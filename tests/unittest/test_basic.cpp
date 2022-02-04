@@ -28,5 +28,11 @@ TEST_CASE("aaa")
 		REQUIRE(v.getVarType() == varpp::vtSignedInt);
 		REQUIRE(v.isReference());
 	}
+	{
+		varpp::Variant v("abc");
+		REQUIRE(v.getAs<const char *>() == std::string("abc"));
+		REQUIRE(v.getVarType() == varpp::vtChar);
+		REQUIRE(v.isPointer());
+	}
 
 }

@@ -8,21 +8,6 @@
 
 namespace varpp {
 
-template <typename T>
-struct MakeVariantType
-{
-	using T1 = typename std::remove_cv<T>::type;
-	using Type = typename std::conditional<
-		std::is_lvalue_reference<T1>::value,
-		typename std::decay<T1>::type &,
-		typename std::conditional<
-			std::is_rvalue_reference<T1>::value,
-			typename std::decay<T1>::type &&,
-			typename std::decay<T1>::type
-		>::type
-	>::type;
-};
-
 class Variant
 {
 public:

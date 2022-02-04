@@ -138,10 +138,10 @@ struct MetaType <T, typename std::enable_if<TypeListIn<T, FundamentalTypeList>::
 };
 
 template <typename T>
-struct MetaType <T *> : public MetaType<T>
+struct MetaType <T *> : public MetaType<typename MakeVariantType<T>::Type>
 {
 private:
-	using super = MetaType<T>;
+	using super = MetaType<typename MakeVariantType<T>::Type>;
 
 public:
 	static constexpr VarType varType = super::varType;
@@ -157,10 +157,10 @@ public:
 };
 
 template <typename T>
-struct MetaType <T &> : public MetaType<T>
+struct MetaType <T &> : public MetaType<typename MakeVariantType<T>::Type>
 {
 private:
-	using super = MetaType<T>;
+	using super = MetaType<typename MakeVariantType<T>::Type>;
 
 public:
 	static constexpr VarType varType = super::varType;
