@@ -1,0 +1,3 @@
+tests/build/temp*
+tests/build/project*
+tests/coverage
