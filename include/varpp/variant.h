@@ -21,7 +21,7 @@ public:
 	template <typename T>
 	explicit Variant(T value) noexcept
 		:
-			metaType(getMetaTypeData<MetaType<typename MakeVariantType<T>::Type> >())
+			metaType(getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >())
 	{
 		metaType->construct(data, &value);
 	}
@@ -43,7 +43,7 @@ public:
 	template <typename T>
 	Variant & set(T value)
 	{
-		metaType = getMetaTypeData<MetaType<typename MakeVariantType<T>::Type> >();
+		metaType = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
 		metaType->construct(data, &value);
 		return *this;
 	}
@@ -51,6 +51,21 @@ public:
 	template <typename T>
 	T getAs() const {
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
+	}
+
+	template <typename T>
+	bool canCast() const {
+		const MetaTypeData * toMetaTypeData = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
+		return metaType->canCast(toMetaTypeData);
+	}
+
+	template <typename T>
+	T cast() const {
+		const MetaTypeData * toMetaTypeData = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
+		assert(metaType->canCast(toMetaTypeData));
+		T result = T();
+		metaType->cast(data, toMetaTypeData, &result);
+		return result;
 	}
 
 	VarType getVarType() const {
@@ -61,18 +76,25 @@ public:
 		return metaType->getExtendType();
 	}
 
-	bool isPointer() const {
-		return (getExtendType() & etPointer);
-	}
-
-	bool isReference() const {
-		return (getExtendType() & etReference);
-	}
-
 private:
 	const MetaTypeData * metaType;
 	VariantData data;
 };
+
+inline bool isPointer(const Variant & v)
+{
+	return isPointer(v.getExtendType());
+}
+
+inline bool isReference(const Variant & v)
+{
+	return isReference(v.getExtendType());
+}
+
+inline bool isAnyExtension(const Variant & v)
+{
+	return isAnyExtension(v.getExtendType());
+}
 
 
 } // namespace varpp

@@ -14,7 +14,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(${TARGET_TEST} Threads::Threads)
 
-set_target_properties(${TARGET_TEST} PROPERTIES CXX_STANDARD 11)
+set_target_properties(${TARGET_TEST} PROPERTIES CXX_STANDARD 17)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 if(coverage)

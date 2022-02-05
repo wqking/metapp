@@ -42,6 +42,18 @@ struct TypeListIn
 	static constexpr bool value = (TypeListIndexOf<T, TL>::value >= 0);
 };
 
+template <typename TL>
+struct TypeListCount
+{
+	static constexpr size_t value = 0;
+};
+
+template <typename ...Args>
+struct TypeListCount <TypeList<Args...> >
+{
+	static constexpr size_t value = sizeof...(Args);
+};
+
 
 } // namespace varpp
 
