@@ -9,7 +9,7 @@
 
 namespace {
 
-TEST_CASE("VarType and get, fundamental")
+TEST_CASE("VarType and get, void")
 {
 	SECTION("void") {
 		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtVoid);
@@ -18,7 +18,10 @@ TEST_CASE("VarType and get, fundamental")
 	SECTION("nullptr") {
 		REQUIRE(varpp::Variant(nullptr).getVarType() == varpp::vtVoid);
 	}
+}
 
+TEST_CASE("VarType and get, fundamental")
+{
 	SECTION("bool") {
 		REQUIRE(varpp::Variant(true).getVarType() == varpp::vtBool);
 		REQUIRE(varpp::Variant(true).get<bool>() == true);
@@ -143,6 +146,25 @@ TEST_CASE("VarType and get, fundamental")
 
 }
 
+TEST_CASE("VarType and get, string")
+{
+	SECTION("std::string") {
+		REQUIRE(varpp::Variant(std::string("abc")).getVarType() == varpp::vtString);
+		REQUIRE(varpp::Variant(std::string("abc")).get<std::string>() == "abc");
+		std::string s("def");
+		REQUIRE(varpp::Variant(s).getVarType() == varpp::vtString);
+		REQUIRE(varpp::Variant(s).get<std::string>() == s);
+	}
+
+	SECTION("std::wstring") {
+		REQUIRE(varpp::Variant(std::wstring(L"abc")).getVarType() == varpp::vtWideString);
+		REQUIRE(varpp::Variant(std::wstring(L"abc")).get<std::wstring>() == L"abc");
+		std::wstring ws(L"def");
+		REQUIRE(varpp::Variant(ws).getVarType() == varpp::vtWideString);
+		REQUIRE(varpp::Variant(ws).get<std::wstring>() == ws);
+	}
+}
+
 TEST_CASE("VarType and get, pointer")
 {
 	SECTION("void *") {
@@ -155,5 +177,18 @@ TEST_CASE("VarType and get, pointer")
 		REQUIRE(varpp::isPointer(varpp::Variant((const volatile void *)0)));
 	}
 }
+
+
+TEST_CASE("VarType and get, vector")
+{
+	SECTION("std::vector<int>") {
+		std::vector<int> v{5};
+		REQUIRE(varpp::Variant(v).getVarType() == varpp::vtInt);
+		auto x = varpp::Variant(v).get<std::vector<int>>();
+		REQUIRE(varpp::Variant(v).get<std::vector<int>>()[0] == 5);
+		REQUIRE(varpp::isVector(varpp::Variant(v)));
+	}
+}
+
 
 } // namespace

@@ -81,6 +81,11 @@ private:
 	VariantData data;
 };
 
+inline bool isAnyExtension(const Variant & v)
+{
+	return isAnyExtension(v.getExtendType());
+}
+
 inline bool isPointer(const Variant & v)
 {
 	return isPointer(v.getExtendType());
@@ -91,9 +96,9 @@ inline bool isReference(const Variant & v)
 	return isReference(v.getExtendType());
 }
 
-inline bool isAnyExtension(const Variant & v)
+inline bool isVector(const Variant & v)
 {
-	return isAnyExtension(v.getExtendType());
+	return isVector(v.getExtendType());
 }
 
 

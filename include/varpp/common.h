@@ -148,6 +148,11 @@ struct VariantData
 	}
 };
 
+inline bool isAnyExtension(const ExtendType & et)
+{
+	return et != etNone;
+}
+
 inline bool isPointer(const ExtendType & et)
 {
 	return et & etPointer;
@@ -158,9 +163,9 @@ inline bool isReference(const ExtendType & et)
 	return et & etReference;
 }
 
-inline bool isAnyExtension(const ExtendType & et)
+inline bool isVector(const ExtendType & et)
 {
-	return et != etNone;
+	return et & etVector;
 }
 
 

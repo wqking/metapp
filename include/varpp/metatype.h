@@ -176,19 +176,31 @@ struct MetaType <void> : public PodMetaType<void>
 };
 
 template <typename T>
-struct MetaType <const T> : public MetaType<T> {};
+struct MetaType <const T> : public MetaType<T>
+{
+};
+
 template <typename T>
-struct MetaType <volatile T> : public MetaType<T> {};
+struct MetaType <volatile T> : public MetaType<T>
+{
+};
+
 template <typename T>
-struct MetaType <const volatile T> : public MetaType<T> {};
+struct MetaType <const volatile T> : public MetaType<T>
+{
+};
 
 template <typename T>
 struct MetaType <T,
-	typename std::enable_if<std::is_array<T>::value>::type> : public MetaType<typename std::decay<T>::type> {};
+	typename std::enable_if<std::is_array<T>::value>::type> : public MetaType<typename std::decay<T>::type>
+{
+};
 
 template <typename T>
 struct MetaType <T,
-	typename std::enable_if<std::is_function<T>::value>::type> : public MetaType<typename std::decay<T>::type> {};
+	typename std::enable_if<std::is_function<T>::value>::type> : public MetaType<typename std::decay<T>::type>
+{
+};
 
 template <typename T>
 struct MetaType <T *> : public PodMetaType<T *>
@@ -215,11 +227,11 @@ template <typename T>
 struct MetaType <T &> : public MetaType<T>
 {
 private:
-	using super = MetaType<T>;
+	using Underlying = MetaType<T>;
 
 public:
-	static constexpr VarType varType = MetaType<T>::varType;
-	static constexpr ExtendType extendType = super::extendType | etReference;
+	static constexpr VarType varType = Underlying::varType;
+	static constexpr ExtendType extendType = Underlying::extendType | etReference;
 
 	static void construct(VariantData & data, const void * value) {
 		data.podAs<T *>() = *(T **)value;
