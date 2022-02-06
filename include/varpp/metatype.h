@@ -2,10 +2,11 @@
 #define METATYPE_H_969872685611
 
 #include "varpp/common.h"
-#include "varpp/typelist.h"
+#include "varpp/internal/metatype_i.h"
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <array>
 
 namespace varpp {
@@ -14,12 +15,7 @@ template <typename T, typename Enabled = void>
 struct MetaType;
 struct MetaTypeData;
 
-inline void emptyCopy(const VariantData & /*fromData*/, VariantData & /*toData*/)
-{
-}
-
 using FuncConstruct = void (*)(VariantData & data, const void * value);
-using FuncDestruct = void (*)(VariantData & data);
 using FuncCopy = void (*)(const VariantData & fromData, VariantData & toData);
 using FuncGetAddress = void * (*)(const VariantData & data);
 using FuncCanCast = bool (*)(const MetaTypeData * toMetaTypeData);
@@ -30,8 +26,7 @@ struct MetaTypeData
 public:
 	constexpr MetaTypeData() :
 		construct(),
-		destruct(),
-		copy(&emptyCopy),
+		copy(&internal_::emptyCopy),
 		getAddress(),
 		canCast(),
 		cast(),
@@ -44,14 +39,12 @@ public:
 		const VarType varType,
 		const ExtendType extendType,
 		FuncConstruct construct,
-		FuncDestruct destruct,
 		FuncCopy copy,
 		FuncGetAddress getAddress,
 		FuncCanCast canCast,
 		FuncCast cast
 	) :
 		construct(construct),
-		destruct(destruct),
 		copy(copy),
 		getAddress(getAddress),
 		canCast(canCast),
@@ -70,7 +63,6 @@ public:
 	}
 
 	FuncConstruct construct;
-	FuncDestruct destruct;
 	FuncCopy copy;
 	FuncGetAddress getAddress;
 	FuncCanCast canCast;
@@ -89,7 +81,6 @@ const MetaTypeData * getMetaTypeData() {
 		M::varType,
 		M::extendType,
 		&M::construct,
-		&M::destruct,
 		&M::copy,
 		&M::getAddress,
 		&M::canCast,
@@ -98,44 +89,8 @@ const MetaTypeData * getMetaTypeData() {
 	return &metaTypeData;
 }
 
-template <typename T_>
-struct MetaTypeBase
-{
-	using T = T_;
-	
-	static constexpr VarType varType = vtObject;
-	static constexpr ExtendType extendType = etNone;
-
-	static void construct(VariantData & data, const void * value) {
-		data.object = std::make_shared<T>(*(T *)value);
-	}
-
-	static void destruct(VariantData & /*data*/) {
-	}
-
-	static void copy(const VariantData & fromData, VariantData & toData) {
-		toData = fromData;
-	}
-
-	static void * getAddress(const VariantData & data) {
-		return data.object.get();
-	}
-
-	static bool canCast(const MetaTypeData * /*toMetaTypeData*/) {
-		return false;
-	}
-
-	static void cast(const VariantData & /*data*/ , const MetaTypeData * /*toMetaTypeData*/, void * /*toData*/) {
-	}
-};
-
-template <typename T, typename Enabled>
-struct MetaType : public MetaTypeBase<T>
-{
-};
-
 template <typename T>
-struct PodMetaType : public MetaTypeBase<T>
+struct PodMetaType : public internal_::MetaTypeBase<T>
 {
 	static void construct(VariantData & data, const void * value) {
 		data.podAs<T>() = *(T *)value;
@@ -147,38 +102,43 @@ struct PodMetaType : public MetaTypeBase<T>
 
 };
 
-using FundamentalTypeList = TypeList<
-	bool,
-	char, wchar_t,
-	signed char, unsigned char,
-	short, unsigned short,
-	int, unsigned int,
-	long, unsigned long,
-	long long, unsigned long long,
-	float, double, long double
->;
+template <typename T>
+struct ObjectMetaType : public internal_::MetaTypeBase<T>
+{
+	static constexpr VarType varType = vtObject;
 
-template <typename T, typename U>
-void fundamentalCast(const VariantData & data, void * toData) {
-	*(U *)toData = (U)(data.podAs<T>());
-}
+	static void construct(VariantData & data, const void * value) {
+		data.object = std::make_shared<T>(*(T *)value);
+	}
+
+	static void * getAddress(const VariantData & data) {
+		return data.object.get();
+	}
+};
+
+template <typename T, typename Enabled>
+struct MetaType : public ObjectMetaType<T>
+{
+};
 
 template <typename T>
 struct MetaType <T,
-	typename std::enable_if<TypeListIn<T, FundamentalTypeList>::value>::type> : public PodMetaType<T>
+	typename std::enable_if<TypeListIn<T, internal_::FundamentalTypeList>::value>::type> : public PodMetaType<T>
 {
-	using CastFunc = void (*)(const VariantData & data, void * toData);
-	static constexpr std::array<CastFunc, TypeListCount<FundamentalTypeList>::value> castFunctions {
-		&fundamentalCast<T, bool>,
-		&fundamentalCast<T, char>, &fundamentalCast<T, wchar_t>,
-		&fundamentalCast<T, signed char>, &fundamentalCast<T, unsigned char>,
-		&fundamentalCast<T, int>, &fundamentalCast<T, unsigned int>,
-		&fundamentalCast<T, long>, &fundamentalCast<T, unsigned long>,
-		&fundamentalCast<T, long long>, &fundamentalCast<T, unsigned long long>,
-		&fundamentalCast<T, float>, &fundamentalCast<T, double>, &fundamentalCast<T, long double>
-	};
+	//using CastFunc = void (*)(const VariantData & data, void * toData);
+	// this array requires either c++17 or definition in souce file
+	/*static constexpr std::array<CastFunc, TypeListCount<internal_::FundamentalTypeList>::value> castFunctions{
+		&internal_::podCast<T, bool>,
+		&internal_::podCast<T, char>, &internal_::podCast<T, wchar_t>,
+		&internal_::podCast<T, signed char>, &internal_::podCast<T, unsigned char>,
+		&internal_::podCast<T, short>, &internal_::podCast<T, unsigned short>,
+		&internal_::podCast<T, int>, &internal_::podCast<T, unsigned int>,
+		&internal_::podCast<T, long>, &internal_::podCast<T, unsigned long>,
+		&internal_::podCast<T, long long>, &internal_::podCast<T, unsigned long long>,
+		&internal_::podCast<T, float>, &internal_::podCast<T, double>, &internal_::podCast<T, long double>
+	};*/
 
-	static constexpr VarType varType = VarType(vtFundamentalBegin + TypeListIndexOf<T, FundamentalTypeList>::value);
+	static constexpr VarType varType = VarType(vtFundamentalBegin + TypeListIndexOf<T, internal_::FundamentalTypeList>::value);
 
 	static bool canCast(const MetaTypeData * toMetaTypeData) {
 		return ! isAnyExtension(toMetaTypeData->getExtendType())
@@ -187,8 +147,32 @@ struct MetaType <T,
 	}
 
 	static void cast(const VariantData & data, const MetaTypeData * toMetaTypeData, void * toData) {
-		castFunctions[toMetaTypeData->getVarType() - vtArithmeticBegin](data, toData);
+		//castFunctions[toMetaTypeData->getVarType() - vtArithmeticBegin](data, toData);
+		switch(toMetaTypeData->getVarType()) {
+		case vtBool: internal_::podCast<T, bool>(data, toData); break;
+		case vtChar: internal_::podCast<T, char>(data, toData); break;
+		case vtWideChar: internal_::podCast<T, wchar_t>(data, toData); break;
+		case vtSignedChar: internal_::podCast<T, signed char>(data, toData); break;
+		case vtUnsignedChar: internal_::podCast<T, unsigned char>(data, toData); break;
+		case vtShort: internal_::podCast<T, short>(data, toData); break;
+		case vtUnsignedShort: internal_::podCast<T, unsigned short>(data, toData); break;
+		case vtInt: internal_::podCast<T, int>(data, toData); break;
+		case vtUnsignedInt: internal_::podCast<T, unsigned int>(data, toData); break;
+		case vtLong: internal_::podCast<T, long>(data, toData); break;
+		case vtUnsignedLong: internal_::podCast<T, unsigned long>(data, toData); break;
+		case vtLongLong: internal_::podCast<T, long long>(data, toData); break;
+		case vtUnsignedLongLong: internal_::podCast<T, unsigned long long>(data, toData); break;
+		case vtFloat: internal_::podCast<T, float>(data, toData); break;
+		case vtDouble: internal_::podCast<T, double>(data, toData); break;
+		case vtLongDouble: internal_::podCast<T, long double>(data, toData); break;
+		}
 	}
+};
+
+template <>
+struct MetaType <void> : public PodMetaType<void>
+{
+	static constexpr VarType varType = vtVoid;
 };
 
 template <typename T>
@@ -207,29 +191,23 @@ struct MetaType <T,
 	typename std::enable_if<std::is_function<T>::value>::type> : public MetaType<typename std::decay<T>::type> {};
 
 template <typename T>
-struct MetaType <T *> : public MetaType<T>
+struct MetaType <T *> : public PodMetaType<T *>
 {
 private:
-	using super = MetaType<T>;
+	// Seems MSVC treats T as pointer, so we need to remove the pointer.
+	// All we need to remove all pointers, if there are more than one.
+	using Underlying = MetaType<typename std::remove_pointer<T>::type>;
 
 public:
-	static constexpr VarType varType = super::varType;
-	static constexpr ExtendType extendType = super::extendType | etPointer;
-
-	static void construct(VariantData & data, const void * value) {
-		data.podAs<T *>() = *(T **)value;
-	}
-
-	static void * getAddress(const VariantData & data) {
-		return &data.podAs<T *>();
-	}
+	static constexpr VarType varType = Underlying::varType;
+	static constexpr ExtendType extendType = Underlying::extendType | etPointer;
 
 	static bool canCast(const MetaTypeData * toMetaTypeData) {
 		return isPointer(toMetaTypeData->getExtendType());
 	}
 
 	static void cast(const VariantData & data, const MetaTypeData * /*toMetaTypeData*/, void * toData) {
-		fundamentalCast<T *, void *>(data, toData);
+		internal_::podCast<T *, void *>(data, toData);
 	}
 };
 
@@ -240,7 +218,7 @@ private:
 	using super = MetaType<T>;
 
 public:
-	static constexpr VarType varType = super::varType;
+	static constexpr VarType varType = MetaType<T>::varType;
 	static constexpr ExtendType extendType = super::extendType | etReference;
 
 	static void construct(VariantData & data, const void * value) {
@@ -256,20 +234,36 @@ public:
 	}
 
 	static void cast(const VariantData & data, const MetaTypeData * /*toMetaTypeData*/, void * toData) {
-		fundamentalCast<T *, void *>(data, toData);
+		internal_::podCast<T *, void *>(data, toData);
 	}
 };
 
 template <>
-struct MetaType <std::string> : public MetaTypeBase<std::string>
+struct MetaType <std::string> : public ObjectMetaType<std::string>
 {
 	static constexpr VarType varType = vtString;
 };
 
 template <>
-struct MetaType <std::wstring> : public MetaTypeBase<std::wstring>
+struct MetaType <std::wstring> : public ObjectMetaType<std::wstring>
 {
 	static constexpr VarType varType = vtWideString;
+};
+
+template <>
+struct MetaType <std::nullptr_t> : public MetaType<void *>
+{
+};
+
+template <typename T, typename Alloc>
+struct MetaType <std::vector<T, Alloc> > : public MetaType<T>
+{
+private:
+	using super = MetaType<T>;
+
+public:
+	static constexpr ExtendType extendType = super::extendType | etVector;
+
 };
 
 

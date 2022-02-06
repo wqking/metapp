@@ -5,7 +5,7 @@
 
 namespace varpp {
 
-constexpr size_t podSize = sizeof(long long);
+constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
 
 class VarType
 {
@@ -65,7 +65,7 @@ constexpr VarType vtArithmeticBegin(vtVoid + 1); // 2
 constexpr VarType vtIntegerBegin(vtArithmeticBegin); // 2
 constexpr VarType vtBool(vtIntegerBegin);
 constexpr VarType vtChar(vtIntegerBegin + 1);
-constexpr VarType vtWchar(vtIntegerBegin + 2);
+constexpr VarType vtWideChar(vtIntegerBegin + 2);
 constexpr VarType vtSignedChar(vtIntegerBegin + 3);
 constexpr VarType vtUnsignedChar(vtIntegerBegin + 4);
 constexpr VarType vtShort(vtIntegerBegin + 5);
@@ -132,8 +132,10 @@ private:
 };
 
 constexpr ExtendType etNone(nullptr);
-constexpr ExtendType etPointer;
-constexpr ExtendType etReference = etPointer << 1;
+constexpr ExtendType etOne;
+constexpr ExtendType etPointer = etOne;
+constexpr ExtendType etReference = etOne << 1;
+constexpr ExtendType etVector = etOne << 2;
 
 struct VariantData
 {

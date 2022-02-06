@@ -1,34 +1,25 @@
 #include "test.h"
 
+#include <iostream>
 #include "varpp/variant.h"
 
 #include <string>
 #include <iostream>
+#include <climits>
 
-struct X
+namespace {
+
+TEST_CASE("cast, fundamental")
 {
-	constexpr X() : value() {}
-	constexpr X(const int v) : value(v) {}
-	constexpr operator int() const {
-		return value;
+	SECTION("bool") {
 	}
-	int value;
-};
+}
 
 TEST_CASE("aaa")
 {
-	constexpr X x = X(2), y = X(1), z = X(2);
-	switch(x) {
-	case y:
-		std::cout << "yyy" << std::endl;
-		break;
-	case z:
-		std::cout << "zzz" << std::endl;
-		break;
-	}
 	{
 		varpp::Variant v(true);
-		REQUIRE(v.getAs<bool>() == true);
+		REQUIRE(v.get<bool>() == true);
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
 		REQUIRE(v.getVarType() == varpp::vtBool);
@@ -36,7 +27,7 @@ TEST_CASE("aaa")
 	}
 	{
 		varpp::Variant v((char)38);
-		REQUIRE(v.getAs<char>() == 38);
+		REQUIRE(v.get<char>() == 38);
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
 		REQUIRE(v.getVarType() == varpp::vtChar);
@@ -46,8 +37,8 @@ TEST_CASE("aaa")
 		int n = 5;
 		int * p = &n;
 		varpp::Variant v(p);
-		REQUIRE(v.getAs<int *>() == p);
-		REQUIRE(*v.getAs<int *>() == 5);
+		REQUIRE(v.get<int *>() == p);
+		REQUIRE(*v.get<int *>() == 5);
 		REQUIRE(v.getVarType() == varpp::vtInt);
 		REQUIRE(varpp::isPointer(v));
 	}
@@ -56,13 +47,13 @@ TEST_CASE("aaa")
 		int & p = n;
 		varpp::Variant v;
 		v.set<int &>(p);
-		REQUIRE(v.getAs<int &>() == 5);
+		REQUIRE(v.get<int &>() == 5);
 		REQUIRE(v.getVarType() == varpp::vtInt);
 		REQUIRE(varpp::isReference(v));
 	}
 	{
 		varpp::Variant v("abc");
-		REQUIRE(v.getAs<const char *>() == std::string("abc"));
+		REQUIRE(v.get<const char *>() == std::string("abc"));
 		REQUIRE(v.getVarType() == varpp::vtChar);
 		REQUIRE(varpp::isPointer(v));
 	}
@@ -70,7 +61,7 @@ TEST_CASE("aaa")
 		char s[] = "abc";
 		varpp::Variant v;
 		v.set<char[]>(s);
-		REQUIRE(v.getAs<const char *>() == std::string("abc"));
+		REQUIRE(v.get<const char *>() == std::string("abc"));
 		REQUIRE(v.getVarType() == varpp::vtChar);
 		REQUIRE(varpp::isPointer(v));
 	}
@@ -78,7 +69,7 @@ TEST_CASE("aaa")
 	{
 		std::string s("abc");
 		varpp::Variant v(s);
-		REQUIRE(v.getAs<std::string>() == s);
+		REQUIRE(v.get<std::string>() == s);
 		REQUIRE(v.getVarType() == varpp::vtString);
 		REQUIRE(! varpp::isPointer(v));
 		REQUIRE(! varpp::isReference(v));
@@ -88,7 +79,7 @@ TEST_CASE("aaa")
 		std::string s("abc");
 		varpp::Variant v;
 		v.set<const std::string>(s);
-		REQUIRE(v.getAs<std::string>() == s);
+		REQUIRE(v.get<std::string>() == s);
 		REQUIRE(v.getVarType() == varpp::vtString);
 		REQUIRE(! varpp::isPointer(v));
 		REQUIRE(! varpp::isReference(v));
@@ -97,10 +88,12 @@ TEST_CASE("aaa")
 	{
 		std::wstring s(L"abc");
 		varpp::Variant v(s);
-		REQUIRE(v.getAs<std::wstring>() == s);
+		REQUIRE(v.get<std::wstring>() == s);
 		REQUIRE(v.getVarType() == varpp::vtWideString);
 		REQUIRE(! varpp::isPointer(v));
 		REQUIRE(! varpp::isReference(v));
 	}
 
 }
+
+} // namespace

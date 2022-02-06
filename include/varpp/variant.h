@@ -49,7 +49,7 @@ public:
 	}
 
 	template <typename T>
-	T getAs() const {
+	T get() const {
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
 
