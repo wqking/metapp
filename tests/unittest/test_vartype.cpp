@@ -12,11 +12,11 @@ namespace {
 TEST_CASE("VarType and get, void")
 {
 	SECTION("void") {
-		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtVoid);
+		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtPointer);
 	}
 
 	SECTION("nullptr") {
-		REQUIRE(varpp::Variant(nullptr).getVarType() == varpp::vtVoid);
+		REQUIRE(varpp::Variant(nullptr).getVarType() == varpp::vtPointer);
 	}
 }
 
@@ -168,17 +168,15 @@ TEST_CASE("VarType and get, string")
 TEST_CASE("VarType and get, pointer")
 {
 	SECTION("void *") {
-		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtVoid);
-		REQUIRE(varpp::isPointer(varpp::Variant((void *)0)));
+		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtPointer);
 	}
 
 	SECTION("const volatile void *") {
-		REQUIRE(varpp::Variant((const volatile void *)0).getVarType() == varpp::vtVoid);
-		REQUIRE(varpp::isPointer(varpp::Variant((const volatile void *)0)));
+		REQUIRE(varpp::Variant((const volatile void *)0).getVarType() == varpp::vtPointer);
 	}
 }
 
-
+/*
 TEST_CASE("VarType and get, vector")
 {
 	SECTION("std::vector<int>") {
@@ -189,6 +187,7 @@ TEST_CASE("VarType and get, vector")
 		REQUIRE(varpp::isVector(varpp::Variant(v)));
 	}
 }
+*/
 
 
 } // namespace

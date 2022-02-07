@@ -23,7 +23,6 @@ TEST_CASE("aaa")
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
 		REQUIRE(v.getVarType() == varpp::vtBool);
-		REQUIRE(! varpp::isPointer(v));
 	}
 	{
 		varpp::Variant v((char)38);
@@ -31,7 +30,6 @@ TEST_CASE("aaa")
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
 		REQUIRE(v.getVarType() == varpp::vtChar);
-		REQUIRE(! varpp::isPointer(v));
 	}
 	{
 		int n = 5;
@@ -39,8 +37,8 @@ TEST_CASE("aaa")
 		varpp::Variant v(p);
 		REQUIRE(v.get<int *>() == p);
 		REQUIRE(*v.get<int *>() == 5);
-		REQUIRE(v.getVarType() == varpp::vtInt);
-		REQUIRE(varpp::isPointer(v));
+		REQUIRE(v.getVarType() == varpp::vtPointer);
+		REQUIRE(v.getMetaType()->getUnderlying()->getVarType() == varpp::vtInt);
 	}
 	{
 		int n = 5;
@@ -48,22 +46,19 @@ TEST_CASE("aaa")
 		varpp::Variant v;
 		v.set<int &>(p);
 		REQUIRE(v.get<int &>() == 5);
-		REQUIRE(v.getVarType() == varpp::vtInt);
-		REQUIRE(varpp::isReference(v));
+		REQUIRE(v.getVarType() == varpp::vtReference);
 	}
 	{
 		varpp::Variant v("abc");
 		REQUIRE(v.get<const char *>() == std::string("abc"));
-		REQUIRE(v.getVarType() == varpp::vtChar);
-		REQUIRE(varpp::isPointer(v));
+		REQUIRE(v.getVarType() == varpp::vtPointer);
 	}
 	{
 		char s[] = "abc";
 		varpp::Variant v;
 		v.set<char[]>(s);
 		REQUIRE(v.get<const char *>() == std::string("abc"));
-		REQUIRE(v.getVarType() == varpp::vtChar);
-		REQUIRE(varpp::isPointer(v));
+		REQUIRE(v.getVarType() == varpp::vtPointer);
 	}
 
 	{
@@ -71,8 +66,6 @@ TEST_CASE("aaa")
 		varpp::Variant v(s);
 		REQUIRE(v.get<std::string>() == s);
 		REQUIRE(v.getVarType() == varpp::vtString);
-		REQUIRE(! varpp::isPointer(v));
-		REQUIRE(! varpp::isReference(v));
 	}
 
 	{
@@ -81,8 +74,6 @@ TEST_CASE("aaa")
 		v.set<const std::string>(s);
 		REQUIRE(v.get<std::string>() == s);
 		REQUIRE(v.getVarType() == varpp::vtString);
-		REQUIRE(! varpp::isPointer(v));
-		REQUIRE(! varpp::isReference(v));
 	}
 
 	{
@@ -90,8 +81,6 @@ TEST_CASE("aaa")
 		varpp::Variant v(s);
 		REQUIRE(v.get<std::wstring>() == s);
 		REQUIRE(v.getVarType() == varpp::vtWideString);
-		REQUIRE(! varpp::isPointer(v));
-		REQUIRE(! varpp::isReference(v));
 	}
 
 }

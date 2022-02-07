@@ -90,7 +90,10 @@ constexpr VarType vtFundamentalEnd(vtLongDouble);
 constexpr VarType vtString(vtFundamentalEnd + 1); // std::string
 constexpr VarType vtWideString(vtString + 1); // std::wstring
 
-constexpr VarType vtObject(31); // is equivalent to unkown type
+constexpr VarType vtObject(vtWideString + 1); // equivalent to unkown type
+constexpr VarType vtPointer(vtObject + 1);
+constexpr VarType vtReference(vtPointer + 1);
+constexpr VarType vtVector(vtReference + 1);
 
 class ExtendType
 {
@@ -133,9 +136,9 @@ private:
 
 constexpr ExtendType etNone(nullptr);
 constexpr ExtendType etOne;
-constexpr ExtendType etPointer = etOne;
-constexpr ExtendType etReference = etOne << 1;
-constexpr ExtendType etVector = etOne << 2;
+//constexpr ExtendType etPointer = etOne;
+//constexpr ExtendType etReference = etOne << 1;
+//constexpr ExtendType etVector = etOne << 2;
 
 struct VariantData
 {
@@ -147,26 +150,6 @@ struct VariantData
 		return *(T *)pod;
 	}
 };
-
-inline bool isAnyExtension(const ExtendType & et)
-{
-	return et != etNone;
-}
-
-inline bool isPointer(const ExtendType & et)
-{
-	return et & etPointer;
-}
-
-inline bool isReference(const ExtendType & et)
-{
-	return et & etReference;
-}
-
-inline bool isVector(const ExtendType & et)
-{
-	return et & etVector;
-}
 
 
 } // namespace varpp

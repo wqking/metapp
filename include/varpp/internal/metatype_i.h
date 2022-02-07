@@ -10,6 +10,8 @@ namespace internal_ {
 template <typename T>
 struct MetaTypeBase
 {
+	using Underlying = void;
+
 	static constexpr ExtendType extendType = etNone;
 
 	static void copy(const VariantData & fromData, VariantData & toData) {

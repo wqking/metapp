@@ -76,30 +76,14 @@ public:
 		return metaType->getExtendType();
 	}
 
+	const MetaTypeData * getMetaType() const {
+		return metaType;
+	}
+
 private:
 	const MetaTypeData * metaType;
 	VariantData data;
 };
-
-inline bool isAnyExtension(const Variant & v)
-{
-	return isAnyExtension(v.getExtendType());
-}
-
-inline bool isPointer(const Variant & v)
-{
-	return isPointer(v.getExtendType());
-}
-
-inline bool isReference(const Variant & v)
-{
-	return isReference(v.getExtendType());
-}
-
-inline bool isVector(const Variant & v)
-{
-	return isVector(v.getExtendType());
-}
 
 
 } // namespace varpp
