@@ -176,18 +176,15 @@ TEST_CASE("VarType and get, pointer")
 	}
 }
 
-/*
 TEST_CASE("VarType and get, vector")
 {
 	SECTION("std::vector<int>") {
 		std::vector<int> v{5};
-		REQUIRE(varpp::Variant(v).getVarType() == varpp::vtInt);
+		REQUIRE(varpp::Variant(v).getVarType() == varpp::vtVector);
 		auto x = varpp::Variant(v).get<std::vector<int>>();
 		REQUIRE(varpp::Variant(v).get<std::vector<int>>()[0] == 5);
-		REQUIRE(varpp::isVector(varpp::Variant(v)));
 	}
 }
-*/
 
 
 } // namespace

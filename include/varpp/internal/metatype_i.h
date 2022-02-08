@@ -3,12 +3,12 @@
 
 namespace varpp {
 
-struct MetaTypeData;
+class MetaType;
 
 namespace internal_ {
 
 template <typename T>
-struct MetaTypeBase
+struct DeclareMetaTypeBase
 {
 	using Underlying = void;
 
@@ -18,17 +18,13 @@ struct MetaTypeBase
 		toData = fromData;
 	}
 
-	static bool canCast(const MetaTypeData * /*toMetaTypeData*/) {
+	static bool canCast(const MetaType * /*toMetaType*/) {
 		return false;
 	}
 
-	static void cast(const VariantData & /*data*/ , const MetaTypeData * /*toMetaTypeData*/, void * /*toData*/) {
+	static void cast(const VariantData & /*data*/ , const MetaType * /*toMetaType*/, void * /*toData*/) {
 	}
 };
-
-inline void emptyCopy(const VariantData & /*fromData*/, VariantData & /*toData*/)
-{
-}
 
 template <typename T, typename U>
 void podCast(const VariantData & data, void * toData) {

@@ -98,7 +98,7 @@ constexpr VarType vtVector(vtReference + 1);
 class ExtendType
 {
 private:
-	using ValueType = uint64_t;
+	using ValueType = unsigned char;
 public:
 	constexpr ExtendType() : value(1) {
 	}
@@ -136,9 +136,8 @@ private:
 
 constexpr ExtendType etNone(nullptr);
 constexpr ExtendType etOne;
-//constexpr ExtendType etPointer = etOne;
-//constexpr ExtendType etReference = etOne << 1;
-//constexpr ExtendType etVector = etOne << 2;
+constexpr ExtendType etConst = etOne;
+constexpr ExtendType etVolatile = etOne << 1;
 
 struct VariantData
 {

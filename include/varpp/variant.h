@@ -13,7 +13,7 @@ class Variant
 public:
 	Variant() noexcept
 		:
-			metaType(&emptyMetaTypeData),
+			metaType(&emptyMetaType),
 			data()
 	{
 	}
@@ -21,16 +21,16 @@ public:
 	template <typename T>
 	explicit Variant(T value) noexcept
 		:
-			metaType(getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >())
+			metaType(varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >())
 	{
 		metaType->construct(data, &value);
 	}
 
 	Variant(const Variant & other) noexcept
 		:
-			metaType(other.metaType)
+			metaType(other.metaType),
+			data(other.data)
 	{
-		metaType->copy(other.data, data);
 	}
 
 	Variant(Variant && other) noexcept
@@ -43,7 +43,7 @@ public:
 	template <typename T>
 	Variant & set(T value)
 	{
-		metaType = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
+		metaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
 		metaType->construct(data, &value);
 		return *this;
 	}
@@ -55,16 +55,16 @@ public:
 
 	template <typename T>
 	bool canCast() const {
-		const MetaTypeData * toMetaTypeData = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
-		return metaType->canCast(toMetaTypeData);
+		const MetaType * toMetaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
+		return metaType->canCast(toMetaType);
 	}
 
 	template <typename T>
 	T cast() const {
-		const MetaTypeData * toMetaTypeData = getMetaTypeData<MetaType<typename std::remove_cv<T>::type> >();
-		assert(metaType->canCast(toMetaTypeData));
+		const MetaType * toMetaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
+		assert(metaType->canCast(toMetaType));
 		T result = T();
-		metaType->cast(data, toMetaTypeData, &result);
+		metaType->cast(data, toMetaType, &result);
 		return result;
 	}
 
@@ -72,16 +72,12 @@ public:
 		return metaType->getVarType();
 	}
 
-	ExtendType getExtendType() const {
-		return metaType->getExtendType();
-	}
-
-	const MetaTypeData * getMetaType() const {
+	const MetaType * getMetaType() const {
 		return metaType;
 	}
 
 private:
-	const MetaTypeData * metaType;
+	const MetaType * metaType;
 	VariantData data;
 };
 
