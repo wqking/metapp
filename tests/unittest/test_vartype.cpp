@@ -168,21 +168,45 @@ TEST_CASE("VarType and get, string")
 TEST_CASE("VarType and get, pointer")
 {
 	SECTION("void *") {
-		REQUIRE(varpp::Variant((void *)0).getVarType() == varpp::vtPointer);
+		varpp::Variant v((void *)0);
+		REQUIRE(v.getVarType() == varpp::vtPointer);
+		using namespace varpp;
+		const auto varTypeList = getUpTypeVarTypes(v.getMetaType());
+		REQUIRE(varTypeList == std::vector<VarType>{ vtPointer, vtVoid });
 	}
 
 	SECTION("const volatile void *") {
-		REQUIRE(varpp::Variant((const volatile void *)0).getVarType() == varpp::vtPointer);
+		varpp::Variant v((const volatile void *)0);
+		REQUIRE(v.getVarType() == varpp::vtPointer);
+		using namespace varpp;
+		const auto varTypeList = getUpTypeVarTypes(v.getMetaType());
+		REQUIRE(varTypeList == std::vector<VarType>{ vtPointer, vtVoid });
 	}
 }
 
-TEST_CASE("VarType and get, vector")
+TEST_CASE("VarType and get, std::shared_ptr")
 {
 	SECTION("std::vector<int>") {
-		std::vector<int> v{5};
-		REQUIRE(varpp::Variant(v).getVarType() == varpp::vtVector);
-		auto x = varpp::Variant(v).get<std::vector<int>>();
-		REQUIRE(varpp::Variant(v).get<std::vector<int>>()[0] == 5);
+		std::shared_ptr<int> sp = std::make_shared<int>(38);
+		varpp::Variant v(sp);
+		REQUIRE(v.getVarType() == varpp::vtSharedPtr);
+		REQUIRE(*(v.get<std::shared_ptr<int> >()) == 38);
+		using namespace varpp;
+		const auto varTypeList = getUpTypeVarTypes(v.getMetaType());
+		REQUIRE(varTypeList == std::vector<VarType>{ vtSharedPtr, vtInt });
+	}
+}
+
+TEST_CASE("VarType and get, std::vector")
+{
+	SECTION("std::vector<int>") {
+		std::vector<int> vec{5};
+		varpp::Variant v(vec);
+		REQUIRE(v.getVarType() == varpp::vtVector);
+		REQUIRE(v.get<std::vector<int>>()[0] == 5);
+		using namespace varpp;
+		const auto varTypeList = getUpTypeVarTypes(v.getMetaType());
+		REQUIRE(varTypeList == std::vector<VarType>{ vtVector, vtInt });
 	}
 }
 

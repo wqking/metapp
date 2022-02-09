@@ -10,7 +10,7 @@ namespace internal_ {
 template <typename T>
 struct DeclareMetaTypeBase
 {
-	using Underlying = void;
+	using UpType = void;
 
 	static constexpr ExtendType extendType = etNone;
 

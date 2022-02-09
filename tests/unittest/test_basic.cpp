@@ -38,7 +38,7 @@ TEST_CASE("aaa")
 		REQUIRE(v.get<int *>() == p);
 		REQUIRE(*v.get<int *>() == 5);
 		REQUIRE(v.getVarType() == varpp::vtPointer);
-		REQUIRE(v.getMetaType()->getUnderlying()->getVarType() == varpp::vtInt);
+		REQUIRE(v.getMetaType()->getUpType()->getVarType() == varpp::vtInt);
 	}
 	{
 		int n = 5;

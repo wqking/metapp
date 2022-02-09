@@ -7,7 +7,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <list>
+#include <deque>
 #include <array>
+#include <forward_list>
+#include <stack>
+#include <queue>
 
 namespace varpp {
 
@@ -17,7 +22,7 @@ template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
 using FuncConstruct = void (*)(VariantData & data, const void * value);
-using FuncGetAddress = void * (*)(const VariantData & data);
+using FuncGetAddress = const void * (*)(const VariantData & data);
 using FuncCanCast = bool (*)(const MetaType * toMetaType);
 using FuncCast = void (*)(const VariantData & data, const MetaType * toMetaType, void * toData);
 
@@ -29,14 +34,14 @@ public:
 		getAddress(),
 		canCast(),
 		cast(),
-		underlying(),
+		upType(),
 		varType(vtEmpty),
 		extendType()
 	{
 	}
 
 	constexpr MetaType(
-		const MetaType * underlying,
+		const MetaType * upType,
 		const VarType varType,
 		const ExtendType extendType,
 		FuncConstruct construct,
@@ -48,14 +53,14 @@ public:
 		getAddress(getAddress),
 		canCast(canCast),
 		cast(cast),
-		underlying(underlying),
+		upType(upType),
 		varType(varType),
 		extendType(extendType)
 	{
 	}
 
-	const MetaType * getUnderlying() const {
-		return underlying;
+	const MetaType * getUpType() const {
+		return upType;
 	}
 
 	VarType getVarType() const {
@@ -76,7 +81,7 @@ public:
 	FuncCast cast;
 
 private:
-	const MetaType * underlying;
+	const MetaType * upType;
 	VarType varType;
 	ExtendType extendType;
 };
@@ -95,7 +100,7 @@ auto getMetaType()
 	-> typename std::enable_if<! std::is_void<M>::value, const MetaType *>::type
 {
 	static const MetaType metaType (
-		getMetaType<typename M::Underlying>(),
+		getMetaType<typename M::UpType>(),
 		M::varType,
 		M::extendType,
 		&M::construct,
@@ -113,7 +118,7 @@ struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
 		data.podAs<T>() = *(T *)value;
 	}
 
-	static void * getAddress(const VariantData & data) {
+	static const void * getAddress(const VariantData & data) {
 		return &data.podAs<T>();
 	}
 
@@ -128,7 +133,7 @@ struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
 		data.object = std::make_shared<T>(*(T *)value);
 	}
 
-	static void * getAddress(const VariantData & data) {
+	static const void * getAddress(const VariantData & data) {
 		return data.object.get();
 	}
 };
@@ -193,7 +198,7 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 	static void construct(VariantData & /*data*/, const void * /*value*/) {
 	}
 
-	static void * getAddress(const VariantData & /*data*/) {
+	static const void * getAddress(const VariantData & /*data*/) {
 		return nullptr;
 	}
 };
@@ -234,7 +239,7 @@ struct DeclareMetaType <T *> : public DeclarePodMetaType<T *>
 public:
 	// Seems MSVC treats T as pointer, so we need to remove the pointer.
 	// All we need to remove all pointers, if there are more than one.
-	using Underlying = DeclareMetaType<typename std::remove_pointer<T>::type>;
+	using UpType = DeclareMetaType<typename std::remove_pointer<T>::type>;
 
 	static constexpr VarType varType = vtPointer;
 
@@ -251,14 +256,14 @@ template <typename T>
 struct DeclareMetaType <T &> : public DeclareMetaType<T>
 {
 public:
-	using Underlying = DeclareMetaType<T>;
+	using UpType = DeclareMetaType<T>;
 	static constexpr VarType varType = vtReference;
 
 	static void construct(VariantData & data, const void * value) {
 		data.podAs<T *>() = *(T **)value;
 	}
 
-	static void * getAddress(const VariantData & data) {
+	static const void * getAddress(const VariantData & data) {
 		return &data.podAs<T *>();
 	}
 
@@ -288,14 +293,114 @@ struct DeclareMetaType <std::nullptr_t> : public DeclareMetaType<void *>
 {
 };
 
+template <typename T>
+struct DeclareMetaType <std::shared_ptr<T> > : public DeclareObjectMetaType<std::shared_ptr<T> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtSharedPtr;
+
+	static void construct(VariantData & data, const void * value) {
+		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
+	}
+
+	static const void * getAddress(const VariantData & data) {
+		return &data.object;
+	}
+
+};
+
 template <typename T, typename Alloc>
 struct DeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<std::vector<T, Alloc> >
 {
 public:
-	using Underlying = DeclareMetaType<T>;
+	using UpType = DeclareMetaType<T>;
 	static constexpr VarType varType = vtVector;
 
 };
+
+template <typename T, typename Alloc>
+struct DeclareMetaType <std::list<T, Alloc> > : public DeclareObjectMetaType<std::list<T, Alloc> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtList;
+
+};
+
+template <typename T, typename Alloc>
+struct DeclareMetaType <std::deque<T, Alloc> > : public DeclareObjectMetaType<std::deque<T, Alloc> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtDeque;
+
+};
+
+template <typename T, size_t Size>
+struct DeclareMetaType <std::array<T, Size> > : public DeclareObjectMetaType<std::array<T, Size> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtArray;
+
+};
+
+template <typename T, typename Alloc>
+struct DeclareMetaType <std::forward_list<T, Alloc> > : public DeclareObjectMetaType<std::forward_list<T, Alloc> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtForwardList;
+
+};
+
+template <typename T, typename Container>
+struct DeclareMetaType <std::stack<T, Container> > : public DeclareObjectMetaType<std::stack<T, Container> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtStack;
+
+};
+
+template <typename T, typename Container>
+struct DeclareMetaType <std::queue<T, Container> > : public DeclareObjectMetaType<std::queue<T, Container> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtQueue;
+
+};
+
+template <typename T, typename Container>
+struct DeclareMetaType <std::priority_queue<T, Container> > : public DeclareObjectMetaType<std::priority_queue<T, Container> >
+{
+public:
+	using UpType = DeclareMetaType<T>;
+	static constexpr VarType varType = vtPriorityQueue;
+
+};
+
+inline const MetaType * getUpTypeAt(const MetaType * metaType, size_t index)
+{
+	while(metaType != nullptr && index > 0) {
+		metaType = metaType->getUpType();
+		--index;
+	}
+	return metaType;
+}
+
+inline std::vector<VarType> getUpTypeVarTypes(const MetaType * metaType)
+{
+	std::vector<VarType> result;
+	result.reserve(8);
+	while(metaType != nullptr) {
+		result.push_back(metaType->getVarType());
+		metaType = metaType->getUpType();
+	}
+	return result;
+}
 
 
 } // namespace varpp
