@@ -7,25 +7,7 @@ namespace varpp {
 
 constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
 
-class VarType
-{
-private:
-	using ValueType = uint16_t;
-
-public:
-	constexpr VarType() : value() {
-	}
-	
-	constexpr VarType(const ValueType value) : value(value) {
-	}
-
-	constexpr operator ValueType() const {
-		return value;
-	}
-
-private:
-	ValueType value;
-};
+using VarType = uint16_t;
 
 constexpr VarType vtEmpty(0);
 
@@ -77,47 +59,10 @@ constexpr VarType vtStack(vtOtherBegin + 11); // 41
 constexpr VarType vtQueue(vtOtherBegin + 12); // 42
 constexpr VarType vtPriorityQueue(vtOtherBegin + 13); // 43
 
-class ExtendType
-{
-private:
-	using ValueType = unsigned char;
-public:
-	constexpr ExtendType() : value(1) {
-	}
+using ExtendType = uint16_t;
 
-	explicit constexpr ExtendType(std::nullptr_t) : value(0) {
-	}
-
-	constexpr bool operator == (const ExtendType & other) const {
-		return value == other.value;
-	}
-
-	constexpr ExtendType operator << (const int bits) const {
-		return ExtendType(value << bits);
-	}
-
-	constexpr ExtendType operator | (const ExtendType & other) const {
-		return ExtendType(value | other.value);
-	}
-
-	constexpr ExtendType operator & (const ExtendType & other) const {
-		return ExtendType(value & other.value);
-	}
-
-	constexpr operator bool() const {
-		return value;
-	}
-
-private:
-	constexpr ExtendType(const ValueType value) : value(value) {
-	}
-
-private:
-	ValueType value;
-};
-
-constexpr ExtendType etNone(nullptr);
-constexpr ExtendType etOne;
+constexpr ExtendType etNone(0);
+constexpr ExtendType etOne(1);
 constexpr ExtendType etConst = etOne;
 constexpr ExtendType etVolatile = etOne << 1;
 
