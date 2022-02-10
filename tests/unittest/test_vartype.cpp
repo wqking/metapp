@@ -186,7 +186,7 @@ TEST_CASE("VarType and get, pointer")
 
 TEST_CASE("VarType and get, std::shared_ptr")
 {
-	SECTION("std::vector<int>") {
+	SECTION("std::shared_ptr<int>") {
 		std::shared_ptr<int> sp = std::make_shared<int>(38);
 		varpp::Variant v(sp);
 		REQUIRE(v.getVarType() == varpp::vtSharedPtr);

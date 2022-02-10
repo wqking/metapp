@@ -36,14 +36,14 @@ public:
 		cast(),
 		upType(),
 		varType(vtEmpty),
-		extendType()
+		qualifiers()
 	{
 	}
 
 	constexpr MetaType(
 		const MetaType * upType,
 		const VarType varType,
-		const ExtendType extendType,
+		const ExtendType qualifiers,
 		FuncConstruct construct,
 		FuncGetAddress getAddress,
 		FuncCanCast canCast,
@@ -55,7 +55,7 @@ public:
 		cast(cast),
 		upType(upType),
 		varType(varType),
-		extendType(extendType)
+		qualifiers(qualifiers)
 	{
 	}
 
@@ -68,11 +68,11 @@ public:
 	}
 
 	bool isConst() const {
-		return extendType & etConst;
+		return qualifiers & etConst;
 	}
 
 	bool isVolatile() const {
-		return extendType & etVolatile;
+		return qualifiers & etVolatile;
 	}
 
 	FuncConstruct construct;
@@ -83,7 +83,7 @@ public:
 private:
 	const MetaType * upType;
 	VarType varType;
-	ExtendType extendType;
+	ExtendType qualifiers;
 };
 
 constexpr MetaType emptyMetaType;
@@ -102,7 +102,7 @@ auto getMetaType()
 	static const MetaType metaType (
 		getMetaType<typename M::UpType>(),
 		M::varType,
-		M::extendType,
+		M::qualifiers,
 		&M::construct,
 		&M::getAddress,
 		&M::canCast,
@@ -206,19 +206,19 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 template <typename T>
 struct DeclareMetaType <const T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType extendType = etConst;
+	static constexpr ExtendType qualifiers = etConst;
 };
 
 template <typename T>
 struct DeclareMetaType <volatile T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType extendType = etVolatile;
+	static constexpr ExtendType qualifiers = etVolatile;
 };
 
 template <typename T>
 struct DeclareMetaType <const volatile T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType extendType = etConst | etVolatile;
+	static constexpr ExtendType qualifiers = etConst | etVolatile;
 };
 
 template <typename T>

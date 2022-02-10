@@ -59,6 +59,9 @@ constexpr VarType vtStack(vtOtherBegin + 11); // 41
 constexpr VarType vtQueue(vtOtherBegin + 12); // 42
 constexpr VarType vtPriorityQueue(vtOtherBegin + 13); // 43
 
+constexpr VarType vtUser(1024);
+
+
 using ExtendType = uint16_t;
 
 constexpr ExtendType etNone(0);

@@ -4,6 +4,7 @@ set(SRC_TEST
 	testmain.cpp
 	test_basic.cpp
 	test_vartype.cpp
+	test_usertype.cpp
 )
 
 add_executable(
