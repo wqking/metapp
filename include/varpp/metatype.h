@@ -35,15 +35,15 @@ public:
 		canCast(),
 		cast(),
 		upType(),
-		varType(vtEmpty),
+		typeKind(tkEmpty),
 		qualifiers()
 	{
 	}
 
 	constexpr MetaType(
 		const MetaType * upType,
-		const VarType varType,
-		const ExtendType qualifiers,
+		const TypeKind typeKind,
+		const QualifierKind qualifiers,
 		FuncConstruct construct,
 		FuncGetAddress getAddress,
 		FuncCanCast canCast,
@@ -54,7 +54,7 @@ public:
 		canCast(canCast),
 		cast(cast),
 		upType(upType),
-		varType(varType),
+		typeKind(typeKind),
 		qualifiers(qualifiers)
 	{
 	}
@@ -63,16 +63,16 @@ public:
 		return upType;
 	}
 
-	VarType getVarType() const {
-		return varType;
+	TypeKind getVarType() const {
+		return typeKind;
 	}
 
 	bool isConst() const {
-		return qualifiers & etConst;
+		return qualifiers & qkConst;
 	}
 
 	bool isVolatile() const {
-		return qualifiers & etVolatile;
+		return qualifiers & qkVolatile;
 	}
 
 	FuncConstruct construct;
@@ -82,8 +82,8 @@ public:
 
 private:
 	const MetaType * upType;
-	VarType varType;
-	ExtendType qualifiers;
+	TypeKind typeKind;
+	QualifierKind qualifiers;
 };
 
 constexpr MetaType emptyMetaType;
@@ -101,7 +101,7 @@ auto getMetaType()
 {
 	static const MetaType metaType (
 		getMetaType<typename M::UpType>(),
-		M::varType,
+		M::typeKind,
 		M::qualifiers,
 		&M::construct,
 		&M::getAddress,
@@ -127,7 +127,7 @@ struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
 template <typename T>
 struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
 {
-	static constexpr VarType varType = vtObject;
+	static constexpr TypeKind typeKind = tkObject;
 
 	static void construct(VariantData & data, const void * value) {
 		data.object = std::make_shared<T>(*(T *)value);
@@ -160,32 +160,32 @@ struct DeclareMetaType <T,
 		&internal_::podCast<T, float>, &internal_::podCast<T, double>, &internal_::podCast<T, long double>
 	};*/
 
-	static constexpr VarType varType = VarType(vtFundamentalBegin + TypeListIndexOf<T, internal_::FundamentalTypeList>::value);
+	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<T, internal_::FundamentalTypeList>::value);
 
 	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getVarType() >= vtArithmeticBegin
-			&& toMetaType->getVarType() <= vtArithmeticEnd;
+		return toMetaType->getVarType() >= tkArithmeticBegin
+			&& toMetaType->getVarType() <= tkArithmeticEnd;
 	}
 
 	static void cast(const VariantData & data, const MetaType * toMetaType, void * toData) {
-		//castFunctions[toMetaType->getVarType() - vtArithmeticBegin](data, toData);
+		//castFunctions[toMetaType->getVarType() - tkArithmeticBegin](data, toData);
 		switch(toMetaType->getVarType()) {
-		case vtBool: internal_::podCast<T, bool>(data, toData); break;
-		case vtChar: internal_::podCast<T, char>(data, toData); break;
-		case vtWideChar: internal_::podCast<T, wchar_t>(data, toData); break;
-		case vtSignedChar: internal_::podCast<T, signed char>(data, toData); break;
-		case vtUnsignedChar: internal_::podCast<T, unsigned char>(data, toData); break;
-		case vtShort: internal_::podCast<T, short>(data, toData); break;
-		case vtUnsignedShort: internal_::podCast<T, unsigned short>(data, toData); break;
-		case vtInt: internal_::podCast<T, int>(data, toData); break;
-		case vtUnsignedInt: internal_::podCast<T, unsigned int>(data, toData); break;
-		case vtLong: internal_::podCast<T, long>(data, toData); break;
-		case vtUnsignedLong: internal_::podCast<T, unsigned long>(data, toData); break;
-		case vtLongLong: internal_::podCast<T, long long>(data, toData); break;
-		case vtUnsignedLongLong: internal_::podCast<T, unsigned long long>(data, toData); break;
-		case vtFloat: internal_::podCast<T, float>(data, toData); break;
-		case vtDouble: internal_::podCast<T, double>(data, toData); break;
-		case vtLongDouble: internal_::podCast<T, long double>(data, toData); break;
+		case tkBool: internal_::podCast<T, bool>(data, toData); break;
+		case tkChar: internal_::podCast<T, char>(data, toData); break;
+		case tkWideChar: internal_::podCast<T, wchar_t>(data, toData); break;
+		case tkSignedChar: internal_::podCast<T, signed char>(data, toData); break;
+		case tkUnsignedChar: internal_::podCast<T, unsigned char>(data, toData); break;
+		case tkShort: internal_::podCast<T, short>(data, toData); break;
+		case tkUnsignedShort: internal_::podCast<T, unsigned short>(data, toData); break;
+		case tkInt: internal_::podCast<T, int>(data, toData); break;
+		case tkUnsignedInt: internal_::podCast<T, unsigned int>(data, toData); break;
+		case tkLong: internal_::podCast<T, long>(data, toData); break;
+		case tkUnsignedLong: internal_::podCast<T, unsigned long>(data, toData); break;
+		case tkLongLong: internal_::podCast<T, long long>(data, toData); break;
+		case tkUnsignedLongLong: internal_::podCast<T, unsigned long long>(data, toData); break;
+		case tkFloat: internal_::podCast<T, float>(data, toData); break;
+		case tkDouble: internal_::podCast<T, double>(data, toData); break;
+		case tkLongDouble: internal_::podCast<T, long double>(data, toData); break;
 		}
 	}
 };
@@ -193,7 +193,7 @@ struct DeclareMetaType <T,
 template <>
 struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 {
-	static constexpr VarType varType = vtVoid;
+	static constexpr TypeKind typeKind = tkVoid;
 
 	static void construct(VariantData & /*data*/, const void * /*value*/) {
 	}
@@ -206,19 +206,19 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 template <typename T>
 struct DeclareMetaType <const T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType qualifiers = etConst;
+	static constexpr QualifierKind qualifiers = qkConst;
 };
 
 template <typename T>
 struct DeclareMetaType <volatile T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType qualifiers = etVolatile;
+	static constexpr QualifierKind qualifiers = qkVolatile;
 };
 
 template <typename T>
 struct DeclareMetaType <const volatile T> : public DeclareMetaType<T>
 {
-	static constexpr ExtendType qualifiers = etConst | etVolatile;
+	static constexpr QualifierKind qualifiers = qkConst | qkVolatile;
 };
 
 template <typename T>
@@ -241,10 +241,10 @@ public:
 	// All we need to remove all pointers, if there are more than one.
 	using UpType = DeclareMetaType<typename std::remove_pointer<T>::type>;
 
-	static constexpr VarType varType = vtPointer;
+	static constexpr TypeKind typeKind = tkPointer;
 
 	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getVarType() == vtPointer;
+		return toMetaType->getVarType() == tkPointer;
 	}
 
 	static void cast(const VariantData & data, const MetaType * /*toMetaType*/, void * toData) {
@@ -257,7 +257,7 @@ struct DeclareMetaType <T &> : public DeclareMetaType<T>
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtReference;
+	static constexpr TypeKind typeKind = tkReference;
 
 	static void construct(VariantData & data, const void * value) {
 		data.podAs<T *>() = *(T **)value;
@@ -268,7 +268,7 @@ public:
 	}
 
 	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getVarType() == vtReference;
+		return toMetaType->getVarType() == tkReference;
 	}
 
 	static void cast(const VariantData & data, const MetaType * /*toMetaType*/, void * toData) {
@@ -279,13 +279,13 @@ public:
 template <>
 struct DeclareMetaType <std::string> : public DeclareObjectMetaType<std::string>
 {
-	static constexpr VarType varType = vtString;
+	static constexpr TypeKind typeKind = tkString;
 };
 
 template <>
 struct DeclareMetaType <std::wstring> : public DeclareObjectMetaType<std::wstring>
 {
-	static constexpr VarType varType = vtWideString;
+	static constexpr TypeKind typeKind = tkWideString;
 };
 
 template <>
@@ -298,7 +298,7 @@ struct DeclareMetaType <std::shared_ptr<T> > : public DeclareObjectMetaType<std:
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtSharedPtr;
+	static constexpr TypeKind typeKind = tkSharedPtr;
 
 	static void construct(VariantData & data, const void * value) {
 		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
@@ -315,7 +315,7 @@ struct DeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<s
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtVector;
+	static constexpr TypeKind typeKind = tkVector;
 
 };
 
@@ -324,7 +324,7 @@ struct DeclareMetaType <std::list<T, Alloc> > : public DeclareObjectMetaType<std
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtList;
+	static constexpr TypeKind typeKind = tkList;
 
 };
 
@@ -333,7 +333,7 @@ struct DeclareMetaType <std::deque<T, Alloc> > : public DeclareObjectMetaType<st
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtDeque;
+	static constexpr TypeKind typeKind = tkDeque;
 
 };
 
@@ -342,7 +342,7 @@ struct DeclareMetaType <std::array<T, Size> > : public DeclareObjectMetaType<std
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtArray;
+	static constexpr TypeKind typeKind = tkArray;
 
 };
 
@@ -351,7 +351,7 @@ struct DeclareMetaType <std::forward_list<T, Alloc> > : public DeclareObjectMeta
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtForwardList;
+	static constexpr TypeKind typeKind = tkForwardList;
 
 };
 
@@ -360,7 +360,7 @@ struct DeclareMetaType <std::stack<T, Container> > : public DeclareObjectMetaTyp
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtStack;
+	static constexpr TypeKind typeKind = tkStack;
 
 };
 
@@ -369,7 +369,7 @@ struct DeclareMetaType <std::queue<T, Container> > : public DeclareObjectMetaTyp
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtQueue;
+	static constexpr TypeKind typeKind = tkQueue;
 
 };
 
@@ -378,7 +378,7 @@ struct DeclareMetaType <std::priority_queue<T, Container> > : public DeclareObje
 {
 public:
 	using UpType = DeclareMetaType<T>;
-	static constexpr VarType varType = vtPriorityQueue;
+	static constexpr TypeKind typeKind = tkPriorityQueue;
 
 };
 
@@ -391,9 +391,9 @@ inline const MetaType * getUpTypeAt(const MetaType * metaType, size_t index)
 	return metaType;
 }
 
-inline std::vector<VarType> getUpTypeVarTypes(const MetaType * metaType)
+inline std::vector<TypeKind> getUpTypeVarTypes(const MetaType * metaType)
 {
-	std::vector<VarType> result;
+	std::vector<TypeKind> result;
 	result.reserve(8);
 	while(metaType != nullptr) {
 		result.push_back(metaType->getVarType());

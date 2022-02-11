@@ -17,13 +17,13 @@ namespace varpp {
 template <>
 struct DeclareMetaType <MyClass> : public DeclareObjectMetaType<MyClass>
 {
-	static constexpr VarType varType = 2000;
+	static constexpr TypeKind typeKind = 2000;
 };
 
 template <>
 struct DeclareMetaType <MyClass *> : public DeclareObjectMetaType<MyClass *>
 {
-	static constexpr VarType varType = 2001;
+	static constexpr TypeKind typeKind = 2001;
 };
 
 } // varpp

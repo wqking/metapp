@@ -7,67 +7,65 @@ namespace varpp {
 
 constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
 
-using VarType = uint16_t;
+using TypeKind = uint16_t;
 
-constexpr VarType vtEmpty(0);
+constexpr TypeKind tkEmpty(0);
 
-constexpr VarType vtVoid(1);
+constexpr TypeKind tkVoid(1);
 
-constexpr VarType vtFundamentalBegin(vtVoid + 1); // 2
+constexpr TypeKind tkFundamentalBegin(tkVoid + 1); // 2
 
-constexpr VarType vtArithmeticBegin(vtFundamentalBegin); // 2
-constexpr VarType vtIntegerBegin(vtArithmeticBegin); // 2
-constexpr VarType vtBool(vtIntegerBegin); // 2
-constexpr VarType vtChar(vtIntegerBegin + 1); // 3
-constexpr VarType vtWideChar(vtIntegerBegin + 2); // 4
-constexpr VarType vtSignedChar(vtIntegerBegin + 3); // 5
-constexpr VarType vtUnsignedChar(vtIntegerBegin + 4); // 6
-constexpr VarType vtShort(vtIntegerBegin + 5); // 7
-constexpr VarType vtUnsignedShort(vtIntegerBegin + 6); // 8
-constexpr VarType vtInt(vtIntegerBegin + 7); // 9
-constexpr VarType vtUnsignedInt(vtIntegerBegin + 8); // 10
-constexpr VarType vtLong(vtIntegerBegin + 9); // 11
-constexpr VarType vtUnsignedLong(vtIntegerBegin + 10); // 12
-constexpr VarType vtLongLong(vtIntegerBegin + 11); // 13
-constexpr VarType vtUnsignedLongLong(vtIntegerBegin + 12); // 14
-constexpr VarType vtIntegerEnd(vtUnsignedLongLong); // 14
+constexpr TypeKind tkArithmeticBegin(tkFundamentalBegin); // 2
+constexpr TypeKind tkIntegerBegin(tkArithmeticBegin); // 2
+constexpr TypeKind tkBool(tkIntegerBegin); // 2
+constexpr TypeKind tkChar(tkIntegerBegin + 1); // 3
+constexpr TypeKind tkWideChar(tkIntegerBegin + 2); // 4
+constexpr TypeKind tkSignedChar(tkIntegerBegin + 3); // 5
+constexpr TypeKind tkUnsignedChar(tkIntegerBegin + 4); // 6
+constexpr TypeKind tkShort(tkIntegerBegin + 5); // 7
+constexpr TypeKind tkUnsignedShort(tkIntegerBegin + 6); // 8
+constexpr TypeKind tkInt(tkIntegerBegin + 7); // 9
+constexpr TypeKind tkUnsignedInt(tkIntegerBegin + 8); // 10
+constexpr TypeKind tkLong(tkIntegerBegin + 9); // 11
+constexpr TypeKind tkUnsignedLong(tkIntegerBegin + 10); // 12
+constexpr TypeKind tkLongLong(tkIntegerBegin + 11); // 13
+constexpr TypeKind tkUnsignedLongLong(tkIntegerBegin + 12); // 14
+constexpr TypeKind tkIntegerEnd(tkUnsignedLongLong); // 14
 
-constexpr VarType vtRealBegin(vtIntegerEnd + 1); // 15
-constexpr VarType vtFloat(vtRealBegin); // 15
-constexpr VarType vtDouble(vtRealBegin + 1); // 16
-constexpr VarType vtLongDouble(vtRealBegin + 2); // 17
-constexpr VarType vtRealEnd(vtLongDouble); // 18
-constexpr VarType vtArithmeticEnd(vtRealEnd); // 19
+constexpr TypeKind tkRealBegin(tkIntegerEnd + 1); // 15
+constexpr TypeKind tkFloat(tkRealBegin); // 15
+constexpr TypeKind tkDouble(tkRealBegin + 1); // 16
+constexpr TypeKind tkLongDouble(tkRealBegin + 2); // 17
+constexpr TypeKind tkRealEnd(tkLongDouble); // 18
+constexpr TypeKind tkArithmeticEnd(tkRealEnd); // 19
 
-constexpr VarType vtFundamentalEnd(vtArithmeticEnd); // 19
+constexpr TypeKind tkFundamentalEnd(tkArithmeticEnd); // 19
 
-constexpr VarType vtOtherBegin(30); // 30
+constexpr TypeKind tkOtherBegin(30); // 30
 
-constexpr VarType vtObject(vtOtherBegin); // 30, equivalent to unkown type
-constexpr VarType vtString(vtOtherBegin + 1); // 31, std::string
-constexpr VarType vtWideString(vtOtherBegin + 1); // 32, std::wstring
+constexpr TypeKind tkObject(tkOtherBegin); // 30, equivalent to unkown type
+constexpr TypeKind tkString(tkOtherBegin + 1); // 31, std::string
+constexpr TypeKind tkWideString(tkOtherBegin + 1); // 32, std::wstring
 
-constexpr VarType vtPointer(vtOtherBegin + 3); // 33
-constexpr VarType vtReference(vtOtherBegin + 4); // 34
-constexpr VarType vtSharedPtr(vtOtherBegin + 5); // 35
-constexpr VarType vtVector(vtOtherBegin + 6); // 36
-constexpr VarType vtList(vtOtherBegin + 7); // 37
-constexpr VarType vtDeque(vtOtherBegin + 8); // 38
-constexpr VarType vtArray(vtOtherBegin + 9); // 39
-constexpr VarType vtForwardList(vtOtherBegin + 10); // 40
-constexpr VarType vtStack(vtOtherBegin + 11); // 41
-constexpr VarType vtQueue(vtOtherBegin + 12); // 42
-constexpr VarType vtPriorityQueue(vtOtherBegin + 13); // 43
+constexpr TypeKind tkPointer(tkOtherBegin + 3); // 33
+constexpr TypeKind tkReference(tkOtherBegin + 4); // 34
+constexpr TypeKind tkSharedPtr(tkOtherBegin + 5); // 35
+constexpr TypeKind tkVector(tkOtherBegin + 6); // 36
+constexpr TypeKind tkList(tkOtherBegin + 7); // 37
+constexpr TypeKind tkDeque(tkOtherBegin + 8); // 38
+constexpr TypeKind tkArray(tkOtherBegin + 9); // 39
+constexpr TypeKind tkForwardList(tkOtherBegin + 10); // 40
+constexpr TypeKind tkStack(tkOtherBegin + 11); // 41
+constexpr TypeKind tkQueue(tkOtherBegin + 12); // 42
+constexpr TypeKind tkPriorityQueue(tkOtherBegin + 13); // 43
 
-constexpr VarType vtUser(1024);
+constexpr TypeKind tkUser(1024);
 
 
-using ExtendType = uint16_t;
+using QualifierKind = uint16_t;
 
-constexpr ExtendType etNone(0);
-constexpr ExtendType etOne(1);
-constexpr ExtendType etConst = etOne;
-constexpr ExtendType etVolatile = etOne << 1;
+constexpr QualifierKind qkConst = 1 << 0;
+constexpr QualifierKind qkVolatile = 1 << 1;
 
 struct VariantData
 {

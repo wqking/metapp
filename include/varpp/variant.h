@@ -68,7 +68,7 @@ public:
 		return result;
 	}
 
-	VarType getVarType() const {
+	TypeKind getVarType() const {
 		return metaType->getVarType();
 	}
 

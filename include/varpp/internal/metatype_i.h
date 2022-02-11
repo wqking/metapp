@@ -12,7 +12,7 @@ struct DeclareMetaTypeBase
 {
 	using UpType = void;
 
-	static constexpr ExtendType qualifiers = etNone;
+	static constexpr QualifierKind qualifiers = 0;
 	
 	static void copy(const VariantData & fromData, VariantData & toData) {
 		toData = fromData;
