@@ -47,5 +47,4 @@ TEST_CASE("User type")
 }
 
 
-
 } // namespace

@@ -2,7 +2,7 @@
 #define VARIANT_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/common.h"
+#include "metapp/metatypedata.h"
 
 #include <type_traits>
 
@@ -55,6 +55,10 @@ public:
 
 	template <typename T>
 	T get() const {
+		//assert(this->canGet<typename std::remove_reference<T>::type>());
+		//if(! this->canGet<typename std::remove_reference<T>::type>()) {
+		//	throw std::runtime_error("Can't get");
+		//}
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
 

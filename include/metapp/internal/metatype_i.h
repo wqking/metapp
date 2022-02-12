@@ -1,5 +1,6 @@
-#include "metapp/common.h"
+#include "metapp/typekind.h"
 #include "metapp/typelist.h"
+#include "metapp/metatypedata.h"
 
 namespace metapp {
 

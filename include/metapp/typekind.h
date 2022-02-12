@@ -1,11 +1,7 @@
-#ifndef COMMON_H_969872685611
-#define COMMON_H_969872685611
-
-#include <memory>
+#ifndef TYPEKIND_H_969872685611
+#define TYPEKIND_H_969872685611
 
 namespace metapp {
-
-constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
 
 using TypeKind = uint16_t;
 
@@ -66,18 +62,6 @@ using QualifierKind = uint16_t;
 
 constexpr QualifierKind qkConst = 1 << 0;
 constexpr QualifierKind qkVolatile = 1 << 1;
-
-struct MetaTypeData
-{
-	uint8_t pod[podSize];
-	std::shared_ptr<void> object;
-
-	template <typename T>
-	T & podAs() const {
-		return *(T *)pod;
-	}
-};
-
 
 } // namespace metapp
 

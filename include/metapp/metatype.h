@@ -1,7 +1,7 @@
 #ifndef METATYPE_H_969872685611
 #define METATYPE_H_969872685611
 
-#include "metapp/common.h"
+#include "metapp/typekind.h"
 #include "metapp/internal/metatype_i.h"
 
 #include <type_traits>
@@ -81,20 +81,20 @@ private:
 constexpr MetaType emptyMetaType;
 
 template <typename T>
-auto getMetaType()
+auto doGetMetaType()
 	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
-auto getMetaType()
+auto doGetMetaType()
 	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
-	using M = DeclareMetaType<typename std::remove_cv<T>::type>;
+	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType (
-		getMetaType<typename M::UpType>(),
+		doGetMetaType<typename M::UpType>(),
 		M::typeKind,
 		M::qualifiers,
 		&M::construct,
@@ -103,6 +103,12 @@ auto getMetaType()
 		&M::cast
 	);
 	return &metaType;
+}
+
+template <typename T>
+const MetaType * getMetaType()
+{
+	return doGetMetaType<typename std::remove_cv<T>::type>();
 }
 
 template <typename T>
@@ -165,7 +171,19 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		toMetaType = toMetaType->getUpType();
 	}
 	if(strictMode) {
-		return toMetaType == fromMetaType;
+		for(;;) {
+			if(toMetaType == fromMetaType) {
+				return true;
+			}
+			if(toMetaType == nullptr || fromMetaType == nullptr) {
+				return false;
+			}
+			if(toMetaType->getTypeKind() != fromMetaType->getTypeKind()) {
+				return false;
+			}
+			toMetaType = toMetaType->getUpType();
+			fromMetaType = fromMetaType->getUpType();
+		}
 	}
 	else {
 		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
@@ -174,7 +192,7 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
 			return true;
 		}
-		return toMetaType == fromMetaType;
+		return toMetaType->getTypeKind() == fromMetaType->getTypeKind();
 	}
 }
 

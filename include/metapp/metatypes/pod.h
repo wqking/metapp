@@ -9,6 +9,8 @@ template <typename T>
 struct DeclareMetaType <T,
 	typename std::enable_if<
 		std::is_class<T>::value
+		&& ! std::is_const<T>::value
+		&& ! std::is_volatile<T>::value
 		&& std::is_trivial<T>::value
 		&& std::is_standard_layout<T>::value
 		&& sizeof(T) <= podSize
