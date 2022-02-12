@@ -21,7 +21,7 @@ public:
 	template <typename T>
 	explicit Variant(T value) noexcept
 		:
-			metaType(varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >())
+			metaType(varpp::getMetaType<T>())
 	{
 		metaType->construct(data, &value);
 	}
@@ -43,7 +43,7 @@ public:
 	template <typename T>
 	Variant & set(T value)
 	{
-		metaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
+		metaType = varpp::getMetaType<T>();
 		metaType->construct(data, &value);
 		return *this;
 	}
@@ -55,13 +55,13 @@ public:
 
 	template <typename T>
 	bool canCast() const {
-		const MetaType * toMetaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
+		const MetaType * toMetaType = varpp::getMetaType<T>();
 		return metaType->canCast(toMetaType);
 	}
 
 	template <typename T>
 	T cast() const {
-		const MetaType * toMetaType = varpp::getMetaType<DeclareMetaType<typename std::remove_cv<T>::type> >();
+		const MetaType * toMetaType = varpp::getMetaType<T>();
 		assert(metaType->canCast(toMetaType));
 		T result = T();
 		metaType->cast(data, toMetaType, &result);

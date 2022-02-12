@@ -7,10 +7,12 @@ class MetaType;
 
 namespace internal_ {
 
+struct NoneUpType {};
+
 template <typename T>
 struct DeclareMetaTypeBase
 {
-	using UpType = void;
+	using UpType = NoneUpType;
 
 	static constexpr QualifierKind qualifiers = 0;
 	
@@ -31,7 +33,7 @@ void podCast(const VariantData & data, void * toData) {
 	*(U *)toData = (U)(data.podAs<T>());
 }
 
-using FundamentalTypeList = TypeList<
+using ArithmeticTypeList = TypeList<
 	bool,
 	char, wchar_t,
 	signed char, unsigned char,

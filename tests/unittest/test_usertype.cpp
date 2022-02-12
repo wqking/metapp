@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "varpp/variant.h"
+#include "varpp/metatypes/metatypes.h"
 
 #include <string>
 #include <iostream>
