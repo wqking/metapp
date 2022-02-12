@@ -36,13 +36,13 @@ TEST_CASE("User type")
 	MyClass obj{ 38 };
 	
 	varpp::Variant v(obj);
-	REQUIRE(v.getVarType() == 2000);
+	REQUIRE(v.getTypeKind() == 2000);
 	REQUIRE(v.get<MyClass>().value == 38);
 	REQUIRE(v.get<MyClass &>().value == 38);
 	REQUIRE(v.get<const MyClass &>().value == 38);
 
 	varpp::Variant v2(&obj);
-	REQUIRE(v2.getVarType() == 2001);
+	REQUIRE(v2.getTypeKind() == 2001);
 	REQUIRE(v2.get<MyClass *>() == &obj);
 }
 

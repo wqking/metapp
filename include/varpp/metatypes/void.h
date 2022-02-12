@@ -10,10 +10,10 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
 
-	static void construct(VariantData & /*data*/, const void * /*value*/) {
+	static void construct(MetaTypeData & /*data*/, const void * /*value*/) {
 	}
 
-	static const void * getAddress(const VariantData & /*data*/) {
+	static const void * getAddress(const MetaTypeData & /*data*/) {
 		return nullptr;
 	}
 };

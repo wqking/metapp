@@ -14,11 +14,11 @@ public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkSharedPtr;
 
-	static void construct(VariantData & data, const void * value) {
+	static void construct(MetaTypeData & data, const void * value) {
 		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
 	}
 
-	static const void * getAddress(const VariantData & data) {
+	static const void * getAddress(const MetaTypeData & data) {
 		return &data.object;
 	}
 

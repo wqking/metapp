@@ -11,10 +11,10 @@ class MetaType;
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
-using FuncConstruct = void (*)(VariantData & data, const void * value);
-using FuncGetAddress = const void * (*)(const VariantData & data);
+using FuncConstruct = void (*)(MetaTypeData & data, const void * value);
+using FuncGetAddress = const void * (*)(const MetaTypeData & data);
 using FuncCanCast = bool (*)(const MetaType * toMetaType);
-using FuncCast = void (*)(const VariantData & data, const MetaType * toMetaType, void * toData);
+using FuncCast = void (*)(const MetaTypeData & data, const MetaType * toMetaType, void * toData);
 
 class MetaType
 {
@@ -53,7 +53,7 @@ public:
 		return upType;
 	}
 
-	TypeKind getVarType() const {
+	TypeKind getTypeKind() const {
 		return typeKind;
 	}
 
@@ -106,11 +106,11 @@ auto getMetaType()
 template <typename T>
 struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
 {
-	static void construct(VariantData & data, const void * value) {
+	static void construct(MetaTypeData & data, const void * value) {
 		data.podAs<T>() = *(T *)value;
 	}
 
-	static const void * getAddress(const VariantData & data) {
+	static const void * getAddress(const MetaTypeData & data) {
 		return &data.podAs<T>();
 	}
 
@@ -123,11 +123,11 @@ struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
 
 	using U = typename std::remove_reference<T>::type;
 
-	static void construct(VariantData & data, const void * value) {
+	static void construct(MetaTypeData & data, const void * value) {
 		data.object = std::make_shared<U>(*(U *)value);
 	}
 
-	static const void * getAddress(const VariantData & data) {
+	static const void * getAddress(const MetaTypeData & data) {
 		return data.object.get();
 	}
 };
@@ -151,10 +151,29 @@ inline std::vector<TypeKind> getUpTypeVarTypes(const MetaType * metaType)
 	std::vector<TypeKind> result;
 	result.reserve(8);
 	while(metaType != nullptr) {
-		result.push_back(metaType->getVarType());
+		result.push_back(metaType->getTypeKind());
 		metaType = metaType->getUpType();
 	}
 	return result;
+}
+
+inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode = false)
+{
+	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
+		toMetaType = toMetaType->getUpType();
+	}
+	if(strictMode) {
+		return toMetaType == fromMetaType;
+	}
+	else {
+		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
+			return true;
+		}
+		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
+			return true;
+		}
+		return toMetaType == fromMetaType;
+	}
 }
 
 

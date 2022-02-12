@@ -12,19 +12,19 @@ public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
-	static void construct(VariantData & data, const void * value) {
+	static void construct(MetaTypeData & data, const void * value) {
 		data.podAs<T *>() = *(T **)value;
 	}
 
-	static const void * getAddress(const VariantData & data) {
+	static const void * getAddress(const MetaTypeData & data) {
 		return &data.podAs<T *>();
 	}
 
 	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getVarType() == tkReference;
+		return toMetaType->getTypeKind() == tkReference;
 	}
 
-	static void cast(const VariantData & data, const MetaType * /*toMetaType*/, void * toData) {
+	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/, void * toData) {
 		internal_::podCast<T *, void *>(data, toData);
 	}
 };

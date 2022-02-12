@@ -49,6 +49,11 @@ public:
 	}
 
 	template <typename T>
+	bool canGet(const bool strictMode = false) const {
+		return probablySame(metaType, varpp::getMetaType<T>(), strictMode);
+	}
+
+	template <typename T>
 	T get() const {
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
@@ -68,8 +73,8 @@ public:
 		return result;
 	}
 
-	TypeKind getVarType() const {
-		return metaType->getVarType();
+	TypeKind getTypeKind() const {
+		return metaType->getTypeKind();
 	}
 
 	const MetaType * getMetaType() const {
@@ -78,7 +83,7 @@ public:
 
 private:
 	const MetaType * metaType;
-	VariantData data;
+	MetaTypeData data;
 };
 
 

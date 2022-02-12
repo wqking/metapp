@@ -16,7 +16,7 @@ struct DeclareMetaTypeBase
 
 	static constexpr QualifierKind qualifiers = 0;
 	
-	static void copy(const VariantData & fromData, VariantData & toData) {
+	static void copy(const MetaTypeData & fromData, MetaTypeData & toData) {
 		toData = fromData;
 	}
 
@@ -24,25 +24,14 @@ struct DeclareMetaTypeBase
 		return false;
 	}
 
-	static void cast(const VariantData & /*data*/ , const MetaType * /*toMetaType*/, void * /*toData*/) {
+	static void cast(const MetaTypeData & /*data*/ , const MetaType * /*toMetaType*/, void * /*toData*/) {
 	}
 };
 
 template <typename T, typename U>
-void podCast(const VariantData & data, void * toData) {
+void podCast(const MetaTypeData & data, void * toData) {
 	*(U *)toData = (U)(data.podAs<T>());
 }
-
-using ArithmeticTypeList = TypeList<
-	bool,
-	char, wchar_t,
-	signed char, unsigned char,
-	short, unsigned short,
-	int, unsigned int,
-	long, unsigned long,
-	long long, unsigned long long,
-	float, double, long double
->;
 
 
 } // namespace internal_

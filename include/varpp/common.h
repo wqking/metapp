@@ -67,7 +67,7 @@ using QualifierKind = uint16_t;
 constexpr QualifierKind qkConst = 1 << 0;
 constexpr QualifierKind qkVolatile = 1 << 1;
 
-struct VariantData
+struct MetaTypeData
 {
 	uint8_t pod[podSize];
 	std::shared_ptr<void> object;
