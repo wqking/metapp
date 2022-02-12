@@ -22,6 +22,11 @@ public:
 	}
 };
 
+template <>
+struct DeclareMetaType <std::nullptr_t> : public DeclareMetaType<void *>
+{
+};
+
 
 } // namespace metapp
 

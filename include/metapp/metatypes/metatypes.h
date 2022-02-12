@@ -8,7 +8,6 @@
 #include "metapp/metatypes/deque.h"
 #include "metapp/metatypes/forward_list.h"
 #include "metapp/metatypes/list.h"
-#include "metapp/metatypes/nullptr.h"
 #include "metapp/metatypes/pod.h"
 #include "metapp/metatypes/pointer.h"
 #include "metapp/metatypes/queue.h"
