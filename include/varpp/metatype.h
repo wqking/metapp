@@ -4,6 +4,8 @@
 #include "varpp/common.h"
 #include "varpp/internal/metatype_i.h"
 
+#include <type_traits>
+
 namespace varpp {
 
 class MetaType;
