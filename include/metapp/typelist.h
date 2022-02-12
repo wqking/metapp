@@ -3,7 +3,7 @@
 
 #include <type_traits>
 
-namespace varpp {
+namespace metapp {
 
 template <typename ...Args>
 struct TypeList
@@ -55,6 +55,6 @@ struct TypeListCount <TypeList<Args...> >
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 #endif

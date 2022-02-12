@@ -1,9 +1,9 @@
 #ifndef CV_H_969872685611
 #define CV_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <typename T>
 struct DeclareMetaType <const T> : public DeclareMetaType<T>
@@ -24,7 +24,7 @@ struct DeclareMetaType <const volatile T> : public DeclareMetaType<T>
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

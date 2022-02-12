@@ -1,9 +1,9 @@
 #ifndef ARITHMETIC_H_969872685611
 #define ARITHMETIC_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 namespace internal_ {
 
@@ -68,7 +68,7 @@ struct DeclareMetaType <T,
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

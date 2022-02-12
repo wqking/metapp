@@ -1,9 +1,9 @@
 #ifndef VOID_H_969872685611
 #define VOID_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <>
 struct DeclareMetaType <void> : public DeclarePodMetaType<void>
@@ -19,7 +19,7 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

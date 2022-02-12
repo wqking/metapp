@@ -1,12 +1,12 @@
 #ifndef VARIANT_H_969872685611
 #define VARIANT_H_969872685611
 
-#include "varpp/metatype.h"
-#include "varpp/common.h"
+#include "metapp/metatype.h"
+#include "metapp/common.h"
 
 #include <type_traits>
 
-namespace varpp {
+namespace metapp {
 
 class Variant
 {
@@ -21,7 +21,7 @@ public:
 	template <typename T>
 	explicit Variant(T value) noexcept
 		:
-			metaType(varpp::getMetaType<T>())
+			metaType(metapp::getMetaType<T>())
 	{
 		metaType->construct(data, &value);
 	}
@@ -43,14 +43,14 @@ public:
 	template <typename T>
 	Variant & set(T value)
 	{
-		metaType = varpp::getMetaType<T>();
+		metaType = metapp::getMetaType<T>();
 		metaType->construct(data, &value);
 		return *this;
 	}
 
 	template <typename T>
 	bool canGet(const bool strictMode = false) const {
-		return probablySame(metaType, varpp::getMetaType<T>(), strictMode);
+		return probablySame(metaType, metapp::getMetaType<T>(), strictMode);
 	}
 
 	template <typename T>
@@ -60,13 +60,13 @@ public:
 
 	template <typename T>
 	bool canCast() const {
-		const MetaType * toMetaType = varpp::getMetaType<T>();
+		const MetaType * toMetaType = metapp::getMetaType<T>();
 		return metaType->canCast(toMetaType);
 	}
 
 	template <typename T>
 	T cast() const {
-		const MetaType * toMetaType = varpp::getMetaType<T>();
+		const MetaType * toMetaType = metapp::getMetaType<T>();
 		assert(metaType->canCast(toMetaType));
 		T result = T();
 		metaType->cast(data, toMetaType, &result);
@@ -87,6 +87,6 @@ private:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 #endif

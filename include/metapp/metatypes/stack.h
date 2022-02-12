@@ -1,11 +1,11 @@
 #ifndef STACK_H_969872685611
 #define STACK_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <stack>
 
-namespace varpp {
+namespace metapp {
 
 template <typename T, typename Container>
 struct DeclareMetaType <std::stack<T, Container> > : public DeclareObjectMetaType<std::stack<T, Container> >
@@ -17,7 +17,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

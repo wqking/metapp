@@ -1,9 +1,9 @@
 #ifndef NULLPTR_H_969872685611
 #define NULLPTR_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <>
 struct DeclareMetaType <std::nullptr_t> : public DeclareMetaType<void *>
@@ -11,7 +11,7 @@ struct DeclareMetaType <std::nullptr_t> : public DeclareMetaType<void *>
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

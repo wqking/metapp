@@ -1,11 +1,11 @@
 #ifndef VECTOR_H_969872685611
 #define VECTOR_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <vector>
 
-namespace varpp {
+namespace metapp {
 
 template <typename T, typename Alloc>
 struct DeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<std::vector<T, Alloc> >
@@ -17,7 +17,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

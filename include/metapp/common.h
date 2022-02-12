@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace varpp {
+namespace metapp {
 
 constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
 
@@ -79,6 +79,6 @@ struct MetaTypeData
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 #endif

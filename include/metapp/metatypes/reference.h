@@ -1,9 +1,9 @@
 #ifndef REFERENCE_H_969872685611
 #define REFERENCE_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <typename T>
 struct DeclareMetaType <T &> : public DeclareMetaType<T>
@@ -30,7 +30,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

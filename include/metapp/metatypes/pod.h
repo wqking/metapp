@@ -1,9 +1,9 @@
 #ifndef POD_H_969872685611
 #define POD_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <typename T>
 struct DeclareMetaType <T,
@@ -19,7 +19,7 @@ struct DeclareMetaType <T,
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

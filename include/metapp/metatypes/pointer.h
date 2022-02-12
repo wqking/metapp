@@ -1,9 +1,9 @@
 #ifndef POINTER_H_969872685611
 #define POINTER_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
-namespace varpp {
+namespace metapp {
 
 template <typename T>
 struct DeclareMetaType <T *> : public DeclarePodMetaType<T *>
@@ -23,7 +23,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

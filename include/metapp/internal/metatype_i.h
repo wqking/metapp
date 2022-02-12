@@ -1,7 +1,7 @@
-#include "varpp/common.h"
-#include "varpp/typelist.h"
+#include "metapp/common.h"
+#include "metapp/typelist.h"
 
-namespace varpp {
+namespace metapp {
 
 class MetaType;
 
@@ -36,4 +36,4 @@ void podCast(const MetaTypeData & data, void * toData) {
 
 } // namespace internal_
 
-} // namespace varpp
+} // namespace metapp

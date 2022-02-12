@@ -1,12 +1,12 @@
 #ifndef METATYPE_H_969872685611
 #define METATYPE_H_969872685611
 
-#include "varpp/common.h"
-#include "varpp/internal/metatype_i.h"
+#include "metapp/common.h"
+#include "metapp/internal/metatype_i.h"
 
 #include <type_traits>
 
-namespace varpp {
+namespace metapp {
 
 class MetaType;
 
@@ -179,6 +179,6 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 }
 
 
-} // namespace varpp
+} // namespace metapp
 
 #endif

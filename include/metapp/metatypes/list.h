@@ -1,11 +1,11 @@
 #ifndef LIST_H_969872685611
 #define LIST_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <list>
 
-namespace varpp {
+namespace metapp {
 
 template <typename T, typename Alloc>
 struct DeclareMetaType <std::list<T, Alloc> > : public DeclareObjectMetaType<std::list<T, Alloc> >
@@ -17,7 +17,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

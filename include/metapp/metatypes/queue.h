@@ -1,11 +1,11 @@
 #ifndef QUEUE_H_969872685611
 #define QUEUE_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <queue>
 
-namespace varpp {
+namespace metapp {
 
 template <typename T, typename Container>
 struct DeclareMetaType <std::queue<T, Container> > : public DeclareObjectMetaType<std::queue<T, Container> >
@@ -26,7 +26,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

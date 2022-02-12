@@ -1,11 +1,11 @@
 #ifndef STRING_H_969872685611
 #define STRING_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <string>
 
-namespace varpp {
+namespace metapp {
 
 template <>
 struct DeclareMetaType <std::string> : public DeclareObjectMetaType<std::string>
@@ -20,7 +20,7 @@ struct DeclareMetaType <std::wstring> : public DeclareObjectMetaType<std::wstrin
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

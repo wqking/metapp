@@ -1,11 +1,11 @@
 #ifndef DEQUE_H_969872685611
 #define DEQUE_H_969872685611
 
-#include "varpp/metatype.h"
+#include "metapp/metatype.h"
 
 #include <deque>
 
-namespace varpp {
+namespace metapp {
 
 template <typename T, typename Alloc>
 struct DeclareMetaType <std::deque<T, Alloc> > : public DeclareObjectMetaType<std::deque<T, Alloc> >
@@ -17,7 +17,7 @@ public:
 };
 
 
-} // namespace varpp
+} // namespace metapp
 
 
 #endif

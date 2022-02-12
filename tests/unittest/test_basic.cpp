@@ -1,7 +1,7 @@
 #include "test.h"
 
-#include "varpp/variant.h"
-#include "varpp/metatypes/metatypes.h"
+#include "metapp/variant.h"
+#include "metapp/metatypes/metatypes.h"
 
 #include <string>
 #include <iostream>
@@ -18,69 +18,69 @@ TEST_CASE("cast, fundamental")
 TEST_CASE("aaa")
 {
 	{
-		varpp::Variant v(true);
+		metapp::Variant v(true);
 		REQUIRE(v.get<bool>() == true);
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
-		REQUIRE(v.getTypeKind() == varpp::tkBool);
+		REQUIRE(v.getTypeKind() == metapp::tkBool);
 	}
 	{
-		varpp::Variant v((char)38);
+		metapp::Variant v((char)38);
 		REQUIRE(v.get<char>() == 38);
 		v.cast<bool>();
 		REQUIRE(v.cast<bool>() == true);
-		REQUIRE(v.getTypeKind() == varpp::tkChar);
+		REQUIRE(v.getTypeKind() == metapp::tkChar);
 	}
 	{
 		int n = 5;
 		int * p = &n;
-		varpp::Variant v(p);
+		metapp::Variant v(p);
 		REQUIRE(v.get<int *>() == p);
 		REQUIRE(*v.get<int *>() == 5);
-		REQUIRE(v.getTypeKind() == varpp::tkPointer);
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == varpp::tkInt);
+		REQUIRE(v.getTypeKind() == metapp::tkPointer);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
 	}
 	{
 		int n = 5;
 		int & p = n;
-		varpp::Variant v;
+		metapp::Variant v;
 		v.set<int &>(p);
 		REQUIRE(v.get<int &>() == 5);
-		REQUIRE(v.getTypeKind() == varpp::tkReference);
+		REQUIRE(v.getTypeKind() == metapp::tkReference);
 	}
 	{
-		varpp::Variant v("abc");
+		metapp::Variant v("abc");
 		REQUIRE(v.get<const char *>() == std::string("abc"));
-		REQUIRE(v.getTypeKind() == varpp::tkPointer);
+		REQUIRE(v.getTypeKind() == metapp::tkPointer);
 	}
 	{
 		char s[] = "abc";
-		varpp::Variant v;
+		metapp::Variant v;
 		v.set<char[]>(s);
 		REQUIRE(v.get<const char *>() == std::string("abc"));
-		REQUIRE(v.getTypeKind() == varpp::tkPointer);
+		REQUIRE(v.getTypeKind() == metapp::tkPointer);
 	}
 
 	{
 		std::string s("abc");
-		varpp::Variant v(s);
+		metapp::Variant v(s);
 		REQUIRE(v.get<std::string>() == s);
-		REQUIRE(v.getTypeKind() == varpp::tkString);
+		REQUIRE(v.getTypeKind() == metapp::tkString);
 	}
 
 	{
 		std::string s("abc");
-		varpp::Variant v;
+		metapp::Variant v;
 		v.set<const std::string>(s);
 		REQUIRE(v.get<std::string>() == s);
-		REQUIRE(v.getTypeKind() == varpp::tkString);
+		REQUIRE(v.getTypeKind() == metapp::tkString);
 	}
 
 	{
 		std::wstring s(L"abc");
-		varpp::Variant v(s);
+		metapp::Variant v(s);
 		REQUIRE(v.get<std::wstring>() == s);
-		REQUIRE(v.getTypeKind() == varpp::tkWideString);
+		REQUIRE(v.getTypeKind() == metapp::tkWideString);
 	}
 
 }
