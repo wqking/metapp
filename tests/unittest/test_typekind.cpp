@@ -181,6 +181,8 @@ TEST_CASE("TypeKind and get, pointer")
 		using namespace metapp;
 		const auto varTypeList = getUpTypeVarTypes(v.getMetaType());
 		REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkVoid });
+		REQUIRE(v.getMetaType()->getUpType()->isConst());
+		REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 	}
 
 	SECTION("int **") {

@@ -18,24 +18,20 @@ using FuncGetAddress = const void * (*)(const MetaTypeData & data);
 using FuncCanCast = bool (*)(const MetaType * toMetaType);
 using FuncCast = void (*)(const MetaTypeData & data, const MetaType * toMetaType, void * toData);
 
-class MetaType
+class UnifiedType
 {
 public:
-	constexpr MetaType() :
+	constexpr UnifiedType() :
 		construct(),
 		getAddress(),
 		canCast(),
 		cast(),
-		upType(),
-		typeKind(tkEmpty),
-		qualifiers()
+		typeKind(tkEmpty)
 	{
 	}
 
-	constexpr MetaType(
-		const MetaType * upType,
+	constexpr UnifiedType(
 		const TypeKind typeKind,
-		const QualifierKind qualifiers,
 		FuncConstruct construct,
 		FuncGetAddress getAddress,
 		FuncCanCast canCast,
@@ -45,26 +41,12 @@ public:
 		getAddress(getAddress),
 		canCast(canCast),
 		cast(cast),
-		upType(upType),
-		typeKind(typeKind),
-		qualifiers(qualifiers)
+		typeKind(typeKind)
 	{
-	}
-
-	const MetaType * getUpType() const {
-		return upType;
 	}
 
 	TypeKind getTypeKind() const {
 		return typeKind;
-	}
-
-	bool isConst() const {
-		return qualifiers & qkConst;
-	}
-
-	bool isVolatile() const {
-		return qualifiers & qkVolatile;
 	}
 
 	FuncConstruct construct;
@@ -73,12 +55,89 @@ public:
 	FuncCast cast;
 
 private:
-	const MetaType * upType;
 	TypeKind typeKind;
+};
+
+constexpr UnifiedType emptyUnifiedType;
+
+class MetaType
+{
+public:
+	constexpr MetaType() :
+		unifiedType(&emptyUnifiedType),
+		upType(),
+		qualifiers()
+	{
+	}
+
+	constexpr MetaType(
+		const UnifiedType * unifiedType,
+		const MetaType * upType,
+		const QualifierKind qualifiers
+	) :
+		unifiedType(unifiedType),
+		upType(upType),
+		qualifiers(qualifiers)
+	{
+	}
+
+	const UnifiedType * getUnifiedType() const {
+		return unifiedType;
+	}
+
+	const MetaType * getUpType() const {
+		return upType;
+	}
+
+	TypeKind getTypeKind() const {
+		return unifiedType->getTypeKind();
+	}
+
+	bool isConst() const {
+		return qualifiers & qkVolatile;
+	}
+
+	bool isVolatile() const {
+		return qualifiers & qkVolatile;
+	}
+
+	void construct(MetaTypeData & data, const void * value) const {
+		unifiedType->construct(data, value);
+	}
+	const void * getAddress(const MetaTypeData & data) const {
+		return unifiedType->getAddress(data);
+	}
+
+	bool canCast(const MetaType * toMetaType) const {
+		return unifiedType->canCast(toMetaType);
+	}
+	
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
+		unifiedType->cast(data, toMetaType, toData);
+	}
+
+private:
+	const UnifiedType * unifiedType;
+	const MetaType * upType;
 	QualifierKind qualifiers;
 };
 
 constexpr MetaType emptyMetaType;
+
+template <typename T>
+const UnifiedType * getUnifiedType()
+{
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType (
+		M::typeKind,
+		&M::construct,
+		&M::getAddress,
+		&M::canCast,
+		&M::cast
+	);
+	return &unifiedType;
+}
 
 template <typename T>
 auto doGetMetaType()
@@ -94,13 +153,9 @@ auto doGetMetaType()
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType (
+		getUnifiedType<typename std::remove_cv<T>::type>(),
 		doGetMetaType<typename M::UpType>(),
-		M::typeKind,
-		M::qualifiers,
-		&M::construct,
-		&M::getAddress,
-		&M::canCast,
-		&M::cast
+		M::qualifiers
 	);
 	return &metaType;
 }
@@ -171,19 +226,13 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		toMetaType = toMetaType->getUpType();
 	}
 	if(strictMode) {
-		for(;;) {
-			if(toMetaType == fromMetaType) {
-				return true;
-			}
-			if(toMetaType == nullptr || fromMetaType == nullptr) {
-				return false;
-			}
-			if(toMetaType->getTypeKind() != fromMetaType->getTypeKind()) {
-				return false;
-			}
-			toMetaType = toMetaType->getUpType();
-			fromMetaType = fromMetaType->getUpType();
+		if(toMetaType == fromMetaType) {
+			return true;
 		}
+		if(toMetaType == nullptr || fromMetaType == nullptr) {
+			return false;
+		}
+		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 	else {
 		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
@@ -192,7 +241,7 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
 			return true;
 		}
-		return toMetaType->getTypeKind() == fromMetaType->getTypeKind();
+		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 }
 
