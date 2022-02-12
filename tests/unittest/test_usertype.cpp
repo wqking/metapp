@@ -1,6 +1,5 @@
 #include "test.h"
 
-#include <iostream>
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 

@@ -94,7 +94,7 @@ public:
 	}
 
 	bool isConst() const {
-		return qualifiers & qkVolatile;
+		return qualifiers & qkConst;
 	}
 
 	bool isVolatile() const {
