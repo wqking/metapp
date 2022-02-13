@@ -6,11 +6,15 @@ set(SRC_TEST
 	test_typekind.cpp
 	test_usertype.cpp
 	test_metatype.cpp
+	test_variant_cast.cpp
 )
+
+file(GLOB_RECURSE HEADERS "../../include/metapp/*.h")
 
 add_executable(
 	${TARGET_TEST}
 	${SRC_TEST}
+	${HEADERS}
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

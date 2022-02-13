@@ -5,6 +5,10 @@
 namespace metapp {
 
 class MetaType;
+bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode = false);
+const void * getDataAddress(const MetaType * metaType, const MetaTypeData & data);
+template <typename T>
+const MetaType * getMetaType();
 
 namespace internal_ {
 
@@ -21,11 +25,24 @@ struct DeclareMetaTypeBase
 		toData = fromData;
 	}
 
-	static bool canCast(const MetaType * /*toMetaType*/) {
-		return false;
+	static bool canCast(const MetaType * toMetaType) {
+		return probablySame(getMetaType<T>(), toMetaType, true);
 	}
 
-	static void cast(const MetaTypeData & /*data*/ , const MetaType * /*toMetaType*/, void * /*toData*/) {
+	static void cast(const MetaTypeData & data , const MetaType * /*toMetaType*/ , void * toData) {
+		const void * value = getDataAddress(getMetaType<T>(), data);
+		using U = typename std::remove_reference<T>::type;
+		doCast((const U *)value, (U *)toData);
+	}
+
+private:
+	template <typename U>
+	static void doCast(const U * /*value*/, U * /*toData*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	}
+
+	template <typename U>
+	static void doCast(const U * value , U * toData, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		*toData = *value;
 	}
 };
 

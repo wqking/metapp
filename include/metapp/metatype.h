@@ -5,6 +5,7 @@
 #include "metapp/internal/metatype_i.h"
 
 #include <type_traits>
+#include <initializer_list>
 
 namespace metapp {
 
@@ -237,7 +238,7 @@ inline const MetaType * getUpTypeAt(const MetaType * metaType, size_t index)
 	return metaType;
 }
 
-inline std::vector<TypeKind> getUpTypeVarTypes(const MetaType * metaType)
+inline std::vector<TypeKind> getUpTypeTypeKinds(const MetaType * metaType)
 {
 	std::vector<TypeKind> result;
 	result.reserve(8);
@@ -248,7 +249,25 @@ inline std::vector<TypeKind> getUpTypeVarTypes(const MetaType * metaType)
 	return result;
 }
 
-inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode = false)
+template <typename T>
+inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)
+{
+	auto begin = std::begin(typeKindList);
+	auto end = std::end(typeKindList);
+	while(begin != end) {
+		if(metaType == nullptr) {
+			return false;
+		}
+		if(metaType->getTypeKind() != *begin) {
+			return false;
+		}
+		metaType = metaType->getUpType();
+		++begin;
+	}
+	return true;
+}
+
+inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
 {
 	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
 		toMetaType = toMetaType->getUpType();
@@ -272,6 +291,21 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 }
+
+inline const void * getDataAddress(const MetaType * metaType, const MetaTypeData & data)
+{
+	if(metaType->getTypeKind() == tkReference) {
+		return data.podAs<void *>();
+	}
+	if(metaType->isPodStorage()) {
+		return &data.podAs<char>();
+	}
+	if(metaType->isSharedPtrStorage()) {
+		return &data.object;
+	}
+	return data.object.get();
+}
+
 
 
 } // namespace metapp
