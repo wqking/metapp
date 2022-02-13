@@ -66,18 +66,18 @@ public:
 	constexpr MetaType() :
 		unifiedType(&emptyUnifiedType),
 		upType(),
-		qualifiers()
+		typeFlags()
 	{
 	}
 
 	constexpr MetaType(
 		const UnifiedType * unifiedType,
 		const MetaType * upType,
-		const QualifierKind qualifiers
+		const TypeFlags typeFlags
 	) :
 		unifiedType(unifiedType),
 		upType(upType),
-		qualifiers(qualifiers)
+		typeFlags(typeFlags)
 	{
 	}
 
@@ -94,16 +94,17 @@ public:
 	}
 
 	bool isConst() const {
-		return qualifiers & qkConst;
+		return typeFlags & tfConst;
 	}
 
 	bool isVolatile() const {
-		return qualifiers & qkVolatile;
+		return typeFlags & tfVolatile;
 	}
 
 	void construct(MetaTypeData & data, const void * value) const {
 		unifiedType->construct(data, value);
 	}
+
 	const void * getAddress(const MetaTypeData & data) const {
 		return unifiedType->getAddress(data);
 	}
@@ -119,7 +120,7 @@ public:
 private:
 	const UnifiedType * unifiedType;
 	const MetaType * upType;
-	QualifierKind qualifiers;
+	TypeFlags typeFlags;
 };
 
 constexpr MetaType emptyMetaType;
@@ -155,7 +156,7 @@ auto doGetMetaType()
 	static const MetaType metaType (
 		getUnifiedType<typename std::remove_cv<T>::type>(),
 		doGetMetaType<typename M::UpType>(),
-		M::qualifiers
+		M::typeFlags
 	);
 	return &metaType;
 }

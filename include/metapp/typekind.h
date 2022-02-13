@@ -58,10 +58,10 @@ constexpr TypeKind tkPriorityQueue(tkOtherBegin + 13); // 43
 constexpr TypeKind tkUser(1024);
 
 
-using QualifierKind = uint16_t;
+using TypeFlags = uint16_t;
 
-constexpr QualifierKind qkConst = 1 << 0;
-constexpr QualifierKind qkVolatile = 1 << 1;
+constexpr TypeFlags tfConst = 1 << 0;
+constexpr TypeFlags tfVolatile = 1 << 1;
 
 } // namespace metapp
 

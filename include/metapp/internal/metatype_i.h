@@ -15,7 +15,7 @@ struct DeclareMetaTypeBase
 {
 	using UpType = NoneUpType;
 
-	static constexpr QualifierKind qualifiers = 0;
+	static constexpr TypeFlags typeFlags = 0;
 	
 	static void copy(const MetaTypeData & fromData, MetaTypeData & toData) {
 		toData = fromData;

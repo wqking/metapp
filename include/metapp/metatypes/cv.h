@@ -8,19 +8,19 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaType <const T> : public DeclareMetaType<T>
 {
-	static constexpr QualifierKind qualifiers = qkConst;
+	static constexpr TypeFlags typeFlags = tfConst;
 };
 
 template <typename T>
 struct DeclareMetaType <volatile T> : public DeclareMetaType<T>
 {
-	static constexpr QualifierKind qualifiers = qkVolatile;
+	static constexpr TypeFlags typeFlags = tfVolatile;
 };
 
 template <typename T>
 struct DeclareMetaType <const volatile T> : public DeclareMetaType<T>
 {
-	static constexpr QualifierKind qualifiers = qkConst | qkVolatile;
+	static constexpr TypeFlags typeFlags = tfConst | tfVolatile;
 };
 
 
