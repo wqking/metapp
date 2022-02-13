@@ -14,7 +14,6 @@ template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
 using FuncConstruct = void (*)(MetaTypeData & data, const void * value);
-using FuncGetAddress = const void * (*)(const MetaTypeData & data);
 using FuncCanCast = bool (*)(const MetaType * toMetaType);
 using FuncCast = void (*)(const MetaTypeData & data, const MetaType * toMetaType, void * toData);
 
@@ -23,7 +22,6 @@ class UnifiedType
 public:
 	constexpr UnifiedType() :
 		construct(),
-		getAddress(),
 		canCast(),
 		cast(),
 		typeKind(tkEmpty)
@@ -33,12 +31,10 @@ public:
 	constexpr UnifiedType(
 		const TypeKind typeKind,
 		FuncConstruct construct,
-		FuncGetAddress getAddress,
 		FuncCanCast canCast,
 		FuncCast cast
 	) :
 		construct(construct),
-		getAddress(getAddress),
 		canCast(canCast),
 		cast(cast),
 		typeKind(typeKind)
@@ -50,7 +46,6 @@ public:
 	}
 
 	FuncConstruct construct;
-	FuncGetAddress getAddress;
 	FuncCanCast canCast;
 	FuncCast cast;
 
@@ -101,12 +96,16 @@ public:
 		return typeFlags & tfVolatile;
 	}
 
-	void construct(MetaTypeData & data, const void * value) const {
-		unifiedType->construct(data, value);
+	bool isPodStorage() const {
+		return typeFlags & tfPodStorage;
 	}
 
-	const void * getAddress(const MetaTypeData & data) const {
-		return unifiedType->getAddress(data);
+	bool isSharedPtrStorage() const {
+		return typeFlags & tfSharedPtrStorage;
+	}
+
+	void construct(MetaTypeData & data, const void * value) const {
+		unifiedType->construct(data, value);
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
@@ -133,7 +132,6 @@ const UnifiedType * getUnifiedType()
 	static const UnifiedType unifiedType (
 		M::typeKind,
 		&M::construct,
-		&M::getAddress,
 		&M::canCast,
 		&M::cast
 	);
@@ -170,12 +168,10 @@ const MetaType * getMetaType()
 template <typename T>
 struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
 {
+	static constexpr TypeFlags typeFlags = tfPodStorage;
+
 	static void construct(MetaTypeData & data, const void * value) {
 		data.podAs<T>() = *(T *)value;
-	}
-
-	static const void * getAddress(const MetaTypeData & data) {
-		return &data.podAs<T>();
 	}
 
 };
@@ -191,9 +187,18 @@ struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
 		data.object = std::make_shared<U>(*(U *)value);
 	}
 
-	static const void * getAddress(const MetaTypeData & data) {
-		return data.object.get();
+};
+
+template <typename T>
+struct DeclareSharedPtrMetaType : public internal_::DeclareMetaTypeBase<T>
+{
+public:
+	static constexpr TypeFlags typeFlags = tfSharedPtrStorage;
+
+	static void construct(MetaTypeData & data, const void * value) {
+		data.object = std::static_pointer_cast<void>(*(T *)value);
 	}
+
 };
 
 template <typename T, typename Enabled>

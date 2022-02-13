@@ -6,18 +6,14 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaType <T &> : public DeclareMetaType<T>
+struct DeclareMetaType <T &> : public DeclarePodMetaType<T *>
 {
 public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
 	static void construct(MetaTypeData & data, const void * value) {
-		data.podAs<T *>() = *(T **)value;
-	}
-
-	static const void * getAddress(const MetaTypeData & data) {
-		return &data.podAs<T *>();
+		data.podAs<T *>() = (T *)value;
 	}
 
 	static bool canCast(const MetaType * toMetaType) {

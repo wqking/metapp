@@ -8,6 +8,19 @@
 
 namespace metapp {
 
+inline const void * getDataAddress(const MetaType * metaType, const MetaTypeData & data) {
+	if(metaType->getTypeKind() == tkReference) {
+		return data.podAs<void *>();
+	}
+	if(metaType->isPodStorage()) {
+		return &data.podAs<char>();
+	}
+	if(metaType->isSharedPtrStorage()) {
+		return &data.object;
+	}
+	return data.object.get();
+}
+
 class Variant
 {
 public:
@@ -59,7 +72,7 @@ public:
 		//if(! this->canGet<typename std::remove_reference<T>::type>()) {
 		//	throw std::runtime_error("Can't get");
 		//}
-		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
+		return *(typename std::remove_reference<T>::type *)(getDataAddress(metaType, data));
 	}
 
 	template <typename T>

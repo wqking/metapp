@@ -13,9 +13,6 @@ struct DeclareMetaType <void> : public DeclarePodMetaType<void>
 	static void construct(MetaTypeData & /*data*/, const void * /*value*/) {
 	}
 
-	static const void * getAddress(const MetaTypeData & /*data*/) {
-		return nullptr;
-	}
 };
 
 
