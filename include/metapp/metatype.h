@@ -16,31 +16,40 @@ struct BaseDeclareMetaType;
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
-using FuncConstruct = void (*)(MetaTypeData & data, const void * value);
-using FuncCanCast = bool (*)(const MetaType * toMetaType);
-using FuncCast = void (*)(const MetaTypeData & data, const MetaType * toMetaType, void * toData);
+enum class MetaMethodAction
+{
+	construct,
+	getAddress,
+	canCast,
+	cast,
+};
+
+struct MetaMethodParam
+{
+	MetaMethodAction action;
+	const MetaType * metaType;
+	MetaTypeData * data;
+	void * value;
+	bool result;
+};
+
+using FuncMetaMethod = void (*)(MetaMethodParam & param);
 
 class UnifiedType
 {
 public:
 	constexpr UnifiedType() :
-		construct(),
-		canCast(),
-		cast(),
-		typeKind(tkEmpty)
+		typeKind(tkEmpty),
+		metaMethod()
 	{
 	}
 
 	constexpr UnifiedType(
 		const TypeKind typeKind,
-		FuncConstruct construct,
-		FuncCanCast canCast,
-		FuncCast cast
+		FuncMetaMethod metaMethod
 	) :
-		construct(construct),
-		canCast(canCast),
-		cast(cast),
-		typeKind(typeKind)
+		typeKind(typeKind),
+		metaMethod(metaMethod)
 	{
 	}
 
@@ -48,15 +57,118 @@ public:
 		return typeKind;
 	}
 
-	FuncConstruct construct;
-	FuncCanCast canCast;
-	FuncCast cast;
+	void construct(MetaTypeData & data, const void * value) const {
+		MetaMethodParam param {
+			MetaMethodAction::construct,
+			nullptr,
+			&data,
+			(void *)value,
+			false
+		};
+		metaMethod(param);
+	}
+
+	const void * getAddress(const MetaTypeData & data) const {
+		MetaMethodParam param {
+			MetaMethodAction::getAddress,
+			nullptr,
+			const_cast<MetaTypeData *>(&data),
+			nullptr,
+			false
+		};
+		metaMethod(param);
+		return param.value;
+	}
+
+	bool canCast(const MetaType * toMetaType) const {
+		MetaMethodParam param {
+			MetaMethodAction::canCast,
+			toMetaType,
+			nullptr,
+			nullptr,
+			false
+		};
+		metaMethod(param);
+		return param.result;
+	}
+
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
+		MetaMethodParam param {
+			MetaMethodAction::cast,
+			toMetaType,
+			const_cast<MetaTypeData *>(&data),
+			toData,
+			false
+		};
+		metaMethod(param);
+	}
 
 private:
 	TypeKind typeKind;
+	FuncMetaMethod metaMethod;
 };
 
+template <typename M>
+void defaultMetaMethod(MetaMethodParam & param)
+{
+	switch(param.action) {
+	case MetaMethodAction::construct:
+		M::construct(*(param.data), param.value);
+		break;
+
+	case MetaMethodAction::getAddress:
+		param.value = const_cast<void *>(M::getAddress(*(param.data)));
+		break;
+
+	case MetaMethodAction::canCast:
+		param.result = M::canCast(param.metaType);
+		break;
+
+	case MetaMethodAction::cast:
+		M::cast(*(param.data), param.metaType, param.value);
+		break;
+	}
+}
+
 constexpr UnifiedType emptyUnifiedType;
+
+struct NoneUpType {};
+
+template <typename T>
+struct DeclareMetaTypeBase
+{
+	using UpType = NoneUpType;
+
+	static constexpr TypeFlags typeFlags = 0;
+
+	static void copy(const MetaTypeData & fromData, MetaTypeData & toData) {
+		toData = fromData;
+	}
+
+	static const void * getAddress(const MetaTypeData & /*data*/) {
+		return nullptr;
+	}
+
+	static bool canCast(const MetaType * toMetaType) {
+		return probablySame(getMetaType<T>(), toMetaType, true);
+	}
+
+	static void cast(const MetaTypeData & data , const MetaType * /*toMetaType*/ , void * toData) {
+		const void * value = getMetaType<T>()->getAddress(data);
+		using U = typename std::remove_reference<T>::type;
+		doCast((const U *)value, (U *)toData);
+	}
+
+private:
+	template <typename U>
+	static void doCast(const U * /*value*/, U * /*toData*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	}
+
+	template <typename U>
+	static void doCast(const U * value , U * toData, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		*toData = *value;
+	}
+};
 
 class MetaType
 {
@@ -103,12 +215,12 @@ public:
 		return typeFlags & tfPodStorage;
 	}
 
-	bool isSharedPtrStorage() const {
-		return typeFlags & tfSharedPtrStorage;
-	}
-
 	void construct(MetaTypeData & data, const void * value) const {
 		unifiedType->construct(data, value);
+	}
+
+	const void * getAddress(const MetaTypeData & data) const {
+		return unifiedType->getAddress(data);
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
@@ -139,23 +251,21 @@ const UnifiedType * getUnifiedType()
 
 	static const UnifiedType unifiedType (
 		M::typeKind,
-		&M::construct,
-		&M::canCast,
-		&M::cast
+		&defaultMetaMethod<M>
 	);
 	return &unifiedType;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
+	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
+	-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type
 {
 	using M = DeclareMetaType<T>;
 
@@ -174,7 +284,7 @@ const MetaType * getMetaType()
 }
 
 template <typename T>
-struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
+struct DeclarePodMetaType : public DeclareMetaTypeBase<T>
 {
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
@@ -182,10 +292,14 @@ struct DeclarePodMetaType : public internal_::DeclareMetaTypeBase<T>
 		data.podAs<T>() = *(T *)value;
 	}
 
+	static const void * getAddress(const MetaTypeData & data) {
+		return &data.podAs<T>();
+	}
+
 };
 
 template <typename T>
-struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
+struct DeclareObjectMetaType : public DeclareMetaTypeBase<T>
 {
 	static constexpr TypeKind typeKind = tkObject;
 
@@ -195,31 +309,8 @@ struct DeclareObjectMetaType : public internal_::DeclareMetaTypeBase<T>
 		data.object = std::make_shared<U>(*(U *)value);
 	}
 
-};
-
-template <typename T>
-struct DeclareSharedPtrMetaType : public internal_::DeclareMetaTypeBase<T>
-{
-public:
-	static constexpr TypeFlags typeFlags = tfSharedPtrStorage;
-
-	static void construct(MetaTypeData & data, const void * value) {
-		data.object = std::static_pointer_cast<void>(*(T *)value);
-	}
-
-};
-
-template <typename T>
-struct DeclareReferenceMetaType : public internal_::DeclareMetaTypeBase<typename std::remove_reference<T>::type>
-{
-private:
-	using U = typename std::remove_reference<T>::type;
-
-public:
-	static constexpr TypeFlags typeFlags = tfReferenceStorage;
-
-	static void construct(MetaTypeData & data, const void * value) {
-		data.podAs<U *>() = (U *)value;
+	static const void * getAddress(const MetaTypeData & data) {
+		return data.object.get();
 	}
 
 };
@@ -291,22 +382,6 @@ inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaT
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 }
-
-inline const void * getDataAddress(const MetaType * metaType, const MetaTypeData & data)
-{
-	if(metaType->getTypeKind() == tkReference) {
-		return data.podAs<void *>();
-	}
-	if(metaType->isPodStorage()) {
-		return &data.podAs<char>();
-	}
-	if(metaType->isSharedPtrStorage()) {
-		return &data.object;
-	}
-	return data.object.get();
-}
-
-
 
 } // namespace metapp
 

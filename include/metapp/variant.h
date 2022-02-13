@@ -59,7 +59,7 @@ public:
 		//if(! this->canGet<typename std::remove_reference<T>::type>()) {
 		//	throw std::runtime_error("Can't get");
 		//}
-		return *(typename std::remove_reference<T>::type *)(getDataAddress(metaType, data));
+		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
 
 	template <typename T>

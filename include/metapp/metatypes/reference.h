@@ -6,11 +6,18 @@
 namespace metapp {
 
 template <typename T>
-struct BaseDeclareMetaType <T &> : public DeclareReferenceMetaType<T &>
+struct BaseDeclareMetaType <T &> : public DeclareMetaTypeBase<T>
 {
-public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
+
+	static void construct(MetaTypeData & data, const void * value) {
+		data.podAs<T *>() = (T *)value;
+	}
+
+	static const void * getAddress(const MetaTypeData & data) {
+		return data.podAs<void *>();
+	}
 
 	static bool canCast(const MetaType * toMetaType) {
 		return toMetaType->getTypeKind() == tkReference;
