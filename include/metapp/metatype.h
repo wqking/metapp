@@ -201,6 +201,21 @@ public:
 
 };
 
+template <typename T>
+struct DeclareReferenceMetaType : public internal_::DeclareMetaTypeBase<typename std::remove_reference<T>::type>
+{
+private:
+	using U = typename std::remove_reference<T>::type;
+
+public:
+	static constexpr TypeFlags typeFlags = tfReferenceStorage;
+
+	static void construct(MetaTypeData & data, const void * value) {
+		data.podAs<U *>() = (U *)value;
+	}
+
+};
+
 template <typename T, typename Enabled>
 struct DeclareMetaType : public DeclareObjectMetaType<T>
 {
