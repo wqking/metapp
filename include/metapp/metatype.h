@@ -29,7 +29,8 @@ struct MetaMethodParam
 	MetaMethodAction action;
 	const MetaType * metaType;
 	MetaTypeData * data;
-	void * value;
+	const void * constValue;
+	void * writableValue;
 	bool result;
 };
 
@@ -62,7 +63,8 @@ public:
 			MetaMethodAction::construct,
 			nullptr,
 			&data,
-			(void *)value,
+			value,
+			nullptr,
 			false
 		};
 		metaMethod(param);
@@ -74,16 +76,18 @@ public:
 			nullptr,
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
+			nullptr,
 			false
 		};
 		metaMethod(param);
-		return param.value;
+		return param.constValue;
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
 		MetaMethodParam param {
 			MetaMethodAction::canCast,
 			toMetaType,
+			nullptr,
 			nullptr,
 			nullptr,
 			false
@@ -97,6 +101,7 @@ public:
 			MetaMethodAction::cast,
 			toMetaType,
 			const_cast<MetaTypeData *>(&data),
+			nullptr,
 			toData,
 			false
 		};
@@ -109,15 +114,15 @@ private:
 };
 
 template <typename M>
-void defaultMetaMethod(MetaMethodParam & param)
+void commonMetaMethod(MetaMethodParam & param)
 {
 	switch(param.action) {
 	case MetaMethodAction::construct:
-		M::construct(*(param.data), param.value);
+		M::construct(*(param.data), param.constValue);
 		break;
 
 	case MetaMethodAction::getAddress:
-		param.value = const_cast<void *>(M::getAddress(*(param.data)));
+		param.constValue = M::getAddress(*(param.data));
 		break;
 
 	case MetaMethodAction::canCast:
@@ -125,7 +130,7 @@ void defaultMetaMethod(MetaMethodParam & param)
 		break;
 
 	case MetaMethodAction::cast:
-		M::cast(*(param.data), param.metaType, param.value);
+		M::cast(*(param.data), param.metaType, param.writableValue);
 		break;
 	}
 }
@@ -251,7 +256,7 @@ const UnifiedType * getUnifiedType()
 
 	static const UnifiedType unifiedType (
 		M::typeKind,
-		&defaultMetaMethod<M>
+		&commonMetaMethod<M>
 	);
 	return &unifiedType;
 }
@@ -319,26 +324,6 @@ template <typename T, typename Enabled>
 struct BaseDeclareMetaType : public DeclareObjectMetaType<T>
 {
 };
-
-inline const MetaType * getUpTypeAt(const MetaType * metaType, size_t index)
-{
-	while(metaType != nullptr && index > 0) {
-		metaType = metaType->getUpType();
-		--index;
-	}
-	return metaType;
-}
-
-inline std::vector<TypeKind> getUpTypeTypeKinds(const MetaType * metaType)
-{
-	std::vector<TypeKind> result;
-	result.reserve(8);
-	while(metaType != nullptr) {
-		result.push_back(metaType->getTypeKind());
-		metaType = metaType->getUpType();
-	}
-	return result;
-}
 
 template <typename T>
 inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)

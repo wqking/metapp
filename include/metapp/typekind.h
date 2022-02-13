@@ -1,6 +1,8 @@
 #ifndef TYPEKIND_H_969872685611
 #define TYPEKIND_H_969872685611
 
+#include <cstdint>
+
 namespace metapp {
 
 using TypeKind = uint16_t;

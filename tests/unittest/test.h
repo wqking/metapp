@@ -14,61 +14,15 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include "metapp/metatype.h"
+#include "metapp/typekind.h"
+
 #include "../catch.hpp"
 
-template <typename Callable, typename ReturnType = void>
-struct EraseArgs1
-{
-	template <typename C>
-	explicit EraseArgs1(const C & callable) : callable(callable)
-	{
-	}
+#include <vector>
 
-	template <typename First, typename ...Args>
-	ReturnType operator() (First &&, Args && ...args)
-	{
-		callable(std::forward(args)...);
-	}
+const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, size_t index);
+std::vector<metapp::TypeKind> getUpTypeTypeKinds(const metapp::MetaType * metaType);
 
-	Callable callable;
-};
-
-template <typename Callable>
-EraseArgs1<Callable> eraseArgs1(const Callable & callable)
-{
-	return EraseArgs1<Callable>(callable);
-}
-
-template <typename T>
-bool checkAllWeakPtrAreFreed(const T & nodeList)
-{
-	for(const auto & node : nodeList) {
-		if(node.lock()) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-// Can be converted from int implicitly
-struct FromInt
-{
-	FromInt() : value(0) {}
-	FromInt(const int value) : value(value) {}
-
-	int value;
-};
-
-// Can convert to int implicitly
-struct ToInt
-{
-	ToInt() : value(0) {}
-	explicit ToInt(const int value) : value(value) {}
-
-	operator int() const { return value; }
-
-	int value;
-};
 
 #endif

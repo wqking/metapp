@@ -225,5 +225,15 @@ TEST_CASE("TypeKind and get, std::vector")
 	}
 }
 
+TEST_CASE("TypeKind, void ***")
+{
+	void *** p = nullptr;
+	metapp::Variant v(p);
+	REQUIRE(v.getTypeKind() == metapp::tkPointer);
+	using namespace metapp;
+	const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
+	REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkPointer, tkPointer, tkVoid });
+}
+
 
 } // namespace
