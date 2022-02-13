@@ -11,6 +11,8 @@ namespace metapp {
 class MetaType;
 
 template <typename T, typename Enabled = void>
+struct BaseDeclareMetaType;
+template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
 using FuncConstruct = void (*)(MetaTypeData & data, const void * value);
@@ -122,6 +124,11 @@ private:
 	TypeFlags typeFlags;
 };
 
+template <typename T, typename Enabled>
+struct DeclareMetaType : public BaseDeclareMetaType<T>
+{
+};
+
 constexpr MetaType emptyMetaType;
 
 template <typename T>
@@ -217,7 +224,7 @@ public:
 };
 
 template <typename T, typename Enabled>
-struct DeclareMetaType : public DeclareObjectMetaType<T>
+struct BaseDeclareMetaType : public DeclareObjectMetaType<T>
 {
 };
 

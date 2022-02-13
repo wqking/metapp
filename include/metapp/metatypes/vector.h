@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Alloc>
-struct DeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<std::vector<T, Alloc> >
+struct BaseDeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<std::vector<T, Alloc> >
 {
 public:
 	using UpType = T;

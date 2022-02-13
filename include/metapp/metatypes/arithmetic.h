@@ -21,7 +21,7 @@ using ArithmeticTypeList = TypeList<
 } // namespace internal_
 
 template <typename T>
-struct DeclareMetaType <T,
+struct BaseDeclareMetaType <T,
 	typename std::enable_if<TypeListIn<T, internal_::ArithmeticTypeList>::value>::type> : public DeclarePodMetaType<T>
 {
 	//using CastFunc = void (*)(const MetaTypeData & data, void * toData);

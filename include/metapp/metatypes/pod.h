@@ -6,7 +6,7 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaType <T,
+struct BaseDeclareMetaType <T,
 	typename std::enable_if<
 		std::is_class<T>::value
 		&& ! std::is_const<T>::value

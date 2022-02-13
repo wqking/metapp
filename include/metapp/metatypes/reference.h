@@ -6,7 +6,7 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaType <T &> : public DeclareReferenceMetaType<T &>
+struct BaseDeclareMetaType <T &> : public DeclareReferenceMetaType<T &>
 {
 public:
 	using UpType = T;

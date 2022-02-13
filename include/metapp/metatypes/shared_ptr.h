@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaType <std::shared_ptr<T> > : public DeclareSharedPtrMetaType<std::shared_ptr<T> >
+struct BaseDeclareMetaType <std::shared_ptr<T> > : public DeclareSharedPtrMetaType<std::shared_ptr<T> >
 {
 public:
 	using UpType = T;

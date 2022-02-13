@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Alloc>
-struct DeclareMetaType <std::deque<T, Alloc> > : public DeclareObjectMetaType<std::deque<T, Alloc> >
+struct BaseDeclareMetaType <std::deque<T, Alloc> > : public DeclareObjectMetaType<std::deque<T, Alloc> >
 {
 public:
 	using UpType = T;

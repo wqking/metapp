@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Container>
-struct DeclareMetaType <std::queue<T, Container> > : public DeclareObjectMetaType<std::queue<T, Container> >
+struct BaseDeclareMetaType <std::queue<T, Container> > : public DeclareObjectMetaType<std::queue<T, Container> >
 {
 public:
 	using UpType = T;
@@ -17,7 +17,7 @@ public:
 };
 
 template <typename T, typename Container>
-struct DeclareMetaType <std::priority_queue<T, Container> > : public DeclareObjectMetaType<std::priority_queue<T, Container> >
+struct BaseDeclareMetaType <std::priority_queue<T, Container> > : public DeclareObjectMetaType<std::priority_queue<T, Container> >
 {
 public:
 	using UpType = T;

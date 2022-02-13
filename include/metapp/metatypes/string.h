@@ -8,13 +8,13 @@
 namespace metapp {
 
 template <>
-struct DeclareMetaType <std::string> : public DeclareObjectMetaType<std::string>
+struct BaseDeclareMetaType <std::string> : public DeclareObjectMetaType<std::string>
 {
 	static constexpr TypeKind typeKind = tkString;
 };
 
 template <>
-struct DeclareMetaType <std::wstring> : public DeclareObjectMetaType<std::wstring>
+struct BaseDeclareMetaType <std::wstring> : public DeclareObjectMetaType<std::wstring>
 {
 	static constexpr TypeKind typeKind = tkWideString;
 };

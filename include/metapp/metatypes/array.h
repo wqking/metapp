@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, size_t Size>
-struct DeclareMetaType <std::array<T, Size> > : public DeclareObjectMetaType<std::array<T, Size> >
+struct BaseDeclareMetaType <std::array<T, Size> > : public DeclareObjectMetaType<std::array<T, Size> >
 {
 public:
 	using UpType = T;
