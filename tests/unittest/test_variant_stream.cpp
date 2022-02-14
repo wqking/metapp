@@ -1,6 +1,7 @@
 #include "test.h"
 
 #include "metapp/variant.h"
+#include "metapp/metatyperepo.h"
 #include "metapp/metatypes/metatypes.h"
 
 #include <string>
@@ -10,6 +11,22 @@ namespace {
 
 TEST_CASE("Input stream")
 {
+	std::stringstream ss;
+	SECTION("bool") {
+		metapp::Variant v(metapp::getMetaTypeRepo()->getMetaType(metapp::tkBool));
+		REQUIRE(v.get<bool>() == false);
+		ss >> std::boolalpha;
+		ss.str("true");
+		ss >> v;
+		REQUIRE(v.get<bool>() == true);
+	}
+	SECTION("int") {
+		metapp::Variant v(metapp::getMetaType<int>());
+		REQUIRE(v.get<int>() == 0);
+		ss.str("138");
+		ss >> v;
+		REQUIRE(v.get<int>() == 138);
+	}
 }
 
 TEST_CASE("Output stream")
@@ -20,6 +37,29 @@ TEST_CASE("Output stream")
 		ss << std::boolalpha;
 		ss << v;
 		REQUIRE(ss.str() == "false");
+
+		v = true;
+		ss << std::boolalpha;
+		ss << v;
+		REQUIRE(ss.str() == "falsetrue");
+	}
+
+	SECTION("char") {
+		metapp::Variant v((char)(int)'w');
+		ss << v;
+		REQUIRE(ss.str() == "w");
+	}
+
+	SECTION("float") {
+		metapp::Variant v(3.1415f);
+		ss << v;
+		REQUIRE(ss.str() == "3.1415");
+	}
+
+	SECTION("double") {
+		metapp::Variant v(3.1415);
+		ss << v;
+		REQUIRE(ss.str() == "3.1415");
 	}
 }
 

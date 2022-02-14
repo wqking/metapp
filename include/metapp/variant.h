@@ -48,10 +48,33 @@ public:
 	}
 
 	template <typename T>
+	Variant & operator = (T value) noexcept
+	{
+		return set<T>(value);
+	}
+
+	Variant & operator = (const Variant & other) noexcept
+	{
+		metaType = other.metaType;
+		data = other.data;
+
+		return *this;
+	}
+
+	Variant & operator = (Variant && other) noexcept
+	{
+		metaType = std::move(other.metaType);
+		data = std::move(other.data);
+
+		return *this;
+	}
+
+	template <typename T>
 	Variant & set(T value)
 	{
 		metaType = metapp::getMetaType<T>();
 		metaType->constructWith(data, &value);
+
 		return *this;
 	}
 

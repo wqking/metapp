@@ -18,7 +18,7 @@ public:
 	}
 
 	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/, void * toData) {
-		internal_::podCast<T *, void *>(data, toData);
+		podCast<T *, void *>(data, toData);
 	}
 };
 

@@ -2,6 +2,7 @@
 #define ARITHMETIC_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/typelist.h"
 
 namespace metapp {
 
@@ -34,28 +35,20 @@ struct BaseDeclareMetaType <T,
 	using CastFunc = void (*)(const MetaTypeData & data, void * toData);
 	static const std::array<CastFunc, TypeListCount<internal_::ArithmeticTypeList>::value> & getCastFunctions() {
 		static const std::array<CastFunc, TypeListCount<internal_::ArithmeticTypeList>::value> castFunctions {
-			&internal_::podCast<T, bool>,
-			&internal_::podCast<T, char>, &internal_::podCast<T, wchar_t>,
-			&internal_::podCast<T, signed char>, &internal_::podCast<T, unsigned char>,
-			&internal_::podCast<T, short>, &internal_::podCast<T, unsigned short>,
-			&internal_::podCast<T, int>, &internal_::podCast<T, unsigned int>,
-			&internal_::podCast<T, long>, &internal_::podCast<T, unsigned long>,
-			&internal_::podCast<T, long long>, &internal_::podCast<T, unsigned long long>,
-			&internal_::podCast<T, float>, &internal_::podCast<T, double>, &internal_::podCast<T, long double>
+			&podCast<T, bool>,
+			&podCast<T, char>, &podCast<T, wchar_t>,
+			&podCast<T, signed char>, &podCast<T, unsigned char>,
+			&podCast<T, short>, &podCast<T, unsigned short>,
+			&podCast<T, int>, &podCast<T, unsigned int>,
+			&podCast<T, long>, &podCast<T, unsigned long>,
+			&podCast<T, long long>, &podCast<T, unsigned long long>,
+			&podCast<T, float>, &podCast<T, double>, &podCast<T, long double>
 		};
 		return castFunctions;
 	}
 
 	static void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) {
 		getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](data, toData);
-	}
-
-	static void streamIn(std::istream & stream, MetaTypeData & data) {
-		internal_::podStreamIn<T>(stream, data);
-	}
-
-	static void streamOut(std::ostream & stream, const MetaTypeData & data) {
-		internal_::podStreamOut<T>(stream, data);
 	}
 
 };

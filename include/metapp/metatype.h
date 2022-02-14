@@ -2,7 +2,8 @@
 #define METATYPE_H_969872685611
 
 #include "metapp/typekind.h"
-#include "metapp/internal/metatype_i.h"
+#include "metapp/metatypedata.h"
+#include "metapp/metatypeutil.h"
 
 #include <type_traits>
 #include <initializer_list>
@@ -15,8 +16,12 @@ class MetaType;
 
 template <typename T, typename Enabled = void>
 struct BaseDeclareMetaType;
+
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
+
+template <typename T>
+const MetaType * getMetaType();
 
 enum class MetaMethodAction
 {
@@ -230,11 +235,11 @@ struct DeclareMetaTypeBase
 	}
 
 	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
-		internal_::errorNoStreamIn();
+		errorNoStreamIn();
 	}
 
 	static void streamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/) {
-		internal_::errorNoStreamOut();
+		errorNoStreamOut();
 	}
 
 private:
@@ -390,6 +395,14 @@ struct DeclarePodMetaType : public DeclareMetaTypeBase<T>
 		return &data.podAs<T>();
 	}
 
+	static void streamIn(std::istream & stream, MetaTypeData & data) {
+		podStreamIn<T>(stream, data);
+	}
+
+	static void streamOut(std::ostream & stream, const MetaTypeData & data) {
+		podStreamOut<T>(stream, data);
+	}
+
 };
 
 template <typename T>
@@ -409,6 +422,14 @@ struct DeclareObjectMetaType : public DeclareMetaTypeBase<T>
 
 	static const void * getAddress(const MetaTypeData & data) {
 		return data.object.get();
+	}
+
+	static void streamIn(std::istream & stream, MetaTypeData & data) {
+		objectStreamIn<T>(stream, data);
+	}
+
+	static void streamOut(std::ostream & stream, const MetaTypeData & data) {
+		objectStreamOut<T>(stream, data);
 	}
 
 };

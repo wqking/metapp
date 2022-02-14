@@ -63,7 +63,7 @@ struct RegisterMetaType <TypeList<> >
 
 } // namespace internal_
 
-MetaTypeRepo::MetaTypeRepo() : metaTypeMap() {
+inline MetaTypeRepo::MetaTypeRepo() : metaTypeMap() {
 	internal_::RegisterMetaType<TypeList<
 		void,
 		std::string,
