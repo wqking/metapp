@@ -8,6 +8,7 @@ set(SRC_TEST
 	test_usertype.cpp
 	test_metatype.cpp
 	test_variant_cast.cpp
+	test_metatyperepo.cpp
 )
 
 file(GLOB_RECURSE HEADERS "../../include/metapp/*.h")

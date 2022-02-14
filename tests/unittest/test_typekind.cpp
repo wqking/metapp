@@ -171,16 +171,14 @@ TEST_CASE("TypeKind and get, pointer")
 		metapp::Variant v((void *)0);
 		REQUIRE(v.getTypeKind() == metapp::tkPointer);
 		using namespace metapp;
-		const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-		REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkVoid });
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 	}
 
 	SECTION("const volatile void *") {
 		metapp::Variant v((const volatile void *)0);
 		REQUIRE(v.getTypeKind() == metapp::tkPointer);
 		using namespace metapp;
-		const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-		REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkVoid });
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 		REQUIRE(v.getMetaType()->getUpType()->isConst());
 		REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 	}
@@ -192,8 +190,7 @@ TEST_CASE("TypeKind and get, pointer")
 		REQUIRE(v.canGet<int **>(false));
 		REQUIRE(! v.canGet<int *>(true));
 		using namespace metapp;
-		const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-		REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkPointer, tkInt });
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 	}
 
 }
@@ -207,8 +204,7 @@ TEST_CASE("TypeKind and get, std::shared_ptr")
 		REQUIRE(v.canGet<std::shared_ptr<int> >());
 		REQUIRE(*(v.get<std::shared_ptr<int> >()) == 38);
 		using namespace metapp;
-		const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-		REQUIRE(varTypeList == std::vector<TypeKind>{ tkSharedPtr, tkInt });
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkSharedPtr, tkInt }));
 	}
 }
 
@@ -220,8 +216,7 @@ TEST_CASE("TypeKind and get, std::vector")
 		REQUIRE(v.getTypeKind() == metapp::tkVector);
 		REQUIRE(v.get<std::vector<int>>()[0] == 5);
 		using namespace metapp;
-		const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-		REQUIRE(varTypeList == std::vector<TypeKind>{ tkVector, tkInt });
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkVector, tkInt }));
 	}
 }
 
@@ -231,8 +226,7 @@ TEST_CASE("TypeKind, void ***")
 	metapp::Variant v(p);
 	REQUIRE(v.getTypeKind() == metapp::tkPointer);
 	using namespace metapp;
-	const auto varTypeList = getUpTypeTypeKinds(v.getMetaType());
-	REQUIRE(varTypeList == std::vector<TypeKind>{ tkPointer, tkPointer, tkPointer, tkVoid });
+	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
 }
 
 
