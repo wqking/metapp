@@ -23,9 +23,9 @@ using ArithmeticTypeList = TypeList<
 
 template <typename T>
 struct BaseDeclareMetaType <T,
-	typename std::enable_if<TypeListIn<T, internal_::ArithmeticTypeList>::value>::type> : public DeclarePodMetaType<T>
+	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclarePodMetaType<T>
 {
-	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<T, internal_::ArithmeticTypeList>::value);
+	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
 
 	static bool canCast(const MetaType * toMetaType) {
 		return toMetaType->getTypeKind() >= tkArithmeticBegin

@@ -3,82 +3,54 @@
 
 #include "metapp/typekind.h"
 #include "metapp/typelist.h"
+#include "metapp/metatype.h"
+#include "metapp/metatypedata.h"
+#include "metapp/exception.h"
 #include "metapp/internal/typeutil_i.h"
-
-#include <stdexcept>
 
 namespace metapp {
 
-inline void errorNoStreamIn()
-{
-	throw std::runtime_error("No << input streaming operator.");
-}
-
-inline void errorNoStreamOut()
-{
-	throw std::runtime_error("No >> output streaming operator.");
-}
-
-template <typename T, typename U>
-void podCast(const MetaTypeData & data, void * toData)
-{
-	*(U *)toData = (U)(data.podAs<T>());
-}
-
 template <typename T>
-auto podStreamIn(std::istream & stream, MetaTypeData & data)
-	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
+inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)
 {
-	stream >> data.podAs<T>();
+	auto begin = std::begin(typeKindList);
+	auto end = std::end(typeKindList);
+	while(begin != end) {
+		if(metaType == nullptr) {
+			return false;
+		}
+		if(metaType->getTypeKind() != *begin) {
+			return false;
+		}
+		metaType = metaType->getUpType();
+		++begin;
+	}
+	return true;
 }
 
-template <typename T>
-auto podStreamIn(std::istream & /*stream*/, MetaTypeData & /*data*/)
-	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
+inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
 {
-	errorNoStreamIn();
-}
-
-template <typename T>
-auto podStreamOut(std::ostream & stream, const MetaTypeData & data)
-	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	stream << data.podAs<T>();
-}
-
-template <typename T>
-auto podStreamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/)
-	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	errorNoStreamOut();
-}
-
-template <typename T>
-auto objectStreamIn(std::istream & stream, MetaTypeData & data)
-	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
-{
-	stream >> *static_cast<T *>(data.object.get());
-}
-
-template <typename T>
-auto objectStreamIn(std::istream & /*stream*/, MetaTypeData & /*data*/)
-	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
-{
-	errorNoStreamIn();
-}
-
-template <typename T>
-auto objectStreamOut(std::ostream & stream, const MetaTypeData & data)
-	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	stream << *static_cast<T *>(data.object.get());
-}
-
-template <typename T>
-auto objectStreamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/)
-	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	errorNoStreamOut();
+	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
+		toMetaType = toMetaType->getUpType();
+	}
+	if(strictMode) {
+		if(toMetaType == fromMetaType) {
+			return true;
+		}
+		if(toMetaType == nullptr || fromMetaType == nullptr) {
+			return false;
+		}
+		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
+	}
+	else {
+		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
+			return true;
+		}
+		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
+			return true;
+		}
+		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
+	}
 }
 
 

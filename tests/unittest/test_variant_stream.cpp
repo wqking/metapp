@@ -20,12 +20,21 @@ TEST_CASE("Input stream")
 		ss >> v;
 		REQUIRE(v.get<bool>() == true);
 	}
+
 	SECTION("int") {
 		metapp::Variant v(metapp::getMetaType<int>());
 		REQUIRE(v.get<int>() == 0);
 		ss.str("138");
 		ss >> v;
 		REQUIRE(v.get<int>() == 138);
+	}
+	
+	SECTION("std::string") {
+		metapp::Variant v(metapp::getMetaType<std::string>());
+		REQUIRE(v.get<std::string>() == "");
+		ss.str("abcxyz");
+		ss >> v;
+		REQUIRE(v.get<std::string>() == "abcxyz");
 	}
 }
 
@@ -61,6 +70,14 @@ TEST_CASE("Output stream")
 		ss << v;
 		REQUIRE(ss.str() == "3.1415");
 	}
+
+	SECTION("std::string") {
+		std::string s("abcdef");
+		metapp::Variant v(s);
+		ss << v;
+		REQUIRE(ss.str() == s);
+	}
+
 }
 
 

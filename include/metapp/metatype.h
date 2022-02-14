@@ -3,7 +3,9 @@
 
 #include "metapp/typekind.h"
 #include "metapp/metatypedata.h"
-#include "metapp/metatypeutil.h"
+#include "metapp/metatypedatautil.h"
+#include "metapp/exception.h"
+#include "metapp/internal/metatype_i.h"
 
 #include <type_traits>
 #include <initializer_list>
@@ -23,31 +25,6 @@ struct DeclareMetaType;
 template <typename T>
 const MetaType * getMetaType();
 
-enum class MetaMethodAction
-{
-	constructDefault,
-	constructWith,
-	getAddress,
-	canCast,
-	cast,
-	streamIn,
-	streamOut,
-};
-
-struct MetaMethodParam
-{
-	MetaMethodAction action;
-	const MetaType * metaType;
-	MetaTypeData * data;
-	const void * constValue;
-	void * writableValue;
-	bool result;
-	std::istream * inputStream;
-	std::ostream * outputStream;
-};
-
-using FuncMetaMethod = void (*)(MetaMethodParam & param);
-
 class UnifiedType
 {
 public:
@@ -59,7 +36,7 @@ public:
 
 	constexpr UnifiedType(
 		const TypeKind typeKind,
-		FuncMetaMethod metaMethod
+		internal_::FuncMetaMethod metaMethod
 	) :
 		typeKind(typeKind),
 		metaMethod(metaMethod)
@@ -71,8 +48,8 @@ public:
 	}
 
 	void constructDefault(MetaTypeData & data) const {
-		MetaMethodParam param {
-			MetaMethodAction::constructDefault,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::constructDefault,
 			nullptr,
 			&data,
 			nullptr,
@@ -85,8 +62,8 @@ public:
 	}
 
 	void constructWith(MetaTypeData & data, const void * value) const {
-		MetaMethodParam param {
-			MetaMethodAction::constructWith,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::constructWith,
 			nullptr,
 			&data,
 			value,
@@ -99,8 +76,8 @@ public:
 	}
 
 	const void * getAddress(const MetaTypeData & data) const {
-		MetaMethodParam param {
-			MetaMethodAction::getAddress,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::getAddress,
 			nullptr,
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
@@ -114,8 +91,8 @@ public:
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
-		MetaMethodParam param {
-			MetaMethodAction::canCast,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::canCast,
 			toMetaType,
 			nullptr,
 			nullptr,
@@ -129,8 +106,8 @@ public:
 	}
 
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
-		MetaMethodParam param {
-			MetaMethodAction::cast,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::cast,
 			toMetaType,
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
@@ -143,8 +120,8 @@ public:
 	}
 
 	void streamIn(std::istream & stream, MetaTypeData & data) const {
-		MetaMethodParam param {
-			MetaMethodAction::streamIn,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::streamIn,
 			nullptr,
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
@@ -157,8 +134,8 @@ public:
 	}
 
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
-		MetaMethodParam param {
-			MetaMethodAction::streamOut,
+		internal_::MetaMethodParam param {
+			internal_::MetaMethodAction::streamOut,
 			nullptr,
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
@@ -172,51 +149,15 @@ public:
 
 private:
 	TypeKind typeKind;
-	FuncMetaMethod metaMethod;
+	internal_::FuncMetaMethod metaMethod;
 };
 
-template <typename M>
-void commonMetaMethod(MetaMethodParam & param)
-{
-	switch(param.action) {
-	case MetaMethodAction::constructDefault:
-		M::constructDefault(*(param.data));
-		break;
-
-	case MetaMethodAction::constructWith:
-		M::constructWith(*(param.data), param.constValue);
-		break;
-
-	case MetaMethodAction::getAddress:
-		param.constValue = M::getAddress(*(param.data));
-		break;
-
-	case MetaMethodAction::canCast:
-		param.result = M::canCast(param.metaType);
-		break;
-
-	case MetaMethodAction::cast:
-		M::cast(*(param.data), param.metaType, param.writableValue);
-		break;
-
-	case MetaMethodAction::streamIn:
-		M::streamIn(*(param.inputStream), *(param.data));
-		break;
-
-	case MetaMethodAction::streamOut:
-		M::streamOut(*(param.outputStream), *(param.data));
-		break;
-	}
-}
-
 constexpr UnifiedType emptyUnifiedType;
-
-struct NoneUpType {};
 
 template <typename T>
 struct DeclareMetaTypeBase
 {
-	using UpType = NoneUpType;
+	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeFlags typeFlags = 0;
 
@@ -225,7 +166,7 @@ struct DeclareMetaTypeBase
 	}
 
 	static bool canCast(const MetaType * toMetaType) {
-		return probablySame(getMetaType<T>(), toMetaType, true);
+		return isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
 	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/ , void * toData) {
@@ -346,21 +287,21 @@ const UnifiedType * getUnifiedType()
 
 	static const UnifiedType unifiedType (
 		M::typeKind,
-		&commonMetaMethod<M>
+		&internal_::commonMetaMethod<M>
 	);
 	return &unifiedType;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
+-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type
+-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
 	using M = DeclareMetaType<T>;
 
@@ -438,49 +379,6 @@ template <typename T, typename Enabled>
 struct BaseDeclareMetaType : public DeclareObjectMetaType<T>
 {
 };
-
-template <typename T>
-inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)
-{
-	auto begin = std::begin(typeKindList);
-	auto end = std::end(typeKindList);
-	while(begin != end) {
-		if(metaType == nullptr) {
-			return false;
-		}
-		if(metaType->getTypeKind() != *begin) {
-			return false;
-		}
-		metaType = metaType->getUpType();
-		++begin;
-	}
-	return true;
-}
-
-inline bool probablySame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
-{
-	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
-		toMetaType = toMetaType->getUpType();
-	}
-	if(strictMode) {
-		if(toMetaType == fromMetaType) {
-			return true;
-		}
-		if(toMetaType == nullptr || fromMetaType == nullptr) {
-			return false;
-		}
-		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
-	}
-	else {
-		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
-			return true;
-		}
-		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
-			return true;
-		}
-		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
-	}
-}
 
 } // namespace metapp
 

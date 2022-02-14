@@ -10,36 +10,36 @@ struct TypeList
 {
 };
 
-template <int N, typename T, typename TL>
+template <typename TL, int N, typename T>
 struct HelperTypeListIndexOf
 {
 };
 
 template <int N, typename T>
-struct HelperTypeListIndexOf <N, T, TypeList<> >
+struct HelperTypeListIndexOf <TypeList<>, N, T>
 {
 	static constexpr int value = -1;
 };
 
 template <int N, typename T, typename Arg0, typename ...Args>
-struct HelperTypeListIndexOf <N, T, TypeList<Arg0, Args...> >
+struct HelperTypeListIndexOf <TypeList<Arg0, Args...>, N, T>
 {
 	static constexpr int value = std::is_same<T, Arg0>::value ?
 		N :
-		HelperTypeListIndexOf<N + 1, T, TypeList<Args...> >::value
+		HelperTypeListIndexOf<TypeList<Args...>, N + 1, T>::value
 	;
 };
 
-template <typename T, typename TL>
+template <typename TL, typename T>
 struct TypeListIndexOf
 {
-	static constexpr int value = HelperTypeListIndexOf<0, T, TL>::value;
+	static constexpr int value = HelperTypeListIndexOf<TL, 0, T>::value;
 };
 
-template <typename T, typename TL>
+template <typename TL, typename T>
 struct TypeListIn
 {
-	static constexpr bool value = (TypeListIndexOf<T, TL>::value >= 0);
+	static constexpr bool value = (TypeListIndexOf<TL, T>::value >= 0);
 };
 
 template <typename TL>
@@ -52,6 +52,29 @@ template <typename ...Args>
 struct TypeListCount <TypeList<Args...> >
 {
 	static constexpr size_t value = sizeof...(Args);
+};
+
+template <size_t I, size_t N, typename TL>
+struct HelperTypeListGetAt
+{
+};
+
+template <size_t N, typename Arg0, typename ...Args>
+struct HelperTypeListGetAt <N, N, TypeList<Arg0, Args...> >
+{
+	using Type = Arg0;
+};
+
+template <size_t I, size_t N, typename Arg0, typename ...Args>
+struct HelperTypeListGetAt<I, N, TypeList<Arg0, Args...> >
+{
+	using Type = typename HelperTypeListGetAt<I + 1, N, TypeList<Args...> >::Type;
+};
+
+template <typename TL, size_t N>
+struct TypeListGetAt
+{
+	using Type = typename HelperTypeListGetAt<0, N, TL>::Type;
 };
 
 

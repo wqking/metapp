@@ -80,7 +80,7 @@ public:
 
 	template <typename T>
 	bool canGet(const bool strictMode = false) const {
-		return probablySame(metaType, metapp::getMetaType<T>(), strictMode);
+		return isPossibleSame(metaType, metapp::getMetaType<T>(), strictMode);
 	}
 
 	template <typename T>
