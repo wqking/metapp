@@ -8,6 +8,7 @@ set(SRC_TEST
 	test_usertype.cpp
 	test_metatype.cpp
 	test_variant_cast.cpp
+	test_variant_stream.cpp
 	test_metatyperepo.cpp
 )
 

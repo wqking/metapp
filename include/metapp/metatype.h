@@ -6,6 +6,8 @@
 
 #include <type_traits>
 #include <initializer_list>
+#include <istream>
+#include <ostream>
 
 namespace metapp {
 
@@ -23,6 +25,8 @@ enum class MetaMethodAction
 	getAddress,
 	canCast,
 	cast,
+	streamIn,
+	streamOut,
 };
 
 struct MetaMethodParam
@@ -33,6 +37,8 @@ struct MetaMethodParam
 	const void * constValue;
 	void * writableValue;
 	bool result;
+	std::istream * inputStream;
+	std::ostream * outputStream;
 };
 
 using FuncMetaMethod = void (*)(MetaMethodParam & param);
@@ -66,7 +72,9 @@ public:
 			&data,
 			nullptr,
 			nullptr,
-			false
+			false,
+			nullptr,
+			nullptr
 		};
 		metaMethod(param);
 	}
@@ -78,7 +86,9 @@ public:
 			&data,
 			value,
 			nullptr,
-			false
+			false,
+			nullptr,
+			nullptr
 		};
 		metaMethod(param);
 	}
@@ -90,7 +100,9 @@ public:
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
 			nullptr,
-			false
+			false,
+			nullptr,
+			nullptr
 		};
 		metaMethod(param);
 		return param.constValue;
@@ -103,7 +115,9 @@ public:
 			nullptr,
 			nullptr,
 			nullptr,
-			false
+			false,
+			nullptr,
+			nullptr
 		};
 		metaMethod(param);
 		return param.result;
@@ -116,7 +130,37 @@ public:
 			const_cast<MetaTypeData *>(&data),
 			nullptr,
 			toData,
-			false
+			false,
+			nullptr,
+			nullptr
+		};
+		metaMethod(param);
+	}
+
+	void streamIn(std::istream & stream, MetaTypeData & data) const {
+		MetaMethodParam param {
+			MetaMethodAction::streamIn,
+			nullptr,
+			const_cast<MetaTypeData *>(&data),
+			nullptr,
+			nullptr,
+			false,
+			&stream,
+			nullptr
+		};
+		metaMethod(param);
+	}
+
+	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
+		MetaMethodParam param {
+			MetaMethodAction::streamOut,
+			nullptr,
+			const_cast<MetaTypeData *>(&data),
+			nullptr,
+			nullptr,
+			false,
+			nullptr,
+			&stream
 		};
 		metaMethod(param);
 	}
@@ -149,6 +193,14 @@ void commonMetaMethod(MetaMethodParam & param)
 	case MetaMethodAction::cast:
 		M::cast(*(param.data), param.metaType, param.writableValue);
 		break;
+
+	case MetaMethodAction::streamIn:
+		M::streamIn(*(param.inputStream), *(param.data));
+		break;
+
+	case MetaMethodAction::streamOut:
+		M::streamOut(*(param.outputStream), *(param.data));
+		break;
 	}
 }
 
@@ -171,10 +223,18 @@ struct DeclareMetaTypeBase
 		return probablySame(getMetaType<T>(), toMetaType, true);
 	}
 
-	static void cast(const MetaTypeData & data , const MetaType * /*toMetaType*/ , void * toData) {
+	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/ , void * toData) {
 		const void * value = getMetaType<T>()->getAddress(data);
 		using U = typename std::remove_reference<T>::type;
 		doCast((const U *)value, (U *)toData);
+	}
+
+	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
+		internal_::errorNoStreamIn();
+	}
+
+	static void streamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/) {
+		internal_::errorNoStreamOut();
 	}
 
 private:
@@ -251,6 +311,14 @@ public:
 	
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
 		unifiedType->cast(data, toMetaType, toData);
+	}
+
+	void streamIn(std::istream & stream, MetaTypeData & data) const {
+		unifiedType->streamIn(stream, data);
+	}
+
+	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
+		unifiedType->streamOut(stream, data);
 	}
 
 private:

@@ -62,10 +62,7 @@ public:
 
 	template <typename T>
 	T get() const {
-		//assert(this->canGet<typename std::remove_reference<T>::type>());
-		//if(! this->canGet<typename std::remove_reference<T>::type>()) {
-		//	throw std::runtime_error("Can't get");
-		//}
+		assert(this->canGet<T>());
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
 
@@ -90,6 +87,16 @@ public:
 
 	const MetaType * getMetaType() const {
 		return metaType;
+	}
+
+	friend std::istream & operator >> (std::istream & stream, Variant & v) {
+		v.metaType->streamIn(stream, v.data);
+		return stream;
+	}
+
+	friend std::ostream & operator << (std::ostream & stream, const Variant & v) {
+		v.metaType->streamOut(stream, v.data);
+		return stream;
 	}
 
 private:
