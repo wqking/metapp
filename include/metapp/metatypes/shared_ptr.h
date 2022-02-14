@@ -14,7 +14,11 @@ public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkSharedPtr;
 
-	static void construct(MetaTypeData & data, const void * value) {
+	static void constructDefault(MetaTypeData & data) {
+		data.object = std::static_pointer_cast<void>(std::shared_ptr<T>());
+	}
+
+	static void constructWith(MetaTypeData & data, const void * value) {
 		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
 	}
 

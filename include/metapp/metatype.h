@@ -18,7 +18,8 @@ struct DeclareMetaType;
 
 enum class MetaMethodAction
 {
-	construct,
+	constructDefault,
+	constructWith,
 	getAddress,
 	canCast,
 	cast,
@@ -58,9 +59,21 @@ public:
 		return typeKind;
 	}
 
-	void construct(MetaTypeData & data, const void * value) const {
+	void constructDefault(MetaTypeData & data) const {
 		MetaMethodParam param {
-			MetaMethodAction::construct,
+			MetaMethodAction::constructDefault,
+			nullptr,
+			&data,
+			nullptr,
+			nullptr,
+			false
+		};
+		metaMethod(param);
+	}
+
+	void constructWith(MetaTypeData & data, const void * value) const {
+		MetaMethodParam param {
+			MetaMethodAction::constructWith,
 			nullptr,
 			&data,
 			value,
@@ -117,8 +130,12 @@ template <typename M>
 void commonMetaMethod(MetaMethodParam & param)
 {
 	switch(param.action) {
-	case MetaMethodAction::construct:
-		M::construct(*(param.data), param.constValue);
+	case MetaMethodAction::constructDefault:
+		M::constructDefault(*(param.data));
+		break;
+
+	case MetaMethodAction::constructWith:
+		M::constructWith(*(param.data), param.constValue);
 		break;
 
 	case MetaMethodAction::getAddress:
@@ -145,10 +162,6 @@ struct DeclareMetaTypeBase
 	using UpType = NoneUpType;
 
 	static constexpr TypeFlags typeFlags = 0;
-
-	static void copy(const MetaTypeData & fromData, MetaTypeData & toData) {
-		toData = fromData;
-	}
 
 	static const void * getAddress(const MetaTypeData & /*data*/) {
 		return nullptr;
@@ -220,8 +233,12 @@ public:
 		return typeFlags & tfPodStorage;
 	}
 
-	void construct(MetaTypeData & data, const void * value) const {
-		unifiedType->construct(data, value);
+	void constructDefault(MetaTypeData & data) const {
+		unifiedType->constructDefault(data);
+	}
+
+	void constructWith(MetaTypeData & data, const void * value) const {
+		unifiedType->constructWith(data, value);
 	}
 
 	const void * getAddress(const MetaTypeData & data) const {
@@ -293,7 +310,11 @@ struct DeclarePodMetaType : public DeclareMetaTypeBase<T>
 {
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
-	static void construct(MetaTypeData & data, const void * value) {
+	static void constructDefault(MetaTypeData & data) {
+		data.podAs<T>() = T();
+	}
+
+	static void constructWith(MetaTypeData & data, const void * value) {
 		data.podAs<T>() = *(T *)value;
 	}
 
@@ -310,7 +331,11 @@ struct DeclareObjectMetaType : public DeclareMetaTypeBase<T>
 
 	using U = typename std::remove_reference<T>::type;
 
-	static void construct(MetaTypeData & data, const void * value) {
+	static void constructDefault(MetaTypeData & data) {
+		data.object = std::make_shared<U>();
+	}
+
+	static void constructWith(MetaTypeData & data, const void * value) {
 		data.object = std::make_shared<U>(*(U *)value);
 	}
 

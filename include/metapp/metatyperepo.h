@@ -9,7 +9,36 @@
 
 namespace metapp {
 
-class MetaTypeRepo;
+class MetaTypeRepo
+{
+public:
+	void registerMetaType(const MetaType * metaType) {
+		metaTypeMap[metaType->getTypeKind()] = metaType;
+	}
+
+	const MetaType * getMetaType(const TypeKind typeKind) const {
+		auto it = metaTypeMap.find(typeKind);
+		if(it != metaTypeMap.end()) {
+			return it->second;
+		}
+		else {
+			return nullptr;
+		}
+	}
+
+private:
+	MetaTypeRepo();
+
+	MetaTypeRepo(const MetaTypeRepo &) = delete;
+	MetaTypeRepo(MetaTypeRepo &&) = delete;
+
+private:
+	std::unordered_map<TypeKind, const MetaType *> metaTypeMap;
+
+	friend MetaTypeRepo * getMetaTypeRepo();
+};
+
+namespace internal_ {
 
 template <typename T>
 struct RegisterMetaType;
@@ -32,48 +61,23 @@ struct RegisterMetaType <TypeList<> >
 	}
 };
 
-class MetaTypeRepo
-{
-public:
-	void registerMetaType(const MetaType * metaType) {
-		metaTypeMap[metaType->getTypeKind()] = metaType;
-	}
+} // namespace internal_
 
-	const MetaType * getMetaType(const TypeKind typeKind) const {
-		auto it = metaTypeMap.find(typeKind);
-		if(it != metaTypeMap.end()) {
-			return it->second;
-		}
-		else {
-			return nullptr;
-		}
-	}
-
-private:
-	MetaTypeRepo() : metaTypeMap() {
-		RegisterMetaType<TypeList<
-			void,
-			std::string,
-			std::wstring,
-			bool,
-			char, wchar_t,
-			signed char, unsigned char,
-			short, unsigned short,
-			int, unsigned int,
-			long, unsigned long,
-			long long, unsigned long long,
-			float, double, long double
-		> >::registerMetaType(this);
-	}
-
-	MetaTypeRepo(const MetaTypeRepo &) = delete;
-	MetaTypeRepo(MetaTypeRepo &&) = delete;
-
-private:
-	std::unordered_map<TypeKind, const MetaType *> metaTypeMap;
-
-	friend MetaTypeRepo * getMetaTypeRepo();
-};
+MetaTypeRepo::MetaTypeRepo() : metaTypeMap() {
+	internal_::RegisterMetaType<TypeList<
+		void,
+		std::string,
+		std::wstring,
+		bool,
+		char, wchar_t,
+		signed char, unsigned char,
+		short, unsigned short,
+		int, unsigned int,
+		long, unsigned long,
+		long long, unsigned long long,
+		float, double, long double
+	> >::registerMetaType(this);
+}
 
 inline MetaTypeRepo * getMetaTypeRepo()
 {
@@ -84,7 +88,7 @@ inline MetaTypeRepo * getMetaTypeRepo()
 template <typename ...Args>
 void registerMetaType()
 {
-	RegisterMetaType<TypeList<Args...> >::registerMetaType(getMetaTypeRepo());
+	internal_::RegisterMetaType<TypeList<Args...> >::registerMetaType(getMetaTypeRepo());
 }
 
 

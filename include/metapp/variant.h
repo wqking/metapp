@@ -23,7 +23,14 @@ public:
 		:
 			metaType(metapp::getMetaType<T>())
 	{
-		metaType->construct(data, &value);
+		metaType->constructWith(data, &value);
+	}
+
+	explicit Variant(const MetaType * metaType) noexcept
+		:
+		metaType(metaType)
+	{
+		metaType->constructDefault(data);
 	}
 
 	Variant(const Variant & other) noexcept
@@ -44,7 +51,7 @@ public:
 	Variant & set(T value)
 	{
 		metaType = metapp::getMetaType<T>();
-		metaType->construct(data, &value);
+		metaType->constructWith(data, &value);
 		return *this;
 	}
 
