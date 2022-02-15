@@ -22,7 +22,7 @@ const MetaType ** getXxx()
 
 TEST_CASE("play camp")
 {
-	std::cout << __cplusplus << std::endl;
+	std::cout << metapp::podSize << std::endl;
 	const MetaType * p = getMetaType<const int *>();
 	REQUIRE(p->getUpType()->isConst());
 	auto xxx = getXxx<char, int>();

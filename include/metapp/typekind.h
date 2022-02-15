@@ -7,69 +7,71 @@ namespace metapp {
 
 using TypeKind = uint16_t;
 
-constexpr TypeKind tkEmpty(0);
+constexpr TypeKind tkEmpty = 0;
 
-constexpr TypeKind tkVoid(1);
+constexpr TypeKind tkVoid = 1;
 
-constexpr TypeKind tkFundamentalBegin(tkVoid + 1); // 2
+constexpr TypeKind tkFundamentalBegin = 2;
 
-constexpr TypeKind tkArithmeticBegin(tkFundamentalBegin); // 2
-constexpr TypeKind tkIntegerBegin(tkArithmeticBegin); // 2
-constexpr TypeKind tkBool(tkIntegerBegin); // 2
-constexpr TypeKind tkChar(tkIntegerBegin + 1); // 3
-constexpr TypeKind tkWideChar(tkIntegerBegin + 2); // 4
-constexpr TypeKind tkSignedChar(tkIntegerBegin + 3); // 5
-constexpr TypeKind tkUnsignedChar(tkIntegerBegin + 4); // 6
-constexpr TypeKind tkShort(tkIntegerBegin + 5); // 7
-constexpr TypeKind tkUnsignedShort(tkIntegerBegin + 6); // 8
-constexpr TypeKind tkInt(tkIntegerBegin + 7); // 9
-constexpr TypeKind tkUnsignedInt(tkIntegerBegin + 8); // 10
-constexpr TypeKind tkLong(tkIntegerBegin + 9); // 11
-constexpr TypeKind tkUnsignedLong(tkIntegerBegin + 10); // 12
-constexpr TypeKind tkLongLong(tkIntegerBegin + 11); // 13
-constexpr TypeKind tkUnsignedLongLong(tkIntegerBegin + 12); // 14
-constexpr TypeKind tkIntegerEnd(tkUnsignedLongLong); // 14
+constexpr TypeKind tkArithmeticBegin = tkFundamentalBegin;
+constexpr TypeKind tkIntegerBegin = tkArithmeticBegin;
+constexpr TypeKind tkBool = 2;
+constexpr TypeKind tkChar = 3;
+constexpr TypeKind tkWideChar = 4;
+constexpr TypeKind tkSignedChar = 5;
+constexpr TypeKind tkUnsignedChar = 6;
+constexpr TypeKind tkShort = 7;
+constexpr TypeKind tkUnsignedShort = 8;
+constexpr TypeKind tkInt = 9;
+constexpr TypeKind tkUnsignedInt = 10;
+constexpr TypeKind tkLong = 11;
+constexpr TypeKind tkUnsignedLong = 12;
+constexpr TypeKind tkLongLong = 13;
+constexpr TypeKind tkUnsignedLongLong = 14;
+constexpr TypeKind tkIntegerEnd = 14;
 
-constexpr TypeKind tkRealBegin(tkIntegerEnd + 1); // 15
-constexpr TypeKind tkFloat(tkRealBegin); // 15
-constexpr TypeKind tkDouble(tkRealBegin + 1); // 16
-constexpr TypeKind tkLongDouble(tkRealBegin + 2); // 17
-constexpr TypeKind tkRealEnd(tkLongDouble); // 18
-constexpr TypeKind tkArithmeticEnd(tkRealEnd); // 19
+constexpr TypeKind tkRealBegin = 15;
+constexpr TypeKind tkFloat = 15;
+constexpr TypeKind tkDouble = 16;
+constexpr TypeKind tkLongDouble = 17;
+constexpr TypeKind tkRealEnd = 18;
+constexpr TypeKind tkArithmeticEnd = 18;
 
-constexpr TypeKind tkFundamentalEnd(tkArithmeticEnd); // 19
+constexpr TypeKind tkFundamentalEnd = tkArithmeticEnd;
 
-constexpr TypeKind tkOtherBegin(30); // 30
+constexpr TypeKind tkObject = 30; // equivalent to unkown type
+constexpr TypeKind tkString = 31; // std::string
+constexpr TypeKind tkWideString = 32; // std::wstring
 
-constexpr TypeKind tkObject(tkOtherBegin); // 30, equivalent to unkown type
-constexpr TypeKind tkString(tkOtherBegin + 1); // 31, std::string
-constexpr TypeKind tkWideString(tkOtherBegin + 1); // 32, std::wstring
+constexpr TypeKind tkPointer = 33;
+constexpr TypeKind tkReference = 34;
+constexpr TypeKind tkFunction = 35; // TBI
+constexpr TypeKind tkMemberFunction = 36; // TBI
+constexpr TypeKind tkMemberPointer = 37; // TBI
 
-constexpr TypeKind tkPointer(tkOtherBegin + 3); // 33
-constexpr TypeKind tkReference(tkOtherBegin + 4); // 34
-constexpr TypeKind tkSharedPtr(tkOtherBegin + 5); // 35
-constexpr TypeKind tkVector(tkOtherBegin + 6); // 36
-constexpr TypeKind tkList(tkOtherBegin + 7); // 37
-constexpr TypeKind tkDeque(tkOtherBegin + 8); // 38
-constexpr TypeKind tkArray(tkOtherBegin + 9); // 39
-constexpr TypeKind tkForwardList(tkOtherBegin + 10); // 40
-constexpr TypeKind tkStack(tkOtherBegin + 11); // 41
-constexpr TypeKind tkQueue(tkOtherBegin + 12); // 42
-constexpr TypeKind tkPriorityQueue(tkOtherBegin + 13); // 43
-constexpr TypeKind tkMap(tkOtherBegin + 14); // 44
-constexpr TypeKind tkMultimap(tkOtherBegin + 15); // 45
-constexpr TypeKind tkSet(tkOtherBegin + 16); // 46
-constexpr TypeKind tkMultiset(tkOtherBegin + 17); // 47
-constexpr TypeKind tkUnorderedMap(tkOtherBegin + 18); // 48
-constexpr TypeKind tkUnorderedMultimap(tkOtherBegin + 19); // 49
-constexpr TypeKind tkUnorderedSet(tkOtherBegin + 18); // 48
-constexpr TypeKind tkUnorderedMultiset(tkOtherBegin + 19); // 49
-constexpr TypeKind tkPair(tkOtherBegin + 20); // 50
-constexpr TypeKind tkTuple(tkOtherBegin + 21); // 51
-constexpr TypeKind tkAny(tkOtherBegin + 22); // 52
-constexpr TypeKind tkStdVariant(tkOtherBegin + 23); // 53
+constexpr TypeKind tkSharedPtr = 60;
+constexpr TypeKind tkVector = 61;
+constexpr TypeKind tkList = 62;
+constexpr TypeKind tkDeque = 63;
+constexpr TypeKind tkArray = 64;
+constexpr TypeKind tkForwardList = 65;
+constexpr TypeKind tkStack = 66;
+constexpr TypeKind tkQueue = 67;
+constexpr TypeKind tkPriorityQueue = 68;
+constexpr TypeKind tkMap = 69;
+constexpr TypeKind tkMultimap = 70;
+constexpr TypeKind tkSet = 71;
+constexpr TypeKind tkMultiset = 72;
+constexpr TypeKind tkUnorderedMap = 73;
+constexpr TypeKind tkUnorderedMultimap = 74;
+constexpr TypeKind tkUnorderedSet = 75;
+constexpr TypeKind tkUnorderedMultiset = 76;
+constexpr TypeKind tkPair = 77;
+constexpr TypeKind tkTuple = 78;
+constexpr TypeKind tkAny = 79;
+constexpr TypeKind tkStdVariant = 80;
 
-constexpr TypeKind tkUser(1024);
+constexpr TypeKind tkUser = 1024;
 
 
 using TypeFlags = uint16_t;

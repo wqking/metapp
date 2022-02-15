@@ -9,7 +9,7 @@
 namespace metapp {
 
 template <>
-struct BaseDeclareMetaType <std::any> : public DeclareObjectMetaType<std::any>
+struct DeclareMetaType <std::any> : public BaseDeclareMetaType <std::any>
 {
 	static constexpr TypeKind typeKind = tkAny;
 };

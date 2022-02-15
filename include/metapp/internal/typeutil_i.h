@@ -29,6 +29,23 @@ struct HasOutputStreamOperator
 	enum { value = !! decltype(test<T>(0))() };
 };
 
+template <size_t ...Ns>
+struct MaxOfInt
+{
+};
+
+template <size_t N1, size_t N2, size_t ...Ns>
+struct MaxOfInt <N1, N2, Ns...>
+{
+	static constexpr size_t r = MaxOfInt<N2, Ns...>::value;
+	static constexpr size_t value = (N1 > r ? N1 : r);
+};
+
+template <size_t N1>
+struct MaxOfInt <N1>
+{
+	static constexpr size_t value = N1;
+};
 
 } // namespace internal_
 

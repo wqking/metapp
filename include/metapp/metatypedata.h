@@ -1,12 +1,14 @@
 #ifndef METATYPEDATA_H_969872685611
 #define METATYPEDATA_H_969872685611
 
+#include "metapp/internal/typeutil_i.h"
+
 #include <memory>
 #include <array>
 
 namespace metapp {
 
-constexpr size_t podSize = (sizeof(long long) > sizeof(long double) ? sizeof(long long) : sizeof(long double));
+constexpr size_t podSize = internal_::MaxOfInt<sizeof(long long), sizeof(long double)>::value;
 
 struct MetaTypeData
 {
