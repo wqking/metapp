@@ -22,16 +22,60 @@ enum class MetaMethodAction
 	streamOut,
 };
 
+struct ParamConstruct
+{
+	MetaTypeData * data;
+};
+
+struct ParamConstructWith
+{
+	MetaTypeData * data;
+	const void * value;
+};
+ 
+struct ParamGetAddress
+{
+	const MetaTypeData * data;
+	const void * value;
+};
+ 
+struct ParamCanCast
+{
+	const MetaType * toMetaType;
+	bool result;
+};
+ 
+struct ParamCast
+{
+	const MetaTypeData * data;
+	const MetaType * toMetaType;
+	void * toData;
+};
+ 
+struct ParamStreamIn
+{
+	std::istream * stream;
+	MetaTypeData * data;
+};
+ 
+struct ParamStreamOut
+{
+	std::ostream * stream;
+	const MetaTypeData * data;
+};
+ 
 struct MetaMethodParam
 {
 	MetaMethodAction action;
-	const MetaType * metaType;
-	MetaTypeData * data;
-	const void * constValue;
-	void * writableValue;
-	bool result;
-	std::istream * inputStream;
-	std::ostream * outputStream;
+	union {
+		ParamConstruct paramConstruct;
+		ParamConstructWith paramConstructWith;
+		ParamGetAddress paramGetAddress;
+		ParamCanCast paramCanCast;
+		ParamCast paramCast;
+		ParamStreamIn paramStreamIn;
+		ParamStreamOut paramStreamOut;
+	};
 };
 
 using FuncMetaMethod = void (*)(MetaMethodParam & param);
@@ -41,31 +85,31 @@ void commonMetaMethod(MetaMethodParam & param)
 {
 	switch(param.action) {
 	case MetaMethodAction::constructDefault:
-		M::constructDefault(*(param.data));
+		M::constructDefault(*(param.paramConstruct.data));
 		break;
 
 	case MetaMethodAction::constructWith:
-		M::constructWith(*(param.data), param.constValue);
+		M::constructWith(*(param.paramConstructWith.data), param.paramConstructWith.value);
 		break;
 
 	case MetaMethodAction::getAddress:
-		param.constValue = M::getAddress(*(param.data));
+		param.paramGetAddress.value = M::getAddress(*(param.paramGetAddress.data));
 		break;
 
 	case MetaMethodAction::canCast:
-		param.result = M::canCast(param.metaType);
+		param.paramCanCast.result = M::canCast(param.paramCanCast.toMetaType);
 		break;
 
 	case MetaMethodAction::cast:
-		M::cast(*(param.data), param.metaType, param.writableValue);
+		M::cast(*(param.paramCast.data), param.paramCast.toMetaType, param.paramCast.toData);
 		break;
 
 	case MetaMethodAction::streamIn:
-		M::streamIn(*(param.inputStream), *(param.data));
+		M::streamIn(*(param.paramStreamIn.stream), *(param.paramStreamIn.data));
 		break;
 
 	case MetaMethodAction::streamOut:
-		M::streamOut(*(param.outputStream), *(param.data));
+		M::streamOut(*(param.paramStreamOut.stream), *(param.paramStreamOut.data));
 		break;
 	}
 }

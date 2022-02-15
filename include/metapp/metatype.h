@@ -48,102 +48,53 @@ public:
 	}
 
 	void constructDefault(MetaTypeData & data) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::constructDefault,
-			nullptr,
-			&data,
-			nullptr,
-			nullptr,
-			false,
-			nullptr,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::constructDefault;
+		param.paramConstruct = { &data };
 		metaMethod(param);
 	}
 
 	void constructWith(MetaTypeData & data, const void * value) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::constructWith,
-			nullptr,
-			&data,
-			value,
-			nullptr,
-			false,
-			nullptr,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::constructWith;
+		param.paramConstructWith = { &data, value };
 		metaMethod(param);
 	}
 
 	const void * getAddress(const MetaTypeData & data) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::getAddress,
-			nullptr,
-			const_cast<MetaTypeData *>(&data),
-			nullptr,
-			nullptr,
-			false,
-			nullptr,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::getAddress;
+		param.paramGetAddress = { &data, nullptr };
 		metaMethod(param);
-		return param.constValue;
+		return param.paramGetAddress.value;
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::canCast,
-			toMetaType,
-			nullptr,
-			nullptr,
-			nullptr,
-			false,
-			nullptr,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::canCast;
+		param.paramCanCast = { toMetaType, false };
 		metaMethod(param);
-		return param.result;
+		return param.paramCanCast.result;
 	}
 
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::cast,
-			toMetaType,
-			const_cast<MetaTypeData *>(&data),
-			nullptr,
-			toData,
-			false,
-			nullptr,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::cast;
+		param.paramCast = { &data, toMetaType, toData };
 		metaMethod(param);
 	}
 
 	void streamIn(std::istream & stream, MetaTypeData & data) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::streamIn,
-			nullptr,
-			const_cast<MetaTypeData *>(&data),
-			nullptr,
-			nullptr,
-			false,
-			&stream,
-			nullptr
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::streamIn;
+		param.paramStreamIn = { &stream, &data };
 		metaMethod(param);
 	}
 
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
-		internal_::MetaMethodParam param {
-			internal_::MetaMethodAction::streamOut,
-			nullptr,
-			const_cast<MetaTypeData *>(&data),
-			nullptr,
-			nullptr,
-			false,
-			nullptr,
-			&stream
-		};
+		internal_::MetaMethodParam param;
+		param.action = internal_::MetaMethodAction::streamOut;
+		param.paramStreamOut = { &stream, &data };
 		metaMethod(param);
 	}
 
