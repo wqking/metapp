@@ -267,7 +267,7 @@ auto doGetMetaType()
 template <typename T>
 const MetaType * getMetaType()
 {
-	return doGetMetaType<typename std::remove_cv<T>::type>();
+	return doGetMetaType<T>();
 }
 
 template <typename T>

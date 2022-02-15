@@ -9,10 +9,24 @@
 
 namespace {
 
-TEST_CASE("cast, fundamental")
+using namespace metapp;
+template <typename Arg0, typename ...Args>
+const MetaType ** getXxx()
 {
-	SECTION("bool") {
-	}
+	static std::array<const MetaType *, sizeof...(Args) + 1> xxx {
+		getMetaType<Arg0>(),
+		getMetaType<Args>()...,
+	};
+	return xxx.data();
+}
+
+TEST_CASE("play camp")
+{
+	const MetaType * p = getMetaType<const int *>();
+	REQUIRE(p->getUpType()->isConst());
+	auto xxx = getXxx<char, int>();
+	REQUIRE(xxx[0] == getMetaType<char>());
+	REQUIRE(xxx[1] == getMetaType<int>());
 }
 
 TEST_CASE("aaa")

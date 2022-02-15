@@ -12,8 +12,9 @@ namespace {
 TEST_CASE("MetaType")
 {
 	REQUIRE(metapp::getMetaType<int>() == metapp::getMetaType<int>());
-	REQUIRE(metapp::getMetaType<int>() == metapp::getMetaType<const int>());
-	REQUIRE(! metapp::getMetaType<const int>()->isConst());
+	REQUIRE(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
+	REQUIRE(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
+	REQUIRE(metapp::getMetaType<const int>()->isConst());
 
 	REQUIRE(metapp::getMetaType<int &>() == metapp::getMetaType<int &>());
 	REQUIRE(metapp::getMetaType<int &>() != metapp::getMetaType<const int &>());
