@@ -7,10 +7,10 @@
 
 namespace metapp {
 
-template <typename T, typename Alloc>
-struct BaseDeclareMetaType <std::list<T, Alloc> > : public DeclareObjectMetaType<std::list<T, Alloc> >
+template <typename T, typename Allocator>
+struct BaseDeclareMetaType <std::list<T, Allocator> >
+	: public DeclareObjectMetaType<std::list<T, Allocator> >
 {
-public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkList;
 

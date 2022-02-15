@@ -1,5 +1,9 @@
 #include "test.h"
 
+#include "metapp/compiler.h"
+
+#if METAPP_SUPPORT_STANDARD_17
+
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
@@ -9,28 +13,7 @@
 
 namespace {
 
-using namespace metapp;
-template <typename Arg0, typename ...Args>
-const MetaType ** getXxx()
-{
-	static std::array<const MetaType *, sizeof...(Args) + 1> xxx {
-		getMetaType<Arg0>(),
-		getMetaType<Args>()...,
-	};
-	return xxx.data();
-}
-
-TEST_CASE("play camp")
-{
-	std::cout << __cplusplus << std::endl;
-	const MetaType * p = getMetaType<const int *>();
-	REQUIRE(p->getUpType()->isConst());
-	auto xxx = getXxx<char, int>();
-	REQUIRE(xxx[0] == getMetaType<char>());
-	REQUIRE(xxx[1] == getMetaType<int>());
-}
-
-TEST_CASE("aaa")
+TEST_CASE("Any")
 {
 	{
 		metapp::Variant v(true);
@@ -101,3 +84,5 @@ TEST_CASE("aaa")
 }
 
 } // namespace
+
+#endif

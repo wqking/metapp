@@ -8,7 +8,6 @@ namespace metapp {
 template <typename T>
 struct BaseDeclareMetaType <T *> : public DeclarePodMetaType<T *>
 {
-public:
 	using UpType = T;
 
 	static constexpr TypeKind typeKind = tkPointer;

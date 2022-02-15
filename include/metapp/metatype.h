@@ -145,23 +145,30 @@ private:
 	}
 };
 
+struct UpTypeData
+{
+	const MetaType * upType;
+	const MetaType ** moreUpType;
+	uint16_t count;
+};
+
 class MetaType
 {
 public:
 	constexpr MetaType() :
 		unifiedType(&emptyUnifiedType),
-		upType(),
+		upTypeData(),
 		typeFlags()
 	{
 	}
 
 	constexpr MetaType(
 		const UnifiedType * unifiedType,
-		const MetaType * upType,
+		const UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) :
 		unifiedType(unifiedType),
-		upType(upType),
+		upTypeData(upTypeData),
 		typeFlags(typeFlags)
 	{
 	}
@@ -171,7 +178,20 @@ public:
 	}
 
 	const MetaType * getUpType() const {
-		return upType;
+		return upTypeData.upType;
+	}
+
+	const MetaType * getUpType(const size_t i) const {
+		if(i == 0) {
+			return upTypeData.upType;
+		}
+		else {
+			return upTypeData.moreUpType[i - 1];
+		}
+	}
+
+	size_t getUpTypeCount() const {
+		return upTypeData.count;
 	}
 
 	TypeKind getTypeKind() const {
@@ -220,7 +240,7 @@ public:
 
 private:
 	const UnifiedType * unifiedType;
-	const MetaType * upType;
+	UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
 
@@ -243,31 +263,93 @@ const UnifiedType * getUnifiedType()
 	return &unifiedType;
 }
 
+namespace internal_ {
+
 template <typename T>
 auto doGetMetaType()
--> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
+	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
+
+template <typename T>
+struct UpTypeGetter
+{
+	static UpTypeData getUpType() {
+		const MetaType * upType = doGetMetaType<T>();
+		return {
+			upType,
+			nullptr,
+			upType == nullptr ? (uint16_t)0 : (uint16_t)1
+		};
+	}
+};
+
+template <typename Arg0, typename Arg1, typename ...Args>
+struct UpTypeGetter <TypeList<Arg0, Arg1, Args...> >
+{
+	static const MetaType ** makeMoreUpTypes()
+	{
+		static std::array<const MetaType *, sizeof...(Args) + 1> moreUpTypes {
+			getMetaType<Arg1>(),
+			getMetaType<Args>()...,
+		};
+		return moreUpTypes.data();
+	}
+
+	static UpTypeData getUpType() {
+		return {
+			doGetMetaType<Arg0>(),
+			makeMoreUpTypes(),
+			(uint16_t)(sizeof...(Args) + 2)
+		};
+	}
+};
+
+template <typename T>
+struct UpTypeGetter <TypeList<T> > : public UpTypeGetter<T>
+{
+};
+
+template <>
+struct UpTypeGetter <TypeList<> >
+{
+	static UpTypeData getUpType() {
+		return {
+			nullptr,
+			nullptr,
+			(uint16_t)0
+		};
+	}
+};
+
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
 auto doGetMetaType()
--> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
+	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
 {
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType (
 		getUnifiedType<typename std::remove_cv<T>::type>(),
-		doGetMetaType<typename M::UpType>(),
+		UpTypeGetter<typename M::UpType>::getUpType(),
 		M::typeFlags
 	);
 	return &metaType;
 }
 
+} // namespace internal_
+
 template <typename T>
 const MetaType * getMetaType()
 {
-	return doGetMetaType<T>();
+	return internal_::doGetMetaType<T>();
 }
 
 template <typename T>

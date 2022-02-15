@@ -9,7 +9,7 @@
 
 namespace {
 
-TEST_CASE("MetaType")
+TEST_CASE("MetaType, arithmetic")
 {
 	REQUIRE(metapp::getMetaType<int>() == metapp::getMetaType<int>());
 	REQUIRE(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
@@ -22,5 +22,12 @@ TEST_CASE("MetaType")
 	REQUIRE(metapp::getMetaType<const int &>()->getUpType()->isConst());
 }
 
+TEST_CASE("MetaType, std::map")
+{
+	auto metaType = metapp::getMetaType<std::map<int, std::string> >();
+	REQUIRE(metaType->getUpTypeCount() == 2);
+	REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkInt);
+	REQUIRE(metaType->getUpType(1)->getTypeKind() == metapp::tkString);
+}
 
 } // namespace

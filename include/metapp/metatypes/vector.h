@@ -7,10 +7,10 @@
 
 namespace metapp {
 
-template <typename T, typename Alloc>
-struct BaseDeclareMetaType <std::vector<T, Alloc> > : public DeclareObjectMetaType<std::vector<T, Alloc> >
+template <typename T, typename Allocator>
+struct BaseDeclareMetaType <std::vector<T, Allocator> >
+	: public DeclareObjectMetaType<std::vector<T, Allocator> >
 {
-public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkVector;
 

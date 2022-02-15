@@ -56,6 +56,18 @@ constexpr TypeKind tkForwardList(tkOtherBegin + 10); // 40
 constexpr TypeKind tkStack(tkOtherBegin + 11); // 41
 constexpr TypeKind tkQueue(tkOtherBegin + 12); // 42
 constexpr TypeKind tkPriorityQueue(tkOtherBegin + 13); // 43
+constexpr TypeKind tkMap(tkOtherBegin + 14); // 44
+constexpr TypeKind tkMultimap(tkOtherBegin + 15); // 45
+constexpr TypeKind tkSet(tkOtherBegin + 16); // 46
+constexpr TypeKind tkMultiset(tkOtherBegin + 17); // 47
+constexpr TypeKind tkUnorderedMap(tkOtherBegin + 18); // 48
+constexpr TypeKind tkUnorderedMultimap(tkOtherBegin + 19); // 49
+constexpr TypeKind tkUnorderedSet(tkOtherBegin + 18); // 48
+constexpr TypeKind tkUnorderedMultiset(tkOtherBegin + 19); // 49
+constexpr TypeKind tkPair(tkOtherBegin + 20); // 50
+constexpr TypeKind tkTuple(tkOtherBegin + 21); // 51
+constexpr TypeKind tkAny(tkOtherBegin + 22); // 52
+constexpr TypeKind tkStdVariant(tkOtherBegin + 23); // 53
 
 constexpr TypeKind tkUser(1024);
 
