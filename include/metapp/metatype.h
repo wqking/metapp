@@ -29,8 +29,9 @@ class UnifiedType
 {
 public:
 	constexpr UnifiedType();
-	constexpr UnifiedType(const TypeKind typeKind, internal_::FuncMetaMethod metaMethod);
+	constexpr UnifiedType(const char * name, const TypeKind typeKind, internal_::FuncMetaMethod metaMethod);
 
+	const char * getName() const;
 	TypeKind getTypeKind() const;
 
 	void constructDefault(MetaTypeData & data) const;
@@ -42,6 +43,7 @@ public:
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
 private:
+	const char * name;
 	TypeKind typeKind;
 	internal_::FuncMetaMethod metaMethod;
 };
@@ -52,6 +54,10 @@ struct DeclareMetaTypeRoot
 	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeFlags typeFlags = 0;
+
+	static const char * getName() {
+		return "";
+	}
 
 	static const void * getAddress(const MetaTypeData & /*data*/) {
 		return nullptr;
@@ -101,6 +107,7 @@ public:
 	const MetaType * getUpType(const size_t i) const;
 	size_t getUpTypeCount() const;
 
+	const char * getName() const;
 	TypeKind getTypeKind() const;
 
 	bool isConst() const;
@@ -132,6 +139,7 @@ const UnifiedType * getUnifiedType()
 	using M = DeclareMetaType<T>;
 
 	static const UnifiedType unifiedType (
+		M::getName(),
 		M::typeKind,
 		&internal_::commonMetaMethod<M>
 	);

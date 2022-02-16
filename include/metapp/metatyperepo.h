@@ -6,25 +6,69 @@
 
 #include <unordered_map>
 #include <string>
+#include <cstring>
 
 namespace metapp {
+
+struct StringEqual
+{
+	bool operator () (const char * a, const char * b) const {
+		return a == b || strcmp(a, b) == 0;
+	}
+};
+
+// http://isthe.com/chongo/tech/comp/fnv/#FNV-param
+template <int size>
+struct HashParameter
+{
+};
+
+template <>
+struct HashParameter <8>
+{
+	// 64 bits
+	static constexpr size_t prime = (size_t)1099511628211ULL;
+	static constexpr size_t offsetBasis = (size_t)14695981039346656037ULL;
+	static constexpr size_t shift = 3;
+	static constexpr size_t size = 8;
+};
+
+template <>
+struct HashParameter <4>
+{
+	// 32 bits
+	static constexpr size_t prime = 16777619U;
+	static constexpr size_t offsetBasis = 2166136261U;
+	static constexpr size_t shift = 2;
+	static constexpr size_t size = 4;
+};
+
+struct StringHash
+{
+	size_t operator () (const char * s) const
+	{
+		const size_t length = strlen(s);
+		const size_t count = (length >> HashParameter<sizeof(size_t)>::shift);
+		size_t result = HashParameter<sizeof(size_t)>::offsetBasis;
+		size_t i = 0;
+		for(; i < count * HashParameter<sizeof(size_t)>::size; i += HashParameter<sizeof(size_t)>::size) {
+			result ^= *(const size_t *)(s + i);
+			result *= HashParameter<sizeof(size_t)>::prime;
+		}
+		for(; i < length; ++i) {
+			result ^= (size_t)s[i];
+			result *= HashParameter<sizeof(size_t)>::prime;
+		}
+		return result;
+	}
+};
 
 class MetaTypeRepo
 {
 public:
-	void registerMetaType(const MetaType * metaType) {
-		metaTypeMap[metaType->getTypeKind()] = metaType;
-	}
+	void registerMetaType(const MetaType * metaType);
 
-	const MetaType * getMetaType(const TypeKind typeKind) const {
-		auto it = metaTypeMap.find(typeKind);
-		if(it != metaTypeMap.end()) {
-			return it->second;
-		}
-		else {
-			return nullptr;
-		}
-	}
+	const MetaType * getMetaType(const TypeKind typeKind) const;
 
 private:
 	MetaTypeRepo();
@@ -33,64 +77,18 @@ private:
 	MetaTypeRepo(MetaTypeRepo &&) = delete;
 
 private:
-	std::unordered_map<TypeKind, const MetaType *> metaTypeMap;
+	std::unordered_map<TypeKind, const MetaType *> metaTypeKindMap;
+	std::unordered_map<const char *, const MetaType *, StringHash, StringEqual> metaTypeNameMap;
 
 	friend MetaTypeRepo * getMetaTypeRepo();
 };
 
-namespace internal_ {
-
-template <typename T>
-struct RegisterMetaType;
-
-template <typename Arg0, typename ...Args>
-struct RegisterMetaType <TypeList<Arg0, Args...> >
-{
-	static void registerMetaType(MetaTypeRepo * metaTypeRepo)
-	{
-		metaTypeRepo->registerMetaType(getMetaType<Arg0>());
-		RegisterMetaType<TypeList<Args...> >::registerMetaType(metaTypeRepo);
-	}
-};
-
-template <>
-struct RegisterMetaType <TypeList<> >
-{
-	static void registerMetaType(MetaTypeRepo * /*metaTypeRepo*/)
-	{
-	}
-};
-
-} // namespace internal_
-
-inline MetaTypeRepo::MetaTypeRepo() : metaTypeMap() {
-	internal_::RegisterMetaType<TypeList<
-		void,
-		std::string,
-		std::wstring,
-		bool,
-		char, wchar_t,
-		signed char, unsigned char,
-		short, unsigned short,
-		int, unsigned int,
-		long, unsigned long,
-		long long, unsigned long long,
-		float, double, long double
-	> >::registerMetaType(this);
-}
-
-inline MetaTypeRepo * getMetaTypeRepo()
-{
-	static MetaTypeRepo metaTypeRepo;
-	return &metaTypeRepo;
-}
+MetaTypeRepo * getMetaTypeRepo();
 
 template <typename ...Args>
-void registerMetaType()
-{
-	internal_::RegisterMetaType<TypeList<Args...> >::registerMetaType(getMetaTypeRepo());
-}
+void registerMetaType();
 
+#include "metapp/implement/metatyperepo_impl.h"
 
 } // namespace metapp
 

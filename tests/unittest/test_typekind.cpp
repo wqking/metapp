@@ -11,6 +11,7 @@ TEST_CASE("TypeKind, void")
 {
 	SECTION("void") {
 		REQUIRE(metapp::Variant((void *)0).getTypeKind() == metapp::tkPointer);
+		REQUIRE(metapp::Variant((void *)0).getMetaType()->getUpType()->getName() == std::string("void"));
 	}
 
 	SECTION("nullptr") {
@@ -23,21 +24,25 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("bool") {
 		REQUIRE(metapp::Variant(true).getTypeKind() == metapp::tkBool);
 		REQUIRE(metapp::Variant(true).get<bool>() == true);
+		REQUIRE(metapp::Variant(true).getMetaType()->getName() == std::string("bool"));
 	}
 
 	SECTION("char") {
 		REQUIRE(metapp::Variant('c').getTypeKind() == metapp::tkChar);
 		REQUIRE(metapp::Variant('c').get<char>() == 'c');
+		REQUIRE(metapp::Variant('c').getMetaType()->getName() == std::string("char"));
 	}
 
 	SECTION("signed char") {
 		REQUIRE(metapp::Variant((signed char)127).getTypeKind() == metapp::tkSignedChar);
 		REQUIRE(metapp::Variant((signed char)127).get<signed char>() == 127);
+		REQUIRE(metapp::Variant((signed char)127).getMetaType()->getName() == std::string("signed char"));
 	}
 
 	SECTION("unsigned char") {
 		REQUIRE(metapp::Variant((unsigned char)255).getTypeKind() == metapp::tkUnsignedChar);
 		REQUIRE(metapp::Variant((unsigned char)255).get<unsigned char>() == 255);
+		REQUIRE(metapp::Variant((unsigned char)255).getMetaType()->getName() == std::string("unsigned char"));
 	}
 
 	SECTION("wchar_t") {
@@ -45,6 +50,7 @@ TEST_CASE("TypeKind, fundamental")
 		REQUIRE(metapp::Variant(L'c').get<wchar_t>() == L'c');
 		REQUIRE(metapp::Variant((wchar_t)0x1cde).getTypeKind() == metapp::tkWideChar);
 		REQUIRE(metapp::Variant((wchar_t)0x1cde).get<wchar_t>() == (wchar_t)0x1cde);
+		REQUIRE(metapp::Variant((wchar_t)0x1cde).getMetaType()->getName() == std::string("wchar_t"));
 	}
 
 	SECTION("short") {
@@ -52,6 +58,7 @@ TEST_CASE("TypeKind, fundamental")
 		REQUIRE(metapp::Variant((short)5).get<short>() == 5);
 		REQUIRE(metapp::Variant((short)0x6789).getTypeKind() == metapp::tkShort);
 		REQUIRE(metapp::Variant((short)0x6789).get<short>() == 0x6789);
+		REQUIRE(metapp::Variant((short)0x6789).getMetaType()->getName() == std::string("short"));
 	}
 
 	SECTION("unsigned short") {
@@ -59,11 +66,13 @@ TEST_CASE("TypeKind, fundamental")
 		REQUIRE(metapp::Variant((unsigned short)5).get<unsigned short>() == 5);
 		REQUIRE(metapp::Variant((unsigned short)0xf987).getTypeKind() == metapp::tkUnsignedShort);
 		REQUIRE(metapp::Variant((unsigned short)0xf987).get<unsigned short>() == 0xf987);
+		REQUIRE(metapp::Variant((unsigned short)0xf987).getMetaType()->getName() == std::string("unsigned short"));
 	}
 
 	SECTION("int") {
 		REQUIRE(metapp::Variant(98).getTypeKind() == metapp::tkInt);
 		REQUIRE(metapp::Variant(98).get<int>() == 98);
+		REQUIRE(metapp::Variant(98).getMetaType()->getName() == std::string("int"));
 		REQUIRE(metapp::Variant(std::numeric_limits<int>::max()).getTypeKind() == metapp::tkInt);
 		REQUIRE(metapp::Variant(std::numeric_limits<int>::max()).get<int>() == std::numeric_limits<int>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<int>::min()).getTypeKind() == metapp::tkInt);
@@ -73,6 +82,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("unsigned int") {
 		REQUIRE(metapp::Variant(98u).getTypeKind() == metapp::tkUnsignedInt);
 		REQUIRE(metapp::Variant(98u).get<unsigned int>() == 98u);
+		REQUIRE(metapp::Variant(98u).getMetaType()->getName() == std::string("unsigned int"));
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned int>::max()).getTypeKind() == metapp::tkUnsignedInt);
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned int>::max()).get<unsigned int>() == std::numeric_limits<unsigned int>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned int>::min()).getTypeKind() == metapp::tkUnsignedInt);
@@ -82,6 +92,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("long") {
 		REQUIRE(metapp::Variant(9L).getTypeKind() == metapp::tkLong);
 		REQUIRE(metapp::Variant(9L).get<long>() == 9L);
+		REQUIRE(metapp::Variant(9L).getMetaType()->getName() == std::string("long"));
 		REQUIRE(metapp::Variant(std::numeric_limits<long>::max()).getTypeKind() == metapp::tkLong);
 		REQUIRE(metapp::Variant(std::numeric_limits<long>::max()).get<long>() == std::numeric_limits<long>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<long>::min()).getTypeKind() == metapp::tkLong);
@@ -91,6 +102,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("unsigned long") {
 		REQUIRE(metapp::Variant(9UL).getTypeKind() == metapp::tkUnsignedLong);
 		REQUIRE(metapp::Variant(9UL).get<unsigned long>() == 9UL);
+		REQUIRE(metapp::Variant(9UL).getMetaType()->getName() == std::string("unsigned long"));
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long>::max()).getTypeKind() == metapp::tkUnsignedLong);
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long>::max()).get<unsigned long>() == std::numeric_limits<unsigned long>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long>::min()).getTypeKind() == metapp::tkUnsignedLong);
@@ -100,6 +112,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("long long") {
 		REQUIRE(metapp::Variant(9LL).getTypeKind() == metapp::tkLongLong);
 		REQUIRE(metapp::Variant(9LL).get<long long>() == 9LL);
+		REQUIRE(metapp::Variant(9LL).getMetaType()->getName() == std::string("long long"));
 		REQUIRE(metapp::Variant(std::numeric_limits<long long>::max()).getTypeKind() == metapp::tkLongLong);
 		REQUIRE(metapp::Variant(std::numeric_limits<long long>::max()).get<long long>() == std::numeric_limits<long long>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<long long>::min()).getTypeKind() == metapp::tkLongLong);
@@ -109,6 +122,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("unsigned long long") {
 		REQUIRE(metapp::Variant(9ULL).getTypeKind() == metapp::tkUnsignedLongLong);
 		REQUIRE(metapp::Variant(9ULL).get<unsigned long long>() == 9ULL);
+		REQUIRE(metapp::Variant(9ULL).getMetaType()->getName() == std::string("unsigned long long"));
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long long>::max()).getTypeKind() == metapp::tkUnsignedLongLong);
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long long>::max()).get<unsigned long long>() == std::numeric_limits<unsigned long long>::max());
 		REQUIRE(metapp::Variant(std::numeric_limits<unsigned long long>::min()).getTypeKind() == metapp::tkUnsignedLongLong);
@@ -118,6 +132,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("float") {
 		REQUIRE(metapp::Variant(123.5678f).getTypeKind() == metapp::tkFloat);
 		REQUIRE(metapp::Variant(123.5678f).get<float>() == Approx(123.5678f));
+		REQUIRE(metapp::Variant(123.5678f).getMetaType()->getName() == std::string("float"));
 		REQUIRE(metapp::Variant(std::numeric_limits<float>::max()).getTypeKind() == metapp::tkFloat);
 		REQUIRE(metapp::Variant(std::numeric_limits<float>::max()).get<float>() == Approx(std::numeric_limits<float>::max()));
 		REQUIRE(metapp::Variant(std::numeric_limits<float>::min()).getTypeKind() == metapp::tkFloat);
@@ -127,6 +142,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("double") {
 		REQUIRE(metapp::Variant(123.5678).getTypeKind() == metapp::tkDouble);
 		REQUIRE(metapp::Variant(123.5678).get<double>() == Approx(123.5678));
+		REQUIRE(metapp::Variant(123.5678).getMetaType()->getName() == std::string("double"));
 		REQUIRE(metapp::Variant(std::numeric_limits<double>::max()).getTypeKind() == metapp::tkDouble);
 		REQUIRE(metapp::Variant(std::numeric_limits<double>::max()).get<double>() == Approx(std::numeric_limits<double>::max()));
 		REQUIRE(metapp::Variant(std::numeric_limits<double>::min()).getTypeKind() == metapp::tkDouble);
@@ -136,6 +152,7 @@ TEST_CASE("TypeKind, fundamental")
 	SECTION("long double") {
 		REQUIRE(metapp::Variant((long double)123.5678).getTypeKind() == metapp::tkLongDouble);
 		REQUIRE(metapp::Variant((long double)123.5678).get<long double>() == Approx((long double)123.5678));
+		REQUIRE(metapp::Variant((long double)123.5678).getMetaType()->getName() == std::string("long double"));
 		REQUIRE(metapp::Variant(std::numeric_limits<long double>::max()).getTypeKind() == metapp::tkLongDouble);
 		REQUIRE(metapp::Variant(std::numeric_limits<long double>::max()).get<long double>() == Approx(std::numeric_limits<long double>::max()));
 		REQUIRE(metapp::Variant(std::numeric_limits<long double>::min()).getTypeKind() == metapp::tkLongDouble);

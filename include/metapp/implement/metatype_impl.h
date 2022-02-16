@@ -1,14 +1,20 @@
 inline constexpr UnifiedType::UnifiedType()
-	: typeKind(tkEmpty), metaMethod()
+	: name(""), typeKind(tkEmpty), metaMethod()
 {
 }
 
 inline constexpr UnifiedType::UnifiedType(
+		const char * name,
 		const TypeKind typeKind,
 		internal_::FuncMetaMethod metaMethod
 	)
-	: typeKind(typeKind), metaMethod(metaMethod)
+	: name(name), typeKind(typeKind), metaMethod(metaMethod)
 {
+}
+
+inline const char * UnifiedType::getName() const
+{
+	return name;
 }
 
 inline TypeKind UnifiedType::getTypeKind() const
@@ -76,73 +82,93 @@ inline void UnifiedType::streamOut(std::ostream & stream, const MetaTypeData & d
 
 
 inline constexpr MetaType::MetaType(
-	const UnifiedType * unifiedType,
-	const internal_::UpTypeData & upTypeData,
-	const TypeFlags typeFlags
-) :
+		const UnifiedType * unifiedType,
+		const internal_::UpTypeData & upTypeData,
+		const TypeFlags typeFlags
+	) :
 	unifiedType(unifiedType),
 	upTypeData(upTypeData),
 	typeFlags(typeFlags)
 {
 }
 
-inline const UnifiedType * MetaType::getUnifiedType() const {
+inline const UnifiedType * MetaType::getUnifiedType() const
+{
 	return unifiedType;
 }
 
-inline const MetaType * MetaType::getUpType() const {
+inline const MetaType * MetaType::getUpType() const
+{
 	return upTypeData.upTypeList[0];
 }
 
-inline const MetaType * MetaType::getUpType(const size_t i) const {
+inline const MetaType * MetaType::getUpType(const size_t i) const
+{
 	return upTypeData.upTypeList[i];
 }
 
-inline size_t MetaType::getUpTypeCount() const {
+inline size_t MetaType::getUpTypeCount() const
+{
 	return upTypeData.count;
 }
 
-inline TypeKind MetaType::getTypeKind() const {
+inline const char * MetaType::getName() const
+{
+	return unifiedType->getName();
+}
+
+inline TypeKind MetaType::getTypeKind() const
+{
 	return unifiedType->getTypeKind();
 }
 
-inline bool MetaType::isConst() const {
+inline bool MetaType::isConst() const
+{
 	return typeFlags & tfConst;
 }
 
-inline bool MetaType::isVolatile() const {
+inline bool MetaType::isVolatile() const
+{
 	return typeFlags & tfVolatile;
 }
 
-inline bool MetaType::isPodStorage() const {
+inline bool MetaType::isPodStorage() const
+{
 	return typeFlags & tfPodStorage;
 }
 
-inline void MetaType::constructDefault(MetaTypeData & data) const {
+inline void MetaType::constructDefault(MetaTypeData & data) const
+{
 	unifiedType->constructDefault(data);
 }
 
-inline void MetaType::constructWith(MetaTypeData & data, const void * value) const {
+inline void MetaType::constructWith(MetaTypeData & data, const void * value) const
+{
 	unifiedType->constructWith(data, value);
 }
 
-inline const void * MetaType::getAddress(const MetaTypeData & data) const {
+inline const void * MetaType::getAddress(const MetaTypeData & data) const
+{
 	return unifiedType->getAddress(data);
 }
 
-inline bool MetaType::canCast(const MetaType * toMetaType) const {
+inline bool MetaType::canCast(const MetaType * toMetaType) const
+{
 	return unifiedType->canCast(toMetaType);
 }
 
-inline void MetaType::cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
+inline void MetaType::cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const
+{
 	unifiedType->cast(data, toMetaType, toData);
 }
 
-inline void MetaType::streamIn(std::istream & stream, MetaTypeData & data) const {
+inline void MetaType::streamIn(std::istream & stream, MetaTypeData & data) const
+{
 	unifiedType->streamIn(stream, data);
 }
 
-inline void MetaType::streamOut(std::ostream & stream, const MetaTypeData & data) const {
+inline void MetaType::streamOut(std::ostream & stream, const MetaTypeData & data) const
+{
 	unifiedType->streamOut(stream, data);
 }
 

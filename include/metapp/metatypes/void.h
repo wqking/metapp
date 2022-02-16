@@ -10,6 +10,10 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
 
+	static const char * getName() {
+		return "void";
+	}
+
 	static void constructDefault(MetaTypeData & /*data*/) {
 	}
 
