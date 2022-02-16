@@ -3,7 +3,6 @@
 
 #include "metapp/typekind.h"
 #include "metapp/metatypedata.h"
-#include "metapp/metatypedatautil.h"
 #include "metapp/exception.h"
 #include "metapp/typelist.h"
 #include "metapp/internal/metatype_i.h"
@@ -397,6 +396,18 @@ struct DeclareMetaTypeBase <internal_::DummyEmptyType> : public DeclareMetaTypeR
 
 };
 
+template <typename Iterator>
+bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end);
+
+template <typename T>
+bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList);
+
+template <typename T, typename U>
+bool matchUpTypeKinds(const MetaType * metaType, const U & typeKindList);
+
+bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
+
+#include "metapp/implement/metatype_impl.h"
 
 } // namespace metapp
 
