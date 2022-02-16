@@ -28,82 +28,23 @@ const MetaType * getMetaType();
 class UnifiedType
 {
 public:
-	constexpr UnifiedType() :
-		typeKind(tkEmpty),
-		metaMethod()
-	{
-	}
+	constexpr UnifiedType();
+	constexpr UnifiedType(const TypeKind typeKind, internal_::FuncMetaMethod metaMethod);
 
-	constexpr UnifiedType(
-		const TypeKind typeKind,
-		internal_::FuncMetaMethod metaMethod
-	) :
-		typeKind(typeKind),
-		metaMethod(metaMethod)
-	{
-	}
+	TypeKind getTypeKind() const;
 
-	TypeKind getTypeKind() const {
-		return typeKind;
-	}
-
-	void constructDefault(MetaTypeData & data) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::constructDefault;
-		param.paramConstruct = { &data };
-		metaMethod(param);
-	}
-
-	void constructWith(MetaTypeData & data, const void * value) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::constructWith;
-		param.paramConstructWith = { &data, value };
-		metaMethod(param);
-	}
-
-	const void * getAddress(const MetaTypeData & data) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::getAddress;
-		param.paramGetAddress = { &data, nullptr };
-		metaMethod(param);
-		return param.paramGetAddress.value;
-	}
-
-	bool canCast(const MetaType * toMetaType) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::canCast;
-		param.paramCanCast = { toMetaType, false };
-		metaMethod(param);
-		return param.paramCanCast.result;
-	}
-
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::cast;
-		param.paramCast = { &data, toMetaType, toData };
-		metaMethod(param);
-	}
-
-	void streamIn(std::istream & stream, MetaTypeData & data) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::streamIn;
-		param.paramStreamIn = { &stream, &data };
-		metaMethod(param);
-	}
-
-	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
-		internal_::MetaMethodParam param;
-		param.action = internal_::MetaMethodAction::streamOut;
-		param.paramStreamOut = { &stream, &data };
-		metaMethod(param);
-	}
+	void constructDefault(MetaTypeData & data) const;
+	void constructWith(MetaTypeData & data, const void * value) const;
+	const void * getAddress(const MetaTypeData & data) const;
+	bool canCast(const MetaType * toMetaType) const;
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
+	void streamIn(std::istream & stream, MetaTypeData & data) const;
+	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
 private:
 	TypeKind typeKind;
 	internal_::FuncMetaMethod metaMethod;
 };
-
-constexpr UnifiedType emptyUnifiedType;
 
 template <typename T>
 struct DeclareMetaTypeRoot
@@ -152,72 +93,27 @@ public:
 		const UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
-	) :
-		unifiedType(unifiedType),
-		upTypeData(upTypeData),
-		typeFlags(typeFlags)
-	{
-	}
+	);
 
-	const UnifiedType * getUnifiedType() const {
-		return unifiedType;
-	}
+	const UnifiedType * getUnifiedType() const;
 
-	const MetaType * getUpType() const {
-		return upTypeData.upTypeList[0];
-	}
+	const MetaType * getUpType() const;
+	const MetaType * getUpType(const size_t i) const;
+	size_t getUpTypeCount() const;
 
-	const MetaType * getUpType(const size_t i) const {
-		return upTypeData.upTypeList[i];
-	}
+	TypeKind getTypeKind() const;
 
-	size_t getUpTypeCount() const {
-		return upTypeData.count;
-	}
+	bool isConst() const;
+	bool isVolatile() const;
+	bool isPodStorage() const;
 
-	TypeKind getTypeKind() const {
-		return unifiedType->getTypeKind();
-	}
-
-	bool isConst() const {
-		return typeFlags & tfConst;
-	}
-
-	bool isVolatile() const {
-		return typeFlags & tfVolatile;
-	}
-
-	bool isPodStorage() const {
-		return typeFlags & tfPodStorage;
-	}
-
-	void constructDefault(MetaTypeData & data) const {
-		unifiedType->constructDefault(data);
-	}
-
-	void constructWith(MetaTypeData & data, const void * value) const {
-		unifiedType->constructWith(data, value);
-	}
-
-	const void * getAddress(const MetaTypeData & data) const {
-		return unifiedType->getAddress(data);
-	}
-
-	bool canCast(const MetaType * toMetaType) const {
-		return unifiedType->canCast(toMetaType);
-	}
-	
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const {
-		unifiedType->cast(data, toMetaType, toData);
-	}
-
-	void streamIn(std::istream & stream, MetaTypeData & data) const {
-		unifiedType->streamIn(stream, data);
-	}
-
-	void streamOut(std::ostream & stream, const MetaTypeData & data) const {
-		unifiedType->streamOut(stream, data);
-	}
+	void constructDefault(MetaTypeData & data) const;
+	void constructWith(MetaTypeData & data, const void * value) const;
+	const void * getAddress(const MetaTypeData & data) const;
+	bool canCast(const MetaType * toMetaType) const;
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
+	void streamIn(std::istream & stream, MetaTypeData & data) const;
+	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
 private:
 	const UnifiedType * unifiedType;
@@ -242,85 +138,8 @@ const UnifiedType * getUnifiedType()
 	return &unifiedType;
 }
 
-namespace internal_ {
-
 template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
-
-template <typename T>
-struct UpTypeGetter;
-
-template <typename Arg0, typename ...Args>
-struct UpTypeGetter <TypeList<Arg0, Args...> >
-{
-	static const MetaType ** makeUpTypeList()
-	{
-		static std::array<const MetaType *, sizeof...(Args) + 1> upTypeList {
-			getMetaType<Arg0>(),
-			getMetaType<Args>()...,
-		};
-		return upTypeList.data();
-	}
-
-	static UpTypeData getUpType() {
-		return {
-			makeUpTypeList(),
-			(uint16_t)(sizeof...(Args) + 1)
-		};
-	}
-};
-
-template <>
-struct UpTypeGetter <TypeList<> >
-{
-	static UpTypeData getUpType() {
-		return {
-			nullptr,
-			(uint16_t)0
-		};
-	}
-};
-
-template <typename T>
-struct UpTypeGetter
-{
-	static UpTypeData getUpType() {
-		return UpTypeGetter<TypeList<T> >::getUpType();
-	}
-};
-
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
-{
-	return nullptr;
-}
-
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
-{
-	using M = DeclareMetaType<T>;
-
-	static const MetaType metaType (
-		getUnifiedType<typename std::remove_cv<T>::type>(),
-		UpTypeGetter<typename M::UpType>::getUpType(),
-		M::typeFlags
-	);
-	return &metaType;
-}
-
-} // namespace internal_
-
-template <typename T>
-const MetaType * getMetaType()
-{
-	return internal_::doGetMetaType<T>();
-}
+const MetaType * getMetaType();
 
 template <typename T>
 struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
