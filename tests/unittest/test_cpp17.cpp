@@ -11,8 +11,6 @@
 #include <iostream>
 #include <climits>
 
-namespace {
-
 TEST_CASE("Any")
 {
 	{
@@ -82,7 +80,5 @@ TEST_CASE("Any")
 	}
 
 }
-
-} // namespace
 
 #endif

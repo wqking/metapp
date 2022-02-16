@@ -28,8 +28,6 @@ struct DeclareMetaType <MyClass *> : public DeclareMetaTypeBase<MyClass *>
 
 } // metapp
 
-namespace {
-
 TEST_CASE("User type")
 {
 	MyClass obj{ 38 };
@@ -46,4 +44,3 @@ TEST_CASE("User type")
 }
 
 
-} // namespace

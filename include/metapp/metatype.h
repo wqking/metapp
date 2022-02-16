@@ -5,6 +5,7 @@
 #include "metapp/metatypedata.h"
 #include "metapp/metatypedatautil.h"
 #include "metapp/exception.h"
+#include "metapp/typelist.h"
 #include "metapp/internal/metatype_i.h"
 
 #include <type_traits>

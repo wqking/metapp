@@ -7,8 +7,6 @@
 #include <iostream>
 #include <climits>
 
-namespace {
-
 TEST_CASE("MetaType, arithmetic")
 {
 	REQUIRE(metapp::getMetaType<int>() == metapp::getMetaType<int>());
@@ -30,4 +28,3 @@ TEST_CASE("MetaType, std::map")
 	REQUIRE(metaType->getUpType(1)->getTypeKind() == metapp::tkString);
 }
 
-} // namespace

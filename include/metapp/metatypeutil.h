@@ -1,20 +1,13 @@
 #ifndef METATYPEUTIL_H_969872685611
 #define METATYPEUTIL_H_969872685611
 
-#include "metapp/typekind.h"
-#include "metapp/typelist.h"
 #include "metapp/metatype.h"
-#include "metapp/metatypedata.h"
-#include "metapp/exception.h"
-#include "metapp/internal/typeutil_i.h"
 
 namespace metapp {
 
-template <typename T>
-inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)
+template <typename Iterator>
+inline bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end)
 {
-	auto begin = std::begin(typeKindList);
-	auto end = std::end(typeKindList);
 	while(begin != end) {
 		if(metaType == nullptr) {
 			return false;
@@ -26,6 +19,18 @@ inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_l
 		++begin;
 	}
 	return true;
+}
+
+template <typename T>
+inline bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList)
+{
+	return matchUpTypeKinds(metaType, std::begin(typeKindList), std::end(typeKindList));
+}
+
+template <typename T, typename U>
+inline bool matchUpTypeKinds(const MetaType * metaType, const U & typeKindList)
+{
+	return matchUpTypeKinds(metaType, std::begin(typeKindList), std::end(typeKindList));
 }
 
 inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)

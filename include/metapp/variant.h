@@ -85,7 +85,6 @@ public:
 
 	template <typename T>
 	T get() const {
-		assert(this->canGet<T>());
 		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
 	}
 

@@ -7,8 +7,6 @@
 #include <iostream>
 #include <climits>
 
-namespace {
-
 using namespace metapp;
 template <typename Arg0, typename ...Args>
 const MetaType ** getXxx()
@@ -100,4 +98,3 @@ TEST_CASE("aaa")
 
 }
 
-} // namespace

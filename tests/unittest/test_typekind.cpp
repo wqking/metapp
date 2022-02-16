@@ -193,6 +193,15 @@ TEST_CASE("TypeKind, pointer")
 
 }
 
+TEST_CASE("TypeKind, void ***")
+{
+	void *** p = nullptr;
+	metapp::Variant v(p);
+	REQUIRE(v.getTypeKind() == metapp::tkPointer);
+	using namespace metapp;
+	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
+}
+
 TEST_CASE("TypeKind, std::shared_ptr")
 {
 	SECTION("std::shared_ptr<int>") {
@@ -209,7 +218,7 @@ TEST_CASE("TypeKind, std::shared_ptr")
 TEST_CASE("TypeKind, std::vector")
 {
 	SECTION("std::vector<int>") {
-		std::vector<int> vec{5};
+		std::vector<int> vec{ 5 };
 		metapp::Variant v(vec);
 		REQUIRE(v.getTypeKind() == metapp::tkVector);
 		REQUIRE(v.get<std::vector<int>>()[0] == 5);
@@ -218,13 +227,17 @@ TEST_CASE("TypeKind, std::vector")
 	}
 }
 
-TEST_CASE("TypeKind, void ***")
+TEST_CASE("TypeKind, std::list")
 {
-	void *** p = nullptr;
-	metapp::Variant v(p);
-	REQUIRE(v.getTypeKind() == metapp::tkPointer);
-	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
+	SECTION("std::list<std::string>") {
+		std::list<std::string> list{ "hello", "world" };
+		metapp::Variant v(list);
+		REQUIRE(v.getTypeKind() == metapp::tkList);
+		REQUIRE(v.get<const std::list<std::string> &>().front() == "hello");
+		REQUIRE(v.get<const std::list<std::string> &>().back() == "world");
+		using namespace metapp;
+		REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkList, tkString }));
+	}
 }
 
 const void * func1(int, const std::vector<int> &) { return nullptr; }
@@ -233,8 +246,9 @@ TEST_CASE("TypeKind, function pointer")
 {
 	metapp::Variant v(&func1);
 	REQUIRE(v.getTypeKind() == metapp::tkFunction);
+	REQUIRE(v.get<void *>() == (void *)&func1);
+
 	using namespace metapp;
-	
 	auto metaType = v.getMetaType();
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
@@ -260,15 +274,27 @@ struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
 };
 } // namespace metapp
 
-
 TEST_CASE("TypeKind, member data")
 {
 	metapp::Variant v(&Class1::data);
 	REQUIRE(v.getTypeKind() == metapp::tkMemberPointer);
+	
 	using namespace metapp;
-
 	auto metaType = v.getMetaType();
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkArray, tkInt }));
+}
+
+TEST_CASE("TypeKind, member function")
+{
+	metapp::Variant v(&Class1::func);
+	REQUIRE(v.getTypeKind() == metapp::tkMemberFunction);
+	
+	using namespace metapp;
+	auto metaType = v.getMetaType();
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkVoid }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkInt }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkVector, tkInt }));
 }
 

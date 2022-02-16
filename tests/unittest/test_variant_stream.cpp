@@ -7,8 +7,6 @@
 #include <string>
 #include <sstream>
 
-namespace {
-
 TEST_CASE("Input stream")
 {
 	std::stringstream ss;
@@ -81,4 +79,3 @@ TEST_CASE("Output stream")
 }
 
 
-} // namespace

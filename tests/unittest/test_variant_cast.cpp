@@ -6,8 +6,6 @@
 #include <string>
 #include <cstring>
 
-namespace {
-
 struct MyClass
 {
 	int value;
@@ -46,4 +44,3 @@ TEST_CASE("Cast std::wstring to wchar_t *")
 	REQUIRE(wcscmp(v.cast<wchar_t *>(), ws.c_str()) == 0);
 }
 
-} // namespace

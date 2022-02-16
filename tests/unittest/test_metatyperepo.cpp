@@ -7,8 +7,6 @@
 #include <iostream>
 #include <climits>
 
-namespace {
-
 TEST_CASE("MetaTypeRepo")
 {
 	metapp::getMetaTypeRepo()->getMetaType(metapp::tkInt);
@@ -16,4 +14,3 @@ TEST_CASE("MetaTypeRepo")
 }
 
 
-} // namespace
