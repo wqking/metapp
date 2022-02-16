@@ -7,7 +7,7 @@ namespace metapp {
 
 template <typename RT, typename ...Args>
 struct DeclareMetaType <RT (*)(Args...)>
-	: public BaseDeclareMetaType<RT (*)(Args...)>
+	: public DeclareMetaTypeBase<RT (*)(Args...)>
 {
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkFunction;
@@ -16,7 +16,7 @@ struct DeclareMetaType <RT (*)(Args...)>
 
 template <typename RT, typename ...Args>
 struct DeclareMetaType <RT (Args...)>
-	: public BaseDeclareMetaType <RT (*)(Args...)>
+	: public DeclareMetaType <RT (*)(Args...)>
 {
 };
 

@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename ...Types>
-struct BaseDeclareMetaType <std::tuple<Types...> >
+struct DeclareMetaTypeBase <std::tuple<Types...> >
 	: public DeclareObjectMetaType<std::tuple<Types...> >
 {
 	using UpType = TypeList<Types...>;

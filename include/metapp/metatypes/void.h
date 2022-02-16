@@ -6,7 +6,7 @@
 namespace metapp {
 
 template <>
-struct BaseDeclareMetaType <void> : public DeclareMetaTypeBase<void>
+struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
 

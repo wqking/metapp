@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename Key, typename T, typename Compare, typename Allocator>
-struct BaseDeclareMetaType <std::map<Key, T, Compare, Allocator> >
+struct DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 	: public DeclareObjectMetaType<std::map<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
@@ -17,7 +17,7 @@ struct BaseDeclareMetaType <std::map<Key, T, Compare, Allocator> >
 };
 
 template <typename Key, typename T, typename Compare, typename Allocator>
-struct BaseDeclareMetaType <std::multimap<Key, T, Compare, Allocator> >
+struct DeclareMetaTypeBase <std::multimap<Key, T, Compare, Allocator> >
 	: public DeclareObjectMetaType<std::multimap<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;

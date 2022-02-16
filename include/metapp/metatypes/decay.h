@@ -6,14 +6,14 @@
 namespace metapp {
 
 template <typename T>
-struct BaseDeclareMetaType <T, typename std::enable_if<std::is_array<T>::value>::type>
-	: public BaseDeclareMetaType<typename std::decay<T>::type>
+struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_array<T>::value>::type>
+	: public DeclareMetaTypeBase<typename std::decay<T>::type>
 {
 };
 
 template <typename T>
-struct BaseDeclareMetaType <T, typename std::enable_if<std::is_function<T>::value>::type>
-	: public BaseDeclareMetaType<typename std::decay<T>::type>
+struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_function<T>::value>::type>
+	: public DeclareMetaTypeBase<typename std::decay<T>::type>
 {
 };
 

@@ -7,9 +7,7 @@
 #include <iostream>
 #include <climits>
 
-namespace {
-
-TEST_CASE("TypeKind and get, void")
+TEST_CASE("TypeKind, void")
 {
 	SECTION("void") {
 		REQUIRE(metapp::Variant((void *)0).getTypeKind() == metapp::tkPointer);
@@ -20,7 +18,7 @@ TEST_CASE("TypeKind and get, void")
 	}
 }
 
-TEST_CASE("TypeKind and get, fundamental")
+TEST_CASE("TypeKind, fundamental")
 {
 	SECTION("bool") {
 		REQUIRE(metapp::Variant(true).getTypeKind() == metapp::tkBool);
@@ -146,7 +144,7 @@ TEST_CASE("TypeKind and get, fundamental")
 
 }
 
-TEST_CASE("TypeKind and get, string")
+TEST_CASE("TypeKind, string")
 {
 	SECTION("std::string") {
 		REQUIRE(metapp::Variant(std::string("abc")).getTypeKind() == metapp::tkString);
@@ -165,7 +163,7 @@ TEST_CASE("TypeKind and get, string")
 	}
 }
 
-TEST_CASE("TypeKind and get, pointer")
+TEST_CASE("TypeKind, pointer")
 {
 	SECTION("void *") {
 		metapp::Variant v((void *)0);
@@ -195,7 +193,7 @@ TEST_CASE("TypeKind and get, pointer")
 
 }
 
-TEST_CASE("TypeKind and get, std::shared_ptr")
+TEST_CASE("TypeKind, std::shared_ptr")
 {
 	SECTION("std::shared_ptr<int>") {
 		std::shared_ptr<int> sp = std::make_shared<int>(38);
@@ -208,7 +206,7 @@ TEST_CASE("TypeKind and get, std::shared_ptr")
 	}
 }
 
-TEST_CASE("TypeKind and get, std::vector")
+TEST_CASE("TypeKind, std::vector")
 {
 	SECTION("std::vector<int>") {
 		std::vector<int> vec{5};
@@ -229,5 +227,48 @@ TEST_CASE("TypeKind, void ***")
 	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
 }
 
+const void * func1(int, const std::vector<int> &) { return nullptr; }
 
-} // namespace
+TEST_CASE("TypeKind, function pointer")
+{
+	metapp::Variant v(&func1);
+	REQUIRE(v.getTypeKind() == metapp::tkFunction);
+	using namespace metapp;
+	
+	auto metaType = v.getMetaType();
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
+	
+	metaType = metapp::getMetaType<const void * (int, const std::vector<int> &)>();
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
+}
+
+struct Class1
+{
+	const void * func(int, const std::vector<int> &) { return nullptr; }
+	const std::array<int, 5> * data;
+};
+
+namespace metapp {
+template <>
+struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
+{
+	static constexpr TypeKind typeKind = 2000;
+};
+} // namespace metapp
+
+
+TEST_CASE("TypeKind, member data")
+{
+	metapp::Variant v(&Class1::data);
+	REQUIRE(v.getTypeKind() == metapp::tkMemberPointer);
+	using namespace metapp;
+
+	auto metaType = v.getMetaType();
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkArray, tkInt }));
+}
+

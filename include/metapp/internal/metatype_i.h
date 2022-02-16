@@ -115,6 +115,12 @@ void commonMetaMethod(MetaMethodParam & param)
 	}
 }
 
+struct UpTypeData
+{
+	const MetaType ** upTypeList;
+	uint16_t count;
+};
+
 
 } // namespace internal_
 

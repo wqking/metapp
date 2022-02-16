@@ -1,5 +1,5 @@
-#ifndef TUPLE_H_969872685611
-#define TUPLE_H_969872685611
+#ifndef STD_VARIANT_H_969872685611
+#define STD_VARIANT_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename ...Types>
-struct BaseDeclareMetaType <std::variant<Types...> >
-	: public DeclareObjectMetaType<std::variant<Types...> >
+struct DeclareMetaTypeBase <std::variant<Types...> >
+	: public DeclareMetaType<std::variant<Types...> >
 {
 	using UpType = TypeList<Types...>;
 	static constexpr TypeKind typeKind = tkStdVariant;

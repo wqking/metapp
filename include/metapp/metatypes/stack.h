@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Container>
-struct BaseDeclareMetaType <std::stack<T, Container> >
+struct DeclareMetaTypeBase <std::stack<T, Container> >
 	: public DeclareObjectMetaType<std::stack<T, Container> >
 {
 	using UpType = T;

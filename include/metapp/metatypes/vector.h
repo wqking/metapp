@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Allocator>
-struct BaseDeclareMetaType <std::vector<T, Allocator> >
+struct DeclareMetaTypeBase <std::vector<T, Allocator> >
 	: public DeclareObjectMetaType<std::vector<T, Allocator> >
 {
 	using UpType = T;

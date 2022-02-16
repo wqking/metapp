@@ -7,7 +7,7 @@ namespace metapp {
 
 template <typename C, typename RT, typename ...Args>
 struct DeclareMetaType <RT (C::*)(Args...)>
-	: public BaseDeclareMetaType <RT (C::*)(Args...)>
+	: public DeclareMetaTypeBase <RT (C::*)(Args...)>
 {
 	using UpType = TypeList <C, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
@@ -15,7 +15,7 @@ struct DeclareMetaType <RT (C::*)(Args...)>
 
 template <typename C, typename T>
 struct DeclareMetaType <T C::*>
-	: public BaseDeclareMetaType <T C::*>
+	: public DeclareMetaTypeBase <T C::*>
 {
 	using UpType = TypeList <C, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;

@@ -50,29 +50,29 @@ constexpr TypeKind tkMemberFunction = 36; // TBI
 constexpr TypeKind tkMemberPointer = 37; // TBI
 
 constexpr TypeKind tkSharedPtr = 60;
-constexpr TypeKind tkVector = 61;
-constexpr TypeKind tkList = 62;
-constexpr TypeKind tkDeque = 63;
-constexpr TypeKind tkArray = 64;
-constexpr TypeKind tkForwardList = 65;
-constexpr TypeKind tkStack = 66;
-constexpr TypeKind tkQueue = 67;
-constexpr TypeKind tkPriorityQueue = 68;
-constexpr TypeKind tkMap = 69;
-constexpr TypeKind tkMultimap = 70;
-constexpr TypeKind tkSet = 71;
-constexpr TypeKind tkMultiset = 72;
-constexpr TypeKind tkUnorderedMap = 73;
-constexpr TypeKind tkUnorderedMultimap = 74;
-constexpr TypeKind tkUnorderedSet = 75;
-constexpr TypeKind tkUnorderedMultiset = 76;
-constexpr TypeKind tkPair = 77;
-constexpr TypeKind tkTuple = 78;
-constexpr TypeKind tkAny = 79;
-constexpr TypeKind tkStdVariant = 80;
+constexpr TypeKind tkStdFunction = 61;
+constexpr TypeKind tkVector = 62;
+constexpr TypeKind tkList = 63;
+constexpr TypeKind tkDeque = 64;
+constexpr TypeKind tkArray = 65;
+constexpr TypeKind tkForwardList = 66;
+constexpr TypeKind tkStack = 67;
+constexpr TypeKind tkQueue = 68;
+constexpr TypeKind tkPriorityQueue = 69;
+constexpr TypeKind tkMap = 70;
+constexpr TypeKind tkMultimap = 71;
+constexpr TypeKind tkSet = 72;
+constexpr TypeKind tkMultiset = 73;
+constexpr TypeKind tkUnorderedMap = 74;
+constexpr TypeKind tkUnorderedMultimap = 75;
+constexpr TypeKind tkUnorderedSet = 76;
+constexpr TypeKind tkUnorderedMultiset = 77;
+constexpr TypeKind tkPair = 78;
+constexpr TypeKind tkTuple = 79;
+constexpr TypeKind tkAny = 80;
+constexpr TypeKind tkStdVariant = 81;
 
 constexpr TypeKind tkUser = 1024;
-
 
 using TypeFlags = uint16_t;
 

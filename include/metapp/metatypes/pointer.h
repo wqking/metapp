@@ -6,7 +6,7 @@
 namespace metapp {
 
 template <typename T>
-struct BaseDeclareMetaType <T *> : public DeclarePodMetaType<T *>
+struct DeclareMetaTypeBase <T *> : public DeclarePodMetaType<T *>
 {
 	using UpType = T;
 
@@ -22,7 +22,7 @@ struct BaseDeclareMetaType <T *> : public DeclarePodMetaType<T *>
 };
 
 template <>
-struct BaseDeclareMetaType <std::nullptr_t> : public BaseDeclareMetaType<void *>
+struct DeclareMetaTypeBase <std::nullptr_t> : public DeclareMetaTypeBase<void *>
 {
 };
 

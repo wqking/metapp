@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T>
-struct BaseDeclareMetaType <std::shared_ptr<T> >
-	: DeclareMetaTypeBase<std::shared_ptr<T> >
+struct DeclareMetaTypeBase <std::shared_ptr<T> >
+	: DeclareMetaTypeRoot<std::shared_ptr<T> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkSharedPtr;

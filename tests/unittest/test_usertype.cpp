@@ -15,13 +15,13 @@ struct MyClass
 namespace metapp {
 
 template <>
-struct DeclareMetaType <MyClass> : public BaseDeclareMetaType<MyClass>
+struct DeclareMetaType <MyClass> : public DeclareMetaTypeBase<MyClass>
 {
 	static constexpr TypeKind typeKind = 2000;
 };
 
 template <>
-struct DeclareMetaType <MyClass *> : public BaseDeclareMetaType<MyClass *>
+struct DeclareMetaType <MyClass *> : public DeclareMetaTypeBase<MyClass *>
 {
 	static constexpr TypeKind typeKind = 2001;
 };

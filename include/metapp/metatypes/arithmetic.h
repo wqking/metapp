@@ -22,7 +22,7 @@ using ArithmeticTypeList = TypeList<
 } // namespace internal_
 
 template <typename T>
-struct BaseDeclareMetaType <T,
+struct DeclareMetaTypeBase <T,
 	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclarePodMetaType<T>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);

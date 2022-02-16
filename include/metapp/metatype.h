@@ -17,7 +17,7 @@ namespace metapp {
 class MetaType;
 
 template <typename T, typename Enabled = void>
-struct BaseDeclareMetaType;
+struct DeclareMetaTypeBase;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -106,7 +106,7 @@ private:
 constexpr UnifiedType emptyUnifiedType;
 
 template <typename T>
-struct DeclareMetaTypeBase
+struct DeclareMetaTypeRoot
 {
 	using UpType = internal_::NoneUpType;
 
@@ -145,26 +145,12 @@ private:
 	}
 };
 
-struct UpTypeData
-{
-	const MetaType * upType;
-	const MetaType ** moreUpType;
-	uint16_t count;
-};
-
 class MetaType
 {
 public:
-	constexpr MetaType() :
-		unifiedType(&emptyUnifiedType),
-		upTypeData(),
-		typeFlags()
-	{
-	}
-
 	constexpr MetaType(
 		const UnifiedType * unifiedType,
-		const UpTypeData & upTypeData,
+		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) :
 		unifiedType(unifiedType),
@@ -178,16 +164,11 @@ public:
 	}
 
 	const MetaType * getUpType() const {
-		return upTypeData.upType;
+		return upTypeData.upTypeList[0];
 	}
 
 	const MetaType * getUpType(const size_t i) const {
-		if(i == 0) {
-			return upTypeData.upType;
-		}
-		else {
-			return upTypeData.moreUpType[i - 1];
-		}
+		return upTypeData.upTypeList[i];
 	}
 
 	size_t getUpTypeCount() const {
@@ -240,12 +221,12 @@ public:
 
 private:
 	const UnifiedType * unifiedType;
-	UpTypeData upTypeData;
+	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
 
 template <typename T, typename Enabled>
-struct DeclareMetaType : public BaseDeclareMetaType<T>
+struct DeclareMetaType : public DeclareMetaTypeBase<T>
 {
 };
 
@@ -271,42 +252,26 @@ auto doGetMetaType()
 	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
 
 template <typename T>
-struct UpTypeGetter
-{
-	static UpTypeData getUpType() {
-		const MetaType * upType = doGetMetaType<T>();
-		return {
-			upType,
-			nullptr,
-			upType == nullptr ? (uint16_t)0 : (uint16_t)1
-		};
-	}
-};
+struct UpTypeGetter;
 
-template <typename Arg0, typename Arg1, typename ...Args>
-struct UpTypeGetter <TypeList<Arg0, Arg1, Args...> >
+template <typename Arg0, typename ...Args>
+struct UpTypeGetter <TypeList<Arg0, Args...> >
 {
-	static const MetaType ** makeMoreUpTypes()
+	static const MetaType ** makeUpTypeList()
 	{
-		static std::array<const MetaType *, sizeof...(Args) + 1> moreUpTypes {
-			getMetaType<Arg1>(),
+		static std::array<const MetaType *, sizeof...(Args) + 1> upTypeList {
+			getMetaType<Arg0>(),
 			getMetaType<Args>()...,
 		};
-		return moreUpTypes.data();
+		return upTypeList.data();
 	}
 
 	static UpTypeData getUpType() {
 		return {
-			doGetMetaType<Arg0>(),
-			makeMoreUpTypes(),
-			(uint16_t)(sizeof...(Args) + 2)
+			makeUpTypeList(),
+			(uint16_t)(sizeof...(Args) + 1)
 		};
 	}
-};
-
-template <typename T>
-struct UpTypeGetter <TypeList<T> > : public UpTypeGetter<T>
-{
 };
 
 template <>
@@ -315,9 +280,16 @@ struct UpTypeGetter <TypeList<> >
 	static UpTypeData getUpType() {
 		return {
 			nullptr,
-			nullptr,
 			(uint16_t)0
 		};
+	}
+};
+
+template <typename T>
+struct UpTypeGetter
+{
+	static UpTypeData getUpType() {
+		return UpTypeGetter<TypeList<T> >::getUpType();
 	}
 };
 
@@ -351,7 +323,7 @@ const MetaType * getMetaType()
 }
 
 template <typename T>
-struct DeclarePodMetaType : public DeclareMetaTypeBase<T>
+struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 {
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
@@ -378,7 +350,7 @@ struct DeclarePodMetaType : public DeclareMetaTypeBase<T>
 };
 
 template <typename T>
-struct DeclareObjectMetaType : public DeclareMetaTypeBase<T>
+struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 {
 	static constexpr TypeKind typeKind = tkObject;
 
@@ -407,12 +379,12 @@ struct DeclareObjectMetaType : public DeclareMetaTypeBase<T>
 };
 
 template <typename T, typename Enabled>
-struct BaseDeclareMetaType : public DeclareObjectMetaType<T>
+struct DeclareMetaTypeBase : public DeclareObjectMetaType<T>
 {
 };
 
 template <>
-struct BaseDeclareMetaType <internal_::DummyEmptyType> : public DeclareMetaTypeBase<void>
+struct DeclareMetaTypeBase <internal_::DummyEmptyType> : public DeclareMetaTypeRoot<void>
 {
 	static constexpr TypeKind typeKind = tkEmpty;
 

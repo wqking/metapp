@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T, typename Allocator>
-struct BaseDeclareMetaType <std::forward_list<T, Allocator> >
+struct DeclareMetaTypeBase <std::forward_list<T, Allocator> >
 	: public DeclareObjectMetaType<std::forward_list<T, Allocator> >
 {
 	using UpType = T;
