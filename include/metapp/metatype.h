@@ -249,8 +249,6 @@ struct DeclareMetaType : public BaseDeclareMetaType<T>
 {
 };
 
-constexpr MetaType emptyMetaType;
-
 template <typename T>
 const UnifiedType * getUnifiedType()
 {
@@ -412,6 +410,20 @@ template <typename T, typename Enabled>
 struct BaseDeclareMetaType : public DeclareObjectMetaType<T>
 {
 };
+
+template <>
+struct BaseDeclareMetaType <internal_::DummyEmptyType> : public DeclareMetaTypeBase<void>
+{
+	static constexpr TypeKind typeKind = tkEmpty;
+
+	static void constructDefault(MetaTypeData & /*data*/) {
+	}
+
+	static void constructWith(MetaTypeData & /*data*/, const void * /*value*/) {
+	}
+
+};
+
 
 } // namespace metapp
 

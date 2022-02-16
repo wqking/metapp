@@ -8,7 +8,11 @@
 
 namespace metapp {
 
-constexpr size_t podSize = internal_::MaxOfInt<sizeof(long long), sizeof(long double)>::value;
+constexpr size_t podSize = internal_::MaxOfInt<
+		sizeof(long long),
+		sizeof(long double),
+		sizeof(void *)
+	>::value;
 
 struct MetaTypeData
 {
