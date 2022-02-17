@@ -1,7 +1,4 @@
-inline constexpr UnifiedType::UnifiedType()
-	: name(""), typeKind(tkEmpty), metaMethod()
-{
-}
+namespace metapp {
 
 inline constexpr UnifiedType::UnifiedType(
 		const char * name,
@@ -305,3 +302,6 @@ inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMet
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 }
+
+
+} // namespace metapp

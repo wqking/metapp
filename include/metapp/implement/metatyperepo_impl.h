@@ -1,3 +1,5 @@
+namespace metapp {
+
 namespace internal_ {
 
 template <typename T>
@@ -74,3 +76,5 @@ void registerMetaType()
 	internal_::RegisterMetaType<TypeList<Args...> >::registerMetaType(getMetaTypeRepo());
 }
 
+
+} // namespace metapp

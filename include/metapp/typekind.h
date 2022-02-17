@@ -7,35 +7,35 @@ namespace metapp {
 
 using TypeKind = uint16_t;
 
-constexpr TypeKind tkEmpty = 0;
+constexpr TypeKind tkVoid = 0;
 
-constexpr TypeKind tkVoid = 1;
-
-constexpr TypeKind tkFundamentalBegin = 2;
+constexpr TypeKind tkFundamentalBegin = 1;
 
 constexpr TypeKind tkArithmeticBegin = tkFundamentalBegin;
-constexpr TypeKind tkIntegerBegin = tkArithmeticBegin;
-constexpr TypeKind tkBool = 2;
-constexpr TypeKind tkChar = 3;
-constexpr TypeKind tkWideChar = 4;
-constexpr TypeKind tkSignedChar = 5;
-constexpr TypeKind tkUnsignedChar = 6;
-constexpr TypeKind tkShort = 7;
-constexpr TypeKind tkUnsignedShort = 8;
-constexpr TypeKind tkInt = 9;
-constexpr TypeKind tkUnsignedInt = 10;
-constexpr TypeKind tkLong = 11;
-constexpr TypeKind tkUnsignedLong = 12;
-constexpr TypeKind tkLongLong = 13;
-constexpr TypeKind tkUnsignedLongLong = 14;
-constexpr TypeKind tkIntegerEnd = 14;
 
-constexpr TypeKind tkRealBegin = 15;
-constexpr TypeKind tkFloat = 15;
-constexpr TypeKind tkDouble = 16;
-constexpr TypeKind tkLongDouble = 17;
-constexpr TypeKind tkRealEnd = 18;
-constexpr TypeKind tkArithmeticEnd = 18;
+constexpr TypeKind tkIntegerBegin = tkArithmeticBegin;
+constexpr TypeKind tkBool = 1;
+constexpr TypeKind tkChar = 2;
+constexpr TypeKind tkWideChar = 3;
+constexpr TypeKind tkSignedChar = 4;
+constexpr TypeKind tkUnsignedChar = 5;
+constexpr TypeKind tkShort = 6;
+constexpr TypeKind tkUnsignedShort = 7;
+constexpr TypeKind tkInt = 8;
+constexpr TypeKind tkUnsignedInt = 9;
+constexpr TypeKind tkLong = 10;
+constexpr TypeKind tkUnsignedLong = 11;
+constexpr TypeKind tkLongLong = 12;
+constexpr TypeKind tkUnsignedLongLong = 13;
+constexpr TypeKind tkIntegerEnd = 13;
+
+constexpr TypeKind tkRealBegin = 14;
+constexpr TypeKind tkFloat = 14;
+constexpr TypeKind tkDouble = 15;
+constexpr TypeKind tkLongDouble = 16;
+constexpr TypeKind tkRealEnd = 17;
+
+constexpr TypeKind tkArithmeticEnd = 17;
 
 constexpr TypeKind tkFundamentalEnd = tkArithmeticEnd;
 

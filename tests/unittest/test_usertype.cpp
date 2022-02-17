@@ -7,7 +7,7 @@
 #include <iostream>
 #include <climits>
 
-struct MyClass
+struct UseTypeMyClass
 {
 	int value;
 };
@@ -15,13 +15,18 @@ struct MyClass
 namespace metapp {
 
 template <>
-struct DeclareMetaType <MyClass> : public DeclareMetaTypeBase<MyClass>
+struct DeclareMetaType <UseTypeMyClass> : public DeclareMetaTypeBase <UseTypeMyClass>
 {
 	static constexpr TypeKind typeKind = 2000;
+
+	static const char * getName() {
+		return "UseTypeMyClass";
+	}
+
 };
 
 template <>
-struct DeclareMetaType <MyClass *> : public DeclareMetaTypeBase<MyClass *>
+struct DeclareMetaType <UseTypeMyClass *> : public DeclareMetaTypeBase <UseTypeMyClass *>
 {
 	static constexpr TypeKind typeKind = 2001;
 };
@@ -30,17 +35,17 @@ struct DeclareMetaType <MyClass *> : public DeclareMetaTypeBase<MyClass *>
 
 TEST_CASE("User type")
 {
-	MyClass obj{ 38 };
+	UseTypeMyClass obj{ 38 };
 	
 	metapp::Variant v(obj);
 	REQUIRE(v.getTypeKind() == 2000);
-	REQUIRE(v.get<MyClass>().value == 38);
-	REQUIRE(v.get<MyClass &>().value == 38);
-	REQUIRE(v.get<const MyClass &>().value == 38);
+	REQUIRE(v.get<UseTypeMyClass>().value == 38);
+	REQUIRE(v.get<UseTypeMyClass &>().value == 38);
+	REQUIRE(v.get<const UseTypeMyClass &>().value == 38);
 
 	metapp::Variant v2(&obj);
 	REQUIRE(v2.getTypeKind() == 2001);
-	REQUIRE(v2.get<MyClass *>() == &obj);
+	REQUIRE(v2.get<UseTypeMyClass *>() == &obj);
 }
 
 

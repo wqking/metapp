@@ -13,7 +13,7 @@ class Variant
 public:
 	Variant() noexcept
 		:
-			metaType(metapp::getMetaType<internal_::DummyEmptyType>()),
+			metaType(metapp::getMetaType<void>()),
 			data()
 	{
 	}

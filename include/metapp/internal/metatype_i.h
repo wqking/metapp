@@ -10,7 +10,6 @@ class MetaType;
 namespace internal_ {
 
 struct NoneUpType {};
-struct DummyEmptyType {};
 
 enum class MetaMethodAction
 {

@@ -28,7 +28,6 @@ const MetaType * getMetaType();
 class UnifiedType
 {
 public:
-	constexpr UnifiedType();
 	constexpr UnifiedType(const char * name, const TypeKind typeKind, internal_::FuncMetaMethod metaMethod);
 
 	const char * getName() const;
@@ -210,19 +209,6 @@ struct DeclareMetaTypeBase : public DeclareObjectMetaType<T>
 {
 };
 
-template <>
-struct DeclareMetaTypeBase <internal_::DummyEmptyType> : public DeclareMetaTypeRoot<void>
-{
-	static constexpr TypeKind typeKind = tkEmpty;
-
-	static void constructDefault(MetaTypeData & /*data*/) {
-	}
-
-	static void constructWith(MetaTypeData & /*data*/, const void * /*value*/) {
-	}
-
-};
-
 template <typename Iterator>
 bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end);
 
@@ -234,8 +220,8 @@ bool matchUpTypeKinds(const MetaType * metaType, const U & typeKindList);
 
 bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
-#include "metapp/implement/metatype_impl.h"
-
 } // namespace metapp
+
+#include "metapp/implement/metatype_impl.h"
 
 #endif

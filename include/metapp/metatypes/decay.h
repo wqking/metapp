@@ -11,12 +11,6 @@ struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_array<T>::value>:
 {
 };
 
-template <typename T>
-struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_function<T>::value>::type>
-	: public DeclareMetaTypeBase<typename std::decay<T>::type>
-{
-};
-
 
 } // namespace metapp
 

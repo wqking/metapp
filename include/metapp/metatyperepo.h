@@ -88,8 +88,9 @@ MetaTypeRepo * getMetaTypeRepo();
 template <typename ...Args>
 void registerMetaType();
 
+} // namespace metapp
+
 #include "metapp/implement/metatyperepo_impl.h"
 
-} // namespace metapp
 
 #endif
