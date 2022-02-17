@@ -7,25 +7,23 @@
 #include <iostream>
 #include <climits>
 
-using namespace metapp;
-template <typename Arg0, typename ...Args>
-const MetaType ** getXxx()
+namespace {
+
+std::string myFunc(const int a, const std::string & b)
 {
-	static std::array<const MetaType *, sizeof...(Args) + 1> xxx {
-		getMetaType<Arg0>(),
-		getMetaType<Args>()...,
-	};
-	return xxx.data();
+	std::cout << a << " " << b << std::endl;
+	return b + std::to_string(a);
 }
 
 TEST_CASE("play camp")
 {
-	std::cout << metapp::podSize << " " << sizeof(std::string) << std::endl;
-	const MetaType * p = getMetaType<const int *>();
-	REQUIRE(p->getUpType()->isConst());
-	auto xxx = getXxx<char, int>();
-	REQUIRE(xxx[0] == getMetaType<char>());
-	REQUIRE(xxx[1] == getMetaType<int>());
+#if 0
+	using namespace metapp;
+	Variant v(&myFunc);
+	Variant arguments[] = { 5, "hello"};
+	using MT = DeclareMetaType<decltype(&myFunc)>;
+	MT::invoke(v, nullptr, nullptr, arguments);
+#endif
 }
 
 TEST_CASE("aaa")
@@ -34,14 +32,14 @@ TEST_CASE("aaa")
 		metapp::Variant v(true);
 		REQUIRE(v.get<bool>() == true);
 		v.cast<bool>();
-		REQUIRE(v.cast<bool>() == true);
+		REQUIRE(v.cast<bool>().get<bool>() == true);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkBool);
 	}
 	{
 		metapp::Variant v((char)38);
 		REQUIRE(v.get<char>() == 38);
 		v.cast<bool>();
-		REQUIRE(v.cast<bool>() == true);
+		REQUIRE(v.cast<bool>().get<bool>() == true);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkChar);
 	}
 	{
@@ -98,3 +96,4 @@ TEST_CASE("aaa")
 
 }
 
+} // namespace

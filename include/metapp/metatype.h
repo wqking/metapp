@@ -38,7 +38,7 @@ public:
 	void constructWith(MetaTypeData & data, const void * value) const;
 	const void * getAddress(const MetaTypeData & data) const;
 	bool canCast(const MetaType * toMetaType) const;
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
@@ -51,50 +51,6 @@ private:
 	const char * name;
 	TypeKind typeKind;
 	internal_::FuncMetaMethod metaMethod;
-};
-
-template <typename T>
-struct DeclareMetaTypeRoot
-{
-	using UpType = internal_::NoneUpType;
-
-	static constexpr TypeFlags typeFlags = 0;
-
-	static const char * getName() {
-		return "";
-	}
-
-	static const void * getAddress(const MetaTypeData & /*data*/) {
-		return nullptr;
-	}
-
-	static bool canCast(const MetaType * toMetaType) {
-		return isPossibleSame(getMetaType<T>(), toMetaType, true);
-	}
-
-	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/ , void * toData) {
-		const void * value = getMetaType<T>()->getAddress(data);
-		using U = typename std::remove_reference<T>::type;
-		doCast((const U *)value, (U *)toData);
-	}
-
-	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
-		errorNoStreamIn();
-	}
-
-	static void streamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/) {
-		errorNoStreamOut();
-	}
-
-private:
-	template <typename U>
-	static void doCast(const U * /*value*/, U * /*toData*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
-	}
-
-	template <typename U>
-	static void doCast(const U * value , U * toData, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		*toData = *value;
-	}
 };
 
 class MetaType
@@ -125,7 +81,7 @@ public:
 	void constructWith(MetaTypeData & data, const void * value) const;
 	const void * getAddress(const MetaTypeData & data) const;
 	bool canCast(const MetaType * toMetaType) const;
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
+	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
@@ -138,6 +94,50 @@ private:
 	const UnifiedType * unifiedType;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
+};
+
+template <typename T>
+struct DeclareMetaTypeRoot
+{
+	using UpType = internal_::NoneUpType;
+
+	static constexpr TypeFlags typeFlags = 0;
+
+	static const char * getName() {
+		return "";
+	}
+
+	static const void * getAddress(const MetaTypeData & /*data*/) {
+		return nullptr;
+	}
+
+	static bool canCast(const MetaType * toMetaType) {
+		return isPossibleSame(getMetaType<T>(), toMetaType, true);
+	}
+
+	static void cast(const MetaTypeData & data, const MetaType * toMetaType , MetaTypeData * toData) {
+		const void * value = getMetaType<T>()->getAddress(data);
+		using U = typename std::remove_reference<T>::type;
+		doCast((const U *)value, toMetaType, toData);
+	}
+
+	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
+		errorNoStreamIn();
+	}
+
+	static void streamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/) {
+		errorNoStreamOut();
+	}
+
+private:
+	template <typename U>
+	static void doCast(const U * /*value*/, const MetaType * /*toMetaType*/, MetaTypeData * /*toData*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	}
+
+	template <typename U>
+	static void doCast(const U * value , const MetaType * toMetaType , MetaTypeData * toData, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		toMetaType->constructWith(*toData, value);
+	}
 };
 
 template <typename T, typename Enabled>
@@ -221,6 +221,13 @@ template <typename T, typename Enabled>
 struct DeclareMetaTypeBase : public DeclareObjectMetaType<T>
 {
 };
+
+template <typename T, typename U>
+void podCast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData)
+{
+	U value = (U)(data.podAs<T>());
+	toMetaType->constructWith(*toData, &value);
+}
 
 template <typename Iterator>
 bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end);

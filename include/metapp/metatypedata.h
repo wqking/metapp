@@ -26,12 +26,6 @@ struct MetaTypeData
 	}
 };
 
-template <typename T, typename U>
-void podCast(const MetaTypeData & data, void * toData)
-{
-	*(U *)toData = (U)(data.podAs<T>());
-}
-
 template <typename T>
 auto podStreamIn(std::istream & stream, MetaTypeData & data)
 -> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type

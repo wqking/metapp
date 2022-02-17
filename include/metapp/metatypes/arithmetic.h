@@ -51,7 +51,7 @@ struct DeclareMetaTypeBase <T,
 			&& toMetaType->getTypeKind() <= tkArithmeticEnd;
 	}
 
-	using CastFunc = void (*)(const MetaTypeData & data, void * toData);
+	using CastFunc = void (*)(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData);
 	static const CastFunc * getCastFunctions() {
 		static const std::array<CastFunc, TypeListCount<internal_::ArithmeticTypeList>::value> castFunctions {
 			&podCast<T, bool>,
@@ -66,8 +66,8 @@ struct DeclareMetaTypeBase <T,
 		return castFunctions.data();
 	}
 
-	static void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) {
-		getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](data, toData);
+	static void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) {
+		getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](data, toMetaType, toData);
 	}
 
 };

@@ -20,7 +20,7 @@ public:
 	~Variant() = default;
 
 	template <typename T>
-	explicit Variant(T value) noexcept
+	Variant(T value) noexcept
 		:
 			metaType(metapp::getMetaType<T>())
 	{
@@ -96,11 +96,11 @@ public:
 	}
 
 	template <typename T>
-	T cast() const {
+	Variant cast() const {
 		const MetaType * toMetaType = metapp::getMetaType<T>();
 		assert(metaType->canCast(toMetaType));
-		T result = T();
-		metaType->cast(data, toMetaType, &result);
+		Variant result(toMetaType);
+		metaType->cast(data, toMetaType, &result.data);
 		return result;
 	}
 

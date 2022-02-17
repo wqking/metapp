@@ -49,7 +49,7 @@ struct ParamCast
 {
 	const MetaTypeData * data;
 	const MetaType * toMetaType;
-	void * toData;
+	MetaTypeData * toData;
 };
  
 struct ParamStreamIn

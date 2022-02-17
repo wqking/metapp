@@ -16,8 +16,8 @@ struct DeclareMetaTypeBase <T *> : public DeclarePodMetaType<T *>
 		return toMetaType->getTypeKind() == tkPointer;
 	}
 
-	static void cast(const MetaTypeData & data, const MetaType * /*toMetaType*/, void * toData) {
-		podCast<T *, void *>(data, toData);
+	static void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) {
+		podCast<T *, void *>(data, toMetaType, toData);
 	}
 };
 

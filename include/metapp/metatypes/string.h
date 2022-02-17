@@ -19,9 +19,10 @@ struct DeclareMetaTypeBase <std::string> : public DeclareObjectMetaType<std::str
 			|| canCastToCharPtr(toMetaType);
 	}
 
-	static void cast(const MetaTypeData & data , const MetaType * toMetaType , void * toData) {
+	static void cast(const MetaTypeData & data , const MetaType * toMetaType , MetaTypeData * toData) {
 		if(canCastToCharPtr(toMetaType)) {
-			*(const char **)toData = std::static_pointer_cast<std::string>(data.object)->c_str();
+			const char * value = std::static_pointer_cast<std::string>(data.object)->c_str();
+			toMetaType->constructWith(*toData, &value);
 		}
 		else {
 			super::cast(data, toMetaType, toData);
@@ -46,9 +47,10 @@ struct DeclareMetaTypeBase <std::wstring> : public DeclareObjectMetaType<std::ws
 			|| canCastToWideCharPtr(toMetaType);
 	}
 
-	static void cast(const MetaTypeData & data , const MetaType * toMetaType , void * toData) {
+	static void cast(const MetaTypeData & data , const MetaType * toMetaType , MetaTypeData * toData) {
 		if(canCastToWideCharPtr(toMetaType)) {
-			*(const wchar_t **)toData = std::static_pointer_cast<std::wstring>(data.object)->c_str();
+			const wchar_t * value = std::static_pointer_cast<std::wstring>(data.object)->c_str();
+			toMetaType->constructWith(*toData, &value);
 		}
 		else {
 			super::cast(data, toMetaType, toData);
