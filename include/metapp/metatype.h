@@ -28,10 +28,11 @@ const MetaType * getMetaType();
 class UnifiedType
 {
 public:
-	constexpr UnifiedType(const char * name, const TypeKind typeKind, internal_::FuncMetaMethod metaMethod);
+	constexpr UnifiedType(const char * name, const TypeKind typeKind, internal_::FuncMetaMethod metaMethod) noexcept;
+	~UnifiedType() = default;
 
-	const char * getName() const;
-	TypeKind getTypeKind() const;
+	const char * getName() const noexcept;
+	TypeKind getTypeKind() const noexcept;
 
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
@@ -40,6 +41,11 @@ public:
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
+
+private:
+	UnifiedType() = delete;
+	UnifiedType(const UnifiedType &) = delete;
+	UnifiedType(UnifiedType &&) = delete;
 
 private:
 	const char * name;
@@ -98,21 +104,23 @@ public:
 		const UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
-	);
+	) noexcept;
+	~MetaType() = default;
 
-	const UnifiedType * getUnifiedType() const;
+	const UnifiedType * getUnifiedType() const noexcept;
 
-	const MetaType * getUpType() const;
+	const MetaType * getUpType() const noexcept;
 	const MetaType * getUpType(const size_t i) const;
-	size_t getUpTypeCount() const;
+	size_t getUpTypeCount() const noexcept;
 
-	const char * getName() const;
-	TypeKind getTypeKind() const;
+	const char * getName() const noexcept;
+	TypeKind getTypeKind() const noexcept;
 
-	bool isConst() const;
-	bool isVolatile() const;
-	bool isPodStorage() const;
+	bool isConst() const noexcept;
+	bool isVolatile() const noexcept;
+	bool isPodStorage() const noexcept;
 
+	// meta methods
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 	const void * getAddress(const MetaTypeData & data) const;
@@ -120,6 +128,11 @@ public:
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, void * toData) const;
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
+
+private:
+	MetaType() = delete;
+	MetaType(const MetaType &) = delete;
+	MetaType(MetaType &&) = delete;
 
 private:
 	const UnifiedType * unifiedType;

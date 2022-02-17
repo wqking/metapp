@@ -25,7 +25,7 @@ struct RegisterMetaType <TypeList<> >
 
 } // namespace internal_
 
-inline MetaTypeRepo::MetaTypeRepo()
+inline MetaTypeRepo::MetaTypeRepo() noexcept
 	: metaTypeKindMap()
 {
 	internal_::RegisterMetaType<TypeList<

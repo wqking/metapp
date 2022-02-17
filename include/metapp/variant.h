@@ -17,6 +17,7 @@ public:
 			data()
 	{
 	}
+	~Variant() = default;
 
 	template <typename T>
 	explicit Variant(T value) noexcept
@@ -103,11 +104,7 @@ public:
 		return result;
 	}
 
-	TypeKind getTypeKind() const {
-		return metaType->getTypeKind();
-	}
-
-	const MetaType * getMetaType() const {
+	const MetaType * getMetaType() const noexcept {
 		return metaType;
 	}
 
@@ -126,6 +123,10 @@ private:
 	MetaTypeData data;
 };
 
+inline TypeKind getTypeKind(const Variant & v)
+{
+	return v.getMetaType()->getTypeKind();
+}
 
 } // namespace metapp
 

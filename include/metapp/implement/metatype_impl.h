@@ -4,17 +4,17 @@ inline constexpr UnifiedType::UnifiedType(
 		const char * name,
 		const TypeKind typeKind,
 		internal_::FuncMetaMethod metaMethod
-	)
+	) noexcept
 	: name(name), typeKind(typeKind), metaMethod(metaMethod)
 {
 }
 
-inline const char * UnifiedType::getName() const
+inline const char * UnifiedType::getName() const noexcept
 {
 	return name;
 }
 
-inline TypeKind UnifiedType::getTypeKind() const
+inline TypeKind UnifiedType::getTypeKind() const noexcept
 {
 	return typeKind;
 }
@@ -82,19 +82,19 @@ inline constexpr MetaType::MetaType(
 		const UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
-	) :
+	) noexcept :
 	unifiedType(unifiedType),
 	upTypeData(upTypeData),
 	typeFlags(typeFlags)
 {
 }
 
-inline const UnifiedType * MetaType::getUnifiedType() const
+inline const UnifiedType * MetaType::getUnifiedType() const noexcept
 {
 	return unifiedType;
 }
 
-inline const MetaType * MetaType::getUpType() const
+inline const MetaType * MetaType::getUpType() const noexcept
 {
 	return upTypeData.upTypeList[0];
 }
@@ -104,32 +104,32 @@ inline const MetaType * MetaType::getUpType(const size_t i) const
 	return upTypeData.upTypeList[i];
 }
 
-inline size_t MetaType::getUpTypeCount() const
+inline size_t MetaType::getUpTypeCount() const noexcept
 {
 	return upTypeData.count;
 }
 
-inline const char * MetaType::getName() const
+inline const char * MetaType::getName() const noexcept
 {
 	return unifiedType->getName();
 }
 
-inline TypeKind MetaType::getTypeKind() const
+inline TypeKind MetaType::getTypeKind() const noexcept
 {
 	return unifiedType->getTypeKind();
 }
 
-inline bool MetaType::isConst() const
+inline bool MetaType::isConst() const noexcept
 {
 	return typeFlags & tfConst;
 }
 
-inline bool MetaType::isVolatile() const
+inline bool MetaType::isVolatile() const noexcept
 {
 	return typeFlags & tfVolatile;
 }
 
-inline bool MetaType::isPodStorage() const
+inline bool MetaType::isPodStorage() const noexcept
 {
 	return typeFlags & tfPodStorage;
 }

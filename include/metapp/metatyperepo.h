@@ -66,12 +66,14 @@ struct StringHash
 class MetaTypeRepo
 {
 public:
+	~MetaTypeRepo() = default;
+
 	void registerMetaType(const MetaType * metaType);
 
 	const MetaType * getMetaType(const TypeKind typeKind) const;
 
 private:
-	MetaTypeRepo();
+	MetaTypeRepo() noexcept;
 
 	MetaTypeRepo(const MetaTypeRepo &) = delete;
 	MetaTypeRepo(MetaTypeRepo &&) = delete;

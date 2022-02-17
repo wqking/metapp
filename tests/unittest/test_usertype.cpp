@@ -38,13 +38,13 @@ TEST_CASE("User type")
 	UseTypeMyClass obj{ 38 };
 	
 	metapp::Variant v(obj);
-	REQUIRE(v.getTypeKind() == 2000);
+	REQUIRE(metapp::getTypeKind(v) == 2000);
 	REQUIRE(v.get<UseTypeMyClass>().value == 38);
 	REQUIRE(v.get<UseTypeMyClass &>().value == 38);
 	REQUIRE(v.get<const UseTypeMyClass &>().value == 38);
 
 	metapp::Variant v2(&obj);
-	REQUIRE(v2.getTypeKind() == 2001);
+	REQUIRE(metapp::getTypeKind(v2) == 2001);
 	REQUIRE(v2.get<UseTypeMyClass *>() == &obj);
 }
 
