@@ -27,7 +27,6 @@
 #include "metapp/metatypes/unordered_map.h"
 #include "metapp/metatypes/unordered_set.h"
 #include "metapp/metatypes/vector.h"
-#include "metapp/metatypes/void.h"
 
 #if METAPP_SUPPORT_STANDARD_17
 #include "metapp/metatypes/any.h"

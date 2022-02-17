@@ -5,6 +5,11 @@
 #include "metapp/metatypedata.h"
 #include "metapp/exception.h"
 #include "metapp/typelist.h"
+
+#define VARIANT_IMPL_H_969872685611
+#include "metapp/variant.h"
+#undef VARIANT_IMPL_H_969872685611
+
 #include "metapp/internal/metatype_i.h"
 
 #include <type_traits>
@@ -36,9 +41,15 @@ public:
 
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
+	
 	const void * getAddress(const MetaTypeData & data) const;
+	
 	bool canCast(const MetaType * toMetaType) const;
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
+	
+	bool canInvoke(const Variant * arguments) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
+
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
@@ -79,9 +90,15 @@ public:
 	// meta methods
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
+
 	const void * getAddress(const MetaTypeData & data) const;
+	
 	bool canCast(const MetaType * toMetaType) const;
 	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
+	
+	bool canInvoke(const Variant * arguments) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
+
 	void streamIn(std::istream & stream, MetaTypeData & data) const;
 	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
 
@@ -119,6 +136,16 @@ struct DeclareMetaTypeRoot
 		const void * value = getMetaType<T>()->getAddress(data);
 		using U = typename std::remove_reference<T>::type;
 		doCast((const U *)value, toMetaType, toData);
+	}
+
+	static bool canInvoke(const Variant * /*arguments*/)
+	{
+		return false;
+	}
+
+	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * /*arguments*/)
+	{
+		throw NotSupportedException("Invoke is not supported.");
 	}
 
 	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
@@ -222,6 +249,23 @@ struct DeclareMetaTypeBase : public DeclareObjectMetaType<T>
 {
 };
 
+template <>
+struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
+{
+	static constexpr TypeKind typeKind = tkVoid;
+
+	static const char * getName() {
+		return "void";
+	}
+
+	static void constructDefault(MetaTypeData & /*data*/) {
+	}
+
+	static void constructWith(MetaTypeData & /*data*/, const void * /*value*/) {
+	}
+
+};
+
 template <typename T, typename U>
 void podCast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData)
 {
@@ -241,6 +285,8 @@ bool matchUpTypeKinds(const MetaType * metaType, const U & typeKindList);
 bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
 } // namespace metapp
+
+#include "metapp/variant.h"
 
 #include "metapp/implement/metatype_impl.h"
 

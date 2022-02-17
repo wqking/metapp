@@ -1,133 +1,67 @@
 #ifndef VARIANT_H_969872685611
 #define VARIANT_H_969872685611
 
-#include "metapp/metatype.h"
 #include "metapp/metatypedata.h"
 
 #include <type_traits>
+#include <cassert>
 
 namespace metapp {
+
+class MetaType;
 
 class Variant
 {
 public:
-	Variant() noexcept
-		:
-			metaType(metapp::getMetaType<void>()),
-			data()
-	{
-	}
+	Variant() noexcept;
 	~Variant() = default;
 
 	template <typename T>
-	Variant(T value) noexcept
-		:
-			metaType(metapp::getMetaType<T>())
-	{
-		metaType->constructWith(data, &value);
-	}
+	Variant(T value) noexcept;
 
-	explicit Variant(const MetaType * metaType) noexcept
-		:
-		metaType(metaType)
-	{
-		metaType->constructDefault(data);
-	}
+	explicit Variant(const MetaType * metaType) noexcept;
 
-	Variant(const Variant & other) noexcept
-		:
-			metaType(other.metaType),
-			data(other.data)
-	{
-	}
-
-	Variant(Variant && other) noexcept
-		:
-			metaType(std::move(other.metaType)),
-			data(std::move(other.data))
-	{
-	}
+	Variant(const Variant & other) noexcept;
+	Variant(Variant && other) noexcept;
 
 	template <typename T>
-	Variant & operator = (T value) noexcept
-	{
-		return set<T>(value);
-	}
-
-	Variant & operator = (const Variant & other) noexcept
-	{
-		metaType = other.metaType;
-		data = other.data;
-
-		return *this;
-	}
-
-	Variant & operator = (Variant && other) noexcept
-	{
-		metaType = std::move(other.metaType);
-		data = std::move(other.data);
-
-		return *this;
-	}
+	Variant & operator = (T value) noexcept;
+	Variant & operator = (const Variant & other) noexcept;
+	Variant & operator = (Variant && other) noexcept;
 
 	template <typename T>
-	Variant & set(T value)
-	{
-		metaType = metapp::getMetaType<T>();
-		metaType->constructWith(data, &value);
-
-		return *this;
-	}
+	Variant & set(T value);
 
 	template <typename T>
-	bool canGet(const bool strictMode = false) const {
-		return isPossibleSame(metaType, metapp::getMetaType<T>(), strictMode);
-	}
+	bool canGet(const bool strictMode = false) const;
 
 	template <typename T>
-	T get() const {
-		return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
-	}
+	T get() const;
 
 	template <typename T>
-	bool canCast() const {
-		const MetaType * toMetaType = metapp::getMetaType<T>();
-		return metaType->canCast(toMetaType);
-	}
+	bool canCast() const;
 
 	template <typename T>
-	Variant cast() const {
-		const MetaType * toMetaType = metapp::getMetaType<T>();
-		assert(metaType->canCast(toMetaType));
-		Variant result(toMetaType);
-		metaType->cast(data, toMetaType, &result.data);
-		return result;
-	}
+	Variant cast() const;
 
-	const MetaType * getMetaType() const noexcept {
-		return metaType;
-	}
+	const MetaType * getMetaType() const noexcept;
 
-	friend std::istream & operator >> (std::istream & stream, Variant & v) {
-		v.metaType->streamIn(stream, v.data);
-		return stream;
-	}
-
-	friend std::ostream & operator << (std::ostream & stream, const Variant & v) {
-		v.metaType->streamOut(stream, v.data);
-		return stream;
-	}
+	friend std::istream & operator >> (std::istream & stream, Variant & v);
+	friend std::ostream & operator << (std::ostream & stream, const Variant & v);
 
 private:
 	const MetaType * metaType;
 	MetaTypeData data;
 };
 
-inline TypeKind getTypeKind(const Variant & v)
-{
-	return v.getMetaType()->getTypeKind();
-}
+TypeKind getTypeKind(const Variant & v);
 
 } // namespace metapp
 
+
 #endif
+
+#include "metapp/implement/variant_impl.h"
+
+#include "metapp/metatype.h"
+

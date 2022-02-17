@@ -23,6 +23,15 @@ public:
 	using super::super;
 };
 
+class BadCastException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 inline void errorNoStreamIn()
 {
 	throw NotSupportedException("No << input streaming operator.");
@@ -31,6 +40,11 @@ inline void errorNoStreamIn()
 inline void errorNoStreamOut()
 {
 	throw NotSupportedException("No >> output streaming operator.");
+}
+
+inline void errorBadCast()
+{
+	throw NotSupportedException("Bad cast");
 }
 
 

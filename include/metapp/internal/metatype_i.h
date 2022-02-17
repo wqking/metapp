@@ -18,6 +18,8 @@ enum class MetaMethodAction
 	getAddress,
 	canCast,
 	cast,
+	canInvoke,
+	invoke,
 	streamIn,
 	streamOut,
 };
@@ -52,6 +54,20 @@ struct ParamCast
 	MetaTypeData * toData;
 };
  
+struct ParamCanInvoke
+{
+	const Variant * arguments;
+	bool result;
+};
+
+struct ParamInvoke
+{
+	Variant * result;
+	void * instance;
+	const Variant * func;
+	const Variant * arguments;
+};
+
 struct ParamStreamIn
 {
 	std::istream * stream;
@@ -73,6 +89,8 @@ struct MetaMethodParam
 		ParamGetAddress paramGetAddress;
 		ParamCanCast paramCanCast;
 		ParamCast paramCast;
+		ParamCanInvoke paramCanInvoke;
+		ParamInvoke paramInvoke;
 		ParamStreamIn paramStreamIn;
 		ParamStreamOut paramStreamOut;
 	};
@@ -102,6 +120,14 @@ void commonMetaMethod(MetaMethodParam & param)
 
 	case MetaMethodAction::cast:
 		M::cast(*(param.paramCast.data), param.paramCast.toMetaType, param.paramCast.toData);
+		break;
+
+	case MetaMethodAction::canInvoke:
+		param.paramCanInvoke.result = M::canInvoke(param.paramCanInvoke.arguments);
+		break;
+
+	case MetaMethodAction::invoke:
+		*param.paramInvoke.result = M::invoke(param.paramInvoke.instance, *param.paramInvoke.func, param.paramInvoke.arguments);
 		break;
 
 	case MetaMethodAction::streamIn:

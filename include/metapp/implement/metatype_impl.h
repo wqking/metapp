@@ -1,3 +1,6 @@
+#ifndef METATYPE_IMPL_H_969872685611
+#define METATYPE_IMPL_H_969872685611
+
 namespace metapp {
 
 inline constexpr UnifiedType::UnifiedType(
@@ -59,6 +62,25 @@ inline void UnifiedType::cast(const MetaTypeData & data, const MetaType * toMeta
 	param.action = internal_::MetaMethodAction::cast;
 	param.paramCast = { &data, toMetaType, toData };
 	metaMethod(param);
+}
+
+inline bool UnifiedType::canInvoke(const Variant * arguments) const
+{
+	internal_::MetaMethodParam param;
+	param.action = internal_::MetaMethodAction::canInvoke;
+	param.paramCanInvoke = { arguments, false };
+	metaMethod(param);
+	return param.paramCanInvoke.result;
+}
+
+inline Variant UnifiedType::invoke(void * instance, const Variant & func, const Variant * arguments) const
+{
+	internal_::MetaMethodParam param;
+	param.action = internal_::MetaMethodAction::invoke;
+	Variant result;
+	param.paramInvoke = { &result, instance, &func, arguments };
+	metaMethod(param);
+	return result;
 }
 
 inline void UnifiedType::streamIn(std::istream & stream, MetaTypeData & data) const
@@ -157,6 +179,16 @@ inline bool MetaType::canCast(const MetaType * toMetaType) const
 inline void MetaType::cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const
 {
 	unifiedType->cast(data, toMetaType, toData);
+}
+
+inline bool MetaType::canInvoke(const Variant * arguments) const
+{
+	return unifiedType->canInvoke(arguments);
+}
+
+inline Variant MetaType::invoke(void * instance, const Variant & func, const Variant * arguments) const
+{
+	return unifiedType->invoke(instance, func, arguments);
 }
 
 inline void MetaType::streamIn(std::istream & stream, MetaTypeData & data) const
@@ -305,3 +337,6 @@ inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMet
 
 
 } // namespace metapp
+
+
+#endif
