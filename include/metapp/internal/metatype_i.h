@@ -49,9 +49,9 @@ struct ParamCanCast
  
 struct ParamCast
 {
+	Variant * result;
 	const MetaTypeData * data;
 	const MetaType * toMetaType;
-	MetaTypeData * toData;
 };
  
 struct ParamCanInvoke
@@ -119,7 +119,7 @@ void commonMetaMethod(MetaMethodParam & param)
 		break;
 
 	case MetaMethodAction::cast:
-		M::cast(*(param.paramCast.data), param.paramCast.toMetaType, param.paramCast.toData);
+		*param.paramCast.result = M::cast(*(param.paramCast.data), param.paramCast.toMetaType);
 		break;
 
 	case MetaMethodAction::canInvoke:

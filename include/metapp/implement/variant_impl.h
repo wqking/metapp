@@ -94,9 +94,7 @@ inline Variant Variant::cast() const
 {
 	const MetaType * toMetaType = metapp::getMetaType<T>();
 	assert(metaType->canCast(toMetaType));
-	Variant result(toMetaType);
-	metaType->cast(data, toMetaType, &result.data);
-	return result;
+	return metaType->cast(data, toMetaType);
 }
 
 inline const MetaType * Variant::getMetaType() const noexcept

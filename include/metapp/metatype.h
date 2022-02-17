@@ -45,7 +45,7 @@ public:
 	const void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
+	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
 	
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
@@ -94,7 +94,7 @@ public:
 	const void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
-	void cast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData) const;
+	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
 	
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
@@ -132,10 +132,10 @@ struct DeclareMetaTypeRoot
 		return isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
-	static void cast(const MetaTypeData & data, const MetaType * toMetaType , MetaTypeData * toData) {
+	static Variant cast(const MetaTypeData & data, const MetaType * toMetaType) {
 		const void * value = getMetaType<T>()->getAddress(data);
 		using U = typename std::remove_reference<T>::type;
-		doCast((const U *)value, toMetaType, toData);
+		return doCast((const U *)value, toMetaType);
 	}
 
 	static bool canInvoke(const Variant * /*arguments*/)
@@ -158,12 +158,13 @@ struct DeclareMetaTypeRoot
 
 private:
 	template <typename U>
-	static void doCast(const U * /*value*/, const MetaType * /*toMetaType*/, MetaTypeData * /*toData*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	static Variant doCast(const U * /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+		return Variant();
 	}
 
 	template <typename U>
-	static void doCast(const U * value , const MetaType * toMetaType , MetaTypeData * toData, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		toMetaType->constructWith(*toData, value);
+	static Variant doCast(const U * value, const MetaType * /*toMetaType*/, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		return *value;
 	}
 };
 
@@ -267,10 +268,9 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 };
 
 template <typename T, typename U>
-void podCast(const MetaTypeData & data, const MetaType * toMetaType, MetaTypeData * toData)
+Variant podCast(const MetaTypeData & data)
 {
-	U value = (U)(data.podAs<T>());
-	toMetaType->constructWith(*toData, &value);
+	return (U)(data.podAs<T>());
 }
 
 template <typename Iterator>
