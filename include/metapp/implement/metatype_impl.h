@@ -168,6 +168,11 @@ inline constexpr bool MetaType::isPodStorage() const noexcept
 	return typeFlags & tfPodStorage;
 }
 
+inline constexpr bool MetaType::isObjectStorage() const noexcept
+{
+	return ! isPodStorage();
+}
+
 inline void MetaType::constructDefault(MetaTypeData & data) const
 {
 	unifiedType->constructDefault(data);

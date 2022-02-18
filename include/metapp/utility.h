@@ -1,6 +1,9 @@
 #ifndef UTILITY_H_969872685611
 #define UTILITY_H_969872685611
 
+#include "metapp/variant.h"
+#include "metapp/metatype.h"
+
 #include <type_traits>
 
 namespace metapp {
@@ -162,6 +165,31 @@ struct MetaFunctionInvoker <Class, void, Args...>
 		(void)castedArguments;
 		(static_cast<Class *>(instance)->*func)(internal_::getArgument<ArgumentTypeList, Indexes>(castedArguments.data())...);
 		return Variant();
+	}
+};
+
+template <typename Class, typename ...Args>
+struct MetaConstructorInvoker
+{
+	using ArgumentTypeList = TypeList<Args...>;
+
+	static Variant construct(const Variant * arguments, const size_t /*argumentCount*/) {
+		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
+		return doConstruct(arguments, IS());
+	}
+
+	template <size_t ...Indexes>
+	static Variant doConstruct(const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+		std::array<Variant, sizeof...(Args)> castedArguments {
+			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
+		};
+		// avoid unused warning if there is no arguments
+		(void)arguments;
+		(void)castedArguments;
+		return Variant().makeObject(
+			getMetaType<Class>(),
+			new Class(internal_::getArgument<ArgumentTypeList, Indexes>(castedArguments.data())...)
+		);
 	}
 };
 

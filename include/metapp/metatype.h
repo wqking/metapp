@@ -87,6 +87,7 @@ public:
 	constexpr bool isVolatile() const noexcept;
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isPodStorage() const noexcept;
+	constexpr bool isObjectStorage() const noexcept;
 
 	// meta methods
 	void constructDefault(MetaTypeData & data) const;

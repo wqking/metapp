@@ -68,7 +68,9 @@ TEST_CASE("Callable, std::function")
 
 struct Base
 {
-	Base(const int n = 0) : myValue(n) {}
+	Base(const int n = 0) : myValue(n) {
+		//printf("===%d\n", n);
+	}
 
 	int myValue;
 
@@ -116,6 +118,15 @@ TEST_CASE("Callable, member function")
 
 }
 
+TEST_CASE("Callable, constructor")
+{
+	auto metaType = metapp::getMetaType<metapp::Constructor<Base (int)> >();
+	metapp::Variant arguments[] = { 7 };
+	metapp::Variant obj = metaType->invoke(nullptr, metapp::Variant(), arguments, 1);
+	Base & base = obj.get<Base &>();
+	REQUIRE(obj.getMetaType() == metapp::getMetaType<Base>());
+	REQUIRE(base.myValue == 7);
+}
 
 
 } // namespace

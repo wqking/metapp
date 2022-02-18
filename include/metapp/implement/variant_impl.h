@@ -78,6 +78,17 @@ inline Variant & Variant::set(T value)
 }
 
 template <typename T>
+inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
+{
+	assert(metaType_->isObjectStorage());
+
+	metaType = metaType_;
+	data.object.reset(object_);
+
+	return *this;
+}
+
+template <typename T>
 inline bool Variant::canGet(const bool strictMode) const
 {
 	return isPossibleSame(metaType, metapp::getMetaType<T>(), strictMode);

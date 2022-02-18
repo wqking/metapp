@@ -45,9 +45,10 @@ constexpr TypeKind tkWideString = 32; // std::wstring
 
 constexpr TypeKind tkPointer = 33;
 constexpr TypeKind tkReference = 34;
-constexpr TypeKind tkFunction = 35; // TBI
-constexpr TypeKind tkMemberFunction = 36; // TBI
-constexpr TypeKind tkMemberPointer = 37; // TBI
+constexpr TypeKind tkFunction = 35;
+constexpr TypeKind tkMemberFunction = 36;
+constexpr TypeKind tkMemberPointer = 37;
+constexpr TypeKind tkConstructor = 38;
 
 constexpr TypeKind tkSharedPtr = 60;
 constexpr TypeKind tkStdFunction = 61;
