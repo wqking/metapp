@@ -90,15 +90,17 @@ inline T Variant::get() const
 }
 
 template <typename T>
-inline const T * Variant::getAddress() const
+inline auto Variant::getAddress() const -> const typename std::remove_reference<T>::type *
 {
-	return const_cast<const T *>(static_cast<T * >(metaType->getAddress(data)));
+	using U = typename std::remove_reference<T>::type;
+	return const_cast<const U *>(static_cast<U * >(metaType->getAddress(data)));
 }
 
 template <typename T>
-inline T * Variant::getAddress()
+inline auto Variant::getAddress() -> typename std::remove_reference<T>::type *
 {
-	return static_cast<T * >(metaType->getAddress(data));
+	using U = typename std::remove_reference<T>::type;
+	return static_cast<U * >(metaType->getAddress(data));
 }
 
 template <typename T>
@@ -151,28 +153,28 @@ inline Variant variantCast(const Variant & value)
 
 template <typename T>
 inline auto variantStreamIn(std::istream & stream, Variant & value)
--> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
+	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
 {
 	stream >> *value.getAddress<T>();
 }
 
 template <typename T>
 inline auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
--> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
+	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
 {
 	errorNoStreamIn();
 }
 
 template <typename T>
 inline auto variantStreamOut(std::ostream & stream, const Variant & value)
--> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
+	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
 {
 	stream << *value.getAddress<T>();
 }
 
 template <typename T>
 inline auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
--> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
+	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
 {
 	errorNoStreamOut();
 }

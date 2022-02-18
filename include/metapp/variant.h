@@ -40,10 +40,10 @@ public:
 	T get() const;
 
 	template <typename T>
-	const T * getAddress() const;
+	auto getAddress() const -> const typename std::remove_reference<T>::type *;
 
 	template <typename T>
-	T * getAddress();
+	auto getAddress() -> typename std::remove_reference<T>::type *;
 
 	template <typename T>
 	bool canCast() const;

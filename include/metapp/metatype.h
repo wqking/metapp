@@ -119,6 +119,7 @@ struct DeclareMetaTypeRoot
 {
 	using UpType = internal_::NoneUpType;
 
+	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0;
 
 	static const char * getName() {
@@ -219,8 +220,6 @@ struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 template <typename T>
 struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 {
-	static constexpr TypeKind typeKind = tkObject;
-
 	using U = typename std::remove_reference<T>::type;
 
 	static void constructDefault(MetaTypeData & data) {
@@ -246,7 +245,16 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 };
 
 template <typename T, typename Enabled>
-struct DeclareMetaTypeBase : public DeclareObjectMetaType<T>
+struct DeclareMetaTypeBase : 
+	public std::conditional<
+		! std::is_const<T>::value
+		&& ! std::is_volatile<T>::value
+		&& std::is_trivial<T>::value
+		&& std::is_standard_layout<T>::value
+		&& sizeof(T) <= podSize,
+		DeclarePodMetaType<T>,
+		DeclareObjectMetaType<T>
+	>::type
 {
 };
 

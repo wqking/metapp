@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <std::function<T> >
-	: public DeclareMetaType<std::function<T> >
+struct DeclareMetaType <std::function<T> >
+	: public DeclareMetaTypeBase <std::function<T> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdFunction;

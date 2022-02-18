@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename ...Types>
-struct DeclareMetaTypeBase <std::tuple<Types...> >
-	: public DeclareObjectMetaType<std::tuple<Types...> >
+struct DeclareMetaType <std::tuple<Types...> >
+	: public DeclareMetaTypeBase <std::tuple<Types...> >
 {
 	using UpType = TypeList<Types...>;
 	static constexpr TypeKind typeKind = tkTuple;

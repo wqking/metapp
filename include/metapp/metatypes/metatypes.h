@@ -14,7 +14,6 @@
 #include "metapp/metatypes/map.h"
 #include "metapp/metatypes/member.h"
 #include "metapp/metatypes/pair.h"
-#include "metapp/metatypes/pod.h"
 #include "metapp/metatypes/pointer.h"
 #include "metapp/metatypes/queue.h"
 #include "metapp/metatypes/reference.h"
