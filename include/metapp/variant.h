@@ -20,6 +20,7 @@ public:
 	Variant(T value) noexcept;
 
 	explicit Variant(const MetaType * metaType) noexcept;
+	Variant(const MetaType * metaType, const MetaTypeData & data) noexcept;
 
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;
@@ -51,6 +52,7 @@ public:
 	Variant cast() const;
 
 	const MetaType * getMetaType() const noexcept;
+	const MetaTypeData & getMetaTypeData() const noexcept;
 
 	friend std::istream & operator >> (std::istream & stream, Variant & v);
 	friend std::ostream & operator << (std::ostream & stream, const Variant & v);
@@ -61,6 +63,9 @@ private:
 };
 
 TypeKind getTypeKind(const Variant & v);
+
+template <typename T, typename U>
+Variant variantCast(const Variant & value);
 
 template <typename T>
 auto variantStreamIn(std::istream & stream, Variant & value)

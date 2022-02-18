@@ -56,12 +56,12 @@ inline bool UnifiedType::canCast(const MetaType * toMetaType) const
 	return param.paramCanCast.result;
 }
 
-inline Variant UnifiedType::cast(const MetaTypeData & data, const MetaType * toMetaType) const
+inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::cast;
 	Variant result;
-	param.paramCast = { &result, &data, toMetaType };
+	param.paramCast = { &result, &value, toMetaType };
 	metaMethod(param);
 	return result;
 }
@@ -178,9 +178,9 @@ inline bool MetaType::canCast(const MetaType * toMetaType) const
 	return unifiedType->canCast(toMetaType);
 }
 
-inline Variant MetaType::cast(const MetaTypeData & data, const MetaType * toMetaType) const
+inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const
 {
-	return unifiedType->cast(data, toMetaType);
+	return unifiedType->cast(value, toMetaType);
 }
 
 inline bool MetaType::canInvoke(const Variant * arguments) const

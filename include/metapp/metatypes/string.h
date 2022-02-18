@@ -19,13 +19,12 @@ struct DeclareMetaTypeBase <std::string> : public DeclareObjectMetaType<std::str
 			|| canCastToCharPtr(toMetaType);
 	}
 
-	static Variant cast(const MetaTypeData & data, const MetaType * toMetaType) {
+	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		if(canCastToCharPtr(toMetaType)) {
-			const char * value = std::static_pointer_cast<std::string>(data.object)->c_str();
-			return value;
+			return value.get<const std::string &>().c_str();
 		}
 		else {
-			return super::cast(data, toMetaType);
+			return super::cast(value, toMetaType);
 		}
 	}
 
@@ -47,13 +46,12 @@ struct DeclareMetaTypeBase <std::wstring> : public DeclareObjectMetaType<std::ws
 			|| canCastToWideCharPtr(toMetaType);
 	}
 
-	static Variant cast(const MetaTypeData & data, const MetaType * toMetaType) {
+	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		if(canCastToWideCharPtr(toMetaType)) {
-			const wchar_t * value = std::static_pointer_cast<std::wstring>(data.object)->c_str();
-			return value;
+			return value.get<const std::wstring &>().c_str();
 		}
 		else {
-			return super::cast(data, toMetaType);
+			return super::cast(value, toMetaType);
 		}
 	}
 

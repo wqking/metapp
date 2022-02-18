@@ -6,9 +6,15 @@
 #include <string>
 #include <cstring>
 
+namespace {
+
 struct MyClass
 {
 	int value;
+};
+
+struct Derived : public MyClass
+{
 };
 
 TEST_CASE("Cast object")
@@ -45,3 +51,34 @@ TEST_CASE("Cast std::wstring to wchar_t *")
 	REQUIRE(wcscmp(v.cast<wchar_t *>().get<wchar_t *>(), ws.c_str()) == 0);
 }
 
+TEST_CASE("Cast Derived * to MyClass *")
+{
+	Derived derived;
+	metapp::Variant v(&derived);
+	REQUIRE(v.canCast<MyClass *>());
+	REQUIRE(! v.canCast<MyClass &>());
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(v.getMetaType()->getUpType() == metapp::getMetaType<Derived>());
+
+	metapp::Variant casted = v.cast<MyClass *>();
+	REQUIRE(metapp::getTypeKind(casted) == metapp::tkPointer);
+	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+}
+
+TEST_CASE("Cast Derived & to MyClass &")
+{
+	Derived derived;
+	metapp::Variant v;
+	v.set<Derived &>(derived);
+	REQUIRE(! v.canCast<MyClass *>());
+	REQUIRE(v.canCast<MyClass &>());
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(v.getMetaType()->getUpType() == metapp::getMetaType<Derived>());
+
+	metapp::Variant casted = v.cast<MyClass &>();
+	REQUIRE(metapp::getTypeKind(casted) == metapp::tkReference);
+	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+}
+
+
+} // namespace

@@ -45,7 +45,7 @@ public:
 	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
-	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
+	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
@@ -94,7 +94,7 @@ public:
 	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
-	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
+	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
@@ -132,10 +132,9 @@ struct DeclareMetaTypeRoot
 		return isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
-	static Variant cast(const MetaTypeData & data, const MetaType * toMetaType) {
-		const void * value = getMetaType<T>()->getAddress(data);
+	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		using U = typename std::remove_reference<T>::type;
-		return doCast((const U *)value, toMetaType);
+		return doCast<U>(value, toMetaType);
 	}
 
 	static bool canInvoke(const Variant * /*arguments*/)
@@ -158,13 +157,13 @@ struct DeclareMetaTypeRoot
 
 private:
 	template <typename U>
-	static Variant doCast(const U * /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	static Variant doCast(const Variant & /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
 		return Variant();
 	}
 
 	template <typename U>
-	static Variant doCast(const U * value, const MetaType * /*toMetaType*/, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		return *value;
+	static Variant doCast(const Variant & value, const MetaType * /*toMetaType*/, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		return value;
 	}
 };
 

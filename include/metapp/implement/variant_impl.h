@@ -13,29 +13,36 @@ inline Variant::Variant() noexcept
 template <typename T>
 inline Variant::Variant(T value) noexcept
 	:
-	metaType(metapp::getMetaType<T>())
+		metaType(metapp::getMetaType<T>())
 {
 	metaType->constructWith(data, &value);
 }
 
 inline Variant::Variant(const MetaType * metaType) noexcept
 	:
-	metaType(metaType)
+		metaType(metaType)
 {
 	metaType->constructDefault(data);
 }
 
+inline Variant::Variant(const MetaType * metaType, const MetaTypeData & data) noexcept
+	:
+		metaType(metaType),
+		data(data)
+{
+}
+
 inline Variant::Variant(const Variant & other) noexcept
 	:
-	metaType(other.metaType),
-	data(other.data)
+		metaType(other.metaType),
+		data(other.data)
 {
 }
 
 inline Variant::Variant(Variant && other) noexcept
 	:
-	metaType(std::move(other.metaType)),
-	data(std::move(other.data))
+		metaType(std::move(other.metaType)),
+		data(std::move(other.data))
 {
 }
 
@@ -106,12 +113,17 @@ inline Variant Variant::cast() const
 {
 	const MetaType * toMetaType = metapp::getMetaType<T>();
 	assert(metaType->canCast(toMetaType));
-	return metaType->cast(data, toMetaType);
+	return metaType->cast(*this, toMetaType);
 }
 
 inline const MetaType * Variant::getMetaType() const noexcept
 {
 	return metaType;
+}
+
+inline const MetaTypeData & Variant::getMetaTypeData() const noexcept
+{
+	return data;
 }
 
 inline std::istream & operator >> (std::istream & stream, Variant & value)
@@ -129,6 +141,12 @@ inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 inline TypeKind getTypeKind(const Variant & v)
 {
 	return v.getMetaType()->getTypeKind();
+}
+
+template <typename T, typename U>
+inline Variant variantCast(const Variant & value)
+{
+	return (U)(value.get<T>());
 }
 
 template <typename T>

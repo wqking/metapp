@@ -51,23 +51,23 @@ struct DeclareMetaTypeBase <T,
 			&& toMetaType->getTypeKind() <= tkArithmeticEnd;
 	}
 
-	using CastFunc = Variant (*)(const MetaTypeData & data);
+	using CastFunc = Variant (*)(const Variant & value);
 	static const CastFunc * getCastFunctions() {
 		static const std::array<CastFunc, TypeListCount<internal_::ArithmeticTypeList>::value> castFunctions {
-			&podCast<T, bool>,
-			&podCast<T, char>, &podCast<T, wchar_t>,
-			&podCast<T, signed char>, &podCast<T, unsigned char>,
-			&podCast<T, short>, &podCast<T, unsigned short>,
-			&podCast<T, int>, &podCast<T, unsigned int>,
-			&podCast<T, long>, &podCast<T, unsigned long>,
-			&podCast<T, long long>, &podCast<T, unsigned long long>,
-			&podCast<T, float>, &podCast<T, double>, &podCast<T, long double>
+			&variantCast<T, bool>,
+			&variantCast<T, char>, &variantCast<T, wchar_t>,
+			&variantCast<T, signed char>, &variantCast<T, unsigned char>,
+			&variantCast<T, short>, &variantCast<T, unsigned short>,
+			&variantCast<T, int>, &variantCast<T, unsigned int>,
+			&variantCast<T, long>, &variantCast<T, unsigned long>,
+			&variantCast<T, long long>, &variantCast<T, unsigned long long>,
+			&variantCast<T, float>, &variantCast<T, double>, &variantCast<T, long double>
 		};
 		return castFunctions.data();
 	}
 
-	static Variant cast(const MetaTypeData & data, const MetaType * toMetaType) {
-		return getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](data);
+	static Variant cast(const Variant & value, const MetaType * toMetaType) {
+		return getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](value);
 	}
 
 };

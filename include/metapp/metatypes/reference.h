@@ -27,8 +27,8 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 		return toMetaType->getTypeKind() == tkReference;
 	}
 
-	static Variant cast(const MetaTypeData & data, const MetaType * /*toMetaType*/) {
-		return podCast<T *, void *>(data);
+	static Variant cast(const Variant & value, const MetaType * toMetaType) {
+		return Variant(toMetaType, value.getMetaTypeData());
 	}
 };
 
