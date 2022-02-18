@@ -22,8 +22,8 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
 	}
 
-	static const void * getAddress(const MetaTypeData & data) {
-		return &data.object;
+	static void * getAddress(const MetaTypeData & data) {
+		return (void *)&data.object;
 	}
 
 };

@@ -38,7 +38,7 @@ struct ParamConstructWith
 struct ParamGetAddress
 {
 	const MetaTypeData * data;
-	const void * value;
+	void * value;
 };
  
 struct ParamCanCast
@@ -71,13 +71,13 @@ struct ParamInvoke
 struct ParamStreamIn
 {
 	std::istream * stream;
-	MetaTypeData * data;
+	Variant * value;
 };
  
 struct ParamStreamOut
 {
 	std::ostream * stream;
-	const MetaTypeData * data;
+	const Variant * value;
 };
  
 struct MetaMethodParam
@@ -131,11 +131,11 @@ void commonMetaMethod(MetaMethodParam & param)
 		break;
 
 	case MetaMethodAction::streamIn:
-		M::streamIn(*(param.paramStreamIn.stream), *(param.paramStreamIn.data));
+		M::streamIn(*(param.paramStreamIn.stream), *(param.paramStreamIn.value));
 		break;
 
 	case MetaMethodAction::streamOut:
-		M::streamOut(*(param.paramStreamOut.stream), *(param.paramStreamOut.data));
+		M::streamOut(*(param.paramStreamOut.stream), *(param.paramStreamOut.value));
 		break;
 	}
 }

@@ -42,7 +42,7 @@ public:
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 	
-	const void * getAddress(const MetaTypeData & data) const;
+	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
@@ -50,8 +50,8 @@ public:
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
 
-	void streamIn(std::istream & stream, MetaTypeData & data) const;
-	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
+	void streamIn(std::istream & stream, Variant & value) const;
+	void streamOut(std::ostream & stream, const Variant & value) const;
 
 private:
 	UnifiedType() = delete;
@@ -91,7 +91,7 @@ public:
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 
-	const void * getAddress(const MetaTypeData & data) const;
+	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const MetaTypeData & data, const MetaType * toMetaType) const;
@@ -99,8 +99,8 @@ public:
 	bool canInvoke(const Variant * arguments) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
 
-	void streamIn(std::istream & stream, MetaTypeData & data) const;
-	void streamOut(std::ostream & stream, const MetaTypeData & data) const;
+	void streamIn(std::istream & stream, Variant & value) const;
+	void streamOut(std::ostream & stream, const Variant & value) const;
 
 private:
 	MetaType() = delete;
@@ -124,7 +124,7 @@ struct DeclareMetaTypeRoot
 		return "";
 	}
 
-	static const void * getAddress(const MetaTypeData & /*data*/) {
+	static void * getAddress(const MetaTypeData & /*data*/) {
 		return nullptr;
 	}
 
@@ -148,11 +148,11 @@ struct DeclareMetaTypeRoot
 		throw NotSupportedException("Invoke is not supported.");
 	}
 
-	static void streamIn(std::istream & /*stream*/, MetaTypeData & /*data*/) {
+	static void streamIn(std::istream & /*stream*/, Variant & /*value*/) {
 		errorNoStreamIn();
 	}
 
-	static void streamOut(std::ostream & /*stream*/, const MetaTypeData & /*data*/) {
+	static void streamOut(std::ostream & /*stream*/, const Variant & /*value*/) {
 		errorNoStreamOut();
 	}
 
@@ -202,16 +202,16 @@ struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 		data.podAs<T>() = *(T *)value;
 	}
 
-	static const void * getAddress(const MetaTypeData & data) {
+	static void * getAddress(const MetaTypeData & data) {
 		return &data.podAs<T>();
 	}
 
-	static void streamIn(std::istream & stream, MetaTypeData & data) {
-		podStreamIn<T>(stream, data);
+	static void streamIn(std::istream & stream, Variant & value) {
+		variantStreamIn<T>(stream, value);
 	}
 
-	static void streamOut(std::ostream & stream, const MetaTypeData & data) {
-		podStreamOut<T>(stream, data);
+	static void streamOut(std::ostream & stream, const Variant & value) {
+		variantStreamOut<T>(stream, value);
 	}
 
 };
@@ -231,16 +231,16 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 		data.object = std::make_shared<U>(*(U *)value);
 	}
 
-	static const void * getAddress(const MetaTypeData & data) {
+	static void * getAddress(const MetaTypeData & data) {
 		return data.object.get();
 	}
 
-	static void streamIn(std::istream & stream, MetaTypeData & data) {
-		objectStreamIn<T>(stream, data);
+	static void streamIn(std::istream & stream, Variant & value) {
+		variantStreamIn<T>(stream, value);
 	}
 
-	static void streamOut(std::ostream & stream, const MetaTypeData & data) {
-		objectStreamOut<T>(stream, data);
+	static void streamOut(std::ostream & stream, const Variant & value) {
+		variantStreamOut<T>(stream, value);
 	}
 
 };
@@ -272,6 +272,7 @@ Variant podCast(const MetaTypeData & data)
 {
 	return (U)(data.podAs<T>());
 }
+
 
 template <typename Iterator>
 bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end);

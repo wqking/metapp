@@ -19,7 +19,7 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 		data.podAs<T *>() = (T *)value;
 	}
 
-	static const void * getAddress(const MetaTypeData & data) {
+	static void * getAddress(const MetaTypeData & data) {
 		return data.podAs<void *>();
 	}
 

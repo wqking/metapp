@@ -83,6 +83,18 @@ inline T Variant::get() const
 }
 
 template <typename T>
+inline const T * Variant::getAddress() const
+{
+	return const_cast<const T *>(static_cast<T * >(metaType->getAddress(data)));
+}
+
+template <typename T>
+inline T * Variant::getAddress()
+{
+	return static_cast<T * >(metaType->getAddress(data));
+}
+
+template <typename T>
 inline bool Variant::canCast() const
 {
 	const MetaType * toMetaType = metapp::getMetaType<T>();
@@ -102,21 +114,49 @@ inline const MetaType * Variant::getMetaType() const noexcept
 	return metaType;
 }
 
-inline std::istream & operator >> (std::istream & stream, Variant & v)
+inline std::istream & operator >> (std::istream & stream, Variant & value)
 {
-	v.metaType->streamIn(stream, v.data);
+	value.metaType->streamIn(stream, value);
 	return stream;
 }
 
-inline std::ostream & operator << (std::ostream & stream, const Variant & v)
+inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 {
-	v.metaType->streamOut(stream, v.data);
+	value.metaType->streamOut(stream, value);
 	return stream;
 }
 
 inline TypeKind getTypeKind(const Variant & v)
 {
 	return v.getMetaType()->getTypeKind();
+}
+
+template <typename T>
+inline auto variantStreamIn(std::istream & stream, Variant & value)
+-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
+{
+	stream >> *value.getAddress<T>();
+}
+
+template <typename T>
+inline auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
+-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
+{
+	errorNoStreamIn();
+}
+
+template <typename T>
+inline auto variantStreamOut(std::ostream & stream, const Variant & value)
+-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
+{
+	stream << *value.getAddress<T>();
+}
+
+template <typename T>
+inline auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
+-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
+{
+	errorNoStreamOut();
 }
 
 

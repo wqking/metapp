@@ -39,6 +39,12 @@ public:
 	T get() const;
 
 	template <typename T>
+	const T * getAddress() const;
+
+	template <typename T>
+	T * getAddress();
+
+	template <typename T>
 	bool canCast() const;
 
 	template <typename T>
@@ -55,6 +61,22 @@ private:
 };
 
 TypeKind getTypeKind(const Variant & v);
+
+template <typename T>
+auto variantStreamIn(std::istream & stream, Variant & value)
+	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type;
+
+template <typename T>
+auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
+	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type;
+
+template <typename T>
+auto variantStreamOut(std::ostream & stream, const Variant & value)
+	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type;
+
+template <typename T>
+auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
+	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type;
 
 } // namespace metapp
 

@@ -38,7 +38,7 @@ inline void UnifiedType::constructWith(MetaTypeData & data, const void * value) 
 	metaMethod(param);
 }
 
-inline const void * UnifiedType::getAddress(const MetaTypeData & data) const
+inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::getAddress;
@@ -85,19 +85,19 @@ inline Variant UnifiedType::invoke(void * instance, const Variant & func, const 
 	return result;
 }
 
-inline void UnifiedType::streamIn(std::istream & stream, MetaTypeData & data) const
+inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::streamIn;
-	param.paramStreamIn = { &stream, &data };
+	param.paramStreamIn = { &stream, &value };
 	metaMethod(param);
 }
 
-inline void UnifiedType::streamOut(std::ostream & stream, const MetaTypeData & data) const
+inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::streamOut;
-	param.paramStreamOut = { &stream, &data };
+	param.paramStreamOut = { &stream, &value };
 	metaMethod(param);
 }
 
@@ -168,7 +168,7 @@ inline void MetaType::constructWith(MetaTypeData & data, const void * value) con
 	unifiedType->constructWith(data, value);
 }
 
-inline const void * MetaType::getAddress(const MetaTypeData & data) const
+inline void * MetaType::getAddress(const MetaTypeData & data) const
 {
 	return unifiedType->getAddress(data);
 }
@@ -193,14 +193,14 @@ inline Variant MetaType::invoke(void * instance, const Variant & func, const Var
 	return unifiedType->invoke(instance, func, arguments);
 }
 
-inline void MetaType::streamIn(std::istream & stream, MetaTypeData & data) const
+inline void MetaType::streamIn(std::istream & stream, Variant & value) const
 {
-	unifiedType->streamIn(stream, data);
+	unifiedType->streamIn(stream, value);
 }
 
-inline void MetaType::streamOut(std::ostream & stream, const MetaTypeData & data) const
+inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
 {
-	unifiedType->streamOut(stream, data);
+	unifiedType->streamOut(stream, value);
 }
 
 
