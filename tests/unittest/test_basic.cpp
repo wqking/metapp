@@ -9,41 +9,8 @@
 
 namespace {
 
-void myFunc(const int a, const std::string & b)
-{
-	std::cout << a << " " << b << std::endl;
-}
-
-std::string myFunc2(const int a, const std::string & b)
-{
-	std::cout << a << " " << b << std::endl;
-	return b + std::to_string(a);
-}
-
-int myFunc3()
-{
-	std::cout << "No arguments" << std::endl;
-	return 38;
-}
-
 TEST_CASE("play camp")
 {
-	using namespace metapp;
-	{
-		Variant v(&myFunc);
-		Variant arguments[] = { 5, std::string("hello") };
-		v.getMetaType()->invoke(nullptr, v, arguments);
-	}
-	{
-		Variant v(&myFunc2);
-		Variant arguments[] = { 5, std::string("hello") };
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments).get<std::string>() == "hello5");
-	}
-	{
-		Variant v(&myFunc3);
-		Variant arguments[] = { 5, std::string("hello") };
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, nullptr).get<int>() == 38);
-	}
 }
 
 TEST_CASE("aaa")

@@ -143,17 +143,22 @@ inline TypeKind MetaType::getTypeKind() const noexcept
 	return unifiedType->getTypeKind();
 }
 
-inline bool MetaType::isConst() const noexcept
+inline constexpr bool MetaType::isConst() const noexcept
 {
 	return typeFlags & tfConst;
 }
 
-inline bool MetaType::isVolatile() const noexcept
+inline constexpr bool MetaType::isVolatile() const noexcept
 {
 	return typeFlags & tfVolatile;
 }
 
-inline bool MetaType::isPodStorage() const noexcept
+inline constexpr bool MetaType::isCallable() const noexcept
+{
+	return typeFlags & tfCallable;
+}
+
+inline constexpr bool MetaType::isPodStorage() const noexcept
 {
 	return typeFlags & tfPodStorage;
 }

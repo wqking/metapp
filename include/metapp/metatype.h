@@ -83,9 +83,10 @@ public:
 	const char * getName() const noexcept;
 	TypeKind getTypeKind() const noexcept;
 
-	bool isConst() const noexcept;
-	bool isVolatile() const noexcept;
-	bool isPodStorage() const noexcept;
+	constexpr bool isConst() const noexcept;
+	constexpr bool isVolatile() const noexcept;
+	constexpr bool isCallable() const noexcept;
+	constexpr bool isPodStorage() const noexcept;
 
 	// meta methods
 	void constructDefault(MetaTypeData & data) const;

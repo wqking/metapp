@@ -10,6 +10,7 @@ set(SRC_TEST
 	test_variant_cast.cpp
 	test_variant_stream.cpp
 	test_metatyperepo.cpp
+	test_callable.cpp
 	test_cpp17.cpp
 )
 

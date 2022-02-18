@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T, size_t Size>
-struct DeclareMetaTypeBase <std::array<T, Size> >
-	: public DeclareObjectMetaType<std::array<T, Size> >
+struct DeclareMetaType <std::array<T, Size> >
+	: public DeclareMetaTypeBase <std::array<T, Size> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkArray;
