@@ -47,8 +47,8 @@ public:
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
-	bool canInvoke(const Variant * arguments) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
@@ -97,8 +97,8 @@ public:
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
-	bool canInvoke(const Variant * arguments) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments) const;
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
@@ -139,12 +139,12 @@ struct DeclareMetaTypeRoot
 		return doCast<U>(value, toMetaType);
 	}
 
-	static bool canInvoke(const Variant * /*arguments*/)
+	static bool canInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		return false;
 	}
 
-	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * /*arguments*/)
+	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		throw NotSupportedException("Invoke is not supported.");
 	}

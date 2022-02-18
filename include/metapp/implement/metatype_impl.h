@@ -66,21 +66,26 @@ inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaT
 	return result;
 }
 
-inline bool UnifiedType::canInvoke(const Variant * arguments) const
+inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::canInvoke;
-	param.paramCanInvoke = { arguments, false };
+	param.paramCanInvoke = { arguments, argumentCount, false };
 	metaMethod(param);
 	return param.paramCanInvoke.result;
 }
 
-inline Variant UnifiedType::invoke(void * instance, const Variant & func, const Variant * arguments) const
+inline Variant UnifiedType::invoke(
+		void * instance,
+		const Variant & func,
+		const Variant * arguments,
+		const size_t argumentCount
+	) const
 {
 	internal_::MetaMethodParam param;
 	param.action = internal_::MetaMethodAction::invoke;
 	Variant result;
-	param.paramInvoke = { &result, instance, &func, arguments };
+	param.paramInvoke = { &result, instance, &func, arguments, argumentCount };
 	metaMethod(param);
 	return result;
 }
@@ -188,14 +193,19 @@ inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType
 	return unifiedType->cast(value, toMetaType);
 }
 
-inline bool MetaType::canInvoke(const Variant * arguments) const
+inline bool MetaType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
-	return unifiedType->canInvoke(arguments);
+	return unifiedType->canInvoke(arguments, argumentCount);
 }
 
-inline Variant MetaType::invoke(void * instance, const Variant & func, const Variant * arguments) const
+inline Variant MetaType::invoke(
+		void * instance,
+		const Variant & func,
+		const Variant * arguments,
+		const size_t argumentCount
+	) const
 {
-	return unifiedType->invoke(instance, func, arguments);
+	return unifiedType->invoke(instance, func, arguments, argumentCount);
 }
 
 inline void MetaType::streamIn(std::istream & stream, Variant & value) const

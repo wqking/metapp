@@ -31,19 +31,20 @@ TEST_CASE("Callable, free function")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
-		v.getMetaType()->invoke(nullptr, v, arguments);
+		REQUIRE(v.getMetaType()->canInvoke(arguments, 2));
+		REQUIRE(! v.getMetaType()->canInvoke(arguments, 1));
+		v.getMetaType()->invoke(nullptr, v, arguments, 2);
 		REQUIRE(a == 15);
 		REQUIRE(b == "world");
 	}
 	{
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, std::string("hello") };
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments).get<std::string>() == "hello5");
+		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments, 2).get<std::string>() == "hello5");
 	}
 	{
 		metapp::Variant v(&myFunc3);
-		metapp::Variant arguments[] = { 5, std::string("hello") };
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, nullptr).get<int>() == 38);
+		REQUIRE(v.getMetaType()->invoke(nullptr, v, nullptr, 0).get<int>() == 38);
 	}
 }
 
@@ -59,7 +60,7 @@ TEST_CASE("Callable, std::function")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
-		v.getMetaType()->invoke(nullptr, v, arguments);
+		v.getMetaType()->invoke(nullptr, v, arguments, 2);
 		REQUIRE(a == 38);
 		REQUIRE(b == "hello");
 	}
@@ -100,7 +101,7 @@ TEST_CASE("Callable, member function")
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
 		Base obj { 5 };
-		v.getMetaType()->invoke(&obj, v, arguments);
+		v.getMetaType()->invoke(&obj, v, arguments, 2);
 		REQUIRE(a == 8);
 		REQUIRE(b == "Good");
 	}
@@ -109,7 +110,7 @@ TEST_CASE("Callable, member function")
 		metapp::Variant v(&Base::add);
 		metapp::Variant arguments[] = { 7 };
 		Derived obj { 5 };
-		metapp::Variant result = v.getMetaType()->invoke(&obj, v, arguments);
+		metapp::Variant result = v.getMetaType()->invoke(&obj, v, arguments, 1);
 		REQUIRE(result.get<int>() == 12);
 	}
 

@@ -48,13 +48,16 @@ struct MetaFunctionInvokeChecker
 {
 	using ArgumentTypeList = TypeList<Args...>;
 
-	static bool canInvoke(const Variant * arguments) {
+	static bool canInvoke(const Variant * arguments, const size_t argumentCount) {
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
-		return doCanInvoke(arguments, IS());
+		return doCanInvoke(arguments, argumentCount, IS());
 	}
 
 	template <size_t ...Indexes>
-	static bool doCanInvoke(const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+	static bool doCanInvoke(const Variant * arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
+		if(argumentCount != sizeof...(Args)) {
+			return false;
+		}
 		std::array<bool, sizeof...(Args)> canCastList {
 			internal_::canCastArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -74,7 +77,7 @@ struct MetaFunctionInvoker <void, RT, Args...>
 	using ArgumentTypeList = TypeList<Args...>;
 
 	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments) {
+	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
@@ -97,7 +100,7 @@ struct MetaFunctionInvoker <void, void, Args...>
 	using ArgumentTypeList = TypeList<Args...>;
 
 	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments) {
+	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
@@ -121,7 +124,7 @@ struct MetaFunctionInvoker
 	using ArgumentTypeList = TypeList<Args...>;
 
 	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments) {
+	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
@@ -144,7 +147,7 @@ struct MetaFunctionInvoker <Class, void, Args...>
 	using ArgumentTypeList = TypeList<Args...>;
 
 	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments) {
+	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}

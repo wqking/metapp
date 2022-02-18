@@ -17,15 +17,15 @@ public:
 	static constexpr TypeKind typeKind = tkMemberFunction;
 	static constexpr TypeFlags typeFlags = tfCallable | DeclareMetaTypeBase<FunctionType>::typeFlags;
 
-	static bool canInvoke(const Variant * arguments)
+	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments);
+		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant invoke(void * instance, const Variant & func, const Variant * arguments)
+	static Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
 		FunctionType f = func.get<FunctionType>();
-		return MetaFunctionInvoker<C, RT, Args...>::invoke(instance, f, arguments);
+		return MetaFunctionInvoker<C, RT, Args...>::invoke(instance, f, arguments, argumentCount);
 	}
 
 };

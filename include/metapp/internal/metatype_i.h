@@ -57,6 +57,7 @@ struct ParamCast
 struct ParamCanInvoke
 {
 	const Variant * arguments;
+	size_t argumentCount;
 	bool result;
 };
 
@@ -66,6 +67,7 @@ struct ParamInvoke
 	void * instance;
 	const Variant * func;
 	const Variant * arguments;
+	size_t argumentCount;
 };
 
 struct ParamStreamIn
@@ -123,11 +125,16 @@ void commonMetaMethod(MetaMethodParam & param)
 		break;
 
 	case MetaMethodAction::canInvoke:
-		param.paramCanInvoke.result = M::canInvoke(param.paramCanInvoke.arguments);
+		param.paramCanInvoke.result = M::canInvoke(param.paramCanInvoke.arguments, param.paramCanInvoke.argumentCount);
 		break;
 
 	case MetaMethodAction::invoke:
-		*param.paramInvoke.result = M::invoke(param.paramInvoke.instance, *param.paramInvoke.func, param.paramInvoke.arguments);
+		*param.paramInvoke.result = M::invoke(
+			param.paramInvoke.instance,
+			*param.paramInvoke.func,
+			param.paramInvoke.arguments,
+			param.paramInvoke.argumentCount
+		);
 		break;
 
 	case MetaMethodAction::streamIn:
