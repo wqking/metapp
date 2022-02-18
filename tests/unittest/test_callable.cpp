@@ -48,5 +48,73 @@ TEST_CASE("Callable, free function")
 }
 
 
+TEST_CASE("Callable, std::function")
+{
+	{
+		std::function<void (int &, std::string &)> func([](int & a, std::string & b) {
+			a = 38;
+			b = "hello";
+		});
+		metapp::Variant v(func);
+		int a = 0;
+		std::string b;
+		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
+		v.getMetaType()->invoke(nullptr, v, arguments);
+		REQUIRE(a == 38);
+		REQUIRE(b == "hello");
+	}
+}
+
+struct Base
+{
+	Base(const int n = 0) : myValue(n) {}
+
+	int myValue;
+
+	void func1(int & a, std::string & b)
+	{
+		a = 3 + myValue;
+		b = "Good";
+	}
+
+	virtual int add(const int ) const {
+		return 0;
+	}
+
+};
+
+struct Derived : Base
+{
+	using Base::Base;
+
+	virtual int add(const int a) const override {
+		return a + myValue;
+	}
+};
+
+TEST_CASE("Callable, member function")
+{
+	SECTION("Non-virtual") {
+		metapp::Variant v(&Base::func1);
+		int a = 0;
+		std::string b;
+		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
+		Base obj { 5 };
+		v.getMetaType()->invoke(&obj, v, arguments);
+		REQUIRE(a == 8);
+		REQUIRE(b == "Good");
+	}
+
+	SECTION("virtual") {
+		metapp::Variant v(&Base::add);
+		metapp::Variant arguments[] = { 7 };
+		Derived obj { 5 };
+		metapp::Variant result = v.getMetaType()->invoke(&obj, v, arguments);
+		REQUIRE(result.get<int>() == 12);
+	}
+
+}
+
+
 
 } // namespace

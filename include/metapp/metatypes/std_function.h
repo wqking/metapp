@@ -7,12 +7,28 @@
 
 namespace metapp {
 
-template <typename T>
-struct DeclareMetaType <std::function<T> >
-	: public DeclareMetaTypeBase <std::function<T> >
+template <typename RT, typename ...Args>
+struct DeclareMetaType <std::function<RT (Args...)> >
+	: public DeclareMetaTypeBase <std::function<RT (Args...)> >
 {
-	using UpType = T;
+private:
+	using FunctionType = std::function<RT (Args...)>;
+
+public:
+	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkStdFunction;
+	static constexpr TypeFlags typeFlags = tfCallable | DeclareMetaTypeBase<FunctionType>::typeFlags;
+
+	static bool canInvoke(const Variant * arguments)
+	{
+		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments);
+	}
+
+	static Variant invoke(void * instance, const Variant & func, const Variant * arguments)
+	{
+		auto & f = func.get<FunctionType &>();
+		return MetaFunctionInvoker<void, RT, Args...>::invoke(instance, f, arguments);
+	}
 
 };
 

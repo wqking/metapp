@@ -17,7 +17,7 @@ private:
 public:
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkFunction;
-	static constexpr TypeFlags typeFlags = tfCallable | DeclareMetaTypeBase<RT (*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfCallable | DeclareMetaTypeBase<FunctionType>::typeFlags;
 
 	static bool canInvoke(const Variant * arguments)
 	{
@@ -33,10 +33,23 @@ public:
 };
 
 template <typename RT, typename ...Args>
+struct DeclareMetaType <RT (*)(Args...) noexcept>
+	: public DeclareMetaType <RT (*)(Args...)>
+{
+};
+
+template <typename RT, typename ...Args>
 struct DeclareMetaType <RT (Args...)>
 	: public DeclareMetaType <RT (*)(Args...)>
 {
 };
+
+template <typename RT, typename ...Args>
+struct DeclareMetaType <RT (Args...) noexcept>
+	: public DeclareMetaType <RT (Args...)>
+{
+};
+
 
 } // namespace metapp
 
