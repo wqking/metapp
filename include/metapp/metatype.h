@@ -6,6 +6,7 @@
 #include "metapp/exception.h"
 #include "metapp/typelist.h"
 
+// The ugly macro trick is to bypass cyclic include variant.h and metatype.h
 #define VARIANT_IMPL_H_969872685611
 #include "metapp/variant.h"
 #undef VARIANT_IMPL_H_969872685611

@@ -1,19 +1,6 @@
 set(TARGET_TEST unittest)
 
-set(SRC_TEST
-	testmain.cpp
-	test.cpp
-	test_basic.cpp
-	test_typekind.cpp
-	test_usertype.cpp
-	test_metatype.cpp
-	test_variant_cast.cpp
-	test_variant_stream.cpp
-	test_metatyperepo.cpp
-	test_callable.cpp
-	test_cpp17.cpp
-)
-
+file(GLOB_RECURSE SRC_TEST "./*.cpp")
 file(GLOB_RECURSE HEADERS "../../include/metapp/*.h")
 
 add_executable(
