@@ -88,6 +88,27 @@ inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
 	return *this;
 }
 
+inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
+{
+	assert(metaType_->isObjectStorage());
+
+	metaType = metaType_;
+	data.object = std::shared_ptr<void>(object_, [metaType_](void * p) {
+		metaType_->destroy(p);
+	});
+
+	return *this;
+}
+
+inline Variant & Variant::makeObject(const Variant & object_)
+{
+	const MetaType * mt = object_.getMetaType();
+	while(mt != nullptr && mt->getTypeKind() == tkPointer) {
+		mt = mt->getUpType();
+	}
+	return makeObject(mt, object_.get<void *>());
+}
+
 template <typename T>
 inline bool Variant::canGet(const bool strictMode) const
 {

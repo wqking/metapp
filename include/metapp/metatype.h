@@ -1,6 +1,7 @@
 #ifndef METATYPE_H_969872685611
 #define METATYPE_H_969872685611
 
+#include "metapp/compiler.h"
 #include "metapp/typekind.h"
 #include "metapp/metatypedata.h"
 #include "metapp/exception.h"
@@ -47,6 +48,8 @@ public:
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 	
+	void destroy(void * instance) const;
+
 	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
@@ -98,6 +101,8 @@ public:
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 
+	void destroy(void * instance) const;
+
 	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
@@ -123,6 +128,7 @@ private:
 template <typename T>
 struct DeclareMetaTypeRoot
 {
+	using U = typename std::remove_reference<T>::type;
 	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeKind typeKind = tkObject;
@@ -132,15 +138,23 @@ struct DeclareMetaTypeRoot
 		return "";
 	}
 
-	static void * getAddress(const MetaTypeData & /*data*/) {
+	static void destroy(void * instance)
+	{
+		doDestroy(static_cast<U *>(instance));
+	}
+
+	static void * getAddress(const MetaTypeData & /*data*/)
+	{
 		return nullptr;
 	}
 
-	static bool canCast(const MetaType * toMetaType) {
+	static bool canCast(const MetaType * toMetaType)
+	{
 		return isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
+	static Variant cast(const Variant & value, const MetaType * toMetaType)
+	{
 		using U = typename std::remove_reference<T>::type;
 		return doCast<U>(value, toMetaType);
 	}
@@ -164,6 +178,22 @@ struct DeclareMetaTypeRoot
 	}
 
 private:
+	template <typename U>
+	static void doDestroy(U * /*instance*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+	}
+
+	template <typename U>
+	static void doDestroy(U * instance, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+		#endif
+				delete instance;
+		#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+		#pragma GCC diagnostic pop
+		#endif
+	}
+
 	template <typename U>
 	static Variant doCast(const Variant & /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
 		return Variant();
@@ -191,6 +221,8 @@ const UnifiedType * getUnifiedType()
 		internal_::MetaMethodTable {
 			&M::constructDefault,
 			&M::constructWith,
+
+			&M::destroy,
 
 			&M::getAddress,
 

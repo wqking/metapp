@@ -186,10 +186,7 @@ struct MetaConstructorInvoker
 		// avoid unused warning if there is no arguments
 		(void)arguments;
 		(void)castedArguments;
-		return Variant().makeObject(
-			getMetaType<Class>(),
-			new Class(internal_::getArgument<ArgumentTypeList, Indexes>(castedArguments.data())...)
-		);
+		return new Class(internal_::getArgument<ArgumentTypeList, Indexes>(castedArguments.data())...);
 	}
 };
 

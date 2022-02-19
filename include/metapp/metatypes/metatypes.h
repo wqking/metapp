@@ -4,7 +4,6 @@
 #include "metapp/compiler.h"
 
 #include "metapp/metatypes/arithmetic.h"
-#include "metapp/metatypes/array.h"
 #include "metapp/metatypes/constructor.h"
 #include "metapp/metatypes/cv.h"
 #include "metapp/metatypes/decay.h"
@@ -22,6 +21,7 @@
 #include "metapp/metatypes/stack.h"
 #include "metapp/metatypes/string.h"
 #include "metapp/metatypes/shared_ptr.h"
+#include "metapp/metatypes/std_array.h"
 #include "metapp/metatypes/std_function.h"
 #include "metapp/metatypes/tuple.h"
 #include "metapp/metatypes/unordered_map.h"

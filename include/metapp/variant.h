@@ -35,6 +35,8 @@ public:
 
 	template <typename T>
 	Variant & makeObject(const MetaType * metaType, T * object);
+	Variant & makeObject(const MetaType * metaType, void * object);
+	Variant & makeObject(const Variant & object);
 
 	template <typename T>
 	bool canGet(const bool strictMode = false) const;

@@ -12,6 +12,17 @@
 	#endif
 #endif
 
+#if defined(_MSC_VER)
+#define METAPP_COMPILER_VC
+#elif defined(__clang__)
+#define METAPP_COMPILER_CLANG
+#elif defined(__GNUC__)
+#define METAPP_COMPILER_GCC
+#else
+#define METAPP_COMPILER_UNKNOWN
+#endif
+
+
 
 #endif
 

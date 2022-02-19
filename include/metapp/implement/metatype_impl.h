@@ -32,6 +32,11 @@ inline void UnifiedType::constructWith(MetaTypeData & data, const void * value) 
 	metaMethodTable.constructWith(data, value);
 }
 
+inline void UnifiedType::destroy(void * instance) const
+{
+	metaMethodTable.destroy(instance);
+}
+
 inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 {
 	return metaMethodTable.getAddress(data);
@@ -147,6 +152,11 @@ inline void MetaType::constructDefault(MetaTypeData & data) const
 inline void MetaType::constructWith(MetaTypeData & data, const void * value) const
 {
 	unifiedType->constructWith(data, value);
+}
+
+inline void MetaType::destroy(void * instance) const
+{
+	unifiedType->destroy(instance);
 }
 
 inline void * MetaType::getAddress(const MetaTypeData & data) const

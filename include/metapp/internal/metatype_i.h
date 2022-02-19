@@ -29,6 +29,8 @@ struct MetaMethodTable
 	void (*constructDefault)(MetaTypeData & data);
 	void (*constructWith)(MetaTypeData & data, const void * value);
 
+	void (*destroy)(void * instance);
+
 	void * (*getAddress)(const MetaTypeData & data);
 
 	bool (*canCast)(const MetaType * toMetaType);
