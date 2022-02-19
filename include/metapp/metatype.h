@@ -33,7 +33,11 @@ const MetaType * getMetaType();
 class UnifiedType
 {
 public:
-	constexpr UnifiedType(const char * name, const TypeKind typeKind, internal_::FuncMetaMethod metaMethod) noexcept;
+	constexpr UnifiedType(
+		const char * name,
+		const TypeKind typeKind,
+		const internal_::MetaMethodTable & metaMethodTable
+	) noexcept;
 	~UnifiedType() = default;
 
 	const char * getName() const noexcept;
@@ -61,7 +65,7 @@ private:
 private:
 	const char * name;
 	TypeKind typeKind;
-	internal_::FuncMetaMethod metaMethod;
+	internal_::MetaMethodTable metaMethodTable;
 };
 
 class MetaType
@@ -183,7 +187,21 @@ const UnifiedType * getUnifiedType()
 	static const UnifiedType unifiedType (
 		M::getName(),
 		M::typeKind,
-		&internal_::commonMetaMethod<M>
+		internal_::MetaMethodTable {
+			&M::constructDefault,
+			&M::constructWith,
+
+			&M::getAddress,
+
+			&M::canCast,
+			&M::cast,
+
+			&M::canInvoke,
+			&M::invoke,
+
+			&M::streamIn,
+			&M::streamOut,
+		}
 	);
 	return &unifiedType;
 }

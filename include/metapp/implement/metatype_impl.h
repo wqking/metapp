@@ -6,9 +6,9 @@ namespace metapp {
 inline constexpr UnifiedType::UnifiedType(
 		const char * name,
 		const TypeKind typeKind,
-		internal_::FuncMetaMethod metaMethod
+		const internal_::MetaMethodTable & metaMethodTable
 	) noexcept
-	: name(name), typeKind(typeKind), metaMethod(metaMethod)
+	: name(name), typeKind(typeKind), metaMethodTable(metaMethodTable)
 {
 }
 
@@ -24,55 +24,32 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 
 inline void UnifiedType::constructDefault(MetaTypeData & data) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::constructDefault;
-	param.paramConstruct = { &data };
-	metaMethod(param);
+	metaMethodTable.constructDefault(data);
 }
 
 inline void UnifiedType::constructWith(MetaTypeData & data, const void * value) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::constructWith;
-	param.paramConstructWith = { &data, value };
-	metaMethod(param);
+	metaMethodTable.constructWith(data, value);
 }
 
 inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::getAddress;
-	param.paramGetAddress = { &data, nullptr };
-	metaMethod(param);
-	return param.paramGetAddress.value;
+	return metaMethodTable.getAddress(data);
 }
 
 inline bool UnifiedType::canCast(const MetaType * toMetaType) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::canCast;
-	param.paramCanCast = { toMetaType, false };
-	metaMethod(param);
-	return param.paramCanCast.result;
+	return metaMethodTable.canCast(toMetaType);
 }
 
 inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::cast;
-	Variant result;
-	param.paramCast = { &result, &value, toMetaType };
-	metaMethod(param);
-	return result;
+	return metaMethodTable.cast(value, toMetaType);
 }
 
 inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::canInvoke;
-	param.paramCanInvoke = { arguments, argumentCount, false };
-	metaMethod(param);
-	return param.paramCanInvoke.result;
+	return metaMethodTable.canInvoke(arguments, argumentCount);
 }
 
 inline Variant UnifiedType::invoke(
@@ -82,28 +59,17 @@ inline Variant UnifiedType::invoke(
 		const size_t argumentCount
 	) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::invoke;
-	Variant result;
-	param.paramInvoke = { &result, instance, &func, arguments, argumentCount };
-	metaMethod(param);
-	return result;
+	return metaMethodTable.invoke(instance, func, arguments, argumentCount);
 }
 
 inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::streamIn;
-	param.paramStreamIn = { &stream, &value };
-	metaMethod(param);
+	metaMethodTable.streamIn(stream, value);
 }
 
 inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
 {
-	internal_::MetaMethodParam param;
-	param.action = internal_::MetaMethodAction::streamOut;
-	param.paramStreamOut = { &stream, &value };
-	metaMethod(param);
+	metaMethodTable.streamOut(stream, value);
 }
 
 

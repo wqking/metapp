@@ -126,6 +126,7 @@ TEST_CASE("Callable, constructor")
 	Base & base = obj.get<Base &>();
 	REQUIRE(obj.getMetaType() == metapp::getMetaType<Base>());
 	REQUIRE(base.myValue == 7);
+	REQUIRE(obj.getAddress<Base>()->myValue == 7);
 }
 
 
