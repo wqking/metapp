@@ -25,7 +25,7 @@ TEST_CASE("metatypes, member data")
 	using namespace metapp;
 	auto metaType = v.getMetaType();
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkArray, tkInt }));
+	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkStdArray, tkInt }));
 }
 
 TEST_CASE("metatypes, member function")

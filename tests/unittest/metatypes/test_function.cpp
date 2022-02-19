@@ -3,6 +3,8 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
+namespace {
+
 const void * func1(int, const std::vector<int> &) { return nullptr; }
 
 TEST_CASE("metatypes, function pointer")
@@ -23,3 +25,5 @@ TEST_CASE("metatypes, function pointer")
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
 }
 
+
+} // namespace

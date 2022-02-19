@@ -12,7 +12,7 @@ struct DeclareMetaType <std::array<T, Size> >
 	: public DeclareMetaTypeBase <std::array<T, Size> >
 {
 	using UpType = T;
-	static constexpr TypeKind typeKind = tkArray;
+	static constexpr TypeKind typeKind = tkStdArray;
 
 };
 
