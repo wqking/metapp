@@ -11,8 +11,11 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
-	static void construct(MetaTypeData & data, const void * value) {
-		data.podAs<T *>() = (T *)value;
+	static void * construct(MetaTypeData * data, const void * copyFrom) {
+		if(data != nullptr) {
+			data->podAs<T *>() = (T *)copyFrom;
+		}
+		return nullptr;
 	}
 
 	static void * getAddress(const MetaTypeData & data) {

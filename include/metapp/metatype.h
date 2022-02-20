@@ -47,7 +47,7 @@ public:
 
 	constexpr bool isCallable() const noexcept;
 
-	void construct(MetaTypeData & data, const void * value) const;
+	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
 	void destroy(void * instance) const;
 
@@ -99,7 +99,7 @@ public:
 	constexpr bool isObjectStorage() const noexcept;
 
 	// meta methods
-	void construct(MetaTypeData & data, const void * value) const;
+	void * construct(MetaTypeData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
 
@@ -235,12 +235,23 @@ struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 {
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
-	static void construct(MetaTypeData & data, const void * value) {
-		if(value == nullptr) {
-			data.podAs<T>() = T();
+	static void * construct(MetaTypeData * data, const void * copyFrom) {
+		if(data != nullptr) {
+			if(copyFrom == nullptr) {
+				data->podAs<T>() = T();
+			}
+			else {
+				data->podAs<T>() = *(T *)copyFrom;
+			}
+			return nullptr;
 		}
 		else {
-			data.podAs<T>() = *(T *)value;
+			if(copyFrom == nullptr) {
+				return new T();
+			}
+			else {
+				return new T(*(T *)copyFrom);
+			}
 		}
 	}
 
@@ -255,12 +266,23 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 {
 	using U = typename std::remove_reference<T>::type;
 
-	static void construct(MetaTypeData & data, const void * value) {
-		if(value == nullptr) {
-			data.object = std::make_shared<U>();
+	static void * construct(MetaTypeData * data, const void * copyFrom) {
+		if(data != nullptr) {
+			if(copyFrom == nullptr) {
+				data->object = std::make_shared<U>();
+			}
+			else {
+				data->object = std::make_shared<U>(*(U *)copyFrom);
+			}
+			return nullptr;
 		}
 		else {
-			data.object = std::make_shared<U>(*(U *)value);
+			if(copyFrom == nullptr) {
+				return new U();
+			}
+			else {
+				return new U(*(U *)copyFrom);
+			}
 		}
 	}
 
@@ -293,7 +315,8 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 		return "void";
 	}
 
-	static void construct(MetaTypeData & /*data*/, const void * /*value*/) {
+	static void * construct(MetaTypeData * /*data*/, const void * /*value*/) {
+		return nullptr;
 	}
 
 };
