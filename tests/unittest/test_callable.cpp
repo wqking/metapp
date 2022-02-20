@@ -8,6 +8,12 @@
 
 namespace {
 
+TEST_CASE("Callable, isCallable")
+{
+	REQUIRE(! metapp::getMetaType<int>()->isCallable());
+	REQUIRE(metapp::getMetaType<void ()>()->isCallable());
+}
+
 void myFunc(int & a, std::string & b)
 {
 	a = 15;

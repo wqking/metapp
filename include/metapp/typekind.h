@@ -79,8 +79,7 @@ using TypeFlags = uint16_t;
 
 constexpr TypeFlags tfConst = 1 << 0;
 constexpr TypeFlags tfVolatile = 1 << 1;
-constexpr TypeFlags tfCallable = 1 << 2;
-constexpr TypeFlags tfPodStorage = 1 << 3;
+constexpr TypeFlags tfPodStorage = 1 << 2;
 
 } // namespace metapp
 

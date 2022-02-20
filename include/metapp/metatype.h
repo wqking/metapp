@@ -45,6 +45,8 @@ public:
 	const char * getName() const noexcept;
 	TypeKind getTypeKind() const noexcept;
 
+	constexpr bool isCallable() const noexcept;
+
 	void constructDefault(MetaTypeData & data) const;
 	void constructWith(MetaTypeData & data, const void * value) const;
 	
@@ -159,16 +161,6 @@ struct DeclareMetaTypeRoot
 		return doCast<U>(value, toMetaType);
 	}
 
-	static bool canInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
-	{
-		return false;
-	}
-
-	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
-	{
-		throw NotSupportedException("Invoke is not supported.");
-	}
-
 	static void streamIn(std::istream & /*stream*/, Variant & /*value*/) {
 		errorNoStreamIn();
 	}
@@ -229,8 +221,7 @@ const UnifiedType * getUnifiedType()
 			&M::canCast,
 			&M::cast,
 
-			&M::canInvoke,
-			&M::invoke,
+			internal_::getInvokeMethdTable<M>(),
 
 			&M::streamIn,
 			&M::streamOut,

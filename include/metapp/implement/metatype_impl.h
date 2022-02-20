@@ -22,6 +22,11 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 	return typeKind;
 }
 
+inline constexpr bool UnifiedType::isCallable() const noexcept
+{
+	return metaMethodTable.invokeMethdTable != nullptr;
+}
+
 inline void UnifiedType::constructDefault(MetaTypeData & data) const
 {
 	metaMethodTable.constructDefault(data);
@@ -54,7 +59,10 @@ inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaT
 
 inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
-	return metaMethodTable.canInvoke(arguments, argumentCount);
+	if(metaMethodTable.invokeMethdTable == nullptr) {
+		throw NotSupportedException("Invoke is not supported.");
+	}
+	return metaMethodTable.invokeMethdTable->canInvoke(arguments, argumentCount);
 }
 
 inline Variant UnifiedType::invoke(
@@ -64,7 +72,10 @@ inline Variant UnifiedType::invoke(
 		const size_t argumentCount
 	) const
 {
-	return metaMethodTable.invoke(instance, func, arguments, argumentCount);
+	if(metaMethodTable.invokeMethdTable == nullptr) {
+		throw NotSupportedException("Invoke is not supported.");
+	}
+	return metaMethodTable.invokeMethdTable->invoke(instance, func, arguments, argumentCount);
 }
 
 inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
@@ -131,7 +142,7 @@ inline constexpr bool MetaType::isVolatile() const noexcept
 
 inline constexpr bool MetaType::isCallable() const noexcept
 {
-	return typeFlags & tfCallable;
+	return unifiedType->isCallable();
 }
 
 inline constexpr bool MetaType::isPodStorage() const noexcept

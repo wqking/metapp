@@ -11,18 +11,27 @@ namespace internal_ {
 
 struct NoneUpType {};
 
-enum class MetaMethodAction
+struct InvokeMethdTable
 {
-	constructDefault,
-	constructWith,
-	getAddress,
-	canCast,
-	cast,
-	canInvoke,
-	invoke,
-	streamIn,
-	streamOut,
+	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
+	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
 };
+
+template <typename T>
+const InvokeMethdTable * getInvokeMethdTable(typename std::enable_if<HasFunctionInvoke<T>::value>::type * = nullptr)
+{
+	static const InvokeMethdTable invokeMethdTable {
+		&T::canInvoke,
+		&T::invoke
+	};
+	return &invokeMethdTable;
+}
+
+template <typename T>
+const InvokeMethdTable * getInvokeMethdTable(typename std::enable_if<! HasFunctionInvoke<T>::value>::type * = nullptr)
+{
+	return nullptr;
+}
 
 struct MetaMethodTable
 {
@@ -36,8 +45,7 @@ struct MetaMethodTable
 	bool (*canCast)(const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 
-	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
-	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
+	const InvokeMethdTable * invokeMethdTable;
 
 	void (*streamIn)(std::istream & stream, Variant & value);
 	void (*streamOut)(std::ostream & stream, const Variant & value);

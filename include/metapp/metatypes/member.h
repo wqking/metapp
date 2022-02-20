@@ -15,7 +15,6 @@ private:
 public:
 	using UpType = TypeList <C, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
-	static constexpr TypeFlags typeFlags = tfCallable | DeclareMetaTypeBase<FunctionType>::typeFlags;
 
 	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
 	{
