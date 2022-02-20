@@ -56,6 +56,16 @@ struct HasFunctionInvoke
 	enum { value = !! decltype(test<T>(0))() };
 };
 
+template <typename T>
+struct HasFunctionAccessibleGet
+{
+	template <typename C> static std::true_type test(decltype(C::accessibleGet) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+
 } // namespace internal_
 
 } // namespace metapp

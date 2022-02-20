@@ -32,7 +32,6 @@ TEST_CASE("metatypes, int **")
 	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 }
 
-
 TEST_CASE("metatypes, void ***")
 {
 	void *** p = nullptr;
@@ -40,5 +39,16 @@ TEST_CASE("metatypes, void ***")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 	using namespace metapp;
 	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
+}
+
+TEST_CASE("metatypes, int *, accessible")
+{
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(v.getMetaType()->accessibleGet(v, nullptr).get<int>() == 5);
+	v.getMetaType()->accessibleSet(v, nullptr, 38);
+	REQUIRE(v.getMetaType()->accessibleGet(v, nullptr).get<int>() == 38);
+	v.getMetaType()->accessibleSet(v, nullptr, 98.0);
+	REQUIRE(v.getMetaType()->accessibleGet(v, nullptr).get<int>() == 98);
 }
 

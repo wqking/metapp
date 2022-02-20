@@ -46,6 +46,7 @@ public:
 	TypeKind getTypeKind() const noexcept;
 
 	constexpr bool isCallable() const noexcept;
+	constexpr bool isAccessible() const noexcept;
 
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -55,12 +56,15 @@ public:
 	
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
-	
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
+
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+
+	Variant accessibleGet(const Variant & accessible, const void * instance) const;
+	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
 
 private:
 	UnifiedType() = delete;
@@ -95,6 +99,7 @@ public:
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
 	constexpr bool isCallable() const noexcept;
+	constexpr bool isAccessible() const noexcept;
 	constexpr bool isPodStorage() const noexcept;
 	constexpr bool isObjectStorage() const noexcept;
 
@@ -107,12 +112,15 @@ public:
 	
 	bool canCast(const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
-	
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
+
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+
+	Variant accessibleGet(const Variant & accessible, const void * instance) const;
+	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
 
 private:
 	MetaType() = delete;
@@ -218,10 +226,11 @@ const UnifiedType * getUnifiedType()
 			&M::canCast,
 			&M::cast,
 
-			internal_::getInvokeMethdTable<M>(),
-
 			&M::streamIn,
 			&M::streamOut,
+
+			internal_::getInvokeMethdTable<M>(),
+			internal_::getAccessibleMethodTable<M>(),
 		}
 	);
 	return &unifiedType;

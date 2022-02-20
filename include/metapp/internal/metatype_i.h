@@ -11,24 +11,46 @@ namespace internal_ {
 
 struct NoneUpType {};
 
-struct InvokeMethdTable
+struct InvokeMethodTable
 {
 	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
 };
 
 template <typename T>
-const InvokeMethdTable * getInvokeMethdTable(typename std::enable_if<HasFunctionInvoke<T>::value>::type * = nullptr)
+const InvokeMethodTable * getInvokeMethdTable(typename std::enable_if<HasFunctionInvoke<T>::value>::type * = nullptr)
 {
-	static const InvokeMethdTable invokeMethdTable {
+	static const InvokeMethodTable invokeMethodTable {
 		&T::canInvoke,
 		&T::invoke
 	};
-	return &invokeMethdTable;
+	return &invokeMethodTable;
 }
 
 template <typename T>
-const InvokeMethdTable * getInvokeMethdTable(typename std::enable_if<! HasFunctionInvoke<T>::value>::type * = nullptr)
+const InvokeMethodTable * getInvokeMethdTable(typename std::enable_if<! HasFunctionInvoke<T>::value>::type * = nullptr)
+{
+	return nullptr;
+}
+
+struct AccessibleMethodTable
+{
+	Variant (*accessibleGet)(const Variant & accessible, const void * instance);
+	void (*accessibleSet)(const Variant & accessible, void * instance, const Variant & value);
+};
+
+template <typename T>
+const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<HasFunctionAccessibleGet<T>::value>::type * = nullptr)
+{
+	static const AccessibleMethodTable accessibleMethodTable {
+		&T::accessibleGet,
+		&T::accessibleSet
+	};
+	return &accessibleMethodTable;
+}
+
+template <typename T>
+const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<! HasFunctionAccessibleGet<T>::value>::type * = nullptr)
 {
 	return nullptr;
 }
@@ -44,10 +66,11 @@ struct MetaMethodTable
 	bool (*canCast)(const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 
-	const InvokeMethdTable * invokeMethdTable;
-
 	void (*streamIn)(std::istream & stream, Variant & value);
 	void (*streamOut)(std::ostream & stream, const Variant & value);
+
+	const InvokeMethodTable * invokeMethodTable;
+	const AccessibleMethodTable * accessibleMethodTable;
 };
 
 struct UpTypeData

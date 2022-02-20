@@ -24,7 +24,12 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 
 inline constexpr bool UnifiedType::isCallable() const noexcept
 {
-	return metaMethodTable.invokeMethdTable != nullptr;
+	return metaMethodTable.invokeMethodTable != nullptr;
+}
+
+inline constexpr bool UnifiedType::isAccessible() const noexcept
+{
+	return metaMethodTable.accessibleMethodTable != nullptr;
 }
 
 inline void * UnifiedType::construct(MetaTypeData * data, const void * copyFrom) const
@@ -52,12 +57,22 @@ inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaT
 	return metaMethodTable.cast(value, toMetaType);
 }
 
+inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
+{
+	metaMethodTable.streamIn(stream, value);
+}
+
+inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
+{
+	metaMethodTable.streamOut(stream, value);
+}
+
 inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
-	if(metaMethodTable.invokeMethdTable == nullptr) {
+	if(metaMethodTable.invokeMethodTable == nullptr) {
 		throw NotSupportedException("Invoke is not supported.");
 	}
-	return metaMethodTable.invokeMethdTable->canInvoke(arguments, argumentCount);
+	return metaMethodTable.invokeMethodTable->canInvoke(arguments, argumentCount);
 }
 
 inline Variant UnifiedType::invoke(
@@ -67,20 +82,29 @@ inline Variant UnifiedType::invoke(
 		const size_t argumentCount
 	) const
 {
-	if(metaMethodTable.invokeMethdTable == nullptr) {
+	if(metaMethodTable.invokeMethodTable == nullptr) {
 		throw NotSupportedException("Invoke is not supported.");
 	}
-	return metaMethodTable.invokeMethdTable->invoke(instance, func, arguments, argumentCount);
+	return metaMethodTable.invokeMethodTable->invoke(instance, func, arguments, argumentCount);
 }
 
-inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
+
+inline Variant UnifiedType::accessibleGet(const Variant & accessible, const void * instance) const
 {
-	metaMethodTable.streamIn(stream, value);
+	if(metaMethodTable.accessibleMethodTable == nullptr) {
+		throw NotSupportedException("Accessible is not supported.");
+	}
+
+	return metaMethodTable.accessibleMethodTable->accessibleGet(accessible, instance);
 }
 
-inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
+inline void UnifiedType::accessibleSet(const Variant & accessible, void * instance, const Variant & value) const
 {
-	metaMethodTable.streamOut(stream, value);
+	if(metaMethodTable.accessibleMethodTable == nullptr) {
+		throw NotSupportedException("Accessible is not supported.");
+	}
+
+	metaMethodTable.accessibleMethodTable->accessibleSet(accessible, instance, value);
 }
 
 
@@ -140,6 +164,11 @@ inline constexpr bool MetaType::isCallable() const noexcept
 	return unifiedType->isCallable();
 }
 
+inline constexpr bool MetaType::isAccessible() const noexcept
+{
+	return unifiedType->isAccessible();
+}
+
 inline constexpr bool MetaType::isPodStorage() const noexcept
 {
 	return typeFlags & tfPodStorage;
@@ -175,6 +204,16 @@ inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType
 	return unifiedType->cast(value, toMetaType);
 }
 
+inline void MetaType::streamIn(std::istream & stream, Variant & value) const
+{
+	unifiedType->streamIn(stream, value);
+}
+
+inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
+{
+	unifiedType->streamOut(stream, value);
+}
+
 inline bool MetaType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
 	return unifiedType->canInvoke(arguments, argumentCount);
@@ -190,14 +229,14 @@ inline Variant MetaType::invoke(
 	return unifiedType->invoke(instance, func, arguments, argumentCount);
 }
 
-inline void MetaType::streamIn(std::istream & stream, Variant & value) const
+inline Variant MetaType::accessibleGet(const Variant & accessible, const void * instance) const
 {
-	unifiedType->streamIn(stream, value);
+	return unifiedType->accessibleGet(accessible, instance);
 }
 
-inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
+inline void MetaType::accessibleSet(const Variant & accessible, void * instance, const Variant & value) const
 {
-	unifiedType->streamOut(stream, value);
+	unifiedType->accessibleSet(accessible, instance, value);
 }
 
 

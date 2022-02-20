@@ -194,7 +194,7 @@ template <typename T>
 inline auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
 	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
 {
-	errorNoStreamIn();
+	throw NotSupportedException("No << input streaming operator.");
 }
 
 template <typename T>
@@ -208,7 +208,7 @@ template <typename T>
 inline auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
 	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
 {
-	errorNoStreamOut();
+	throw NotSupportedException("No >> output streaming operator.");
 }
 
 

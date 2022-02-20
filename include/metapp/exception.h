@@ -32,21 +32,6 @@ public:
 	using super::super;
 };
 
-inline void errorNoStreamIn()
-{
-	throw NotSupportedException("No << input streaming operator.");
-}
-
-inline void errorNoStreamOut()
-{
-	throw NotSupportedException("No >> output streaming operator.");
-}
-
-inline void errorBadCast()
-{
-	throw NotSupportedException("Bad cast");
-}
-
 
 } // namespace metapp
 
