@@ -23,17 +23,6 @@ struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
 
 namespace {
 
-TEST_CASE("metatypes, member data")
-{
-	metapp::Variant v(&Class1::data);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
-	
-	using namespace metapp;
-	auto metaType = v.getMetaType();
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkStdArray, tkInt }));
-}
-
 TEST_CASE("metatypes, member function, types")
 {
 	metapp::Variant v(&Class1::func);
