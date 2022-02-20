@@ -15,14 +15,14 @@ inline Variant::Variant(T value) noexcept
 	:
 		metaType(metapp::getMetaType<T>())
 {
-	metaType->constructWith(data, &value);
+	metaType->construct(data, &value);
 }
 
 inline Variant::Variant(const MetaType * metaType) noexcept
 	:
 		metaType(metaType)
 {
-	metaType->constructDefault(data);
+	metaType->construct(data, nullptr);
 }
 
 inline Variant::Variant(const MetaType * metaType, const MetaTypeData & data) noexcept
@@ -72,7 +72,7 @@ template <typename T>
 inline Variant & Variant::set(T value)
 {
 	metaType = metapp::getMetaType<T>();
-	metaType->constructWith(data, &value);
+	metaType->construct(data, &value);
 
 	return *this;
 }

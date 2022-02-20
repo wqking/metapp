@@ -14,12 +14,13 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkSharedPtr;
 
-	static void constructDefault(MetaTypeData & data) {
-		data.object = std::static_pointer_cast<void>(std::shared_ptr<T>());
-	}
-
-	static void constructWith(MetaTypeData & data, const void * value) {
-		data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
+	static void construct(MetaTypeData & data, const void * value) {
+		if(value == nullptr) {
+			data.object = std::static_pointer_cast<void>(std::shared_ptr<T>());
+		}
+		else {
+			data.object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)value);
+		}
 	}
 
 	static void * getAddress(const MetaTypeData & data) {

@@ -47,8 +47,7 @@ public:
 
 	constexpr bool isCallable() const noexcept;
 
-	void constructDefault(MetaTypeData & data) const;
-	void constructWith(MetaTypeData & data, const void * value) const;
+	void construct(MetaTypeData & data, const void * value) const;
 	
 	void destroy(void * instance) const;
 
@@ -100,8 +99,7 @@ public:
 	constexpr bool isObjectStorage() const noexcept;
 
 	// meta methods
-	void constructDefault(MetaTypeData & data) const;
-	void constructWith(MetaTypeData & data, const void * value) const;
+	void construct(MetaTypeData & data, const void * value) const;
 
 	void destroy(void * instance) const;
 
@@ -161,12 +159,12 @@ struct DeclareMetaTypeRoot
 		return doCast<U>(value, toMetaType);
 	}
 
-	static void streamIn(std::istream & /*stream*/, Variant & /*value*/) {
-		errorNoStreamIn();
+	static void streamIn(std::istream & stream, Variant & value) {
+		variantStreamIn<T>(stream, value);
 	}
 
-	static void streamOut(std::ostream & /*stream*/, const Variant & /*value*/) {
-		errorNoStreamOut();
+	static void streamOut(std::ostream & stream, const Variant & value) {
+		variantStreamOut<T>(stream, value);
 	}
 
 private:
@@ -211,8 +209,7 @@ const UnifiedType * getUnifiedType()
 		M::getName(),
 		M::typeKind,
 		internal_::MetaMethodTable {
-			&M::constructDefault,
-			&M::constructWith,
+			&M::construct,
 
 			&M::destroy,
 
@@ -238,24 +235,17 @@ struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 {
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
-	static void constructDefault(MetaTypeData & data) {
-		data.podAs<T>() = T();
-	}
-
-	static void constructWith(MetaTypeData & data, const void * value) {
-		data.podAs<T>() = *(T *)value;
+	static void construct(MetaTypeData & data, const void * value) {
+		if(value == nullptr) {
+			data.podAs<T>() = T();
+		}
+		else {
+			data.podAs<T>() = *(T *)value;
+		}
 	}
 
 	static void * getAddress(const MetaTypeData & data) {
 		return &data.podAs<T>();
-	}
-
-	static void streamIn(std::istream & stream, Variant & value) {
-		variantStreamIn<T>(stream, value);
-	}
-
-	static void streamOut(std::ostream & stream, const Variant & value) {
-		variantStreamOut<T>(stream, value);
 	}
 
 };
@@ -265,24 +255,17 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 {
 	using U = typename std::remove_reference<T>::type;
 
-	static void constructDefault(MetaTypeData & data) {
-		data.object = std::make_shared<U>();
-	}
-
-	static void constructWith(MetaTypeData & data, const void * value) {
-		data.object = std::make_shared<U>(*(U *)value);
+	static void construct(MetaTypeData & data, const void * value) {
+		if(value == nullptr) {
+			data.object = std::make_shared<U>();
+		}
+		else {
+			data.object = std::make_shared<U>(*(U *)value);
+		}
 	}
 
 	static void * getAddress(const MetaTypeData & data) {
 		return data.object.get();
-	}
-
-	static void streamIn(std::istream & stream, Variant & value) {
-		variantStreamIn<T>(stream, value);
-	}
-
-	static void streamOut(std::ostream & stream, const Variant & value) {
-		variantStreamOut<T>(stream, value);
 	}
 
 };
@@ -310,10 +293,7 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 		return "void";
 	}
 
-	static void constructDefault(MetaTypeData & /*data*/) {
-	}
-
-	static void constructWith(MetaTypeData & /*data*/, const void * /*value*/) {
+	static void construct(MetaTypeData & /*data*/, const void * /*value*/) {
 	}
 
 };

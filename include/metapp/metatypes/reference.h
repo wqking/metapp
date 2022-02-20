@@ -11,11 +11,7 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
-	static void constructDefault(MetaTypeData & data) {
-		data.podAs<T *>() = (T *)nullptr;
-	}
-
-	static void constructWith(MetaTypeData & data, const void * value) {
+	static void construct(MetaTypeData & data, const void * value) {
 		data.podAs<T *>() = (T *)value;
 	}
 

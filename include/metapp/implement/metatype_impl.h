@@ -27,14 +27,9 @@ inline constexpr bool UnifiedType::isCallable() const noexcept
 	return metaMethodTable.invokeMethdTable != nullptr;
 }
 
-inline void UnifiedType::constructDefault(MetaTypeData & data) const
+inline void UnifiedType::construct(MetaTypeData & data, const void * value) const
 {
-	metaMethodTable.constructDefault(data);
-}
-
-inline void UnifiedType::constructWith(MetaTypeData & data, const void * value) const
-{
-	metaMethodTable.constructWith(data, value);
+	metaMethodTable.construct(data, value);
 }
 
 inline void UnifiedType::destroy(void * instance) const
@@ -155,14 +150,9 @@ inline constexpr bool MetaType::isObjectStorage() const noexcept
 	return ! isPodStorage();
 }
 
-inline void MetaType::constructDefault(MetaTypeData & data) const
+inline void MetaType::construct(MetaTypeData & data, const void * value) const
 {
-	unifiedType->constructDefault(data);
-}
-
-inline void MetaType::constructWith(MetaTypeData & data, const void * value) const
-{
-	unifiedType->constructWith(data, value);
+	unifiedType->construct(data, value);
 }
 
 inline void MetaType::destroy(void * instance) const

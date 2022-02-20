@@ -35,8 +35,7 @@ const InvokeMethdTable * getInvokeMethdTable(typename std::enable_if<! HasFuncti
 
 struct MetaMethodTable
 {
-	void (*constructDefault)(MetaTypeData & data);
-	void (*constructWith)(MetaTypeData & data, const void * value);
+	void (*construct)(MetaTypeData & data, const void * value);
 
 	void (*destroy)(void * instance);
 
