@@ -3,7 +3,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, std::function<int (int)>")
+TEST_CASE("metatypes, std::function<int (int)>, types")
 {
 	std::function<int (int)> f([](const int n) { return n * 2; });
 	metapp::Variant v(f);
@@ -15,5 +15,22 @@ TEST_CASE("metatypes, std::function<int (int)>")
 	auto metaType = v.getMetaType();
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkInt }));
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+}
+
+TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")
+{
+	{
+		std::function<void (int &, std::string &)> func([](int & a, std::string & b) {
+			a = 38;
+			b = "hello";
+			});
+		metapp::Variant v(func);
+		int a = 0;
+		std::string b;
+		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
+		v.getMetaType()->invoke(nullptr, v, arguments, 2);
+		REQUIRE(a == 38);
+		REQUIRE(b == "hello");
+	}
 }
 

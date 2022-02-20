@@ -7,6 +7,12 @@
 #include <iostream>
 #include <climits>
 
+TEST_CASE("MetaType, isCallable()")
+{
+	REQUIRE(! metapp::getMetaType<int>()->isCallable());
+	REQUIRE(metapp::getMetaType<void ()>()->isCallable());
+}
+
 TEST_CASE("MetaType, arithmetic")
 {
 	REQUIRE(metapp::getMetaType<int>() == metapp::getMetaType<int>());
