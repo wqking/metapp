@@ -63,8 +63,9 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	size_t getParameterCount(const Variant & func) const;
+	int rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+	bool canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
@@ -122,8 +123,9 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
+	size_t getParameterCount(const Variant & func) const;
+	int rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+	bool canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
@@ -170,7 +172,8 @@ struct DeclareMetaTypeRoot
 
 	static bool canCast(const MetaType * toMetaType)
 	{
-		return isPossibleSame(getMetaType<T>(), toMetaType, true);
+		using U = typename std::remove_reference<T>::type;
+		return (! std::is_void<U>::value) && isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
@@ -206,6 +209,7 @@ private:
 
 	template <typename U>
 	static Variant doCast(const Variant & /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
+		errorBadCast();
 		return Variant();
 	}
 

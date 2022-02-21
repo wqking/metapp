@@ -32,6 +32,10 @@ public:
 	using super::super;
 };
 
+inline void errorBadCast(const std::string & message = "Bad cast")
+{
+	throw BadCastException(message);
+}
 
 } // namespace metapp
 

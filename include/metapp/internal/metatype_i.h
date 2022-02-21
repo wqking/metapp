@@ -14,8 +14,9 @@ struct NoneUpType {};
 
 struct InvokeMethodTable
 {
-	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
-	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
+	size_t (*getParameterCount)(const Variant & func);
+	int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
+	bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
 };
 
@@ -23,6 +24,7 @@ template <typename T>
 const InvokeMethodTable * getInvokeMethdTable(typename std::enable_if<HasFunctionInvoke<T>::value>::type * = nullptr)
 {
 	static const InvokeMethodTable invokeMethodTable {
+		&T::getParameterCount,
 		&T::rankInvoke,
 		&T::canInvoke,
 		&T::invoke

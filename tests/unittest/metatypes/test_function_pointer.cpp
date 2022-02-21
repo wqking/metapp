@@ -48,8 +48,8 @@ TEST_CASE("metatypes, free function, invoke")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
-		REQUIRE(v.getMetaType()->canInvoke(arguments, 2));
-		REQUIRE(! v.getMetaType()->canInvoke(arguments, 1));
+		REQUIRE(v.getMetaType()->canInvoke(v, arguments, 2));
+		REQUIRE(! v.getMetaType()->canInvoke(v, arguments, 1));
 		v.getMetaType()->invoke(nullptr, v, arguments, 2);
 		REQUIRE(a == 15);
 		REQUIRE(b == "world");
@@ -57,6 +57,7 @@ TEST_CASE("metatypes, free function, invoke")
 	{
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, std::string("hello") };
+		v.getMetaType()->invoke(nullptr, v, arguments, 2);
 		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments, 2).get<std::string>() == "hello5");
 	}
 	{

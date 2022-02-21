@@ -72,20 +72,28 @@ inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value)
 	metaMethodTable.streamOut(stream, value);
 }
 
-inline int UnifiedType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
+inline size_t UnifiedType::getParameterCount(const Variant & func) const
 {
 	if(metaMethodTable.invokeMethodTable == nullptr) {
 		throw NotSupportedException("Invoke is not supported.");
 	}
-	return metaMethodTable.invokeMethodTable->rankInvoke(arguments, argumentCount);
+	return metaMethodTable.invokeMethodTable->getParameterCount(func);
 }
 
-inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
+inline int UnifiedType::rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const
 {
 	if(metaMethodTable.invokeMethodTable == nullptr) {
 		throw NotSupportedException("Invoke is not supported.");
 	}
-	return metaMethodTable.invokeMethodTable->canInvoke(arguments, argumentCount);
+	return metaMethodTable.invokeMethodTable->rankInvoke(func, arguments, argumentCount);
+}
+
+inline bool UnifiedType::canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const
+{
+	if(metaMethodTable.invokeMethodTable == nullptr) {
+		throw NotSupportedException("Invoke is not supported.");
+	}
+	return metaMethodTable.invokeMethodTable->canInvoke(func, arguments, argumentCount);
 }
 
 inline Variant UnifiedType::invoke(
@@ -232,14 +240,19 @@ inline void MetaType::streamOut(std::ostream & stream, const Variant & value) co
 	unifiedType->streamOut(stream, value);
 }
 
-inline int MetaType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
+inline size_t MetaType::getParameterCount(const Variant & func) const
 {
-	return unifiedType->rankInvoke(arguments, argumentCount);
+	return unifiedType->getParameterCount(func);
 }
 
-inline bool MetaType::canInvoke(const Variant * arguments, const size_t argumentCount) const
+inline int MetaType::rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const
 {
-	return unifiedType->canInvoke(arguments, argumentCount);
+	return unifiedType->rankInvoke(func, arguments, argumentCount);
+}
+
+inline bool MetaType::canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const
+{
+	return unifiedType->canInvoke(func, arguments, argumentCount);
 }
 
 inline Variant MetaType::invoke(

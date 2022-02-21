@@ -28,7 +28,7 @@ public:
 		int maxRank = 0;
 		const Variant * callable = nullptr;
 		for(const Variant & method : methodList) {
-			const int rank = method.getMetaType()->rankInvoke(arguments, argumentCount);
+			const int rank = method.getMetaType()->rankInvoke(method, arguments, argumentCount);
 			if(rank > maxRank) {
 				maxRank = rank;
 				callable = &method;
