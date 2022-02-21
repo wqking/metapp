@@ -6,6 +6,7 @@
 namespace metapp {
 
 class MetaType;
+class MetaClass;
 
 namespace internal_ {
 
@@ -60,6 +61,8 @@ struct MetaMethodTable
 	void * (*construct)(MetaTypeData * data, const void * copyFrom);
 
 	void (*destroy)(void * instance);
+
+	const MetaClass * (*getMetaClass)();
 
 	void * (*getAddress)(const MetaTypeData & data);
 

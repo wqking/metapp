@@ -22,6 +22,7 @@
 namespace metapp {
 
 class MetaType;
+class MetaClass;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaTypeBase;
@@ -51,6 +52,8 @@ public:
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
 	void destroy(void * instance) const;
+
+	const MetaClass * getMetaClass() const;
 
 	void * getAddress(const MetaTypeData & data) const;
 	
@@ -108,6 +111,8 @@ public:
 
 	void destroy(void * instance) const;
 
+	const MetaClass * getMetaClass() const;
+
 	void * getAddress(const MetaTypeData & data) const;
 	
 	bool canCast(const MetaType * toMetaType) const;
@@ -149,6 +154,11 @@ struct DeclareMetaTypeRoot
 	{
 		using U = typename std::remove_reference<T>::type;
 		doDestroy(static_cast<U *>(instance));
+	}
+
+	static const MetaClass * getMetaClass()
+	{
+		return nullptr;
 	}
 
 	static void * getAddress(const MetaTypeData & /*data*/)
@@ -220,6 +230,8 @@ const UnifiedType * getUnifiedType()
 			&M::construct,
 
 			&M::destroy,
+
+			&M::getMetaClass,
 
 			&M::getAddress,
 
