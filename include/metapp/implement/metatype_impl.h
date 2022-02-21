@@ -72,6 +72,14 @@ inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value)
 	metaMethodTable.streamOut(stream, value);
 }
 
+inline int UnifiedType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
+{
+	if(metaMethodTable.invokeMethodTable == nullptr) {
+		throw NotSupportedException("Invoke is not supported.");
+	}
+	return metaMethodTable.invokeMethodTable->rankInvoke(arguments, argumentCount);
+}
+
 inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
 	if(metaMethodTable.invokeMethodTable == nullptr) {
@@ -224,6 +232,11 @@ inline void MetaType::streamOut(std::ostream & stream, const Variant & value) co
 	unifiedType->streamOut(stream, value);
 }
 
+inline int MetaType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
+{
+	return unifiedType->rankInvoke(arguments, argumentCount);
+}
+
 inline bool MetaType::canInvoke(const Variant * arguments, const size_t argumentCount) const
 {
 	return unifiedType->canInvoke(arguments, argumentCount);
@@ -362,6 +375,9 @@ inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMet
 {
 	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
 		toMetaType = toMetaType->getUpType();
+	}
+	else if(toMetaType->getTypeKind() != tkReference && fromMetaType->getTypeKind() == tkReference) {
+		fromMetaType = fromMetaType->getUpType();
 	}
 	if(strictMode) {
 		if(toMetaType == fromMetaType) {

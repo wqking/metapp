@@ -9,7 +9,7 @@
 #include "metapp/metatypes/decay.h"
 #include "metapp/metatypes/deque.h"
 #include "metapp/metatypes/forward_list.h"
-#include "metapp/metatypes/function.h"
+#include "metapp/metatypes/function_pointer.h"
 #include "metapp/metatypes/list.h"
 #include "metapp/metatypes/map.h"
 #include "metapp/metatypes/member_data.h"

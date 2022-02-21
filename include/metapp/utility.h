@@ -5,6 +5,7 @@
 #include "metapp/metatype.h"
 
 #include <type_traits>
+#include <numeric>
 
 namespace metapp {
 
@@ -30,6 +31,19 @@ template <typename TL, size_t N>
 bool canCastArgument(const Variant * arguments)
 {
 	return arguments[N].canCast<typename TypeListGetAt<TL, N>::Type>();
+}
+
+template <typename TL, size_t N>
+int rankArgumentMatching(const Variant * arguments)
+{
+	using To = typename TypeListGetAt<TL, N>::Type;
+	if(arguments[N].canGet<To>()) {
+		return 1000;
+	}
+	if(arguments[N].canCast<To>()) {
+		return 1;
+	}
+	return 0;
 }
 
 template <typename TL, size_t N>
@@ -107,6 +121,25 @@ struct MetaFunctionInvokeChecker
 		(void)arguments;
 		(void)canCastList;
 		return std::find(std::begin(canCastList), std::end(canCastList), false) == std::end(canCastList);
+	}
+
+	static int rankInvoke(const Variant * arguments, const size_t argumentCount) {
+		using IS = typename internal_::MakeIndexSequence<sizeof...(Args)>::Type;
+		return doRankInvoke(arguments, argumentCount, IS());
+	}
+
+	template <size_t ...Indexes>
+	static int doRankInvoke(const Variant * arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
+		if(argumentCount != sizeof...(Args)) {
+			return 0;
+		}
+		std::array<int, sizeof...(Args)> canCastList {
+			internal_::rankArgumentMatching<ArgumentTypeList, Indexes>(arguments)...
+		};
+		// avoid unused warning if there is no arguments
+		(void)arguments;
+		(void)canCastList;
+		return std::accumulate(std::begin(canCastList), std::end(canCastList), 0);
 	}
 };
 

@@ -63,6 +63,7 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
 	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
@@ -121,6 +122,7 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
 	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 

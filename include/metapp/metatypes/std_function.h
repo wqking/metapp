@@ -18,6 +18,11 @@ public:
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkStdFunction;
 
+	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
+	{
+		return MetaFunctionInvokeChecker<Args...>::rankInvoke(arguments, argumentCount);
+	}
+
 	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments, argumentCount);

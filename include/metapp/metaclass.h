@@ -9,7 +9,7 @@
 
 namespace metapp {
 
-class MetaMethodList
+class MethodList
 {
 public:
 	void addMethod(const Variant & method) {
@@ -22,6 +22,19 @@ public:
 
 	const Variant & get(const size_t index) const {
 		return methodList[index];
+	}
+
+	const Variant * findCallable(const Variant * arguments, const size_t argumentCount) const {
+		int maxRank = 0;
+		const Variant * callable = nullptr;
+		for(const Variant & method : methodList) {
+			const int rank = method.getMetaType()->rankInvoke(arguments, argumentCount);
+			if(rank > maxRank) {
+				maxRank = rank;
+				callable = &method;
+			}
+		}
+		return callable;
 	}
 
 private:
@@ -66,12 +79,12 @@ public:
 			return;
 		}
 		if(! constructorList) {
-			constructorList = std::make_shared<MetaMethodList>();
+			constructorList = std::make_shared<MethodList>();
 		}
 		constructorList->addMethod(constructor);
 	}
 	
-	const MetaMethodList * getConstructorList() const {
+	const MethodList * getConstructorList() const {
 		return constructorList.get();
 	}
 
@@ -79,10 +92,10 @@ public:
 		if(! method.getMetaType()->isCallable()) {
 			return;
 		}
-		std::shared_ptr<MetaMethodList> methodList;
+		std::shared_ptr<MethodList> methodList;
 		auto it = methodListMap.find(name);
 		if(it == methodListMap.end()) {
-			methodList = std::make_shared<MetaMethodList>();
+			methodList = std::make_shared<MethodList>();
 			methodListMap.insert(std::make_pair(name, methodList));
 		}
 		else {
@@ -91,7 +104,7 @@ public:
 		methodList->addMethod(method);
 	}
 
-	const MetaMethodList * getMethodList(const std::string & name) const {
+	const MethodList * getMethodList(const std::string & name) const {
 		auto it = methodListMap.find(name);
 		if(it == methodListMap.end()) {
 			return nullptr;
@@ -129,8 +142,8 @@ private:
 	const MetaType * classMetaType;
 	std::vector<const MetaType *> baseList;
 	mutable std::vector<const MetaType *> derivedList;
-	std::shared_ptr<MetaMethodList> constructorList;
-	std::unordered_map<std::string, std::shared_ptr<MetaMethodList> > methodListMap;
+	std::shared_ptr<MethodList> constructorList;
+	std::unordered_map<std::string, std::shared_ptr<MethodList> > methodListMap;
 	std::unordered_map<std::string, Variant> fieldMap;
 };
 
