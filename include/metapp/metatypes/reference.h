@@ -29,6 +29,36 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		return Variant(toMetaType, value.getMetaTypeData());
 	}
+
+	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+		using U = typename std::remove_cv<T>::type;
+		return accessible.get<U>();
+	}
+
+	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
+		doAccessibleSet<T>(accessible, instance, value);
+	}
+
+private:
+	template <typename U>
+	static void doAccessibleSet(
+		const Variant & /*accessible*/,
+		void * /*instance*/,
+		const Variant & /*value*/,
+		typename std::enable_if<! AccessibleIsAssignable<U &>::value>::type * = nullptr
+	) {
+	}
+
+	template <typename U>
+	static void doAccessibleSet(
+		const Variant & accessible,
+		void * /*instance*/,
+		const Variant & value,
+		typename std::enable_if<AccessibleIsAssignable<U &>::value>::type * = nullptr
+	) {
+		accessible.get<U &>() = value.cast<U>().template get<const U &>();
+	}
+
 };
 
 

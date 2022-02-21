@@ -53,7 +53,6 @@ private:
 			const Variant & /*accessible*/,
 			void * /*instance*/,
 			const Variant & /*value*/,
-			//typename std::enable_if<std::is_void<U>::value || IsPointerToConst<U>::value>::type * = nullptr
 			typename std::enable_if<! AccessibleIsAssignable<U *>::value>::type * = nullptr
 		) {
 	}
@@ -63,7 +62,6 @@ private:
 			const Variant & accessible,
 			void * /*instance*/,
 			const Variant & value,
-			//typename std::enable_if<! std::is_void<U>::value && ! IsPointerToConst<U>::value>::type * = nullptr
 			typename std::enable_if<AccessibleIsAssignable<U *>::value>::type * = nullptr
 		) {
 		*(accessible.get<U *>()) = value.cast<U>().template get<const U &>();

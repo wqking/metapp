@@ -136,7 +136,6 @@ private:
 template <typename T>
 struct DeclareMetaTypeRoot
 {
-	using U = typename std::remove_reference<T>::type;
 	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeKind typeKind = tkObject;
@@ -148,6 +147,7 @@ struct DeclareMetaTypeRoot
 
 	static void destroy(void * instance)
 	{
+		using U = typename std::remove_reference<T>::type;
 		doDestroy(static_cast<U *>(instance));
 	}
 

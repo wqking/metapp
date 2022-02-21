@@ -9,6 +9,7 @@ struct Class1
 {
 	const void * func(int, const std::vector<int> &) { return nullptr; }
 	const std::array<int, 5> * data;
+	int value;
 };
 
 } // namespace
@@ -32,6 +33,22 @@ TEST_CASE("metatypes, member data")
 	auto metaType = v.getMetaType();
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
 	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkStdArray, tkInt }));
+}
+
+TEST_CASE("metatypes, member data, int Class1::*")
+{
+	metapp::Variant v(&Class1::value);
+	Class1 obj;
+	obj.value = 5;
+	REQUIRE(v.getMetaType()->accessibleGet(v, &obj).get<int>() == 5);
+
+	v.getMetaType()->accessibleSet(v, &obj, 38);
+	REQUIRE(obj.value == 38);
+	REQUIRE(v.getMetaType()->accessibleGet(v, &obj).get<int>() == 38);
+
+	v.getMetaType()->accessibleSet(v, &obj, 98.0);
+	REQUIRE(obj.value == 98);
+	REQUIRE(v.getMetaType()->accessibleGet(v, &obj).get<int>() == 98);
 }
 
 
