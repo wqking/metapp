@@ -4,49 +4,31 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/utility.h"
+#include "metapp/metatypes/utils/callablebase.h"
 
 namespace metapp {
 
 template <typename T>
-struct Constructor
+struct Constructor;
+
+template <typename Class, typename ...Args>
+struct Constructor<Class (Args...)>
 {
+	Class * operator() (Args ... args) {
+		return new Class(args...);
+	}
 };
 
-template <typename RT, typename ...Args>
-struct DeclareMetaType <Constructor<RT (Args...)> >
-	: public DeclareMetaTypeBase <Constructor<RT (Args...)> >
+template <typename Class, typename ...Args>
+struct DeclareMetaType <Constructor<Class (Args...)> >
+	: public CallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
 {
-private:
-	using FunctionType = Constructor<RT (Args...)>;
-	using Class = RT;
-
 public:
-	using ArgumentTypeList = TypeList<Args...>;
-
-	using UpType = TypeList<RT, Args...>;
+	using UpType = TypeList<Class, Args...>;
 	static constexpr TypeKind typeKind = tkConstructor;
 
-	static size_t getParameterCount(const Variant & /*func*/)
-	{
-		return sizeof...(Args);
-	}
-
-	static int rankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
-	{
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
-	}
-
-	static bool canInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
-	{
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
-	}
-
-	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
-	{
-		return MetaConstructorInvoker<Class, ArgumentTypeList>::construct(arguments, argumentCount);
-	}
-
 };
+
 
 } // namespace metapp
 

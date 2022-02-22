@@ -245,29 +245,6 @@ struct MetaFunctionInvoker <Class, void, ArgList>
 	}
 };
 
-template <typename Class, typename ArgList>
-struct MetaConstructorInvoker
-{
-	using ArgumentTypeList = ArgList;
-	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
-
-	static Variant construct(const Variant * arguments, const size_t /*argumentCount*/) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doConstruct(arguments, IS());
-	}
-
-	template <size_t ...Indexes>
-	static Variant doConstruct(const Variant * arguments, internal_::IndexSequence<Indexes...>) {
-		std::array<Variant, argCount> castedArguments {
-			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
-		};
-		// avoid unused warning if there is no arguments
-		(void)arguments;
-		(void)castedArguments;
-		return new Class(internal_::getArgument<ArgumentTypeList, Indexes>(castedArguments.data())...);
-	}
-};
-
 
 } // namespace metapp
 
