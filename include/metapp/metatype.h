@@ -260,24 +260,26 @@ const MetaType * getMetaType();
 template <typename T>
 struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 {
+	using U = typename std::remove_reference<T>::type;
+
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
 	static void * construct(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
-				data->podAs<T>() = T();
+				data->podAs<U>() = U();
 			}
 			else {
-				data->podAs<T>() = *(T *)copyFrom;
+				data->podAs<U>() = *(U *)copyFrom;
 			}
 			return nullptr;
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return new T();
+				return new U();
 			}
 			else {
-				return new T(*(T *)copyFrom);
+				return new U(*(U *)copyFrom);
 			}
 		}
 	}

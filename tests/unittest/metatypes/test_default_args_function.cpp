@@ -16,6 +16,9 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 {
 	metapp::DefaultArgsFunction<decltype(&myFunc1), 1> func(&myFunc1, { std::string("hello") });
 	metapp::Variant v(func);
+	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkDefaultArgsFunction);
+	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkFunction);
+
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };
 		REQUIRE(v.getMetaType()->canInvoke(arguments, 1));

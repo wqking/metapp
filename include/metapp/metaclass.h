@@ -2,6 +2,7 @@
 #define METACLASS_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/internal/metaclass_i.h"
 
 #include <vector>
 #include <unordered_map>
@@ -41,17 +42,6 @@ private:
 	std::vector<Variant> methodList;
 };
 
-template <typename Map>
-auto getPointerFromMap(const Map & map, const std::string & name)
-	-> const typename Map::mapped_type *
-{
-	auto it = map.find(name);
-	if(it == map.end()) {
-		return nullptr;
-	}
-	return &it->second;
-}
-
 class MetaClass
 {
 public:
@@ -71,7 +61,23 @@ public:
 	}
 
 	const MetaType * getBase(const size_t index) const {
-		return baseList.at(index);
+		return baseList.at(index).metaType;
+	}
+
+	size_t getDerivedCount() const {
+		return derivedList.size();
+	}
+
+	const MetaType * getDerived(const size_t index) const {
+		return derivedList.at(index).metaType;
+	}
+
+	void * castToBase(void * pointer, const size_t baseIndex) const {
+		return baseList[baseIndex].cast(pointer);
+	}
+
+	void * castToDerived(void * pointer, const size_t derivedIndex) const {
+		return derivedList[derivedIndex].cast(pointer);
 	}
 
 	void addConstructor(const Variant & constructor) {
@@ -117,7 +123,7 @@ public:
 	}
 
 	const Variant * getField(const std::string & name) const {
-		return getPointerFromMap(fieldMap, name);
+		return internal_::getPointerFromMap(fieldMap, name);
 	}
 
 protected:
@@ -126,22 +132,16 @@ protected:
 		const MetaType * base = getMetaType<Base>();
 		const MetaClass * baseMetaClass = base->getMetaClass();
 		if(baseMetaClass != nullptr) {
-			baseMetaClass->addDerived(classMetaType);
+			baseMetaClass->derivedList.push_back({ classMetaType, &internal_::classCast<Base, This> });
 		}
 
-		baseList.push_back(base);
-	}
-
-private:
-	void addDerived(const MetaType * derived) const
-	{
-		derivedList.push_back(derived);
+		baseList.push_back({ base, &internal_::classCast<This, Base> });
 	}
 
 private:
 	const MetaType * classMetaType;
-	std::vector<const MetaType *> baseList;
-	mutable std::vector<const MetaType *> derivedList;
+	std::vector<internal_::BaseDerived> baseList;
+	mutable std::vector<internal_::BaseDerived> derivedList;
 	std::shared_ptr<MethodList> constructorList;
 	std::unordered_map<std::string, std::shared_ptr<MethodList> > methodListMap;
 	std::unordered_map<std::string, Variant> fieldMap;
