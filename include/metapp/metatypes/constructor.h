@@ -21,6 +21,8 @@ private:
 	using Class = RT;
 
 public:
+	using ArgumentTypeList = TypeList<Args...>;
+
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkConstructor;
 
@@ -31,17 +33,17 @@ public:
 
 	static int rankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaFunctionInvokeChecker<Args...>::rankInvoke(arguments, argumentCount);
+		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool canInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments, argumentCount);
+		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant invoke(void * /*instance*/, const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaConstructorInvoker<Class, Args...>::construct(arguments, argumentCount);
+		return MetaConstructorInvoker<Class, ArgumentTypeList>::construct(arguments, argumentCount);
 	}
 
 };

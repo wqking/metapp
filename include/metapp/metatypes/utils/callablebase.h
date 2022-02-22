@@ -14,6 +14,8 @@ private:
 	using FunctionType = FT;
 
 public:
+	using ArgumentTypeList = TypeList<Args...>;
+
 	static size_t getParameterCount(const Variant & /*func*/)
 	{
 		return sizeof...(Args);
@@ -21,18 +23,18 @@ public:
 
 	static int rankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaFunctionInvokeChecker<Args...>::rankInvoke(arguments, argumentCount);
+		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool canInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
-		return MetaFunctionInvokeChecker<Args...>::canInvoke(arguments, argumentCount);
+		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
 		FunctionType f = func.get<FunctionType &>();
-		return MetaFunctionInvoker<C, RT, Args...>::invoke(instance, f, arguments, argumentCount);
+		return MetaFunctionInvoker<C, RT, ArgumentTypeList>::invoke(instance, f, arguments, argumentCount);
 	}
 
 };
