@@ -49,6 +49,7 @@ constexpr TypeKind tkFunction = 35;
 constexpr TypeKind tkMemberFunction = 36;
 constexpr TypeKind tkMemberPointer = 37;
 constexpr TypeKind tkConstructor = 38;
+constexpr TypeKind tkDefaultArgsFunction = 39;
 
 constexpr TypeKind tkSharedPtr = 60;
 constexpr TypeKind tkStdFunction = 61;

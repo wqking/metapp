@@ -14,9 +14,9 @@ struct NoneUpType {};
 
 struct InvokeMethodTable
 {
-	size_t (*getParameterCount)(const Variant & func);
-	int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
-	bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
+	size_t (*getParameterCount)();
+	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
+	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
 };
 

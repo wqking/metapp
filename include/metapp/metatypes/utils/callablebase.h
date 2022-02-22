@@ -10,23 +10,23 @@ template <typename FT, typename C, typename RT, typename ...Args>
 struct CallableBase
 	: public DeclareMetaTypeBase <FT>
 {
-private:
-	using FunctionType = FT;
-
 public:
+	using FunctionType = FT;
+	using ClassType = C;
+	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
 
-	static size_t getParameterCount(const Variant & /*func*/)
+	static size_t getParameterCount()
 	{
-		return sizeof...(Args);
+		return TypeListCount<ArgumentTypeList>::value;
 	}
 
-	static int rankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
+	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool canInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
+	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}

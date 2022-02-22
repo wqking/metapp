@@ -63,9 +63,9 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
-	size_t getParameterCount(const Variant & func) const;
-	int rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+	size_t getParameterCount() const;
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
@@ -123,9 +123,9 @@ public:
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
-	size_t getParameterCount(const Variant & func) const;
-	int rankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount) const;
+	size_t getParameterCount() const;
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
 	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
