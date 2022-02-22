@@ -15,6 +15,7 @@ public:
 	using ClassType = C;
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
+	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 	static size_t getParameterCount()
 	{
@@ -23,16 +24,26 @@ public:
 
 	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
 	{
+		if(argumentCount != argsCount) {
+			return 0;
+		}
 		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
 	{
+		if(argumentCount != argsCount) {
+			return false;
+		}
 		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
+		if(argumentCount != argsCount) {
+			errorIllegalArgument();
+		}
+
 		FunctionType f = func.get<FunctionType &>();
 		return MetaFunctionInvoker<C, RT, ArgumentTypeList>::invoke(instance, f, arguments, argumentCount);
 	}

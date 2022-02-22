@@ -32,9 +32,23 @@ public:
 	using super::super;
 };
 
+class IllegalArgumentException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 inline void errorBadCast(const std::string & message = "Bad cast")
 {
 	throw BadCastException(message);
+}
+
+inline void errorIllegalArgument(const std::string & message = "Illegal arguments")
+{
+	throw IllegalArgumentException(message);
 }
 
 } // namespace metapp

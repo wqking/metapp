@@ -57,7 +57,6 @@ TEST_CASE("metatypes, free function, invoke")
 	{
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, std::string("hello") };
-		v.getMetaType()->invoke(nullptr, v, arguments, 2);
 		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments, 2).get<std::string>() == "hello5");
 	}
 	{

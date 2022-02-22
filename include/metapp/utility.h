@@ -27,35 +27,41 @@ struct MakeIndexSequence<0, Indexes...>
 	using Type = IndexSequence<Indexes...>;
 };
 
-template <typename TL, size_t N>
-bool canCastArgument(const Variant * arguments)
+template <typename TL, size_t N, typename Args>
+bool canCastArgument(const Args & arguments, const size_t argumentCount)
 {
-	return arguments[N].canCast<typename TypeListGetAt<TL, N>::Type>();
+	if(N >= argumentCount) {
+		return true;
+	}
+	return arguments[N].template canCast<typename TypeListGetAt<TL, N>::Type>();
 }
 
-template <typename TL, size_t N>
-int rankArgumentMatching(const Variant * arguments)
+template <typename TL, size_t N, typename Args>
+int rankArgumentMatching(const Args & arguments, const size_t argumentCount)
 {
-	using To = typename TypeListGetAt<TL, N>::Type;
-	if(arguments[N].canGet<To>()) {
+	if(N >= argumentCount) {
 		return 1000;
 	}
-	if(arguments[N].canCast<To>()) {
+	using To = typename TypeListGetAt<TL, N>::Type;
+	if(arguments[N].template canGet<To>()) {
+		return 1000;
+	}
+	if(arguments[N].template canCast<To>()) {
 		return 1;
 	}
 	return 0;
 }
 
-template <typename TL, size_t N>
-Variant castArgument(const Variant * arguments)
+template <typename TL, size_t N, typename Args>
+Variant castArgument(const Args & arguments)
 {
-	return arguments[N].cast<typename TypeListGetAt<TL, N>::Type>();
+	return arguments[N].template cast<typename TypeListGetAt<TL, N>::Type>();
 }
 
-template <typename TL, size_t N>
-auto getArgument(const Variant * arguments) -> typename TypeListGetAt<TL, N>::Type
+template <typename TL, size_t N, typename Args>
+auto getArgument(const Args & arguments) -> typename TypeListGetAt<TL, N>::Type
 {
-	return arguments[N].get<typename TypeListGetAt<TL, N>::Type>();
+	return arguments[N].template get<typename TypeListGetAt<TL, N>::Type>();
 }
 
 } // namespace internal_
@@ -105,40 +111,38 @@ struct MetaFunctionInvokeChecker
 	using ArgumentTypeList = ArgList;
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
-	static bool canInvoke(const Variant * arguments, const size_t argumentCount) {
+	template <typename Args>
+	static bool canInvoke(const Args & arguments, const size_t argumentCount) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doCanInvoke(arguments, argumentCount, IS());
 	}
 
-	template <size_t ...Indexes>
-	static bool doCanInvoke(const Variant * arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
-		if(argumentCount != argCount) {
-			return false;
-		}
+	template <size_t ...Indexes, typename Args>
+	static bool doCanInvoke(const Args & arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
 		std::array<bool, argCount> canCastList {
-			internal_::canCastArgument<ArgumentTypeList, Indexes>(arguments)...
+			internal_::canCastArgument<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
 		// avoid unused warning if there is no arguments
 		(void)arguments;
+		(void)argumentCount;
 		(void)canCastList;
 		return std::find(std::begin(canCastList), std::end(canCastList), false) == std::end(canCastList);
 	}
 
-	static int rankInvoke(const Variant * arguments, const size_t argumentCount) {
+	template <typename Args>
+	static int rankInvoke(const Args & arguments, const size_t argumentCount) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doRankInvoke(arguments, argumentCount, IS());
 	}
 
-	template <size_t ...Indexes>
-	static int doRankInvoke(const Variant * arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
-		if(argumentCount != argCount) {
-			return 0;
-		}
+	template <size_t ...Indexes, typename Args>
+	static int doRankInvoke(const Args & arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
 		std::array<int, argCount> canCastList {
-			internal_::rankArgumentMatching<ArgumentTypeList, Indexes>(arguments)...
+			internal_::rankArgumentMatching<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
 		// avoid unused warning if there is no arguments
 		(void)arguments;
+		(void)argumentCount;
 		(void)canCastList;
 		return std::accumulate(std::begin(canCastList), std::end(canCastList), 0);
 	}
@@ -153,14 +157,14 @@ struct MetaFunctionInvoker <void, RT, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
+	template <typename FT, typename Args>
+	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
 
-	template <typename FT, size_t ...Indexes>
-	static Variant doInvoke(void * /*instance*/, FT func, const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+	template <typename FT, typename Args, size_t ...Indexes>
+	static Variant doInvoke(void * /*instance*/, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -177,14 +181,14 @@ struct MetaFunctionInvoker <void, void, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
+	template <typename FT, typename Args>
+	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
 
-	template <typename FT, size_t ...Indexes>
-	static Variant doInvoke(void * /*instance*/, FT func, const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+	template <typename FT, typename Args, size_t ...Indexes>
+	static Variant doInvoke(void * /*instance*/, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -202,14 +206,14 @@ struct MetaFunctionInvoker
 	using ArgumentTypeList = ArgList;
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
+	template <typename FT, typename Args>
+	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
 
-	template <typename FT, size_t ...Indexes>
-	static Variant doInvoke(void * instance, FT func, const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+	template <typename FT, typename Args, size_t ...Indexes>
+	static Variant doInvoke(void * instance, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -226,14 +230,14 @@ struct MetaFunctionInvoker <Class, void, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT>
-	static Variant invoke(void * instance, FT && func, const Variant * arguments, const size_t /*argumentCount*/) {
+	template <typename FT, typename Args>
+	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
 		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
 	}
 
-	template <typename FT, size_t ...Indexes>
-	static Variant doInvoke(void * instance, FT func, const Variant * arguments, internal_::IndexSequence<Indexes...>) {
+	template <typename FT, typename Args, size_t ...Indexes>
+	static Variant doInvoke(void * instance, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
