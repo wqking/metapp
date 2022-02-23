@@ -13,7 +13,7 @@ TEST_CASE("metatypes, int &") {
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkReference, tkInt }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkReference, tkInt }));
 }
 
 TEST_CASE("metatypes, int &, accessible")

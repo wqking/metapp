@@ -13,8 +13,8 @@ TEST_CASE("metatypes, std::function<int (int)>, types")
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkInt }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
 }
 
 TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")

@@ -13,6 +13,6 @@ TEST_CASE("metatypes, std::deque<std::string>")
 	v.get<Type &>().push_back("good");
 	REQUIRE(v.get<Type &>().back() == "good");
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkDeque, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkDeque, tkString }));
 }
 

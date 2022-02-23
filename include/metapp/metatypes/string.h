@@ -30,7 +30,8 @@ struct DeclareMetaType <std::string> : public DeclareMetaTypeBase <std::string>
 
 private:
 	static bool canCastToCharPtr(const MetaType * toMetaType) {
-		return matchUpTypeKinds(toMetaType, { tkPointer, tkChar });
+		return toMetaType->getTypeKind() == tkPointer
+			&& toMetaType->getUpType()->getTypeKind() == tkChar;
 	}
 };
 
@@ -57,7 +58,8 @@ struct DeclareMetaType <std::wstring> : public DeclareMetaTypeBase <std::wstring
 
 private:
 	static bool canCastToWideCharPtr(const MetaType * toMetaType) {
-		return matchUpTypeKinds(toMetaType, { tkPointer, tkWideChar });
+		return toMetaType->getTypeKind() == tkPointer
+			&& toMetaType->getUpType()->getTypeKind() == tkWideChar;
 	}
 };
 

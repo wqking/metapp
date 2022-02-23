@@ -14,6 +14,6 @@ TEST_CASE("metatypes, std::list<std::string>")
 	v.get<Type &>().push_back("good");
 	REQUIRE(v.get<const Type &>().back() == "good");
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkList, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkList, tkString }));
 }
 

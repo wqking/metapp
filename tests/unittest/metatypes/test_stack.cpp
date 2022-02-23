@@ -16,6 +16,6 @@ TEST_CASE("metatypes, std::stack<std::string>")
 	v.get<Type &>().pop();
 	REQUIRE(v.get<Type &>().top() == "perfect");
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkStack, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStack, tkString }));
 }
 

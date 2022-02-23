@@ -30,10 +30,10 @@ TEST_CASE("metatypes, member function, types")
 	
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkVoid }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkInt }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(2), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkVector, tkInt }));
 }
 
 struct Base

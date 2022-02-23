@@ -343,16 +343,6 @@ Variant podCast(const MetaTypeData & data)
 	return (U)(data.podAs<T>());
 }
 
-
-template <typename Iterator>
-bool matchUpTypeKinds(const MetaType * metaType, Iterator begin, Iterator end);
-
-template <typename T>
-bool matchUpTypeKinds(const MetaType * metaType, const std::initializer_list<T> & typeKindList);
-
-template <typename T, typename U>
-bool matchUpTypeKinds(const MetaType * metaType, const U & typeKindList);
-
 bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
 } // namespace metapp

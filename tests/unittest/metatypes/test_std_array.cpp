@@ -15,6 +15,6 @@ TEST_CASE("metatypes, std::array<int, 5>")
 	REQUIRE(v.get<Type>()[3] == 16);
 	REQUIRE(v.get<Type>()[4] == 99);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkStdArray, tkInt }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdArray, tkInt }));
 }
 

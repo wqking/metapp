@@ -8,7 +8,7 @@ TEST_CASE("metatypes, void *")
 	metapp::Variant v((void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 }
 
 TEST_CASE("metatypes, const volatile void *")
@@ -16,7 +16,7 @@ TEST_CASE("metatypes, const volatile void *")
 	metapp::Variant v((const volatile void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 	REQUIRE(v.getMetaType()->getUpType()->isConst());
 	REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 }
@@ -29,7 +29,7 @@ TEST_CASE("metatypes, int **")
 	REQUIRE(v.canGet<int **>(false));
 	REQUIRE(! v.canGet<int *>(true));
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 }
 
 TEST_CASE("metatypes, void ***")
@@ -38,7 +38,7 @@ TEST_CASE("metatypes, void ***")
 	metapp::Variant v(p);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
 }
 
 TEST_CASE("metatypes, int *, accessible")

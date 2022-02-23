@@ -13,6 +13,6 @@ TEST_CASE("metatypes, std::forward_list<std::string>")
 	v.get<Type &>().push_front("good");
 	REQUIRE(v.get<Type &>().front() == "good");
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkForwardList, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkForwardList, tkString }));
 }
 

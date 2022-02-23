@@ -15,14 +15,14 @@ TEST_CASE("metatypes, free function, types")
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
 	
 	metaType = metapp::getMetaType<const void * (int, const std::vector<int> &)>();
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
-	REQUIRE(metapp::matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(2), { tkReference, tkVector, tkInt }));
 }
 
 void myFunc(int & a, std::string & b)

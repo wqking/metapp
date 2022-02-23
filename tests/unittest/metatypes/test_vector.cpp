@@ -13,6 +13,6 @@ TEST_CASE("metatypes, std::vector<int>")
 	v.get<Type &>().push_back(10);
 	REQUIRE(v.get<Type>().back() == 10);
 	using namespace metapp;
-	REQUIRE(metapp::matchUpTypeKinds(v.getMetaType(), { tkVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkVector, tkInt }));
 }
 
