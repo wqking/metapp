@@ -4,9 +4,9 @@
 #include "metapp/compiler.h"
 
 #include "metapp/metatypes/arithmetic.h"
+#include "metapp/metatypes/array.h"
 #include "metapp/metatypes/constructor.h"
 #include "metapp/metatypes/cv.h"
-#include "metapp/metatypes/decay.h"
 #include "metapp/metatypes/default_args_function.h"
 #include "metapp/metatypes/deque.h"
 #include "metapp/metatypes/forward_list.h"

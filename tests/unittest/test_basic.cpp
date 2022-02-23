@@ -103,7 +103,7 @@ TEST_CASE("aaa")
 		metapp::Variant v;
 		v.set<char[]>(s);
 		REQUIRE(v.get<const char *>() == std::string("abc"));
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	}
 
 	{

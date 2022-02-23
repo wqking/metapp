@@ -116,9 +116,11 @@ inline bool Variant::canGet(const bool strictMode) const
 }
 
 template <typename T>
-inline T Variant::get() const
+inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Type
 {
-	return *(typename std::remove_reference<T>::type *)(metaType->getAddress(data));
+	return *(typename std::remove_reference<
+			typename internal_::VariantReturnType<T>::Type
+		>::type *)(metaType->getAddress(data));
 }
 
 template <typename T>

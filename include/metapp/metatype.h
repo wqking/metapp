@@ -23,6 +23,7 @@ namespace metapp {
 
 class MetaType;
 class MetaClass;
+class MetaArray;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaTypeBase;
@@ -46,6 +47,9 @@ public:
 
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
+	
+	constexpr bool hasMetaArray() const noexcept;
+	constexpr const MetaArray * getMetaArray() const;
 
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -99,8 +103,13 @@ public:
 
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
+
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
+	
+	constexpr bool hasMetaArray() const noexcept;
+	constexpr const MetaArray * getMetaArray() const;
+
 	constexpr bool isPodStorage() const noexcept;
 	constexpr bool isObjectStorage() const noexcept;
 
@@ -240,6 +249,8 @@ const UnifiedType * getUnifiedType()
 
 			internal_::getInvokeMethdTable<M>(),
 			internal_::getAccessibleMethodTable<M>(),
+
+			internal_::makeExtraInfo<M>(),
 		}
 	);
 	return &unifiedType;

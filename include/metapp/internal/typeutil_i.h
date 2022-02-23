@@ -28,6 +28,16 @@ struct MaxOfInt <N1>
 };
 
 template <typename T>
+struct VariantReturnType
+{
+	using Type = typename std::conditional<
+		std::is_reference<T>::value,
+		T,
+		typename std::decay<T>::type
+	>::type;
+};
+
+template <typename T>
 struct HasInputStreamOperator
 {
 	template <typename C> static std::true_type test(
@@ -60,6 +70,15 @@ template <typename T>
 struct HasFunctionAccessibleGet
 {
 	template <typename C> static std::true_type test(decltype(C::accessibleGet) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
+struct HasFunctionGetMetaArray
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaArray) *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };

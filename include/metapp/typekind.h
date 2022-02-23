@@ -45,13 +45,14 @@ constexpr TypeKind tkObject = 30; // equivalent to unkown type
 constexpr TypeKind tkString = 31; // std::string
 constexpr TypeKind tkWideString = 32; // std::wstring
 
-constexpr TypeKind tkPointer = 33;
-constexpr TypeKind tkReference = 34;
-constexpr TypeKind tkFunction = 35;
-constexpr TypeKind tkMemberFunction = 36;
-constexpr TypeKind tkMemberPointer = 37;
-constexpr TypeKind tkConstructor = 38;
-constexpr TypeKind tkDefaultArgsFunction = 39;
+constexpr TypeKind tkArray = 33;
+constexpr TypeKind tkPointer = 34;
+constexpr TypeKind tkReference = 35;
+constexpr TypeKind tkFunction = 36;
+constexpr TypeKind tkMemberFunction = 37;
+constexpr TypeKind tkMemberPointer = 38;
+constexpr TypeKind tkConstructor = 39;
+constexpr TypeKind tkDefaultArgsFunction = 40;
 
 constexpr TypeKind tkSharedPtr = 60;
 constexpr TypeKind tkStdFunction = 61;
@@ -109,6 +110,7 @@ inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkString, "std::string" },
 		{ tkWideString, "std::wstring" },
 		
+		{ tkArray, "array" },
 		{ tkPointer, "pointer" },
 		{ tkReference, "reference" },
 		{ tkFunction, "function" },

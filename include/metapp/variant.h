@@ -2,6 +2,7 @@
 #define VARIANT_H_969872685611
 
 #include "metapp/metatypedata.h"
+#include "metapp/internal/typeutil_i.h"
 
 #include <type_traits>
 #include <cassert>
@@ -42,7 +43,7 @@ public:
 	bool canGet(const bool strictMode = false) const;
 
 	template <typename T>
-	T get() const;
+	auto get() const -> typename internal_::VariantReturnType<T>::Type;
 
 	template <typename T>
 	auto getAddress() const -> const typename std::remove_reference<T>::type *;

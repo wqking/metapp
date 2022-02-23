@@ -60,6 +60,37 @@ const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<!
 	return nullptr;
 }
 
+enum class ExtraInfoKind
+{
+	eikNone,
+	eikArray,
+};
+
+struct ExtraInfo
+{
+	ExtraInfoKind kind;
+	const void * (*getter)();
+};
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		HasFunctionGetMetaArray<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo {
+		ExtraInfoKind::eikArray,
+		(const void * (*)())&T::getMetaArray
+	};
+}
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		! HasFunctionGetMetaArray<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo { ExtraInfoKind::eikNone, nullptr };
+}
+
 struct MetaMethodTable
 {
 	void * (*construct)(MetaTypeData * data, const void * copyFrom);
@@ -78,6 +109,8 @@ struct MetaMethodTable
 
 	const InvokeMethodTable * invokeMethodTable;
 	const AccessibleMethodTable * accessibleMethodTable;
+
+	ExtraInfo extraInfo;
 };
 
 struct UpTypeData
