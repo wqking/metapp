@@ -337,14 +337,6 @@ auto doGetMetaType()
 	return &metaType;
 }
 
-} // namespace internal_
-
-template <typename T>
-inline const MetaType * getMetaType()
-{
-	return internal_::doGetMetaType<T>();
-}
-
 inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
 {
 	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
@@ -371,6 +363,14 @@ inline bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMet
 		}
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
+}
+
+} // namespace internal_
+
+template <typename T>
+inline const MetaType * getMetaType()
+{
+	return internal_::doGetMetaType<T>();
 }
 
 

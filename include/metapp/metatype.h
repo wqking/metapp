@@ -165,7 +165,7 @@ struct DeclareMetaTypeRoot
 	static bool canCast(const MetaType * toMetaType)
 	{
 		using U = typename std::remove_reference<T>::type;
-		return (! std::is_void<U>::value) && isPossibleSame(getMetaType<T>(), toMetaType, true);
+		return (! std::is_void<U>::value) && internal_::isPossibleSame(getMetaType<T>(), toMetaType, true);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
@@ -342,8 +342,6 @@ Variant podCast(const MetaTypeData & data)
 {
 	return (U)(data.podAs<T>());
 }
-
-bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
 } // namespace metapp
 

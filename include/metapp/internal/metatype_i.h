@@ -86,6 +86,7 @@ struct UpTypeData
 	uint16_t count;
 };
 
+bool isPossibleSame(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
 } // namespace internal_
 
