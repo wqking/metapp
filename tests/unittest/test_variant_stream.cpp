@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "metapp/variant.h"
-#include "metapp/metatyperepo.h"
+#include "metapp/metarepository.h"
 #include "metapp/metatypes/metatypes.h"
 
 #include <string>
@@ -11,7 +11,7 @@ TEST_CASE("Input stream")
 {
 	std::stringstream ss;
 	SECTION("bool") {
-		metapp::Variant v(metapp::getMetaTypeRepo()->getMetaType(metapp::tkBool));
+		metapp::Variant v(metapp::getMetaRepository()->getTypeByKind(metapp::tkBool));
 		REQUIRE(v.get<bool>() == false);
 		ss >> std::boolalpha;
 		ss.str("true");

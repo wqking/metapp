@@ -37,13 +37,11 @@ class UnifiedType
 {
 public:
 	constexpr UnifiedType(
-		const char * name,
 		const TypeKind typeKind,
 		const internal_::MetaMethodTable & metaMethodTable
 	) noexcept;
 	~UnifiedType() = default;
 
-	const char * getName() const noexcept;
 	TypeKind getTypeKind() const noexcept;
 
 	constexpr bool isCallable() const noexcept;
@@ -77,7 +75,6 @@ private:
 	UnifiedType(UnifiedType &&) = delete;
 
 private:
-	const char * name;
 	TypeKind typeKind;
 	internal_::MetaMethodTable metaMethodTable;
 };
@@ -98,7 +95,6 @@ public:
 	const MetaType * getUpType(const size_t i) const;
 	size_t getUpTypeCount() const noexcept;
 
-	const char * getName() const noexcept;
 	TypeKind getTypeKind() const noexcept;
 
 	constexpr bool isConst() const noexcept;
@@ -149,10 +145,6 @@ struct DeclareMetaTypeRoot
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0;
-
-	static const char * getName() {
-		return "";
-	}
 
 	static void destroy(void * instance)
 	{
@@ -230,7 +222,6 @@ const UnifiedType * getUnifiedType()
 	using M = DeclareMetaType<T>;
 
 	static const UnifiedType unifiedType (
-		M::getName(),
 		M::typeKind,
 		internal_::MetaMethodTable {
 			&M::construct,
@@ -339,10 +330,6 @@ template <>
 struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
-
-	static const char * getName() {
-		return "void";
-	}
 
 	static void * construct(MetaTypeData * /*data*/, const void * /*value*/) {
 		return nullptr;

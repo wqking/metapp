@@ -19,10 +19,6 @@ struct DeclareMetaType <UseTypeMyClass> : public DeclareMetaTypeBase <UseTypeMyC
 {
 	static constexpr TypeKind typeKind = 2000;
 
-	static const char * getName() {
-		return "UseTypeMyClass";
-	}
-
 };
 
 template <>

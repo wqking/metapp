@@ -4,17 +4,11 @@
 namespace metapp {
 
 inline constexpr UnifiedType::UnifiedType(
-		const char * name,
 		const TypeKind typeKind,
 		const internal_::MetaMethodTable & metaMethodTable
 	) noexcept
-	: name(name), typeKind(typeKind), metaMethodTable(metaMethodTable)
+	: typeKind(typeKind), metaMethodTable(metaMethodTable)
 {
-}
-
-inline const char * UnifiedType::getName() const noexcept
-{
-	return name;
 }
 
 inline TypeKind UnifiedType::getTypeKind() const noexcept
@@ -158,11 +152,6 @@ inline const MetaType * MetaType::getUpType(const size_t i) const
 inline size_t MetaType::getUpTypeCount() const noexcept
 {
 	return upTypeData.count;
-}
-
-inline const char * MetaType::getName() const noexcept
-{
-	return unifiedType->getName();
 }
 
 inline TypeKind MetaType::getTypeKind() const noexcept

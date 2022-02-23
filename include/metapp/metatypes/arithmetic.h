@@ -19,21 +19,6 @@ using ArithmeticTypeList = TypeList<
 	float, double, long double
 >;
 
-inline const char * const * getArithmeticTypeNameList()
-{
-	static const std::array<const char *, TypeListCount<internal_::ArithmeticTypeList>::value> nameList {
-		"bool",
-		"char", "wchar_t",
-		"signed char", "unsigned char",
-		"short", "unsigned short",
-		"int", "unsigned int",
-		"long", "unsigned long",
-		"long long", "unsigned long long",
-		"float", "double", "long double"
-	};
-	return nameList.data();
-}
-
 } // namespace internal_
 
 template <typename T>
@@ -41,10 +26,6 @@ struct DeclareMetaTypeBase <T,
 	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclarePodMetaType<T>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
-
-	static const char * getName() {
-		return internal_::getArithmeticTypeNameList()[TypeListIndexOf<internal_::ArithmeticTypeList, T>::value];
-	}
 
 	static bool canCast(const MetaType * toMetaType) {
 		return toMetaType->getTypeKind() >= tkArithmeticBegin

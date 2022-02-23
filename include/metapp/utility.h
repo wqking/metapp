@@ -21,7 +21,7 @@ struct MakeIndexSequence : MakeIndexSequence <N - 1, N - 1, Indexes...>
 {
 };
 
-template <std::size_t ...Indexes>
+template <size_t ...Indexes>
 struct MakeIndexSequence<0, Indexes...>
 {
 	using Type = IndexSequence<Indexes...>;
