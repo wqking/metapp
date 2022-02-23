@@ -4,25 +4,25 @@ namespace internal_ {
 
 inline void registerBuiltinTypes(MetaRepository * repo)
 {
-	repo->addType<void>("void");
-	repo->addType<bool>("bool");
-	repo->addType<char>("char");
-	repo->addType<wchar_t>("wchar_t");
-	repo->addType<signed char>("signed char");
-	repo->addType<unsigned char>("unsigned char");
-	repo->addType<short>("short");
-	repo->addType<unsigned short>("unsigned short");
-	repo->addType<int>("int");
-	repo->addType<unsigned int>("unsigned int");
-	repo->addType<long>("long");
-	repo->addType<unsigned long>("unsigned long");
-	repo->addType<long long>("long long");
-	repo->addType<unsigned long long>("unsigned long long");
-	repo->addType<float>("float");
-	repo->addType<double>("double");
-	repo->addType<long double>("long double");
-	repo->addType<std::string>("string");
-	repo->addType<std::wstring>("wstring");
+	repo->addType<void>();
+	repo->addType<bool>();
+	repo->addType<char>();
+	repo->addType<wchar_t>();
+	repo->addType<signed char>();
+	repo->addType<unsigned char>();
+	repo->addType<short>();
+	repo->addType<unsigned short>();
+	repo->addType<int>();
+	repo->addType<unsigned int>();
+	repo->addType<long>();
+	repo->addType<unsigned long>();
+	repo->addType<long long>();
+	repo->addType<unsigned long long>();
+	repo->addType<float>();
+	repo->addType<double>();
+	repo->addType<long double>();
+	repo->addType<std::string>();
+	repo->addType<std::wstring>();
 }
 
 } // namespace

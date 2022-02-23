@@ -2,6 +2,8 @@
 #define TYPEKIND_H_969872685611
 
 #include <cstdint>
+#include <unordered_map>
+#include <string>
 
 namespace metapp {
 
@@ -81,6 +83,75 @@ using TypeFlags = uint16_t;
 constexpr TypeFlags tfConst = 1 << 0;
 constexpr TypeFlags tfVolatile = 1 << 1;
 constexpr TypeFlags tfPodStorage = 1 << 2;
+
+inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
+{
+	static std::unordered_map<TypeKind, std::string> typeKindNameMap {
+		{ tkVoid, "void" },
+		{ tkBool, "bool" },
+		{ tkChar, "char" },
+		{ tkWideChar, "wchar_t" },
+		{ tkSignedChar, "signed char" },
+		{ tkUnsignedChar, "unsigned char" },
+		{ tkShort, "short" },
+		{ tkUnsignedShort, "unsigned short" },
+		{ tkInt, "int" },
+		{ tkUnsignedInt, "unsigned int" },
+		{ tkLong, "long" },
+		{ tkUnsignedLong, "unsigned long" },
+		{ tkLongLong, "long long" },
+		{ tkUnsignedLongLong, "unsigned long long" },
+		{ tkFloat, "float" },
+		{ tkDouble, "double" },
+		{ tkLongDouble, "long double" },
+		
+		{ tkObject, "object" },
+		{ tkString, "std::string" },
+		{ tkWideString, "std::wstring" },
+		
+		{ tkPointer, "pointer" },
+		{ tkReference, "reference" },
+		{ tkFunction, "function" },
+		{ tkMemberFunction, "member_func" },
+		{ tkMemberPointer, "member_pointer" },
+		{ tkConstructor, "constructor" },
+		{ tkDefaultArgsFunction, "default_args_function" },
+	
+		{ tkSharedPtr, "std::shared_ptr" },
+		{ tkStdFunction, "std::function" },
+		{ tkVector, "std::vector" },
+		{ tkList, "std::list" },
+		{ tkDeque, "std::deque" },
+		{ tkStdArray, "std::array" },
+		{ tkForwardList, "std::forward_list" },
+		{ tkStack, "std::stack" },
+		{ tkQueue, "std::queue" },
+		{ tkPriorityQueue, "std::priority_queue" },
+		{ tkMap, "std::map" },
+		{ tkMultimap, "std::multipmap" },
+		{ tkSet, "std::set" },
+		{ tkMultiset, "std::multiset" },
+		{ tkUnorderedMap, "std::unordered_map" },
+		{ tkUnorderedMultimap, "std::unordered_multimap" },
+		{ tkUnorderedSet, "std::unordered_set" },
+		{ tkUnorderedMultiset, "std::unordered_multiset" },
+		{ tkPair, "std::pair" },
+		{ tkTuple, "std::tuple" },
+		{ tkAny, "std::any" },
+		{ tkStdVariant, "std::variant" },
+	};
+	return typeKindNameMap;
+}
+
+inline std::string getNameByTypeKind(const TypeKind typeKind)
+{
+	auto it = getTypeKindNameMap().find(typeKind);
+	if(it != getTypeKindNameMap().end()) {
+		return it->second;
+	}
+	return "";
+}
+
 
 } // namespace metapp
 

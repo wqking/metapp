@@ -34,14 +34,19 @@ public:
 	{
 	}
 
-	void addType(const std::string & name, const MetaType * metaType) {
-		nameTypeMap[name] = metaType;
-		kindTypeMap[metaType->getTypeKind()] = metaType;
+	void addType(const MetaType * metaType, std::string name = "") {
+		if(name.empty()) {
+			name = getNameByTypeKind(metaType->getTypeKind());
+		}
+		if(! name.empty()) {
+			nameTypeMap[name] = metaType;
+		}
+		kindTypeMap[metaType->getTypeKind()] = std::make_pair(name, metaType);
 	}
 
 	template <typename T>
-	void addType(const std::string & name) {
-		addType(name, getMetaType<T>());
+	void addType(const std::string & name = "") {
+		addType(getMetaType<T>(), name);
 	}
 
 	const MetaType * getTypeByName(const std::string & name) const {
@@ -55,9 +60,17 @@ public:
 	const MetaType * getTypeByKind(const TypeKind kind) const {
 		auto it = kindTypeMap.find(kind);
 		if(it != kindTypeMap.end()) {
-			return it->second;
+			return it->second.second;
 		}
 		return nullptr;
+	}
+
+	std::string getNameByKind(const TypeKind kind) const {
+		auto it = kindTypeMap.find(kind);
+		if(it != kindTypeMap.end()) {
+			return it->second.first;
+		}
+		return std::string();
 	}
 
 	void addMethod(const std::string & name, const Variant & method) {
@@ -94,7 +107,7 @@ public:
 
 private:
 	std::unordered_map<std::string, const MetaType *> nameTypeMap;
-	std::unordered_map<TypeKind, const MetaType *> kindTypeMap;
+	std::unordered_map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
 	std::unordered_map<std::string, std::shared_ptr<MethodList> > methodListMap;
 	std::unordered_map<std::string, Variant> fieldMap;
 };
