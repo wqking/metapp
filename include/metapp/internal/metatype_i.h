@@ -64,6 +64,7 @@ enum class ExtraInfoKind
 {
 	eikNone,
 	eikArray,
+	eikEnum,
 };
 
 struct ExtraInfo
@@ -86,6 +87,19 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaArray<T>::value
+		&& HasFunctionGetMetaEnum<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo {
+		ExtraInfoKind::eikEnum,
+		(const void * (*)())&T::getMetaEnum
+	};
+}
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		! HasFunctionGetMetaArray<T>::value
+		&& ! HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
 {
 	return ExtraInfo { ExtraInfoKind::eikNone, nullptr };

@@ -9,6 +9,7 @@
 #include "metapp/metatypes/cv.h"
 #include "metapp/metatypes/default_args_function.h"
 #include "metapp/metatypes/deque.h"
+#include "metapp/metatypes/enum.h"
 #include "metapp/metatypes/forward_list.h"
 #include "metapp/metatypes/function.h"
 #include "metapp/metatypes/list.h"

@@ -24,6 +24,7 @@ namespace metapp {
 class MetaType;
 class MetaClass;
 class MetaArray;
+class MetaEnum;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaTypeBase;
@@ -48,8 +49,8 @@ public:
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
 	
-	constexpr bool hasMetaArray() const noexcept;
 	constexpr const MetaArray * getMetaArray() const;
+	constexpr const MetaEnum * getMetaEnum() const;
 
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -107,8 +108,8 @@ public:
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
 	
-	constexpr bool hasMetaArray() const noexcept;
 	constexpr const MetaArray * getMetaArray() const;
+	constexpr const MetaEnum * getMetaEnum() const;
 
 	constexpr bool isPodStorage() const noexcept;
 	constexpr bool isObjectStorage() const noexcept;

@@ -9,7 +9,7 @@ TEST_CASE("metatypes, int[]")
 	metapp::Variant v;
 	v.set<int[]>(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
-	REQUIRE(v.getMetaType()->hasMetaArray());
+	REQUIRE(v.getMetaType()->getMetaArray() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaArray()->getLength() == -1);
 	REQUIRE(v.get<int[]>()[0] == 3);
 	REQUIRE(v.get<int[]>()[1] == 8);
@@ -22,7 +22,7 @@ TEST_CASE("metatypes, int[3]")
 	metapp::Variant v;
 	v.set<int[3]>(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
-	REQUIRE(v.getMetaType()->hasMetaArray());
+	REQUIRE(v.getMetaType()->getMetaArray() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaArray()->getLength() == 3);
 	REQUIRE(v.get<int[]>()[0] == 3);
 	REQUIRE(v.get<int[]>()[1] == 8);

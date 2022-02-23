@@ -26,15 +26,24 @@ inline constexpr bool UnifiedType::isAccessible() const noexcept
 	return metaMethodTable.accessibleMethodTable != nullptr;
 }
 
-inline constexpr bool UnifiedType::hasMetaArray() const noexcept
-{
-	return metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikArray;
-}
-
 inline constexpr const MetaArray * UnifiedType::getMetaArray() const
 {
-	assert(hasMetaArray());
-	return static_cast<const MetaArray *>(metaMethodTable.extraInfo.getter());
+	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikArray) {
+		return static_cast<const MetaArray *>(metaMethodTable.extraInfo.getter());
+	}
+	else {
+		return nullptr;
+	}
+}
+
+inline constexpr const MetaEnum * UnifiedType::getMetaEnum() const
+{
+	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikEnum) {
+		return static_cast<const MetaEnum *>(metaMethodTable.extraInfo.getter());
+	}
+	else {
+		return nullptr;
+	}
 }
 
 inline void * UnifiedType::construct(MetaTypeData * data, const void * copyFrom) const
@@ -190,14 +199,14 @@ inline constexpr bool MetaType::isAccessible() const noexcept
 	return unifiedType->isAccessible();
 }
 
-inline constexpr bool MetaType::hasMetaArray() const noexcept
-{
-	return unifiedType->hasMetaArray();
-}
-
 inline constexpr const MetaArray * MetaType::getMetaArray() const
 {
 	return unifiedType->getMetaArray();
+}
+
+inline constexpr const MetaEnum * MetaType::getMetaEnum() const
+{
+	return unifiedType->getMetaEnum();
 }
 
 inline constexpr bool MetaType::isPodStorage() const noexcept

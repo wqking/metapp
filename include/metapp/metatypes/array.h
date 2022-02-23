@@ -2,21 +2,9 @@
 #define ARRAY_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/metaarray.h"
 
 namespace metapp {
-
-class MetaArray
-{
-public:
-	explicit MetaArray(const int length) : length(length) {}
-
-	int getLength() const {
-		return length;
-	}
-
-private:
-	const int length;
-};
 
 template <typename T, typename U, int length>
 struct DeclareMetaTypeArrayBase
