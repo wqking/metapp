@@ -18,7 +18,7 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 
 inline constexpr bool UnifiedType::isCallable() const noexcept
 {
-	return metaMethodTable.invokeMethodTable != nullptr;
+	return metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikCallable;
 }
 
 inline constexpr bool UnifiedType::isAccessible() const noexcept
@@ -30,6 +30,16 @@ inline const MetaClass * UnifiedType::getMetaClass() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikClass) {
 		return static_cast<const MetaClass *>(metaMethodTable.extraInfo.getter());
+	}
+	else {
+		return nullptr;
+	}
+}
+
+inline const MetaCallable * UnifiedType::getMetaCallable() const
+{
+	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikCallable) {
+		return static_cast<const MetaCallable *>(metaMethodTable.extraInfo.getter());
 	}
 	else {
 		return nullptr;
@@ -90,44 +100,6 @@ inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value)
 {
 	metaMethodTable.streamOut(stream, value);
 }
-
-inline size_t UnifiedType::getParameterCount() const
-{
-	if(metaMethodTable.invokeMethodTable == nullptr) {
-		throw NotSupportedException("Invoke is not supported.");
-	}
-	return metaMethodTable.invokeMethodTable->getParameterCount();
-}
-
-inline int UnifiedType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
-{
-	if(metaMethodTable.invokeMethodTable == nullptr) {
-		throw NotSupportedException("Invoke is not supported.");
-	}
-	return metaMethodTable.invokeMethodTable->rankInvoke(arguments, argumentCount);
-}
-
-inline bool UnifiedType::canInvoke(const Variant * arguments, const size_t argumentCount) const
-{
-	if(metaMethodTable.invokeMethodTable == nullptr) {
-		throw NotSupportedException("Invoke is not supported.");
-	}
-	return metaMethodTable.invokeMethodTable->canInvoke(arguments, argumentCount);
-}
-
-inline Variant UnifiedType::invoke(
-		void * instance,
-		const Variant & func,
-		const Variant * arguments,
-		const size_t argumentCount
-	) const
-{
-	if(metaMethodTable.invokeMethodTable == nullptr) {
-		throw NotSupportedException("Invoke is not supported.");
-	}
-	return metaMethodTable.invokeMethodTable->invoke(instance, func, arguments, argumentCount);
-}
-
 
 inline Variant UnifiedType::accessibleGet(const Variant & accessible, const void * instance) const
 {
@@ -209,6 +181,11 @@ inline const MetaClass * MetaType::getMetaClass() const
 	return unifiedType->getMetaClass();
 }
 
+inline const MetaCallable * MetaType::getMetaCallable() const
+{
+	return unifiedType->getMetaCallable();
+}
+
 inline constexpr const MetaArray * MetaType::getMetaArray() const
 {
 	return unifiedType->getMetaArray();
@@ -262,31 +239,6 @@ inline void MetaType::streamIn(std::istream & stream, Variant & value) const
 inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
 {
 	unifiedType->streamOut(stream, value);
-}
-
-inline size_t MetaType::getParameterCount() const
-{
-	return unifiedType->getParameterCount();
-}
-
-inline int MetaType::rankInvoke(const Variant * arguments, const size_t argumentCount) const
-{
-	return unifiedType->rankInvoke(arguments, argumentCount);
-}
-
-inline bool MetaType::canInvoke(const Variant * arguments, const size_t argumentCount) const
-{
-	return unifiedType->canInvoke(arguments, argumentCount);
-}
-
-inline Variant MetaType::invoke(
-		void * instance,
-		const Variant & func,
-		const Variant * arguments,
-		const size_t argumentCount
-	) const
-{
-	return unifiedType->invoke(instance, func, arguments, argumentCount);
 }
 
 inline Variant MetaType::accessibleGet(const Variant & accessible, const void * instance) const

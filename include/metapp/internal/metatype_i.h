@@ -12,32 +12,6 @@ namespace internal_ {
 
 struct NoneUpType {};
 
-struct InvokeMethodTable
-{
-	size_t (*getParameterCount)();
-	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
-	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
-	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
-};
-
-template <typename T>
-const InvokeMethodTable * getInvokeMethdTable(typename std::enable_if<HasFunctionInvoke<T>::value>::type * = nullptr)
-{
-	static const InvokeMethodTable invokeMethodTable {
-		&T::getParameterCount,
-		&T::rankInvoke,
-		&T::canInvoke,
-		&T::invoke
-	};
-	return &invokeMethodTable;
-}
-
-template <typename T>
-const InvokeMethodTable * getInvokeMethdTable(typename std::enable_if<! HasFunctionInvoke<T>::value>::type * = nullptr)
-{
-	return nullptr;
-}
-
 struct AccessibleMethodTable
 {
 	Variant (*accessibleGet)(const Variant & accessible, const void * instance);
@@ -64,6 +38,7 @@ enum class ExtraInfoKind
 {
 	eikNone,
 	eikClass,
+	eikCallable,
 	eikArray,
 	eikEnum,
 };
@@ -88,6 +63,19 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
+		&& HasFunctionGetMetaCallable<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo {
+		ExtraInfoKind::eikCallable,
+		(const void * (*)())&T::getMetaCallable
+	};
+}
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaCallable<T>::value
 		&& HasFunctionGetMetaArray<T>::value
 	>::type * = nullptr)
 {
@@ -100,6 +88,7 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaCallable<T>::value
 		&& ! HasFunctionGetMetaArray<T>::value
 		&& HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
@@ -113,6 +102,7 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaCallable<T>::value
 		&& ! HasFunctionGetMetaArray<T>::value
 		&& ! HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
@@ -134,7 +124,6 @@ struct MetaMethodTable
 	void (*streamIn)(std::istream & stream, Variant & value);
 	void (*streamOut)(std::ostream & stream, const Variant & value);
 
-	const InvokeMethodTable * invokeMethodTable;
 	const AccessibleMethodTable * accessibleMethodTable;
 
 	ExtraInfo extraInfo;

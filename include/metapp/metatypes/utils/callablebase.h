@@ -2,6 +2,7 @@
 #define CALLABLEBASE_FUNCTION_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/metacallable.h"
 #include "metapp/utility.h"
 
 namespace metapp {
@@ -16,6 +17,16 @@ public:
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
+
+	static const MetaCallable * getMetaCallable() {
+		static const MetaCallable metaCallable(
+			&getParameterCount,
+			&rankInvoke,
+			&canInvoke,
+			&invoke
+		);
+		return &metaCallable;
+	}
 
 	static size_t getParameterCount()
 	{

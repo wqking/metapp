@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
+#include "metapp/metacallable.h"
 #include "metapp/utility.h"
 
 #include <vector>
@@ -75,6 +76,16 @@ public:
 	using UpType = FT;
 	static constexpr TypeKind typeKind = tkDefaultArgsFunction;
 
+	static const MetaCallable * getMetaCallable() {
+		static const MetaCallable metaCallable(
+			&getParameterCount,
+			&rankInvoke,
+			&canInvoke,
+			&invoke
+		);
+		return &metaCallable;
+	}
+
 	static bool isValidArgumentCount(const size_t argumentCount)
 	{
 		return argumentCount >= argsCount - defaultArgsCount && argumentCount <= argsCount;
@@ -112,7 +123,7 @@ public:
 		const FunctionType & defaultArgsFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = defaultArgsFunc.getFunc();
 		if(argumentCount == argsCount) {
-			return underlyingFunc.getMetaType()->invoke(instance, underlyingFunc, arguments, argumentCount);
+			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(instance, underlyingFunc, arguments, argumentCount);
 		}
 		else {
 			std::array<Variant, argsCount> newArguments;
@@ -124,7 +135,7 @@ public:
 				newArguments[i] = defaultArgsFunc.getDefaultArgs()[argsCount - i - 1];
 				++i;
 			}
-			return underlyingFunc.getMetaType()->invoke(instance, underlyingFunc, newArguments.data(), argsCount);
+			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(instance, underlyingFunc, newArguments.data(), argsCount);
 		}
 	}
 

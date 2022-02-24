@@ -23,6 +23,7 @@ namespace metapp {
 
 class MetaType;
 class MetaClass;
+class MetaCallable;
 class MetaArray;
 class MetaEnum;
 
@@ -50,6 +51,7 @@ public:
 	constexpr bool isAccessible() const noexcept;
 	
 	const MetaClass * getMetaClass() const;
+	const MetaCallable * getMetaCallable() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
@@ -64,11 +66,6 @@ public:
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
-
-	size_t getParameterCount() const;
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
 	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
@@ -108,6 +105,7 @@ public:
 	constexpr bool isAccessible() const noexcept;
 	
 	const MetaClass * getMetaClass() const;
+	const MetaCallable * getMetaCallable() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
@@ -126,11 +124,6 @@ public:
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
-
-	size_t getParameterCount() const;
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const;
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const;
-	Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount) const;
 
 	Variant accessibleGet(const Variant & accessible, const void * instance) const;
 	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
@@ -239,7 +232,6 @@ const UnifiedType * getUnifiedType()
 			&M::streamIn,
 			&M::streamOut,
 
-			internal_::getInvokeMethdTable<M>(),
 			internal_::getAccessibleMethodTable<M>(),
 
 			internal_::makeExtraInfo<M>(),

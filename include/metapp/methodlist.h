@@ -2,6 +2,7 @@
 #define METHODLIST_H_969872685611
 
 #include "metapp/variant.h"
+#include "metapp/metacallable.h"
 
 #include <vector>
 
@@ -26,7 +27,7 @@ public:
 		int maxRank = 0;
 		const Variant * callable = nullptr;
 		for(const Variant & method : methodList) {
-			const int rank = method.getMetaType()->rankInvoke(arguments, argumentCount);
+			const int rank = method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
 			if(rank > maxRank) {
 				maxRank = rank;
 				callable = &method;

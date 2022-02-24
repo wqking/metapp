@@ -21,13 +21,13 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };
-		REQUIRE(v.getMetaType()->canInvoke(arguments, 1));
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments, 1).get<std::string>() == "hello5");
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 1));
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 1).get<std::string>() == "hello5");
 	}
 	SECTION("Invoke without default arguments") {
 		metapp::Variant arguments[] = { 6, std::string("good") };
-		REQUIRE(v.getMetaType()->canInvoke(arguments, 2));
-		REQUIRE(v.getMetaType()->invoke(nullptr, v, arguments, 2).get<std::string>() == "good6");
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 2).get<std::string>() == "good6");
 	}
 }
 
@@ -64,16 +64,16 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 	MyClass obj { 3 };
 	SECTION("Invoke with 3 default arguments") {
 		metapp::Variant arguments[] = { 5, std::string("hello") };
-		REQUIRE(v.getMetaType()->canInvoke(arguments, 2));
-		REQUIRE(v.getMetaType()->invoke(&obj, v, arguments, 2).get<const std::vector<std::string> &>()
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, arguments, 2).get<const std::vector<std::string> &>()
 			== 
 			std::vector<std::string> { "8", "hello", "38", "default", "97" }
 		);
 	}
 	SECTION("Invoke with 2 default arguments") {
 		metapp::Variant arguments[] = { 6, std::string("good"), 98 };
-		REQUIRE(v.getMetaType()->canInvoke(arguments, 3));
-		REQUIRE(v.getMetaType()->invoke(&obj, v, arguments, 3).get<const std::vector<std::string> &>()
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 3));
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, arguments, 3).get<const std::vector<std::string> &>()
 			== 
 			std::vector<std::string> { "9", "good", "98", "default", "97" }
 		);

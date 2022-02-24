@@ -58,15 +58,6 @@ struct HasOutputStreamOperator
 };
 
 template <typename T>
-struct HasFunctionInvoke
-{
-	template <typename C> static std::true_type test(decltype(C::invoke) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
 struct HasFunctionAccessibleGet
 {
 	template <typename C> static std::true_type test(decltype(C::accessibleGet) *);
@@ -79,6 +70,15 @@ template <typename T>
 struct HasFunctionGetMetaClass
 {
 	template <typename C> static std::true_type test(decltype(C::getMetaClass) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
+struct HasFunctionGetMetaCallable
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaCallable) *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };
