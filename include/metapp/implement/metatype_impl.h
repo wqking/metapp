@@ -23,7 +23,7 @@ inline constexpr bool UnifiedType::isCallable() const noexcept
 
 inline constexpr bool UnifiedType::isAccessible() const noexcept
 {
-	return metaMethodTable.accessibleMethodTable != nullptr;
+	return metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikAccessible;
 }
 
 inline const MetaClass * UnifiedType::getMetaClass() const
@@ -40,6 +40,16 @@ inline const MetaCallable * UnifiedType::getMetaCallable() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikCallable) {
 		return static_cast<const MetaCallable *>(metaMethodTable.extraInfo.getter());
+	}
+	else {
+		return nullptr;
+	}
+}
+
+inline const MetaAccessible * UnifiedType::getMetaAccessible() const
+{
+	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikAccessible) {
+		return static_cast<const MetaAccessible *>(metaMethodTable.extraInfo.getter());
 	}
 	else {
 		return nullptr;
@@ -99,24 +109,6 @@ inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
 inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
 {
 	metaMethodTable.streamOut(stream, value);
-}
-
-inline Variant UnifiedType::accessibleGet(const Variant & accessible, const void * instance) const
-{
-	if(metaMethodTable.accessibleMethodTable == nullptr) {
-		throw NotSupportedException("Accessible is not supported.");
-	}
-
-	return metaMethodTable.accessibleMethodTable->accessibleGet(accessible, instance);
-}
-
-inline void UnifiedType::accessibleSet(const Variant & accessible, void * instance, const Variant & value) const
-{
-	if(metaMethodTable.accessibleMethodTable == nullptr) {
-		throw NotSupportedException("Accessible is not supported.");
-	}
-
-	metaMethodTable.accessibleMethodTable->accessibleSet(accessible, instance, value);
 }
 
 
@@ -186,6 +178,11 @@ inline const MetaCallable * MetaType::getMetaCallable() const
 	return unifiedType->getMetaCallable();
 }
 
+inline const MetaAccessible * MetaType::getMetaAccessible() const
+{
+	return unifiedType->getMetaAccessible();
+}
+
 inline constexpr const MetaArray * MetaType::getMetaArray() const
 {
 	return unifiedType->getMetaArray();
@@ -239,16 +236,6 @@ inline void MetaType::streamIn(std::istream & stream, Variant & value) const
 inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
 {
 	unifiedType->streamOut(stream, value);
-}
-
-inline Variant MetaType::accessibleGet(const Variant & accessible, const void * instance) const
-{
-	return unifiedType->accessibleGet(accessible, instance);
-}
-
-inline void MetaType::accessibleSet(const Variant & accessible, void * instance, const Variant & value) const
-{
-	unifiedType->accessibleSet(accessible, instance, value);
 }
 
 

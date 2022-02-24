@@ -85,6 +85,15 @@ struct HasFunctionGetMetaCallable
 };
 
 template <typename T>
+struct HasFunctionGetMetaAccessible
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaAccessible) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
 struct HasFunctionGetMetaArray
 {
 	template <typename C> static std::true_type test(decltype(C::getMetaArray) *);

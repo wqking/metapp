@@ -24,6 +24,7 @@ namespace metapp {
 class MetaType;
 class MetaClass;
 class MetaCallable;
+class MetaAccessible;
 class MetaArray;
 class MetaEnum;
 
@@ -52,6 +53,7 @@ public:
 	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
+	const MetaAccessible * getMetaAccessible() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
@@ -66,9 +68,6 @@ public:
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
-
-	Variant accessibleGet(const Variant & accessible, const void * instance) const;
-	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
 
 private:
 	UnifiedType() = delete;
@@ -106,6 +105,7 @@ public:
 	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
+	const MetaAccessible * getMetaAccessible() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
@@ -231,8 +231,6 @@ const UnifiedType * getUnifiedType()
 
 			&M::streamIn,
 			&M::streamOut,
-
-			internal_::getAccessibleMethodTable<M>(),
 
 			internal_::makeExtraInfo<M>(),
 		}

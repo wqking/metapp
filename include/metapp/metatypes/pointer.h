@@ -2,6 +2,7 @@
 #define POINTER_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/metaaccessible.h"
 #include "metapp/utility.h"
 
 namespace metapp {
@@ -12,6 +13,14 @@ struct DeclareMetaTypeBase <T *> : public DeclarePodMetaType<T *>
 	using UpType = T;
 
 	static constexpr TypeKind typeKind = tkPointer;
+
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
 
 	static bool canCast(const MetaType * toMetaType) {
 		return toMetaType->getTypeKind() == tkPointer;

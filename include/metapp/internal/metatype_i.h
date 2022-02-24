@@ -12,33 +12,12 @@ namespace internal_ {
 
 struct NoneUpType {};
 
-struct AccessibleMethodTable
-{
-	Variant (*accessibleGet)(const Variant & accessible, const void * instance);
-	void (*accessibleSet)(const Variant & accessible, void * instance, const Variant & value);
-};
-
-template <typename T>
-const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<HasFunctionAccessibleGet<T>::value>::type * = nullptr)
-{
-	static const AccessibleMethodTable accessibleMethodTable {
-		&T::accessibleGet,
-		&T::accessibleSet
-	};
-	return &accessibleMethodTable;
-}
-
-template <typename T>
-const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<! HasFunctionAccessibleGet<T>::value>::type * = nullptr)
-{
-	return nullptr;
-}
-
 enum class ExtraInfoKind
 {
 	eikNone,
 	eikClass,
 	eikCallable,
+	eikAccessible,
 	eikArray,
 	eikEnum,
 };
@@ -76,6 +55,20 @@ template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
 		&& ! HasFunctionGetMetaCallable<T>::value
+		&& HasFunctionGetMetaAccessible<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo {
+		ExtraInfoKind::eikAccessible,
+		(const void * (*)())&T::getMetaAccessible
+	};
+}
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaCallable<T>::value
+		&& ! HasFunctionGetMetaAccessible<T>::value
 		&& HasFunctionGetMetaArray<T>::value
 	>::type * = nullptr)
 {
@@ -90,6 +83,7 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
 		&& ! HasFunctionGetMetaCallable<T>::value
 		&& ! HasFunctionGetMetaArray<T>::value
+		&& ! HasFunctionGetMetaAccessible<T>::value
 		&& HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
 {
@@ -103,6 +97,7 @@ template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
 		! HasFunctionGetMetaClass<T>::value
 		&& ! HasFunctionGetMetaCallable<T>::value
+		&& ! HasFunctionGetMetaAccessible<T>::value
 		&& ! HasFunctionGetMetaArray<T>::value
 		&& ! HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
@@ -123,8 +118,6 @@ struct MetaMethodTable
 
 	void (*streamIn)(std::istream & stream, Variant & value);
 	void (*streamOut)(std::ostream & stream, const Variant & value);
-
-	const AccessibleMethodTable * accessibleMethodTable;
 
 	ExtraInfo extraInfo;
 };

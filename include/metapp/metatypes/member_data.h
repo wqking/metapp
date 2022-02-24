@@ -2,6 +2,7 @@
 #define MEMBER_DATA_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/metaaccessible.h"
 
 namespace metapp {
 
@@ -11,6 +12,14 @@ struct DeclareMetaType <T Class::*, typename std::enable_if<! std::is_function<T
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
+
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
 
 	static Variant accessibleGet(const Variant & accessible, const void * instance) {
 		return ((const Class *)instance)->*(accessible.get<T Class::*>());

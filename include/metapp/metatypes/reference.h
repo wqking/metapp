@@ -2,6 +2,7 @@
 #define REFERENCE_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/metaaccessible.h"
 
 namespace metapp {
 
@@ -10,6 +11,14 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
+
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
 
 	static void * construct(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {

@@ -25,7 +25,6 @@ public:
 	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
-private:
 };
 
 
