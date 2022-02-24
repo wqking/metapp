@@ -49,14 +49,13 @@ public:
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
 	
+	const MetaClass * getMetaClass() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 	
 	void destroy(void * instance) const;
-
-	const MetaClass * getMetaClass() const;
 
 	void * getAddress(const MetaTypeData & data) const;
 	
@@ -108,6 +107,7 @@ public:
 	constexpr bool isCallable() const noexcept;
 	constexpr bool isAccessible() const noexcept;
 	
+	const MetaClass * getMetaClass() const;
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
@@ -118,8 +118,6 @@ public:
 	void * construct(MetaTypeData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
-
-	const MetaClass * getMetaClass() const;
 
 	void * getAddress(const MetaTypeData & data) const;
 	
@@ -160,11 +158,6 @@ struct DeclareMetaTypeRoot
 	{
 		using U = typename std::remove_reference<T>::type;
 		doDestroy(static_cast<U *>(instance));
-	}
-
-	static const MetaClass * getMetaClass()
-	{
-		return nullptr;
 	}
 
 	static void * getAddress(const MetaTypeData & /*data*/)
@@ -237,8 +230,6 @@ const UnifiedType * getUnifiedType()
 			&M::construct,
 
 			&M::destroy,
-
-			&M::getMetaClass,
 
 			&M::getAddress,
 

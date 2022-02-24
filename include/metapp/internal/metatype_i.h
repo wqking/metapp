@@ -63,6 +63,7 @@ const AccessibleMethodTable * getAccessibleMethodTable(typename std::enable_if<!
 enum class ExtraInfoKind
 {
 	eikNone,
+	eikClass,
 	eikArray,
 	eikEnum,
 };
@@ -75,7 +76,19 @@ struct ExtraInfo
 
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
-		HasFunctionGetMetaArray<T>::value
+		HasFunctionGetMetaClass<T>::value
+	>::type * = nullptr)
+{
+	return ExtraInfo {
+		ExtraInfoKind::eikClass,
+		(const void * (*)())&T::getMetaClass
+	};
+}
+
+template <typename T>
+ExtraInfo makeExtraInfo(typename std::enable_if<
+		! HasFunctionGetMetaClass<T>::value
+		&& HasFunctionGetMetaArray<T>::value
 	>::type * = nullptr)
 {
 	return ExtraInfo {
@@ -86,7 +99,8 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaArray<T>::value
+		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaArray<T>::value
 		&& HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
 {
@@ -98,7 +112,8 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 
 template <typename T>
 ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaArray<T>::value
+		! HasFunctionGetMetaClass<T>::value
+		&& ! HasFunctionGetMetaArray<T>::value
 		&& ! HasFunctionGetMetaEnum<T>::value
 	>::type * = nullptr)
 {
@@ -110,8 +125,6 @@ struct MetaMethodTable
 	void * (*construct)(MetaTypeData * data, const void * copyFrom);
 
 	void (*destroy)(void * instance);
-
-	const MetaClass * (*getMetaClass)();
 
 	void * (*getAddress)(const MetaTypeData & data);
 

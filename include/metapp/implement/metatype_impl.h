@@ -26,6 +26,16 @@ inline constexpr bool UnifiedType::isAccessible() const noexcept
 	return metaMethodTable.accessibleMethodTable != nullptr;
 }
 
+inline const MetaClass * UnifiedType::getMetaClass() const
+{
+	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikClass) {
+		return static_cast<const MetaClass *>(metaMethodTable.extraInfo.getter());
+	}
+	else {
+		return nullptr;
+	}
+}
+
 inline constexpr const MetaArray * UnifiedType::getMetaArray() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikArray) {
@@ -54,11 +64,6 @@ inline void * UnifiedType::construct(MetaTypeData * data, const void * copyFrom)
 inline void UnifiedType::destroy(void * instance) const
 {
 	metaMethodTable.destroy(instance);
-}
-
-inline const MetaClass * UnifiedType::getMetaClass() const
-{
-	return metaMethodTable.getMetaClass();
 }
 
 inline void * UnifiedType::getAddress(const MetaTypeData & data) const
@@ -199,6 +204,11 @@ inline constexpr bool MetaType::isAccessible() const noexcept
 	return unifiedType->isAccessible();
 }
 
+inline const MetaClass * MetaType::getMetaClass() const
+{
+	return unifiedType->getMetaClass();
+}
+
 inline constexpr const MetaArray * MetaType::getMetaArray() const
 {
 	return unifiedType->getMetaArray();
@@ -227,11 +237,6 @@ inline void * MetaType::construct(MetaTypeData * data, const void * copyFrom) co
 inline void MetaType::destroy(void * instance) const
 {
 	unifiedType->destroy(instance);
-}
-
-inline const MetaClass * MetaType::getMetaClass() const
-{
-	return unifiedType->getMetaClass();
 }
 
 inline void * MetaType::getAddress(const MetaTypeData & data) const
