@@ -20,7 +20,7 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 		return &metaAccessible;
 	}
 
-	static void * construct(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			data->podAs<T *>() = (T *)copyFrom;
 		}

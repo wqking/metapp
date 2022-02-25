@@ -76,9 +76,9 @@ inline constexpr const MetaEnum * UnifiedType::getMetaEnum() const
 	}
 }
 
-inline void * UnifiedType::construct(MetaTypeData * data, const void * copyFrom) const
+inline void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const
 {
-	return metaMethodTable.construct(data, copyFrom);
+	return metaMethodTable.constructData(data, copyFrom);
 }
 
 inline void UnifiedType::destroy(void * instance) const
@@ -203,9 +203,33 @@ inline constexpr bool MetaType::isObjectStorage() const noexcept
 	return ! isPodStorage();
 }
 
-inline void * MetaType::construct(MetaTypeData * data, const void * copyFrom) const
+inline void * MetaType::construct() const
 {
-	return unifiedType->construct(data, copyFrom);
+	return constructData(nullptr, nullptr);
+}
+
+inline void * MetaType::copyConstruct(const void * copyFrom) const
+{
+	return constructData(nullptr, copyFrom);
+}
+
+inline Variant MetaType::constructVariant() const
+{
+	MetaTypeData data;
+	constructData(&data, nullptr);
+	return Variant(this, data);
+}
+
+inline Variant MetaType::copyConstructVariant(const void * copyFrom) const
+{
+	MetaTypeData data;
+	constructData(&data, copyFrom);
+	return Variant(this, data);
+}
+
+inline void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
+{
+	return unifiedType->constructData(data, copyFrom);
 }
 
 inline void MetaType::destroy(void * instance) const

@@ -57,7 +57,7 @@ public:
 	constexpr const MetaArray * getMetaArray() const;
 	constexpr const MetaEnum * getMetaEnum() const;
 
-	void * construct(MetaTypeData * data, const void * copyFrom) const;
+	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
 	void destroy(void * instance) const;
 
@@ -112,8 +112,13 @@ public:
 	constexpr bool isPodStorage() const noexcept;
 	constexpr bool isObjectStorage() const noexcept;
 
-	// meta methods
-	void * construct(MetaTypeData * data, const void * copyFrom) const;
+	void * construct() const;
+	void * copyConstruct(const void * copyFrom) const;
+	Variant constructVariant() const;
+	Variant copyConstructVariant(const void * copyFrom) const;
+
+	// re-implementable meta methods
+	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
 
@@ -124,9 +129,6 @@ public:
 
 	void streamIn(std::istream & stream, Variant & value) const;
 	void streamOut(std::ostream & stream, const Variant & value) const;
-
-	Variant accessibleGet(const Variant & accessible, const void * instance) const;
-	void accessibleSet(const Variant & accessible, void * instance, const Variant & value) const;
 
 private:
 	MetaType() = delete;
@@ -220,7 +222,7 @@ const UnifiedType * getUnifiedType()
 	static const UnifiedType unifiedType (
 		M::typeKind,
 		internal_::MetaMethodTable {
-			&M::construct,
+			&M::constructData,
 
 			&M::destroy,
 
@@ -248,7 +250,7 @@ struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
 
 	static constexpr TypeFlags typeFlags = tfPodStorage;
 
-	static void * construct(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
 				data->podAs<U>() = U();
@@ -279,7 +281,7 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 {
 	using U = typename std::remove_reference<T>::type;
 
-	static void * construct(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
 				data->object = std::make_shared<U>();
@@ -327,7 +329,7 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
 
-	static void * construct(MetaTypeData * /*data*/, const void * /*value*/) {
+	static void * constructData(MetaTypeData * /*data*/, const void * /*value*/) {
 		return nullptr;
 	}
 

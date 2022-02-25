@@ -14,7 +14,7 @@ std::string myFunc1(const int a, const std::string & b)
 
 TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 {
-	metapp::DefaultArgsFunction<decltype(&myFunc1), 1> func(&myFunc1, { std::string("hello") });
+	metapp::DefaultArgsFunction<decltype(&myFunc1), 1> func(&myFunc1, { "hello" });
 	metapp::Variant v(func);
 	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkDefaultArgsFunction);
 	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkFunction);
@@ -25,7 +25,7 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 1).get<std::string>() == "hello5");
 	}
 	SECTION("Invoke without default arguments") {
-		metapp::Variant arguments[] = { 6, std::string("good") };
+		metapp::Variant arguments[] = { 6, "good" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 2).get<std::string>() == "good6");
 	}
@@ -57,13 +57,13 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 {
 	metapp::DefaultArgsFunction<decltype(&MyClass::myFunc2), 3> func(&MyClass::myFunc2, {
 		'a',
-		std::string("default"),
+		"default",
 		38
 	});
 	metapp::Variant v(func);
 	MyClass obj { 3 };
 	SECTION("Invoke with 3 default arguments") {
-		metapp::Variant arguments[] = { 5, std::string("hello") };
+		metapp::Variant arguments[] = { 5, "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, arguments, 2).get<const std::vector<std::string> &>()
 			== 
@@ -71,7 +71,7 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 		);
 	}
 	SECTION("Invoke with 2 default arguments") {
-		metapp::Variant arguments[] = { 6, std::string("good"), 98 };
+		metapp::Variant arguments[] = { 6, "good", 98 };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 3));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, arguments, 3).get<const std::vector<std::string> &>()
 			== 

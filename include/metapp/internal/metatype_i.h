@@ -107,7 +107,7 @@ ExtraInfo makeExtraInfo(typename std::enable_if<
 
 struct MetaMethodTable
 {
-	void * (*construct)(MetaTypeData * data, const void * copyFrom);
+	void * (*constructData)(MetaTypeData * data, const void * copyFrom);
 
 	void (*destroy)(void * instance);
 

@@ -7,6 +7,78 @@
 #include <iostream>
 #include <climits>
 
+TEST_CASE("MetaType, construct")
+{
+	SECTION("int") {
+		std::unique_ptr<int> instance((int *)metapp::getMetaType<int>()->construct());
+		REQUIRE(*instance == 0);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		std::unique_ptr<MyClass> instance((MyClass *)metapp::getMetaType<MyClass>()->construct());
+		REQUIRE(instance->value == 5);
+	}
+}
+
+TEST_CASE("MetaType, copyConstruct")
+{
+	SECTION("int") {
+		int n = 38;
+		std::unique_ptr<int> instance((int *)metapp::getMetaType<int>()->copyConstruct(&n));
+		REQUIRE(*instance == 38);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		MyClass copyFrom { 98 };
+		std::unique_ptr<MyClass> instance((MyClass *)metapp::getMetaType<MyClass>()->copyConstruct(&copyFrom));
+		REQUIRE(instance->value == 98);
+	}
+}
+
+TEST_CASE("MetaType, constructVariant")
+{
+	SECTION("int") {
+		metapp::Variant v = metapp::getMetaType<int>()->constructVariant();
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 0);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		metapp::Variant v = metapp::getMetaType<MyClass>()->constructVariant();
+		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
+		REQUIRE(v.get<MyClass &>().value == 5);
+	}
+}
+
+TEST_CASE("MetaType, copyConstructVariant")
+{
+	SECTION("int") {
+		int n = 38;
+		metapp::Variant v = metapp::getMetaType<int>()->copyConstructVariant(&n);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 38);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		MyClass copyFrom { 98 };
+		metapp::Variant v = metapp::getMetaType<MyClass>()->copyConstructVariant(&copyFrom);
+		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
+		REQUIRE(v.get<MyClass &>().value == 98);
+	}
+}
+
 TEST_CASE("MetaType, isCallable()")
 {
 	REQUIRE(! metapp::getMetaType<int>()->isCallable());

@@ -14,7 +14,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
 
-	static void * construct(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
 				data->object = std::static_pointer_cast<void>(std::shared_ptr<T>());
