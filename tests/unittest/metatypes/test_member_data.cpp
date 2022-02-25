@@ -40,15 +40,15 @@ TEST_CASE("metatypes, member data, int Class1::*")
 	metapp::Variant v(&Class1::value);
 	Class1 obj;
 	obj.value = 5;
-	REQUIRE(v.getMetaType()->getMetaAccessible()->accessibleGet(v, &obj).get<int>() == 5);
+	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, &obj).get<int>() == 5);
 
-	v.getMetaType()->getMetaAccessible()->accessibleSet(v, &obj, 38);
+	v.getMetaType()->getMetaAccessible()->set(v, &obj, 38);
 	REQUIRE(obj.value == 38);
-	REQUIRE(v.getMetaType()->getMetaAccessible()->accessibleGet(v, &obj).get<int>() == 38);
+	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, &obj).get<int>() == 38);
 
-	v.getMetaType()->getMetaAccessible()->accessibleSet(v, &obj, 98.0);
+	v.getMetaType()->getMetaAccessible()->set(v, &obj, 98.0);
 	REQUIRE(obj.value == 98);
-	REQUIRE(v.getMetaType()->getMetaAccessible()->accessibleGet(v, &obj).get<int>() == 98);
+	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, &obj).get<int>() == 98);
 }
 
 

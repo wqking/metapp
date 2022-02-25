@@ -9,16 +9,16 @@ class MetaAccessible
 {
 public:
 	MetaAccessible(
-		Variant (*accessibleGet)(const Variant & accessible, const void * instance),
-		void (*accessibleSet)(const Variant & accessible, void * instance, const Variant & value)
+		Variant (*get)(const Variant & accessible, const void * instance),
+		void (*set)(const Variant & accessible, void * instance, const Variant & value)
 	)
 		:
-			accessibleGet(accessibleGet),
-			accessibleSet(accessibleSet)
+			get(get),
+			set(set)
 	{}
 
-	Variant (*accessibleGet)(const Variant & accessible, const void * instance);
-	void (*accessibleSet)(const Variant & accessible, void * instance, const Variant & value);
+	Variant (*get)(const Variant & accessible, const void * instance);
+	void (*set)(const Variant & accessible, void * instance, const Variant & value);
 };
 
 
