@@ -54,8 +54,8 @@ public:
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
-	constexpr const MetaArray * getMetaArray() const;
-	constexpr const MetaEnum * getMetaEnum() const;
+	const MetaArray * getMetaArray() const;
+	const MetaEnum * getMetaEnum() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -106,8 +106,8 @@ public:
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
-	constexpr const MetaArray * getMetaArray() const;
-	constexpr const MetaEnum * getMetaEnum() const;
+	const MetaArray * getMetaArray() const;
+	const MetaEnum * getMetaEnum() const;
 
 	constexpr bool isPodStorage() const noexcept;
 	constexpr bool isObjectStorage() const noexcept;

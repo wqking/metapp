@@ -32,7 +32,7 @@
 #include "metapp/metatypes/std_unordered_set.h"
 #include "metapp/metatypes/std_vector.h"
 
-#if METAPP_SUPPORT_STANDARD_17
+#ifdef METAPP_SUPPORT_STANDARD_17
 #include "metapp/metatypes/std_any.h"
 #include "metapp/metatypes/std_variant.h"
 #endif

@@ -2,7 +2,7 @@
 
 #include "metapp/compiler.h"
 
-#if METAPP_SUPPORT_STANDARD_17
+#ifdef METAPP_SUPPORT_STANDARD_17
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"

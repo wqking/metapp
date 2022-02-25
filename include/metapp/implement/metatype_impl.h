@@ -56,7 +56,7 @@ inline const MetaAccessible * UnifiedType::getMetaAccessible() const
 	}
 }
 
-inline constexpr const MetaArray * UnifiedType::getMetaArray() const
+inline const MetaArray * UnifiedType::getMetaArray() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikArray) {
 		return static_cast<const MetaArray *>(metaMethodTable.extraInfo.getter());
@@ -66,7 +66,7 @@ inline constexpr const MetaArray * UnifiedType::getMetaArray() const
 	}
 }
 
-inline constexpr const MetaEnum * UnifiedType::getMetaEnum() const
+inline const MetaEnum * UnifiedType::getMetaEnum() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikEnum) {
 		return static_cast<const MetaEnum *>(metaMethodTable.extraInfo.getter());
@@ -183,12 +183,12 @@ inline const MetaAccessible * MetaType::getMetaAccessible() const
 	return unifiedType->getMetaAccessible();
 }
 
-inline constexpr const MetaArray * MetaType::getMetaArray() const
+inline const MetaArray * MetaType::getMetaArray() const
 {
 	return unifiedType->getMetaArray();
 }
 
-inline constexpr const MetaEnum * MetaType::getMetaEnum() const
+inline const MetaEnum * MetaType::getMetaEnum() const
 {
 	return unifiedType->getMetaEnum();
 }

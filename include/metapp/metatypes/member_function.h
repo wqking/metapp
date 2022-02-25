@@ -2,6 +2,7 @@
 #define MEMBER_FUNCTION_H_969872685611
 
 #include "metapp/metatypes/utils/callablebase.h"
+#include "metapp/compiler.h"
 
 namespace metapp {
 
@@ -33,6 +34,8 @@ struct DeclareMetaType <RT (C::*)(Args...) const volatile> : public DeclareMetaT
 	static constexpr TypeFlags typeFlags = tfConst | tfVolatile | DeclareMetaType <RT (C::*)(Args...)>::typeFlags;
 };
 
+#ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
+
 template <typename C, typename RT, typename ...Args>
 struct DeclareMetaType <RT (C::*)(Args...) noexcept> : public DeclareMetaType <RT (C::*)(Args...)>
 {
@@ -52,6 +55,8 @@ template <typename C, typename RT, typename ...Args>
 struct DeclareMetaType <RT (C::*)(Args...) const volatile noexcept> : public DeclareMetaType <RT (C::*)(Args...) const volatile>
 {
 };
+
+#endif
 
 
 } // namespace metapp

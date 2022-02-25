@@ -33,7 +33,7 @@ TEST_CASE("MetaType, copyConstruct")
 	SECTION("MyClass") {
 		struct MyClass
 		{
-			int value = 5;
+			int value;
 		};
 		MyClass copyFrom { 98 };
 		std::unique_ptr<MyClass> instance((MyClass *)metapp::getMetaType<MyClass>()->copyConstruct(&copyFrom));
@@ -70,7 +70,7 @@ TEST_CASE("MetaType, copyConstructVariant")
 	SECTION("MyClass") {
 		struct MyClass
 		{
-			int value = 5;
+			int value;
 		};
 		MyClass copyFrom { 98 };
 		metapp::Variant v = metapp::getMetaType<MyClass>()->copyConstructVariant(&copyFrom);

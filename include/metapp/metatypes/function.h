@@ -2,6 +2,7 @@
 #define FUNCTION_H_969872685611
 
 #include "metapp/metatypes/utils/callablebase.h"
+#include "metapp/compiler.h"
 
 namespace metapp {
 
@@ -16,13 +17,15 @@ public:
 };
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (*)(Args...) noexcept>
+struct DeclareMetaType <RT (Args...)>
 	: public DeclareMetaType <RT (*)(Args...)>
 {
 };
 
+#ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
+
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (Args...)>
+struct DeclareMetaType <RT (*)(Args...) noexcept>
 	: public DeclareMetaType <RT (*)(Args...)>
 {
 };
@@ -32,6 +35,8 @@ struct DeclareMetaType <RT (Args...) noexcept>
 	: public DeclareMetaType <RT (Args...)>
 {
 };
+
+#endif
 
 
 } // namespace metapp
