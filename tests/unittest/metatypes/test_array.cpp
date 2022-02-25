@@ -29,3 +29,16 @@ TEST_CASE("metatypes, int[3]")
 	REQUIRE(v.get<int[3]>()[2] == 9);
 }
 
+TEST_CASE("metatypes, int[], constness")
+{
+	REQUIRE(metapp::getMetaType<const int[]>()->getTypeKind() == metapp::tkArray);
+	REQUIRE(metapp::getMetaType<const int[]>()->isConst());
+	
+	REQUIRE(metapp::getMetaType<volatile int[]>()->getTypeKind() == metapp::tkArray);
+	REQUIRE(metapp::getMetaType<volatile int[]>()->isVolatile());
+	
+	REQUIRE(metapp::getMetaType<const volatile int[]>()->getTypeKind() == metapp::tkArray);
+	REQUIRE(metapp::getMetaType<const volatile int[]>()->isConst());
+	REQUIRE(metapp::getMetaType<const volatile int[]>()->isVolatile());
+}
+

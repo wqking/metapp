@@ -10,8 +10,10 @@ namespace metapp {
 template <>
 struct DeclareMetaType <std::string> : public DeclareMetaTypeBase <std::string>
 {
+private:
 	using super = DeclareObjectMetaType<std::string>;
 
+public:
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool canCast(const MetaType * toMetaType) {
@@ -30,8 +32,9 @@ struct DeclareMetaType <std::string> : public DeclareMetaTypeBase <std::string>
 
 private:
 	static bool canCastToCharPtr(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer
-			&& toMetaType->getUpType()->getTypeKind() == tkChar;
+		return toMetaType->getTypeKind() == tkCharPtr
+			|| (toMetaType->getTypeKind() == tkPointer && toMetaType->getUpType()->getTypeKind() == tkChar)
+		;
 	}
 };
 
@@ -58,8 +61,9 @@ struct DeclareMetaType <std::wstring> : public DeclareMetaTypeBase <std::wstring
 
 private:
 	static bool canCastToWideCharPtr(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer
-			&& toMetaType->getUpType()->getTypeKind() == tkWideChar;
+		return toMetaType->getTypeKind() == tkWideCharPtr
+			|| (toMetaType->getTypeKind() == tkPointer && toMetaType->getUpType()->getTypeKind() == tkWideChar)
+		;
 	}
 };
 

@@ -5,6 +5,7 @@
 
 #include "metapp/metatypes/arithmetic.h"
 #include "metapp/metatypes/array.h"
+#include "metapp/metatypes/char_ptr.h"
 #include "metapp/metatypes/constructor.h"
 #include "metapp/metatypes/cv.h"
 #include "metapp/metatypes/default_args_function.h"

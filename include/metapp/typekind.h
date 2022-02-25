@@ -50,7 +50,9 @@ constexpr TypeKind tkMemberPointer = 35;
 constexpr TypeKind tkConstructor = 36;
 constexpr TypeKind tkArray = 37;
 constexpr TypeKind tkEnum = 38;
-constexpr TypeKind tkDefaultArgsFunction = 39;
+constexpr TypeKind tkCharPtr = 39;
+constexpr TypeKind tkWideCharPtr = 40;
+constexpr TypeKind tkDefaultArgsFunction = 41;
 
 constexpr TypeKind tkStdString = 60; // std::string
 constexpr TypeKind tkStdWideString = 61; // std::wstring
@@ -105,17 +107,20 @@ inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkFloat, "float" },
 		{ tkDouble, "double" },
 		{ tkLongDouble, "long double" },
-		
+
 		{ tkObject, "object" },
-		{ tkArray, "array" },
 		{ tkPointer, "pointer" },
 		{ tkReference, "reference" },
 		{ tkFunction, "function" },
 		{ tkMemberFunction, "member_func" },
 		{ tkMemberPointer, "member_pointer" },
 		{ tkConstructor, "constructor" },
+		{ tkArray, "array" },
+		{ tkEnum, "enum" },
+		{ tkCharPtr, "const char *" },
+		{ tkWideCharPtr, "const wchar_t *" },
 		{ tkDefaultArgsFunction, "default_args_function" },
-	
+
 		{ tkStdString, "std::string" },
 		{ tkStdWideString, "std::wstring" },
 		{ tkStdSharedPtr, "std::shared_ptr" },

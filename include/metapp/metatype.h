@@ -305,17 +305,20 @@ struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
 
 };
 
+template <typename T>
+using SelectMetaTypeStorageBase = typename std::conditional<
+	! std::is_const<T>::value
+	&& ! std::is_volatile<T>::value
+	&& std::is_trivial<T>::value
+	&& std::is_standard_layout<T>::value
+	&& sizeof(T) <= podSize,
+	DeclarePodMetaType<T>,
+	DeclareObjectMetaType<T>
+>::type;
+
+
 template <typename T, typename Enabled>
-struct DeclareMetaTypeBase : 
-	public std::conditional<
-		! std::is_const<T>::value
-		&& ! std::is_volatile<T>::value
-		&& std::is_trivial<T>::value
-		&& std::is_standard_layout<T>::value
-		&& sizeof(T) <= podSize,
-		DeclarePodMetaType<T>,
-		DeclareObjectMetaType<T>
-	>::type
+struct DeclareMetaTypeBase : public SelectMetaTypeStorageBase<T>
 {
 };
 
