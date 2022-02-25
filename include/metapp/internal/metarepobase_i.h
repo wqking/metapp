@@ -4,7 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/methodlist.h"
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 namespace metapp {
@@ -106,10 +106,10 @@ public:
 	}
 
 private:
-	std::unordered_map<std::string, const MetaType *> nameTypeMap;
-	std::unordered_map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
-	std::unordered_map<std::string, std::shared_ptr<MethodList> > methodListMap;
-	std::unordered_map<std::string, Variant> fieldMap;
+	std::map<std::string, const MetaType *> nameTypeMap;
+	std::map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
+	std::map<std::string, std::shared_ptr<MethodList> > methodListMap;
+	std::map<std::string, Variant> fieldMap;
 };
 
 

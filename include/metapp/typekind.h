@@ -2,7 +2,7 @@
 #define TYPEKIND_H_969872685611
 
 #include <cstdint>
-#include <unordered_map>
+#include <map>
 #include <string>
 
 namespace metapp {
@@ -87,9 +87,9 @@ constexpr TypeFlags tfConst = 1 << 0;
 constexpr TypeFlags tfVolatile = 1 << 1;
 constexpr TypeFlags tfPodStorage = 1 << 2;
 
-inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
+inline std::map<TypeKind, std::string> & getTypeKindNameMap()
 {
-	static std::unordered_map<TypeKind, std::string> typeKindNameMap {
+	static std::map<TypeKind, std::string> typeKindNameMap {
 		{ tkVoid, "void" },
 		{ tkBool, "bool" },
 		{ tkChar, "char" },
@@ -137,7 +137,7 @@ inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkStdMultimap, "std::multipmap" },
 		{ tkStdSet, "std::set" },
 		{ tkStdMultiset, "std::multiset" },
-		{ tkStdUnorderedMap, "std::unordered_map" },
+		{ tkStdUnorderedMap, "std::map" },
 		{ tkStdUnorderedMultimap, "std::unordered_multimap" },
 		{ tkStdUnorderedSet, "std::unordered_set" },
 		{ tkStdUnorderedMultiset, "std::unordered_multiset" },

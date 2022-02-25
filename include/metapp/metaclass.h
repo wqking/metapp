@@ -5,7 +5,6 @@
 #include "metapp/internal/metarepobase_i.h"
 
 #include <vector>
-#include <unordered_map>
 #include <memory>
 
 namespace metapp {
