@@ -110,7 +110,7 @@ TEST_CASE("aaa")
 		std::string s("abc");
 		metapp::Variant v(s);
 		REQUIRE(v.get<std::string>() == s);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkString);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
 	}
 
 	{
@@ -118,14 +118,14 @@ TEST_CASE("aaa")
 		metapp::Variant v;
 		v.set<const std::string>(s);
 		REQUIRE(v.get<std::string>() == s);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkString);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
 	}
 
 	{
 		std::wstring s(L"abc");
 		metapp::Variant v(s);
 		REQUIRE(v.get<std::wstring>() == s);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkWideString);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkStdWideString);
 	}
 
 }

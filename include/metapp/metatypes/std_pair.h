@@ -1,5 +1,5 @@
-#ifndef PAIR_H_969872685611
-#define PAIR_H_969872685611
+#ifndef STD_PAIR_H_969872685611
+#define STD_PAIR_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::pair<T1, T2> >
 	: public DeclareMetaTypeBase <std::pair<T1, T2> >
 {
 	using UpType = TypeList<T1, T2>;
-	static constexpr TypeKind typeKind = tkPair;
+	static constexpr TypeKind typeKind = tkStdPair;
 
 };
 

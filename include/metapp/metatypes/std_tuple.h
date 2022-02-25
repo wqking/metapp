@@ -1,5 +1,5 @@
-#ifndef TUPLE_H_969872685611
-#define TUPLE_H_969872685611
+#ifndef STD_TUPLE_H_969872685611
+#define STD_TUPLE_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::tuple<Types...> >
 	: public DeclareMetaTypeBase <std::tuple<Types...> >
 {
 	using UpType = TypeList<Types...>;
-	static constexpr TypeKind typeKind = tkTuple;
+	static constexpr TypeKind typeKind = tkStdTuple;
 
 };
 

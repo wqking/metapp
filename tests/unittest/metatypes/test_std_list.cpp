@@ -8,12 +8,12 @@ TEST_CASE("metatypes, std::list<std::string>")
 	using Type = std::list<std::string>;
 	Type list{ "hello", "world" };
 	metapp::Variant v(list);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkList);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdList);
 	REQUIRE(v.get<const Type &>().front() == "hello");
 	REQUIRE(v.get<const Type &>().back() == "world");
 	v.get<Type &>().push_back("good");
 	REQUIRE(v.get<const Type &>().back() == "good");
 	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkList, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdList, tkStdString }));
 }
 

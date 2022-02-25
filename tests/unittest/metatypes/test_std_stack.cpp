@@ -9,13 +9,13 @@ TEST_CASE("metatypes, std::stack<std::string>")
 	Type container;
 	metapp::Variant v(container);
 	v.get<Type &>().push("perfect");
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkStack);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdStack);
 	REQUIRE(v.get<Type &>().top() == "perfect");
 	v.get<Type &>().push("good");
 	REQUIRE(v.get<Type &>().top() == "good");
 	v.get<Type &>().pop();
 	REQUIRE(v.get<Type &>().top() == "perfect");
 	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStack, tkString }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdStack, tkStdString }));
 }
 

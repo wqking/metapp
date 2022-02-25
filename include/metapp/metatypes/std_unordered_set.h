@@ -1,5 +1,5 @@
-#ifndef UNORDERED_SET_H_969872685611
-#define UNORDERED_SET_H_969872685611
+#ifndef STD_UNORDERED_SET_H_969872685611
+#define STD_UNORDERED_SET_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
 	: public DeclareMetaTypeBase <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
 {
 	using UpType = Key;
-	static constexpr TypeKind typeKind = tkUnorderedSet;
+	static constexpr TypeKind typeKind = tkStdUnorderedSet;
 
 };
 
@@ -21,7 +21,7 @@ struct DeclareMetaType <std::unordered_multiset<Key, Hash, KeyEqual, Allocator> 
 	: public DeclareMetaTypeBase <std::unordered_multiset<Key, Hash, KeyEqual, Allocator> >
 {
 	using UpType = Key;
-	static constexpr TypeKind typeKind = tkUnorderedMultiset;
+	static constexpr TypeKind typeKind = tkStdUnorderedMultiset;
 
 };
 

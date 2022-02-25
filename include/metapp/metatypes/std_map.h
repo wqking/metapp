@@ -1,5 +1,5 @@
-#ifndef MAP_H_969872685611
-#define MAP_H_969872685611
+#ifndef STD_MAP_H_969872685611
+#define STD_MAP_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::map<Key, T, Compare, Allocator> >
 	: public DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
-	static constexpr TypeKind typeKind = tkMap;
+	static constexpr TypeKind typeKind = tkStdMap;
 
 };
 
@@ -21,7 +21,7 @@ struct DeclareMetaType <std::multimap<Key, T, Compare, Allocator> >
 	: public DeclareMetaTypeBase <std::multimap<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
-	static constexpr TypeKind typeKind = tkMultimap;
+	static constexpr TypeKind typeKind = tkStdMultimap;
 
 };
 

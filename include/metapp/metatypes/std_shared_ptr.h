@@ -1,5 +1,5 @@
-#ifndef SHARED_PTR_H_969872685611
-#define SHARED_PTR_H_969872685611
+#ifndef STD_SHARED_PTR_H_969872685611
+#define STD_SHARED_PTR_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	: DeclareMetaTypeRoot<std::shared_ptr<T> >
 {
 	using UpType = T;
-	static constexpr TypeKind typeKind = tkSharedPtr;
+	static constexpr TypeKind typeKind = tkStdSharedPtr;
 
 	static void * construct(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {

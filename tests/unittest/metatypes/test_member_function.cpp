@@ -33,7 +33,7 @@ TEST_CASE("metatypes, member function, types")
 	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
 	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkVoid }));
 	REQUIRE(matchUpTypeKinds(metaType->getUpType(2), { tkInt }));
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkStdVector, tkInt }));
 }
 
 struct Base

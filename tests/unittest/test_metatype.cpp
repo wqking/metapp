@@ -31,6 +31,6 @@ TEST_CASE("MetaType, std::map")
 	auto metaType = metapp::getMetaType<std::map<int, std::string> >();
 	REQUIRE(metaType->getUpTypeCount() == 2);
 	REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkInt);
-	REQUIRE(metaType->getUpType(1)->getTypeKind() == metapp::tkString);
+	REQUIRE(metaType->getUpType(1)->getTypeKind() == metapp::tkStdString);
 }
 

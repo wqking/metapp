@@ -1,5 +1,5 @@
-#ifndef SET_H_969872685611
-#define SET_H_969872685611
+#ifndef STD_SET_H_969872685611
+#define STD_SET_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::set<Key, Compare, Allocator> >
 	: public DeclareMetaTypeBase <std::set<Key, Compare, Allocator> >
 {
 	using UpType = Key;
-	static constexpr TypeKind typeKind = tkSet;
+	static constexpr TypeKind typeKind = tkStdSet;
 
 };
 
@@ -21,7 +21,7 @@ struct DeclareMetaType <std::multiset<Key, Compare, Allocator> >
 	: public DeclareMetaTypeBase <std::multiset<Key, Compare, Allocator> >
 {
 	using UpType = Key;
-	static constexpr TypeKind typeKind = tkMultiset;
+	static constexpr TypeKind typeKind = tkStdMultiset;
 
 };
 

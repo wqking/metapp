@@ -8,7 +8,7 @@ TEST_CASE("metatypes, std::set<int>")
 	using Type = std::set<int>;
 	Type container { 3, 2, 5 };
 	metapp::Variant v(container);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkSet);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdSet);
 	REQUIRE(*v.get<Type &>().find(3) == 3);
 	v.get<Type &>().insert(6);
 	REQUIRE(*v.get<Type &>().find(6) == 6);
@@ -21,7 +21,7 @@ TEST_CASE("metatypes, std::multiset<int>")
 	using Type = std::multiset<int>;
 	Type container { 3, 2, 5 };
 	metapp::Variant v(container);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkMultiset);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdMultiset);
 	REQUIRE(*v.get<Type &>().find(3) == 3);
 	v.get<Type &>().insert(6);
 	REQUIRE(*v.get<Type &>().find(6) == 6);

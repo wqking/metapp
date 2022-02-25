@@ -1,5 +1,5 @@
-#ifndef UNORDERED_MAP_H_969872685611
-#define UNORDERED_MAP_H_969872685611
+#ifndef STD_UNORDERED_MAP_H_969872685611
+#define STD_UNORDERED_MAP_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 	: public DeclareMetaTypeBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
-	static constexpr TypeKind typeKind = tkUnorderedMap;
+	static constexpr TypeKind typeKind = tkStdUnorderedMap;
 
 };
 
@@ -21,7 +21,7 @@ struct DeclareMetaType <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocato
 	: public DeclareMetaTypeBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
-	static constexpr TypeKind typeKind = tkUnorderedMultimap;
+	static constexpr TypeKind typeKind = tkStdUnorderedMultimap;
 
 };
 

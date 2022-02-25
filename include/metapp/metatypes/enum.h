@@ -14,7 +14,8 @@ struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_enum<T>::value>::
 	static constexpr TypeKind typeKind = tkEnum;
 
 	static const MetaEnum * getMetaEnum() {
-		static const MetaEnum metaEnum;
+		static const MetaEnum metaEnum([](MetaEnum & /*me*/) {
+		});
 		return &metaEnum;
 	}
 };

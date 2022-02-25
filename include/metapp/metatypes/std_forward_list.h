@@ -1,5 +1,5 @@
-#ifndef FORWARD_LIST_H_969872685611
-#define FORWARD_LIST_H_969872685611
+#ifndef STD_FORWARD_LIST_H_969872685611
+#define STD_FORWARD_LIST_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::forward_list<T, Allocator> >
 	: public DeclareMetaTypeBase <std::forward_list<T, Allocator> >
 {
 	using UpType = T;
-	static constexpr TypeKind typeKind = tkForwardList;
+	static constexpr TypeKind typeKind = tkStdForwardList;
 
 };
 

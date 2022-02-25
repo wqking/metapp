@@ -1,5 +1,5 @@
-#ifndef STRING_H_969872685611
-#define STRING_H_969872685611
+#ifndef STD_STRING_H_969872685611
+#define STD_STRING_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -12,7 +12,7 @@ struct DeclareMetaType <std::string> : public DeclareMetaTypeBase <std::string>
 {
 	using super = DeclareObjectMetaType<std::string>;
 
-	static constexpr TypeKind typeKind = tkString;
+	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool canCast(const MetaType * toMetaType) {
 		return super::canCast(toMetaType)
@@ -40,7 +40,7 @@ struct DeclareMetaType <std::wstring> : public DeclareMetaTypeBase <std::wstring
 {
 	using super = DeclareObjectMetaType<std::wstring>;
 
-	static constexpr TypeKind typeKind = tkWideString;
+	static constexpr TypeKind typeKind = tkStdWideString;
 
 	static bool canCast(const MetaType * toMetaType) {
 		return super::canCast(toMetaType)

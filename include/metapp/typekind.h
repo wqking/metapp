@@ -42,41 +42,40 @@ constexpr TypeKind tkArithmeticEnd = 17;
 constexpr TypeKind tkFundamentalEnd = tkArithmeticEnd;
 
 constexpr TypeKind tkObject = 30; // equivalent to unkown type
-constexpr TypeKind tkString = 31; // std::string
-constexpr TypeKind tkWideString = 32; // std::wstring
+constexpr TypeKind tkPointer = 31;
+constexpr TypeKind tkReference = 32;
+constexpr TypeKind tkFunction = 33;
+constexpr TypeKind tkMemberFunction = 34;
+constexpr TypeKind tkMemberPointer = 35;
+constexpr TypeKind tkConstructor = 36;
+constexpr TypeKind tkArray = 37;
+constexpr TypeKind tkEnum = 38;
+constexpr TypeKind tkDefaultArgsFunction = 39;
 
-constexpr TypeKind tkPointer = 33;
-constexpr TypeKind tkReference = 34;
-constexpr TypeKind tkFunction = 35;
-constexpr TypeKind tkMemberFunction = 36;
-constexpr TypeKind tkMemberPointer = 37;
-constexpr TypeKind tkConstructor = 38;
-constexpr TypeKind tkArray = 39;
-constexpr TypeKind tkEnum = 40;
-constexpr TypeKind tkDefaultArgsFunction = 41;
-
-constexpr TypeKind tkSharedPtr = 60;
-constexpr TypeKind tkStdFunction = 61;
-constexpr TypeKind tkVector = 62;
-constexpr TypeKind tkList = 63;
-constexpr TypeKind tkDeque = 64;
-constexpr TypeKind tkStdArray = 65;
-constexpr TypeKind tkForwardList = 66;
-constexpr TypeKind tkStack = 67;
-constexpr TypeKind tkQueue = 68;
-constexpr TypeKind tkPriorityQueue = 69;
-constexpr TypeKind tkMap = 70;
-constexpr TypeKind tkMultimap = 71;
-constexpr TypeKind tkSet = 72;
-constexpr TypeKind tkMultiset = 73;
-constexpr TypeKind tkUnorderedMap = 74;
-constexpr TypeKind tkUnorderedMultimap = 75;
-constexpr TypeKind tkUnorderedSet = 76;
-constexpr TypeKind tkUnorderedMultiset = 77;
-constexpr TypeKind tkPair = 78;
-constexpr TypeKind tkTuple = 79;
-constexpr TypeKind tkAny = 80;
-constexpr TypeKind tkStdVariant = 81;
+constexpr TypeKind tkStdString = 60; // std::string
+constexpr TypeKind tkStdWideString = 61; // std::wstring
+constexpr TypeKind tkStdSharedPtr = 62;
+constexpr TypeKind tkStdFunction = 63;
+constexpr TypeKind tkStdVector = 64;
+constexpr TypeKind tkStdList = 65;
+constexpr TypeKind tkStdDeque = 66;
+constexpr TypeKind tkStdArray = 67;
+constexpr TypeKind tkStdForwardList = 68;
+constexpr TypeKind tkStdStack = 69;
+constexpr TypeKind tkStdQueue = 70;
+constexpr TypeKind tkStdPriorityQueue = 71;
+constexpr TypeKind tkStdMap = 72;
+constexpr TypeKind tkStdMultimap = 73;
+constexpr TypeKind tkStdSet = 74;
+constexpr TypeKind tkStdMultiset = 75;
+constexpr TypeKind tkStdUnorderedMap = 76;
+constexpr TypeKind tkStdUnorderedMultimap = 77;
+constexpr TypeKind tkStdUnorderedSet = 78;
+constexpr TypeKind tkStdUnorderedMultiset = 79;
+constexpr TypeKind tkStdPair = 80;
+constexpr TypeKind tkStdTuple = 81;
+constexpr TypeKind tkStdAny = 81;
+constexpr TypeKind tkStdVariant = 83;
 
 constexpr TypeKind tkUser = 1024;
 
@@ -108,9 +107,6 @@ inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkLongDouble, "long double" },
 		
 		{ tkObject, "object" },
-		{ tkString, "std::string" },
-		{ tkWideString, "std::wstring" },
-		
 		{ tkArray, "array" },
 		{ tkPointer, "pointer" },
 		{ tkReference, "reference" },
@@ -120,27 +116,29 @@ inline std::unordered_map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkConstructor, "constructor" },
 		{ tkDefaultArgsFunction, "default_args_function" },
 	
-		{ tkSharedPtr, "std::shared_ptr" },
+		{ tkStdString, "std::string" },
+		{ tkStdWideString, "std::wstring" },
+		{ tkStdSharedPtr, "std::shared_ptr" },
 		{ tkStdFunction, "std::function" },
-		{ tkVector, "std::vector" },
-		{ tkList, "std::list" },
-		{ tkDeque, "std::deque" },
+		{ tkStdVector, "std::vector" },
+		{ tkStdList, "std::list" },
+		{ tkStdDeque, "std::deque" },
 		{ tkStdArray, "std::array" },
-		{ tkForwardList, "std::forward_list" },
-		{ tkStack, "std::stack" },
-		{ tkQueue, "std::queue" },
-		{ tkPriorityQueue, "std::priority_queue" },
-		{ tkMap, "std::map" },
-		{ tkMultimap, "std::multipmap" },
-		{ tkSet, "std::set" },
-		{ tkMultiset, "std::multiset" },
-		{ tkUnorderedMap, "std::unordered_map" },
-		{ tkUnorderedMultimap, "std::unordered_multimap" },
-		{ tkUnorderedSet, "std::unordered_set" },
-		{ tkUnorderedMultiset, "std::unordered_multiset" },
-		{ tkPair, "std::pair" },
-		{ tkTuple, "std::tuple" },
-		{ tkAny, "std::any" },
+		{ tkStdForwardList, "std::forward_list" },
+		{ tkStdStack, "std::stack" },
+		{ tkStdQueue, "std::queue" },
+		{ tkStdPriorityQueue, "std::priority_queue" },
+		{ tkStdMap, "std::map" },
+		{ tkStdMultimap, "std::multipmap" },
+		{ tkStdSet, "std::set" },
+		{ tkStdMultiset, "std::multiset" },
+		{ tkStdUnorderedMap, "std::unordered_map" },
+		{ tkStdUnorderedMultimap, "std::unordered_multimap" },
+		{ tkStdUnorderedSet, "std::unordered_set" },
+		{ tkStdUnorderedMultiset, "std::unordered_multiset" },
+		{ tkStdPair, "std::pair" },
+		{ tkStdTuple, "std::tuple" },
+		{ tkStdAny, "std::any" },
 		{ tkStdVariant, "std::variant" },
 	};
 	return typeKindNameMap;
