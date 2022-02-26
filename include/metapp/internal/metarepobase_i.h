@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/methodlist.h"
+#include "metapp/internal/util_i.h"
 
 #include <map>
 #include <memory>
@@ -10,17 +11,6 @@
 namespace metapp {
 
 namespace internal_ {
-
-template <typename Map>
-auto getPointerFromMap(const Map & map, const std::string & name)
--> const typename Map::mapped_type *
-{
-	auto it = map.find(name);
-	if(it == map.end()) {
-		return nullptr;
-	}
-	return &it->second;
-}
 
 class MetaRepoBase
 {

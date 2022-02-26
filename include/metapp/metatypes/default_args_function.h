@@ -78,7 +78,6 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			&getParameterCount,
 			&rankInvoke,
 			&canInvoke,
 			&invoke
@@ -89,11 +88,6 @@ public:
 	static bool isValidArgumentCount(const size_t argumentCount)
 	{
 		return argumentCount >= argsCount - defaultArgsCount && argumentCount <= argsCount;
-	}
-
-	static size_t getParameterCount()
-	{
-		return argsCount;
 	}
 
 	static int rankInvoke(const Variant * arguments, const size_t argumentCount)

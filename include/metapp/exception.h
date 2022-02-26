@@ -41,6 +41,15 @@ public:
 	using super::super;
 };
 
+class IllegalTypeKindException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 inline void errorBadCast(const std::string & message = "Bad cast")
 {
 	throw BadCastException(message);
@@ -50,6 +59,12 @@ inline void errorIllegalArgument(const std::string & message = "Illegal argument
 {
 	throw IllegalArgumentException(message);
 }
+
+inline void errorIllegalTypeKind(const std::string & message = "Illegal TypeKind")
+{
+	throw IllegalTypeKindException(message);
+}
+
 
 } // namespace metapp
 

@@ -18,13 +18,35 @@ TEST_CASE("metatypes, enum")
 
 enum class EnumHuman : char {
 	male,
-	femail
+	female
 };
+
+namespace metapp {
+
+template <>
+struct DeclareMetaType <EnumHuman> : public DeclareMetaTypeBase <EnumHuman>
+{
+	static constexpr TypeKind typeKind = 2000;
+
+	static const MetaEnum * getMetaEnum() {
+		static const MetaEnum metaEnum([](MetaEnum & me) {
+			me.addValue("male", EnumHuman::male);
+			me.addValue("female", EnumHuman::female);
+		});
+		return &metaEnum;
+	}
+};
+
+} // metapp
+
 
 TEST_CASE("metatypes, enum class")
 {
 	auto metaType = metapp::getMetaType<EnumHuman>();
-	REQUIRE(metaType->getTypeKind() == metapp::tkEnum);
+	REQUIRE(metaType->getTypeKind() == 2000);
 	REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkChar);
+	REQUIRE(metaType->getMetaEnum() != nullptr);
+	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("male")) == EnumHuman::male);
+	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("female")) == EnumHuman::female);
 }
 

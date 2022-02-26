@@ -2,6 +2,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
+#include "metapp/inspectors.h"
 
 namespace {
 
@@ -30,10 +31,13 @@ TEST_CASE("metatypes, member function, types")
 	
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkVoid }));
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(2), { tkInt }));
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(3), { tkReference, tkStdVector, tkInt }));
+	metapp::CallableInspector inspector(metaType);
+	REQUIRE(inspector.getClassType() != nullptr);
+	REQUIRE(inspector.getClassType()->getTypeKind() == 2000);
+	REQUIRE(inspector.getParamCount() == 2);
+	REQUIRE(matchUpTypeKinds(inspector.getReturnType(), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(inspector.getParamType(0), { tkInt }));
+	REQUIRE(matchUpTypeKinds(inspector.getParamType(1), { tkReference, tkStdVector, tkInt }));
 }
 
 struct Base

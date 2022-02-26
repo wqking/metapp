@@ -20,12 +20,17 @@ public:
 		callback(*this);
 	}
 
-	void addValue(const std::string & name, const ValueType value) {
-		nameValueMap[name] = value;
+	template <typename T>
+	void addValue(const std::string & name, const T value) {
+		nameValueMap[name] = static_cast<ValueType>(value);
 	}
 
 	std::vector<std::string> getNameList() const {
 		return internal_::getMapKeys(nameValueMap);
+	}
+
+	ValueType getValue(const std::string & name) const {
+		return internal_::getValueFromMap(nameValueMap, name);
 	}
 
 private:

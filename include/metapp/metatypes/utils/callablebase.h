@@ -19,22 +19,16 @@ public:
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<FT>::typeFlags
-		| (std::is_void<Class>::value ? tfClassMember : 0)
+		| (std::is_void<Class>::value ? 0 : tfClassMember)
 	;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			&getParameterCount,
 			&rankInvoke,
 			&canInvoke,
 			&invoke
 		);
 		return &metaCallable;
-	}
-
-	static size_t getParameterCount()
-	{
-		return TypeListCount<ArgumentTypeList>::value;
 	}
 
 	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
