@@ -53,31 +53,32 @@ constexpr TypeKind tkEnum = 38;
 constexpr TypeKind tkCharPtr = 39;
 constexpr TypeKind tkWideCharPtr = 40;
 constexpr TypeKind tkDefaultArgsFunction = 41;
+constexpr TypeKind tkVariadicFunction = 42;
 
-constexpr TypeKind tkStdString = 60; // std::string
-constexpr TypeKind tkStdWideString = 61; // std::wstring
-constexpr TypeKind tkStdSharedPtr = 62;
-constexpr TypeKind tkStdFunction = 63;
-constexpr TypeKind tkStdVector = 64;
-constexpr TypeKind tkStdList = 65;
-constexpr TypeKind tkStdDeque = 66;
-constexpr TypeKind tkStdArray = 67;
-constexpr TypeKind tkStdForwardList = 68;
-constexpr TypeKind tkStdStack = 69;
-constexpr TypeKind tkStdQueue = 70;
-constexpr TypeKind tkStdPriorityQueue = 71;
-constexpr TypeKind tkStdMap = 72;
-constexpr TypeKind tkStdMultimap = 73;
-constexpr TypeKind tkStdSet = 74;
-constexpr TypeKind tkStdMultiset = 75;
-constexpr TypeKind tkStdUnorderedMap = 76;
-constexpr TypeKind tkStdUnorderedMultimap = 77;
-constexpr TypeKind tkStdUnorderedSet = 78;
-constexpr TypeKind tkStdUnorderedMultiset = 79;
-constexpr TypeKind tkStdPair = 80;
-constexpr TypeKind tkStdTuple = 81;
-constexpr TypeKind tkStdAny = 81;
-constexpr TypeKind tkStdVariant = 83;
+constexpr TypeKind tkStdString = 70; // std::string
+constexpr TypeKind tkStdWideString = 71; // std::wstring
+constexpr TypeKind tkStdSharedPtr = 72;
+constexpr TypeKind tkStdFunction = 73;
+constexpr TypeKind tkStdVector = 74;
+constexpr TypeKind tkStdList = 75;
+constexpr TypeKind tkStdDeque = 76;
+constexpr TypeKind tkStdArray = 77;
+constexpr TypeKind tkStdForwardList = 78;
+constexpr TypeKind tkStdStack = 79;
+constexpr TypeKind tkStdQueue = 80;
+constexpr TypeKind tkStdPriorityQueue = 81;
+constexpr TypeKind tkStdMap = 82;
+constexpr TypeKind tkStdMultimap = 83;
+constexpr TypeKind tkStdSet = 84;
+constexpr TypeKind tkStdMultiset = 85;
+constexpr TypeKind tkStdUnorderedMap = 86;
+constexpr TypeKind tkStdUnorderedMultimap = 87;
+constexpr TypeKind tkStdUnorderedSet = 88;
+constexpr TypeKind tkStdUnorderedMultiset = 89;
+constexpr TypeKind tkStdPair = 90;
+constexpr TypeKind tkStdTuple = 91;
+constexpr TypeKind tkStdAny = 92;
+constexpr TypeKind tkStdVariant = 93;
 
 constexpr TypeKind tkUser = 1024;
 
@@ -121,6 +122,7 @@ inline std::map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkCharPtr, "const char *" },
 		{ tkWideCharPtr, "const wchar_t *" },
 		{ tkDefaultArgsFunction, "default_args_function" },
+		{ tkVariadicFunction, "variadic_function" },
 
 		{ tkStdString, "std::string" },
 		{ tkStdWideString, "std::wstring" },

@@ -14,7 +14,7 @@ std::string myFunc1(const int a, const std::string & b)
 
 TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 {
-	metapp::DefaultArgsFunction<decltype(&myFunc1), 1> func(&myFunc1, { "hello" });
+	auto func = metapp::createDefaultArgsFunction<1>(&myFunc1, { "hello" });
 	metapp::Variant v(func);
 	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkDefaultArgsFunction);
 	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkFunction);

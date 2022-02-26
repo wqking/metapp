@@ -38,6 +38,13 @@ private:
 	std::vector<Variant> defaultArgs;
 };
 
+template <size_t defaultArgsCount, typename FT>
+auto createDefaultArgsFunction(FT && func, const std::initializer_list<Variant> & defaultArgs_)
+	-> DefaultArgsFunction<FT, defaultArgsCount>
+{
+	return DefaultArgsFunction<FT, defaultArgsCount>(std::forward<FT>(func), defaultArgs_);
+}
+
 namespace internal_ {
 
 struct DefaultArgsGetter

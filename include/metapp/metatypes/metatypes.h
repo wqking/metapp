@@ -31,6 +31,7 @@
 #include "metapp/metatypes/std_unordered_map.h"
 #include "metapp/metatypes/std_unordered_set.h"
 #include "metapp/metatypes/std_vector.h"
+#include "metapp/metatypes/variadic_function.h"
 
 #ifdef METAPP_SUPPORT_STANDARD_17
 #include "metapp/metatypes/std_any.h"
