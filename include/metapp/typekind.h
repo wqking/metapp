@@ -35,9 +35,9 @@ constexpr TypeKind tkRealBegin = 14;
 constexpr TypeKind tkFloat = 14;
 constexpr TypeKind tkDouble = 15;
 constexpr TypeKind tkLongDouble = 16;
-constexpr TypeKind tkRealEnd = 17;
+constexpr TypeKind tkRealEnd = 16;
 
-constexpr TypeKind tkArithmeticEnd = 17;
+constexpr TypeKind tkArithmeticEnd = tkRealEnd;
 
 constexpr TypeKind tkFundamentalEnd = tkArithmeticEnd;
 
