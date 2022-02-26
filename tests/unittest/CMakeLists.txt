@@ -21,12 +21,4 @@ if(coverage)
 endif()
 endif()
 
-if(MSVC)
-	# It's difficult to make MSVC report C++ standard correct even using /Zc:__cplusplus
-	# Let's just set the standard to 17
-	# target_compile_options(${TARGET_TEST} INTERFACE "/Zc:__cplusplus")
-	#set(CMAKE_CXX_FLAGS "/Zc:__cplusplus")
-	set_target_properties(${TARGET_TEST} PROPERTIES CXX_STANDARD 17)
-endif()
-
 add_test(NAME ${TARGET_TEST} COMMAND ${TARGET_TEST})
