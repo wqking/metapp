@@ -46,7 +46,7 @@ public:
 	}
 
 	void addConstructor(const Variant & constructor) {
-		if(! constructor.getMetaType()->isCallable()) {
+		if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 			return;
 		}
 		if(! constructorList) {

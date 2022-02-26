@@ -7,16 +7,20 @@
 
 namespace metapp {
 
-template <typename FT, typename C, typename RT, typename ...Args>
+template <typename FT, typename Class, typename RT, typename ...Args>
 struct CallableBase
-	: public DeclareMetaTypeBase <FT>
+	: public DeclareMetaTypeBase<FT>
 {
 public:
 	using FunctionType = FT;
-	using ClassType = C;
+	using ClassType = Class;
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
+
+	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<FT>::typeFlags
+		| (std::is_void<Class>::value ? tfClassMember : 0)
+	;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
@@ -56,7 +60,7 @@ public:
 		}
 
 		FunctionType f = func.get<FunctionType &>();
-		return MetaFunctionInvoker<C, RT, ArgumentTypeList>::invoke(instance, f, arguments, argumentCount);
+		return MetaFunctionInvoker<Class, RT, ArgumentTypeList>::invoke(instance, f, arguments, argumentCount);
 	}
 
 };

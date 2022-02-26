@@ -74,7 +74,7 @@ public:
 	}
 
 	void addMethod(const std::string & name, const Variant & method) {
-		if(! method.getMetaType()->isCallable()) {
+		if(method.getMetaType()->getMetaCallable() == nullptr) {
 			return;
 		}
 		std::shared_ptr<MethodList> methodList;

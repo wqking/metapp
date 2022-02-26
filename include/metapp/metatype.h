@@ -48,9 +48,6 @@ public:
 
 	TypeKind getTypeKind() const noexcept;
 
-	constexpr bool isCallable() const noexcept;
-	constexpr bool isAccessible() const noexcept;
-	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
@@ -99,10 +96,8 @@ public:
 
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
+	constexpr bool isClassMember() const noexcept;
 
-	constexpr bool isCallable() const noexcept;
-	constexpr bool isAccessible() const noexcept;
-	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;

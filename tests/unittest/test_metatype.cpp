@@ -79,10 +79,10 @@ TEST_CASE("MetaType, copyConstructVariant")
 	}
 }
 
-TEST_CASE("MetaType, isCallable()")
+TEST_CASE("MetaType, getMetaCallable()")
 {
-	REQUIRE(! metapp::getMetaType<int>()->isCallable());
-	REQUIRE(metapp::getMetaType<void ()>()->isCallable());
+	REQUIRE(metapp::getMetaType<int>()->getMetaCallable() == nullptr);
+	REQUIRE(metapp::getMetaType<void ()>()->getMetaCallable() != nullptr);
 }
 
 TEST_CASE("MetaType, arithmetic")

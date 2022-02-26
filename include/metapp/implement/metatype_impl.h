@@ -16,16 +16,6 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 	return typeKind;
 }
 
-inline constexpr bool UnifiedType::isCallable() const noexcept
-{
-	return metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikCallable;
-}
-
-inline constexpr bool UnifiedType::isAccessible() const noexcept
-{
-	return metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikAccessible;
-}
-
 inline const MetaClass * UnifiedType::getMetaClass() const
 {
 	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikClass) {
@@ -158,14 +148,9 @@ inline constexpr bool MetaType::isVolatile() const noexcept
 	return typeFlags & tfVolatile;
 }
 
-inline constexpr bool MetaType::isCallable() const noexcept
+inline constexpr bool MetaType::isClassMember() const noexcept
 {
-	return unifiedType->isCallable();
-}
-
-inline constexpr bool MetaType::isAccessible() const noexcept
-{
-	return unifiedType->isAccessible();
+	return typeFlags & tfClassMember;
 }
 
 inline const MetaClass * MetaType::getMetaClass() const

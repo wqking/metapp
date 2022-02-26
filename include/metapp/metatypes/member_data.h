@@ -8,10 +8,14 @@ namespace metapp {
 
 template <typename Class, typename T>
 struct DeclareMetaType <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
-	: public DeclareMetaTypeBase <T Class::*>
+	: public DeclareMetaTypeBase<T Class::*>
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
+	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<T Class::*>::typeFlags
+		| tfClassMember
+	;
+
 
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(
