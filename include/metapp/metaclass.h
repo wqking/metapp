@@ -47,7 +47,7 @@ public:
 
 	void addConstructor(const Variant & constructor) {
 		if(constructor.getMetaType()->getMetaCallable() == nullptr) {
-			return;
+			errorWrongMetaType();
 		}
 		if(! constructorList) {
 			constructorList = std::make_shared<MethodList>();

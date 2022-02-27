@@ -11,7 +11,7 @@ public:
 	MetaCallable(
 		int (*rankInvoke)(const Variant * arguments, const size_t argumentCount),
 		bool (*canInvoke)(const Variant * arguments, const size_t argumentCount),
-		Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
+		Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
 			rankInvoke(rankInvoke),
@@ -21,7 +21,7 @@ public:
 
 	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
-	Variant (*invoke)(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount);
+	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
 };
 
 

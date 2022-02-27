@@ -47,14 +47,14 @@ public:
 		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
+	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			errorIllegalArgument();
 		}
 
 		FunctionType f = func.get<FunctionType &>();
-		return MetaFunctionInvoker<Class, RT, ArgumentTypeList>::invoke(instance, f, arguments, argumentCount);
+		return MetaFunctionInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments, argumentCount);
 	}
 
 };

@@ -9,7 +9,7 @@ TEST_CASE("metatypes, std::function<int (int)>, types")
 	metapp::Variant v(f);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdFunction);
 	metapp::Variant arguments[] = { 5 };
-	REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 1).get<int>() == 10);
+	REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1).get<int>() == 10);
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
@@ -28,7 +28,7 @@ TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
-		v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 2);
+		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2);
 		REQUIRE(a == 38);
 		REQUIRE(b == "hello");
 	}

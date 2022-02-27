@@ -24,17 +24,17 @@ TEST_CASE("metatypes, VariadicFunction, sum")
 
 	SECTION("0 arguments") {
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(nullptr, 0));
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, nullptr, 0).get<int>() == 0);
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, nullptr, 0).get<int>() == 0);
 	}
 	SECTION("2 arguments") {
 		metapp::Variant arguments[] = { 6, 3 };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 2).get<int>() == 9);
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2).get<int>() == 9);
 	}
 	SECTION("5 arguments") {
 		metapp::Variant arguments[] = { 6, 3, 1, 5, 8 };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 5));
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(nullptr, v, arguments, 5).get<int>() == 23);
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 5).get<int>() == 23);
 	}
 }
 
@@ -58,7 +58,7 @@ TEST_CASE("metatypes, VariadicFunction, MyClass::join")
 	SECTION("0 arguments") {
 		MyClass obj { "first" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(nullptr, 0));
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, nullptr, 0).get<const std::string&>()
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, nullptr, 0).get<const std::string&>()
 			== 
 			"first"
 		);
@@ -67,7 +67,7 @@ TEST_CASE("metatypes, VariadicFunction, MyClass::join")
 		MyClass obj { "first" };
 		metapp::Variant arguments[] = { "abc", "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(&obj, v, arguments, 2).get<const std::string&>()
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 2).get<const std::string&>()
 			== 
 			"firstabchello"
 		);

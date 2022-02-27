@@ -73,13 +73,13 @@ public:
 		return true;
 	}
 
-	static Variant invoke(void * instance, const Variant & func, const Variant * arguments, const size_t argumentCount)
+	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		Variant newArguments[2] = { arguments, argumentCount };
 
 		const FunctionType & variadicFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = variadicFunc.getFunc();
-		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(instance, underlyingFunc, newArguments, 2);
+		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments, 2);
 	}
 
 };

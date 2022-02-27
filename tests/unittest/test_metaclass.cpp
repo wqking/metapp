@@ -8,27 +8,53 @@
 #include <iostream>
 #include <climits>
 
-struct Base1
+struct Base
 {
+	Base() : value(0) {
+	}
+
+	explicit Base(const int value) : value(value) {
+	}
+
+	int value;
 };
 
-struct Derived1 : Base1
+struct DerivedFirst : Base
 {
 };
 
 namespace metapp {
 
-constexpr TypeKind tkDerived = tkUser;
+constexpr TypeKind tkBase = tkUser;
+constexpr TypeKind tkDerivedFirst = tkUser + 1;
 
 template <>
-struct DeclareMetaType <Derived1> : public DeclareMetaTypeBase <Base1>
+struct DeclareMetaType <Base> : public DeclareMetaTypeBase <Base>
 {
-	static constexpr TypeKind typeKind = tkDerived;
+	static constexpr TypeKind typeKind = tkBase;
 
 	static const MetaClass * getMetaClass() {
-		static const DeclareMetaClass<Derived1> metaClass(
-			[](DeclareMetaClass<Derived1> & mc) {
-				mc.addBase<Base1>();
+		static const DeclareMetaClass<Base> metaClass(
+			[](DeclareMetaClass<Base> & mc) {
+				mc.addConstructor(metapp::Constructor<Base()>());
+				mc.addConstructor(metapp::Constructor<Base(int)>());
+				mc.addField("value", &Base::value);
+			}
+		);
+		return &metaClass;
+	}
+
+};
+
+template <>
+struct DeclareMetaType <DerivedFirst> : public DeclareMetaTypeBase <DerivedFirst>
+{
+	static constexpr TypeKind typeKind = tkDerivedFirst;
+
+	static const MetaClass * getMetaClass() {
+		static const DeclareMetaClass<DerivedFirst> metaClass(
+			[](DeclareMetaClass<DerivedFirst> & mc) {
+				mc.addBase<Base>();
 			}
 		);
 		return &metaClass;

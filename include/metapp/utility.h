@@ -158,13 +158,13 @@ struct MetaFunctionInvoker <void, RT, ArgList>
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
 	template <typename FT, typename Args>
-	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
+	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
+		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(void * /*instance*/, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -182,13 +182,13 @@ struct MetaFunctionInvoker <void, void, ArgList>
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
 	template <typename FT, typename Args>
-	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
+	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
+		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(void * /*instance*/, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -207,13 +207,13 @@ struct MetaFunctionInvoker
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
 	template <typename FT, typename Args>
-	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
+	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
+		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(void * instance, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -231,13 +231,13 @@ struct MetaFunctionInvoker <Class, void, ArgList>
 	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
 	template <typename FT, typename Args>
-	static Variant invoke(void * instance, FT && func, const Args & arguments, const size_t /*argumentCount*/) {
+	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
 		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(instance, std::forward<FT>(func), arguments, IS());
+		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(void * instance, FT func, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::IndexSequence<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
