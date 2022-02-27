@@ -4,6 +4,8 @@
 #include "metapp/metatype.h"
 #include "metapp/metaaccessible.h"
 
+#include <functional>
+
 namespace metapp {
 
 template <typename T>
@@ -29,6 +31,23 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		return Variant(toMetaType, value.getMetaTypeData());
+	}
+
+};
+
+template <typename T>
+struct DeclareMetaTypeBase <std::reference_wrapper<T> >
+	: public DeclareMetaTypeBase<T &>
+{
+	using UpType = T;
+	static constexpr TypeKind typeKind = tkReference;
+	using WrapperType = std::reference_wrapper<T>;
+
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+		if(data != nullptr) {
+			data->podAs<T *>() = &(T &)*(WrapperType *)copyFrom;
+		}
+		return nullptr;
 	}
 
 };
