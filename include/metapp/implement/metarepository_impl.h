@@ -39,6 +39,20 @@ inline MetaRepository * getMetaRepository()
 	return &repoWrapper.repo;
 }
 
+inline MetaRepository * MetaRepository::addRepository(const std::string & name)
+{
+	std::unique_ptr<MetaRepository> repo(new MetaRepository());
+	MetaRepository * result = repo.get();
+	repositoryMap[name] = std::move(repo);
+	return result;
+}
+
+inline std::vector<std::string> MetaRepository::getRepositionNameList() const
+{
+	return internal_::getMapKeys(repositoryMap);
+}
+
+
 
 } // namespace metapp
 

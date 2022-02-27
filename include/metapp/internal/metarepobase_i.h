@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/methodlist.h"
+#include "metapp/exception.h"
 #include "metapp/internal/util_i.h"
 
 #include <map>
@@ -63,9 +64,13 @@ public:
 		return std::string();
 	}
 
+	std::vector<std::string> getTypeNameList() const {
+		return internal_::getMapKeys(nameTypeMap);
+	}
+
 	void addMethod(const std::string & name, const Variant & method) {
 		if(method.getMetaType()->getMetaCallable() == nullptr) {
-			return;
+			errorWrongMetaType();
 		}
 		std::shared_ptr<MethodList> methodList;
 		auto it = methodListMap.find(name);
@@ -87,12 +92,23 @@ public:
 		return it->second.get();
 	}
 
+	std::vector<std::string> getMethodNameList() const {
+		return internal_::getMapKeys(methodListMap);
+	}
+
 	void addField(const std::string & name, const Variant & field) {
+		if(field.getMetaType()->getMetaAccessible() == nullptr) {
+			errorWrongMetaType();
+		}
 		fieldMap[name]= field;
 	}
 
 	const Variant * getField(const std::string & name) const {
 		return internal_::getPointerFromMap(fieldMap, name);
+	}
+
+	std::vector<std::string> getFieldNameList() const {
+		return internal_::getMapKeys(fieldMap);
 	}
 
 private:

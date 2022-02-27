@@ -41,7 +41,7 @@ public:
 	using super::super;
 };
 
-class IllegalTypeKindException : public MetaException
+class WrongMetaTypeException : public MetaException
 {
 private:
 	using super = MetaException;
@@ -60,9 +60,9 @@ inline void errorIllegalArgument(const std::string & message = "Illegal argument
 	throw IllegalArgumentException(message);
 }
 
-inline void errorIllegalTypeKind(const std::string & message = "Illegal TypeKind")
+inline void errorWrongMetaType(const std::string & message = "Wrong meta type")
 {
-	throw IllegalTypeKindException(message);
+	throw WrongMetaTypeException(message);
 }
 
 

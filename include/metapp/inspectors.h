@@ -13,7 +13,7 @@ public:
 		: metaType(metaType), classOffset(-1)
 	{
 		if(metaType->getMetaCallable() == nullptr) {
-			errorIllegalTypeKind();
+			errorWrongMetaType();
 		}
 		if(metaType->isClassMember()) {
 			classOffset = 0;
