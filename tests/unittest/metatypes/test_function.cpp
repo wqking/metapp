@@ -3,6 +3,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/inspectors.h"
+#include "metapp/utility.h"
 
 namespace {
 
@@ -57,10 +58,12 @@ TEST_CASE("metatypes, free function, invoke")
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2).get<std::string>() == "hello5");
+		REQUIRE(metapp::invokeCallable(v, nullptr, 6, "world").get<std::string>() == "world6");
 	}
 	{
 		metapp::Variant v(&myFunc3);
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, nullptr, 0).get<int>() == 38);
+		REQUIRE(metapp::invokeCallable(v, nullptr).get<int>() == 38);
 	}
 }
 

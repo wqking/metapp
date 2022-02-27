@@ -3,7 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/metacallable.h"
-#include "metapp/utility.h"
+#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 
@@ -36,7 +36,7 @@ public:
 		if(argumentCount != argsCount) {
 			return 0;
 		}
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
+		return MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
@@ -44,7 +44,7 @@ public:
 		if(argumentCount != argsCount) {
 			return false;
 		}
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
+		return MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
@@ -54,7 +54,7 @@ public:
 		}
 
 		FunctionType f = func.get<FunctionType &>();
-		return MetaFunctionInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments, argumentCount);
+		return MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments, argumentCount);
 	}
 
 };

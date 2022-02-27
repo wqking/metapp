@@ -3,7 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/metaaccessible.h"
-#include "metapp/utility.h"
+#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 

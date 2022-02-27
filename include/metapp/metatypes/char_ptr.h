@@ -2,8 +2,8 @@
 #define C_STRING_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/utility.h"
-// Need the specialization included first
+#include "metapp/metatypes/utils/declareutil.h"
+// Need the specialization to be included first
 #include "metapp/metatypes/pointer.h"
 
 #include <string>

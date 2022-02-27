@@ -4,7 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/metacallable.h"
-#include "metapp/utility.h"
+#include "metapp/metatypes/utils/declareutil.h"
 
 #include <vector>
 #include <initializer_list>
@@ -103,7 +103,7 @@ public:
 			return 0;
 		}
 
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
+		return MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
@@ -112,7 +112,7 @@ public:
 			return false;
 		}
 
-		return MetaFunctionInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
+		return MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)

@@ -3,8 +3,8 @@
 
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
-#include "metapp/utility.h"
 #include "metapp/metatypes/utils/callablebase.h"
+#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 
