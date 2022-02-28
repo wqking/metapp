@@ -7,7 +7,7 @@
 #include <string>
 #include <sstream>
 
-TEST_CASE("input stream")
+TEST_CASE("Variant, input stream")
 {
 	std::stringstream ss;
 	SECTION("bool") {
@@ -36,7 +36,7 @@ TEST_CASE("input stream")
 	}
 }
 
-TEST_CASE("output stream")
+TEST_CASE("Variant, output stream")
 {
 	std::stringstream ss;
 	SECTION("bool") {

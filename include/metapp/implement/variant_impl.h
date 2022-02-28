@@ -68,6 +68,14 @@ inline Variant & Variant::operator = (Variant && other) noexcept
 	return *this;
 }
 
+inline Variant Variant::clone() const
+{
+	Variant result;
+	result.metaType = metaType;
+	result.metaType->constructData(&result.data, metaType->getAddress(data));
+	return result;
+}
+
 template <typename T>
 inline Variant & Variant::set(T value)
 {

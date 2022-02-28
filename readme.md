@@ -33,14 +33,11 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 
 Apache License, Version 2.0  
 
-## Version 0.1.1
+## Version 0.1 RC
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
-The master branch is usable and stable.  
-There are some releases on Github, but usually the releases are far behind the latest code.  
-You shold prefer to clone or fork the master branch instead of downloading the releases.  
-The master branch is currently fully back compatible with the first version. So your project won't get any back compatible issues.  
-If you find any back compatible issue which is not announced, please report a bug.
+This is the first release candidate version.   
+metapp needs more tests.  
 
 ## Source code
 
@@ -48,8 +45,7 @@ If you find any back compatible issue which is not announced, please report a bu
 
 ## Supported compilers
 
-Tested with MSVC 2019, MinGW (Msys) GCC 7.2, Ubuntu GCC 5.4, and MacOS GCC.
-GCC 4.8.3 can compile the library, but we don't support GCC prior to GCC 5.
+Tested with MSVC 2022, MinGW (Msys) GCC 8.3, Ubuntu GCC 5.4.
 In brief, MSVC, GCC, Clang that has well support for C++11, or released after 2019, should be able to compile the library.
 
 ## C++ standard requirements

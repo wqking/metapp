@@ -31,6 +31,8 @@ public:
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 
+	Variant clone() const;
+
 	template <typename T>
 	Variant & set(T value);
 
