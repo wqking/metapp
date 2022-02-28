@@ -178,16 +178,6 @@ inline const MetaEnum * MetaType::getMetaEnum() const
 	return unifiedType->getMetaEnum();
 }
 
-inline constexpr bool MetaType::isPodStorage() const noexcept
-{
-	return typeFlags & tfPodStorage;
-}
-
-inline constexpr bool MetaType::isObjectStorage() const noexcept
-{
-	return ! isPodStorage();
-}
-
 inline void * MetaType::construct() const
 {
 	return constructData(nullptr, nullptr);

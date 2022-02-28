@@ -88,22 +88,20 @@ inline Variant & Variant::set(T value)
 template <typename T>
 inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
 {
-	assert(metaType_->isObjectStorage());
-
 	metaType = metaType_;
 	data.object.reset(object_);
+	data.setObjectStorage(true);
 
 	return *this;
 }
 
 inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
 {
-	assert(metaType_->isObjectStorage());
-
 	metaType = metaType_;
 	data.object = std::shared_ptr<void>(object_, [metaType_](void * p) {
 		metaType_->destroy(p);
 	});
+	data.setObjectStorage(true);
 
 	return *this;
 }

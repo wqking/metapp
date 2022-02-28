@@ -11,7 +11,7 @@ template <>
 struct DeclareMetaType <std::string> : public DeclareMetaTypeBase <std::string>
 {
 private:
-	using super = DeclareObjectMetaType<std::string>;
+	using super = DeclareMetaTypeBase<std::string>;
 
 public:
 	static constexpr TypeKind typeKind = tkStdString;
@@ -41,7 +41,7 @@ private:
 template <>
 struct DeclareMetaType <std::wstring> : public DeclareMetaTypeBase <std::wstring>
 {
-	using super = DeclareObjectMetaType<std::wstring>;
+	using super = DeclareMetaTypeBase<std::wstring>;
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 

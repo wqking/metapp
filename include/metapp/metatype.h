@@ -104,9 +104,6 @@ public:
 	const MetaArray * getMetaArray() const;
 	const MetaEnum * getMetaEnum() const;
 
-	constexpr bool isPodStorage() const noexcept;
-	constexpr bool isObjectStorage() const noexcept;
-
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
 	Variant constructVariant() const;
@@ -144,15 +141,31 @@ struct DeclareMetaTypeRoot
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0;
 
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+		using U = typename std::remove_reference<T>::type;
+		if(data != nullptr) {
+			data->construct<U>(copyFrom);
+			return nullptr;
+		}
+		else {
+			if(copyFrom == nullptr) {
+				return new U();
+			}
+			else {
+				return new U(*(U *)copyFrom);
+			}
+		}
+	}
+
 	static void destroy(void * instance)
 	{
 		using U = typename std::remove_reference<T>::type;
 		doDestroy(static_cast<U *>(instance));
 	}
 
-	static void * getAddress(const MetaTypeData & /*data*/)
+	static void * getAddress(const MetaTypeData & data)
 	{
-		return nullptr;
+		return data.getAddress();
 	}
 
 	static bool canCast(const MetaType * toMetaType)
@@ -262,84 +275,8 @@ const UnifiedType * getUnifiedType()
 template <typename T>
 const MetaType * getMetaType();
 
-template <typename T>
-struct DeclarePodMetaType : public DeclareMetaTypeRoot<T>
-{
-	using U = typename std::remove_reference<T>::type;
-
-	static constexpr TypeFlags typeFlags = tfPodStorage;
-
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
-		if(data != nullptr) {
-			if(copyFrom == nullptr) {
-				data->podAs<U>() = U();
-			}
-			else {
-				data->podAs<U>() = *(U *)copyFrom;
-			}
-			return nullptr;
-		}
-		else {
-			if(copyFrom == nullptr) {
-				return new U();
-			}
-			else {
-				return new U(*(U *)copyFrom);
-			}
-		}
-	}
-
-	static void * getAddress(const MetaTypeData & data) {
-		return &data.podAs<T>();
-	}
-
-};
-
-template <typename T>
-struct DeclareObjectMetaType : public DeclareMetaTypeRoot<T>
-{
-	using U = typename std::remove_reference<T>::type;
-
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
-		if(data != nullptr) {
-			if(copyFrom == nullptr) {
-				data->object = std::make_shared<U>();
-			}
-			else {
-				data->object = std::make_shared<U>(*(U *)copyFrom);
-			}
-			return nullptr;
-		}
-		else {
-			if(copyFrom == nullptr) {
-				return new U();
-			}
-			else {
-				return new U(*(U *)copyFrom);
-			}
-		}
-	}
-
-	static void * getAddress(const MetaTypeData & data) {
-		return data.object.get();
-	}
-
-};
-
-template <typename T>
-using SelectMetaTypeStorageBase = typename std::conditional<
-	! std::is_const<T>::value
-	&& ! std::is_volatile<T>::value
-	&& std::is_trivial<T>::value
-	&& std::is_standard_layout<T>::value
-	&& sizeof(T) <= podSize,
-	DeclarePodMetaType<T>,
-	DeclareObjectMetaType<T>
->::type;
-
-
 template <typename T, typename Enabled>
-struct DeclareMetaTypeBase : public SelectMetaTypeStorageBase<T>
+struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
 {
 };
 

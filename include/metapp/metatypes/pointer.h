@@ -8,10 +8,10 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <T *> : public DeclarePodMetaType<T *>
+struct DeclareMetaTypeBase <T *> : public DeclareMetaTypeRoot<T *>
 {
 private:
-	using super = DeclarePodMetaType<T *>;
+	using super = DeclareMetaTypeRoot<T *>;
 
 public:
 	using UpType = T;

@@ -8,10 +8,10 @@ namespace metapp {
 
 template <typename T, typename U, int length>
 struct DeclareMetaTypeArrayBase
-	: public DeclarePodMetaType <U>
+	: public DeclareMetaTypeBase <U>
 {
 	static constexpr TypeKind typeKind = tkArray;
-	static constexpr TypeFlags typeFlags = DeclarePodMetaType<U>::typeFlags
+	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<U>::typeFlags
 		| (std::is_const<U>::value ? tfConst : 0)
 		| (std::is_volatile<U>::value ? tfVolatile : 0)
 	;

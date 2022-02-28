@@ -23,7 +23,7 @@ using ArithmeticTypeList = TypeList<
 
 template <typename T>
 struct DeclareMetaTypeBase <T,
-	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclarePodMetaType<T>
+	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclareMetaTypeRoot<T>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
 
