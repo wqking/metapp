@@ -36,6 +36,11 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 };
 
 template <typename T>
+struct DeclareMetaTypeBase <T &&> : public DeclareMetaTypeBase<T &>
+{
+};
+
+template <typename T>
 struct DeclareMetaTypeBase <std::reference_wrapper<T> >
 	: public DeclareMetaTypeBase<T &>
 {

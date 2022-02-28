@@ -29,7 +29,7 @@ struct DeclareMetaType <UseTypeMyClass *> : public DeclareMetaTypeBase <UseTypeM
 
 } // metapp
 
-TEST_CASE("User type")
+TEST_CASE("user type")
 {
 	UseTypeMyClass obj{ 38 };
 	

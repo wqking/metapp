@@ -10,16 +10,25 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T *> : public DeclarePodMetaType<T *>
 {
+private:
+	using super = DeclarePodMetaType<T *>;
+
+public:
 	using UpType = T;
 
 	static constexpr TypeKind typeKind = tkPointer;
 
 	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer;
+		return toMetaType->getTypeKind() == tkPointer || super::canCast(toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		return Variant(toMetaType, value.getMetaTypeData());
+		if(toMetaType->getTypeKind() == tkPointer) {
+			return Variant(toMetaType, value.getMetaTypeData());
+		}
+		else {
+			return super::cast(value, toMetaType);
+		}
 	}
 
 };

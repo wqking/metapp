@@ -17,7 +17,7 @@ struct Derived : public MyClass
 {
 };
 
-TEST_CASE("Cast object")
+TEST_CASE("cast object")
 {
 	MyClass obj{ 38 };
 	
@@ -30,7 +30,7 @@ TEST_CASE("Cast object")
 	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
 }
 
-TEST_CASE("Cast std::string to char *")
+TEST_CASE("cast std::string to char *")
 {
 	std::string s("abcdef");
 	metapp::Variant v(s);
@@ -40,7 +40,7 @@ TEST_CASE("Cast std::string to char *")
 	REQUIRE(strcmp(v.cast<char *>().get<char *>(), s.c_str()) == 0);
 }
 
-TEST_CASE("Cast std::wstring to wchar_t *")
+TEST_CASE("cast std::wstring to wchar_t *")
 {
 	std::wstring ws(L"abcdef");
 	metapp::Variant v(ws);
@@ -51,7 +51,7 @@ TEST_CASE("Cast std::wstring to wchar_t *")
 	REQUIRE(wcscmp(v.cast<wchar_t *>().get<wchar_t *>(), ws.c_str()) == 0);
 }
 
-TEST_CASE("Cast Derived * to MyClass *")
+TEST_CASE("cast Derived * to MyClass *")
 {
 	Derived derived;
 	metapp::Variant v(&derived);
@@ -65,7 +65,7 @@ TEST_CASE("Cast Derived * to MyClass *")
 	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
 }
 
-TEST_CASE("Cast Derived & to MyClass &")
+TEST_CASE("cast Derived & to MyClass &")
 {
 	Derived derived;
 	metapp::Variant v;

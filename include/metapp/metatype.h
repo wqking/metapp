@@ -158,7 +158,20 @@ struct DeclareMetaTypeRoot
 	static bool canCast(const MetaType * toMetaType)
 	{
 		using U = typename std::remove_reference<T>::type;
-		return (! std::is_void<U>::value) && internal_::isPossibleSame(getMetaType<T>(), toMetaType, true);
+		if(std::is_void<U>::value) {
+			return false;
+		}
+		const MetaType * fromMetaType = getMetaType<T>();
+		if(internal_::isPossibleSame(fromMetaType, toMetaType, true)) {
+			return true;
+		}
+		if(fromMetaType->getTypeKind() != tkReference
+			&& toMetaType->getTypeKind() == tkReference
+			&& fromMetaType->canCast(toMetaType->getUpType())
+			) {
+			return true;
+		}
+		return false;
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
@@ -199,8 +212,19 @@ private:
 	}
 
 	template <typename U>
-	static Variant doCast(const Variant & value, const MetaType * /*toMetaType*/, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		return value;
+	static Variant doCast(const Variant & value, const MetaType * toMetaType, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
+		const MetaType * fromMetaType = getMetaType<T>();
+		if(internal_::isPossibleSame(fromMetaType, toMetaType, true)) {
+			return value;
+		}
+		if(fromMetaType->getTypeKind() != tkReference
+			&& toMetaType->getTypeKind() == tkReference
+			&& fromMetaType->canCast(toMetaType->getUpType())
+			) {
+			return fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		errorBadCast();
+		return Variant();
 	}
 };
 

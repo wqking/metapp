@@ -35,9 +35,7 @@ public:
 
 private:
 	static bool canCastToStdString(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkStdString
-			|| (toMetaType->getTypeKind() == tkReference && toMetaType->getUpType()->getTypeKind() == tkStdString)
-		;
+		return toMetaType->getTypeKind() == tkStdString;
 	}
 };
 
@@ -87,9 +85,7 @@ public:
 
 private:
 	static bool canCastToStdWstring(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkStdWideString
-			|| (toMetaType->getTypeKind() == tkReference && toMetaType->getUpType()->getTypeKind() == tkStdWideString)
-			;
+		return toMetaType->getTypeKind() == tkStdWideString;
 	}
 };
 
