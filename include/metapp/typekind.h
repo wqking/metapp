@@ -52,8 +52,9 @@ constexpr TypeKind tkArray = 37;
 constexpr TypeKind tkEnum = 38;
 constexpr TypeKind tkCharPtr = 39;
 constexpr TypeKind tkWideCharPtr = 40;
-constexpr TypeKind tkDefaultArgsFunction = 41;
-constexpr TypeKind tkVariadicFunction = 42;
+constexpr TypeKind tkAccessor = 41;
+constexpr TypeKind tkDefaultArgsFunction = 42;
+constexpr TypeKind tkVariadicFunction = 43;
 
 constexpr TypeKind tkStdString = 70; // std::string
 constexpr TypeKind tkStdWideString = 71; // std::wstring

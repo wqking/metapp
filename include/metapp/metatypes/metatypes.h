@@ -3,6 +3,7 @@
 
 #include "metapp/compiler.h"
 
+#include "metapp/metatypes/accessor.h"
 #include "metapp/metatypes/arithmetic.h"
 #include "metapp/metatypes/array.h"
 #include "metapp/metatypes/char_ptr.h"
