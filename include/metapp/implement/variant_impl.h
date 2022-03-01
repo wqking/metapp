@@ -89,8 +89,7 @@ template <typename T>
 inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
 {
 	metaType = metaType_;
-	data.object.reset(object_);
-	data.setObjectStorage(true);
+	data.constructObject(std::static_pointer_cast<void>(std::shared_ptr<T>(object_)));
 
 	return *this;
 }
@@ -98,10 +97,9 @@ inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
 inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
 {
 	metaType = metaType_;
-	data.object = std::shared_ptr<void>(object_, [metaType_](void * p) {
+	data.constructObject(std::shared_ptr<void>(object_, [metaType_](void * p) {
 		metaType_->destroy(p);
-	});
-	data.setObjectStorage(true);
+	}));
 
 	return *this;
 }

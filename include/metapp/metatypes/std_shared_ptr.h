@@ -17,10 +17,10 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
-				data->object = std::static_pointer_cast<void>(std::shared_ptr<T>());
+				data->constructSharedPtr(std::static_pointer_cast<void>(std::shared_ptr<T>()));
 			}
 			else {
-				data->object = std::static_pointer_cast<void>(*(std::shared_ptr<T> *)copyFrom);
+				data->constructSharedPtr(std::static_pointer_cast<void>(*(std::shared_ptr<T> *)copyFrom));
 			}
 			return nullptr;
 		}
@@ -32,10 +32,6 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 				return new std::shared_ptr<T>(*(std::shared_ptr<T> *)copyFrom);
 			}
 		}
-	}
-
-	static void * getAddress(const MetaTypeData & data) {
-		return (void *)&data.object;
 	}
 
 };

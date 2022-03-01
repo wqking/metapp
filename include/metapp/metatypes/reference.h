@@ -16,13 +16,13 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
-			data->podAs<T *>() = (T *)copyFrom;
+			data->construct<T *>(&copyFrom);
 		}
 		return nullptr;
 	}
 
 	static void * getAddress(const MetaTypeData & data) {
-		return data.podAs<void *>();
+		return *(void **)data.getAddress();
 	}
 
 	static bool canCast(const MetaType * toMetaType) {
@@ -50,7 +50,8 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> >
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
-			data->podAs<T *>() = &(T &)*(WrapperType *)copyFrom;
+			const void * p = &(T &)*(WrapperType *)copyFrom;
+			data->construct<T *>(&p);
 		}
 		return nullptr;
 	}

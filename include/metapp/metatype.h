@@ -291,12 +291,6 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
 
 };
 
-template <typename T, typename U>
-Variant podCast(const MetaTypeData & data)
-{
-	return (U)(data.podAs<T>());
-}
-
 } // namespace metapp
 
 #include "metapp/variant.h"
