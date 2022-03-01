@@ -45,11 +45,7 @@ public:
 	template <typename T>
 	auto get() const -> typename internal_::VariantReturnType<T>::Type;
 
-	template <typename T>
-	auto getAddress() const -> const typename std::remove_reference<T>::type *;
-
-	template <typename T>
-	auto getAddress() -> typename std::remove_reference<T>::type *;
+	void * getAddress() const;
 
 	template <typename T>
 	bool canCast() const;

@@ -35,7 +35,7 @@ TEST_CASE("metatypes, constructor")
 			Base & base = obj.get<Base &>();
 			REQUIRE(obj.getMetaType() == metapp::getMetaType<Base>());
 			REQUIRE(base.myValue == 7);
-			REQUIRE(obj.getAddress<Base>()->myValue == 7);
+			REQUIRE(static_cast<const Base *>(obj.getAddress())->myValue == 7);
 		}
 		REQUIRE(ctorCounter == 0);
 	}

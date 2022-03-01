@@ -118,18 +118,9 @@ inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Ty
 	return (U)(*(typename std::remove_reference<U>::type *)(metaType->getAddress(data)));
 }
 
-template <typename T>
-inline auto Variant::getAddress() const -> const typename std::remove_reference<T>::type *
+inline void * Variant::getAddress() const
 {
-	using U = typename std::remove_reference<T>::type;
-	return const_cast<const U *>(static_cast<U * >(metaType->getAddress(data)));
-}
-
-template <typename T>
-inline auto Variant::getAddress() -> typename std::remove_reference<T>::type *
-{
-	using U = typename std::remove_reference<T>::type;
-	return static_cast<U * >(metaType->getAddress(data));
+	return metaType->getAddress(data);
 }
 
 template <typename T>
@@ -184,7 +175,8 @@ template <typename T>
 inline auto variantStreamIn(std::istream & stream, Variant & value)
 	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
 {
-	stream >> *value.getAddress<T>();
+	using U = typename std::remove_reference<T>::type;
+	stream >> *static_cast<U *>(value.getAddress());
 }
 
 template <typename T>
@@ -198,7 +190,8 @@ template <typename T>
 inline auto variantStreamOut(std::ostream & stream, const Variant & value)
 	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
 {
-	stream << *value.getAddress<T>();
+	using U = typename std::remove_reference<T>::type;
+	stream << *static_cast<const U *>(value.getAddress());
 }
 
 template <typename T>
