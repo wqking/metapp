@@ -103,8 +103,6 @@ public:
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
-	Variant constructVariant() const;
-	Variant copyConstructVariant(const void * copyFrom) const;
 
 	// re-implementable meta methods
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;

@@ -32,6 +32,44 @@ TEST_CASE("Variant, ctor Variant(const MetaType * metaType)")
 	REQUIRE(v.get<MyClass &>().value == 9);
 }
 
+TEST_CASE("Variant, ctor Variant(const MetaType * metaType, nullptr)")
+{
+	SECTION("int") {
+		metapp::Variant v(metapp::getMetaType<int>(), nullptr);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 0);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		metapp::Variant v(metapp::getMetaType<MyClass>(), nullptr);
+		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
+		REQUIRE(v.get<MyClass &>().value == 5);
+	}
+}
+
+TEST_CASE("Variant, ctor Variant(const MetaType * metaType, copyFrom)")
+{
+	SECTION("int") {
+		int n = 38;
+		metapp::Variant v(metapp::getMetaType<int>(), &n);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 38);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value;
+		};
+		MyClass copyFrom { 98 };
+		metapp::Variant v(metapp::getMetaType<MyClass>(), &copyFrom);
+		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
+		REQUIRE(v.get<MyClass &>().value == 98);
+	}
+}
+
 TEST_CASE("Variant, copy ctor, MyClass")
 {
 	MyClass obj { 38 };

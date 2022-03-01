@@ -41,44 +41,6 @@ TEST_CASE("MetaType, copyConstruct")
 	}
 }
 
-TEST_CASE("MetaType, constructVariant")
-{
-	SECTION("int") {
-		metapp::Variant v = metapp::getMetaType<int>()->constructVariant();
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
-		REQUIRE(v.get<int>() == 0);
-	}
-	SECTION("MyClass") {
-		struct MyClass
-		{
-			int value = 5;
-		};
-		metapp::Variant v = metapp::getMetaType<MyClass>()->constructVariant();
-		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
-		REQUIRE(v.get<MyClass &>().value == 5);
-	}
-}
-
-TEST_CASE("MetaType, copyConstructVariant")
-{
-	SECTION("int") {
-		int n = 38;
-		metapp::Variant v = metapp::getMetaType<int>()->copyConstructVariant(&n);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
-		REQUIRE(v.get<int>() == 38);
-	}
-	SECTION("MyClass") {
-		struct MyClass
-		{
-			int value;
-		};
-		MyClass copyFrom { 98 };
-		metapp::Variant v = metapp::getMetaType<MyClass>()->copyConstructVariant(&copyFrom);
-		REQUIRE(v.getMetaType() == metapp::getMetaType<MyClass>());
-		REQUIRE(v.get<MyClass &>().value == 98);
-	}
-}
-
 TEST_CASE("MetaType, getMetaCallable()")
 {
 	REQUIRE(metapp::getMetaType<int>()->getMetaCallable() == nullptr);
