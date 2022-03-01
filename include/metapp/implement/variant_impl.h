@@ -123,19 +123,27 @@ inline void * Variant::getAddress() const
 	return metaType->getAddress(data);
 }
 
+inline bool Variant::canCast(const MetaType * toMetaType) const
+{
+	return metaType->canCast(toMetaType);
+}
+
 template <typename T>
 inline bool Variant::canCast() const
 {
-	const MetaType * toMetaType = metapp::getMetaType<T>();
-	return metaType->canCast(toMetaType);
+	return canCast(metapp::getMetaType<T>());
+}
+
+inline Variant Variant::cast(const MetaType * toMetaType) const
+{
+	assert(metaType->canCast(toMetaType));
+	return metaType->cast(*this, toMetaType);
 }
 
 template <typename T>
 inline Variant Variant::cast() const
 {
-	const MetaType * toMetaType = metapp::getMetaType<T>();
-	assert(metaType->canCast(toMetaType));
-	return metaType->cast(*this, toMetaType);
+	return cast(metapp::getMetaType<T>());
 }
 
 inline const MetaType * Variant::getMetaType() const noexcept

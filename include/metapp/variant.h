@@ -47,9 +47,11 @@ public:
 
 	void * getAddress() const;
 
+	bool canCast(const MetaType * toMetaType) const;
 	template <typename T>
 	bool canCast() const;
 
+	Variant cast(const MetaType * toMetaType) const;
 	template <typename T>
 	Variant cast() const;
 
