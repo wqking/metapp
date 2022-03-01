@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename Key, typename Compare, typename Allocator>
-struct DeclareMetaType <std::set<Key, Compare, Allocator> >
-	: public DeclareMetaTypeBase <std::set<Key, Compare, Allocator> >
+struct DeclareMetaTypeBase <std::set<Key, Compare, Allocator> >
+	: public DeclareMetaTypeRoot <std::set<Key, Compare, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdSet;
@@ -17,8 +17,8 @@ struct DeclareMetaType <std::set<Key, Compare, Allocator> >
 };
 
 template <typename Key, typename Compare, typename Allocator>
-struct DeclareMetaType <std::multiset<Key, Compare, Allocator> >
-	: public DeclareMetaTypeBase <std::multiset<Key, Compare, Allocator> >
+struct DeclareMetaTypeBase <std::multiset<Key, Compare, Allocator> >
+	: public DeclareMetaTypeRoot <std::multiset<Key, Compare, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdMultiset;

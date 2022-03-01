@@ -67,8 +67,8 @@ struct DefaultArgsGetter
 } // namespace internal_
 
 template <typename FT, size_t defaultArgsCount>
-struct DeclareMetaType <DefaultArgsFunction<FT, defaultArgsCount> >
-	: public DeclareMetaTypeBase<DefaultArgsFunction<FT, defaultArgsCount> >
+struct DeclareMetaTypeBase <DefaultArgsFunction<FT, defaultArgsCount> >
+	: public DeclareMetaTypeRoot<DefaultArgsFunction<FT, defaultArgsCount> >
 {
 private:
 	using Underlying = DeclareMetaType<FT>;

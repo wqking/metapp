@@ -9,8 +9,8 @@
 namespace metapp {
 
 template <typename T, size_t length>
-struct DeclareMetaType <std::array<T, length> >
-	: public DeclareMetaTypeBase <std::array<T, length> >
+struct DeclareMetaTypeBase <std::array<T, length> >
+	: public DeclareMetaTypeRoot <std::array<T, length> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdArray;

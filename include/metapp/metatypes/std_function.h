@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <std::function<RT (Args...)> >
+struct DeclareMetaTypeBase <std::function<RT (Args...)> >
 	: public CallableBase <std::function<RT (Args...)>, void, RT, Args...>
 {
 public:

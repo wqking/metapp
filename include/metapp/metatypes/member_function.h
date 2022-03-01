@@ -7,7 +7,7 @@
 namespace metapp {
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
 	: public CallableBase <RT (Class::*)(Args...), Class, RT, Args...>
 {
 public:
@@ -17,42 +17,42 @@ public:
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) const> : public DeclareMetaType <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
 {
-	static constexpr TypeFlags typeFlags = tfConst | DeclareMetaType <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) volatile> : public DeclareMetaType <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
 {
-	static constexpr TypeFlags typeFlags = tfVolatile | DeclareMetaType <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfVolatile | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) const volatile> : public DeclareMetaType <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
 {
-	static constexpr TypeFlags typeFlags = tfConst | tfVolatile | DeclareMetaType <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst | tfVolatile | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
 };
 
 #ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) noexcept> : public DeclareMetaType <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
 {
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) const noexcept> : public DeclareMetaType <RT (Class::*)(Args...) const>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) const>
 {
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) volatile noexcept> : public DeclareMetaType <RT (Class::*)(Args...) volatile>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) volatile>
 {
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaType <RT (Class::*)(Args...) const volatile noexcept> : public DeclareMetaType <RT (Class::*)(Args...) const volatile>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile>
 {
 };
 

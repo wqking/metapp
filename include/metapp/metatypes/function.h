@@ -7,7 +7,7 @@
 namespace metapp {
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (*)(Args...)>
+struct DeclareMetaTypeBase <RT (*)(Args...)>
 	: public CallableBase<RT (*)(Args...), void, RT, Args...>
 {
 public:
@@ -17,22 +17,22 @@ public:
 };
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (Args...)>
-	: public DeclareMetaType <RT (*)(Args...)>
+struct DeclareMetaTypeBase <RT (Args...)>
+	: public DeclareMetaTypeBase <RT (*)(Args...)>
 {
 };
 
 #ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (*)(Args...) noexcept>
-	: public DeclareMetaType <RT (*)(Args...)>
+struct DeclareMetaTypeBase <RT (*)(Args...) noexcept>
+	: public DeclareMetaTypeBase <RT (*)(Args...)>
 {
 };
 
 template <typename RT, typename ...Args>
-struct DeclareMetaType <RT (Args...) noexcept>
-	: public DeclareMetaType <RT (Args...)>
+struct DeclareMetaTypeBase <RT (Args...) noexcept>
+	: public DeclareMetaTypeBase <RT (Args...)>
 {
 };
 

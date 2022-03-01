@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
-struct DeclareMetaType <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
-	: public DeclareMetaTypeBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
+struct DeclareMetaTypeBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
+	: public DeclareMetaTypeRoot <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdUnorderedMap;
@@ -17,8 +17,8 @@ struct DeclareMetaType <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 };
 
 template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
-struct DeclareMetaType <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
-	: public DeclareMetaTypeBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
+struct DeclareMetaTypeBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
+	: public DeclareMetaTypeRoot <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdUnorderedMultimap;

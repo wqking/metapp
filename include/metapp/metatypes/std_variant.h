@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename ...Types>
-struct DeclareMetaType <std::variant<Types...> >
-	: public DeclareMetaTypeBase <std::variant<Types...> >
+struct DeclareMetaTypeBase <std::variant<Types...> >
+	: public DeclareMetaTypeRoot <std::variant<Types...> >
 {
 	using UpType = TypeList<Types...>;
 	static constexpr TypeKind typeKind = tkStdVariant;

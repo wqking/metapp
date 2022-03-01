@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T, typename Allocator>
-struct DeclareMetaType <std::vector<T, Allocator> >
-	: public DeclareMetaTypeBase <std::vector<T, Allocator> >
+struct DeclareMetaTypeBase <std::vector<T, Allocator> >
+	: public DeclareMetaTypeRoot <std::vector<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdVector;

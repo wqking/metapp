@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T, typename Allocator>
-struct DeclareMetaType <std::forward_list<T, Allocator> >
-	: public DeclareMetaTypeBase <std::forward_list<T, Allocator> >
+struct DeclareMetaTypeBase <std::forward_list<T, Allocator> >
+	: public DeclareMetaTypeRoot <std::forward_list<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdForwardList;

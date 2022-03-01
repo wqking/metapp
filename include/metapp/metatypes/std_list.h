@@ -8,8 +8,8 @@
 namespace metapp {
 
 template <typename T, typename Allocator>
-struct DeclareMetaType <std::list<T, Allocator> >
-	: public DeclareMetaTypeBase <std::list<T, Allocator> >
+struct DeclareMetaTypeBase <std::list<T, Allocator> >
+	: public DeclareMetaTypeRoot <std::list<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdList;

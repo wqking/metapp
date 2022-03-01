@@ -7,12 +7,12 @@
 namespace metapp {
 
 template <typename Class, typename T>
-struct DeclareMetaType <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
-	: public DeclareMetaTypeBase<T Class::*>
+struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
+	: public DeclareMetaTypeRoot<T Class::*>
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
-	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<T Class::*>::typeFlags
+	static constexpr TypeFlags typeFlags = DeclareMetaTypeRoot<T Class::*>::typeFlags
 		| tfClassMember
 	;
 

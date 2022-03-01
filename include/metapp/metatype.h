@@ -29,9 +29,6 @@ class MetaArray;
 class MetaEnum;
 
 template <typename T, typename Enabled = void>
-struct DeclareMetaTypeBase;
-
-template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 
 template <typename T>
@@ -136,31 +133,33 @@ private:
 template <typename T>
 struct DeclareMetaTypeRoot
 {
+private:
+	using Decayed = typename std::decay<typename std::remove_reference<T>::type>::type;
+
+public:
 	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
-		using U = typename std::remove_reference<T>::type;
 		if(data != nullptr) {
-			data->construct<U>(copyFrom);
+			data->construct<Decayed>(copyFrom);
 			return nullptr;
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return new U();
+				return new Decayed();
 			}
 			else {
-				return new U(*(U *)copyFrom);
+				return new Decayed(*(Decayed *)copyFrom);
 			}
 		}
 	}
 
 	static void destroy(void * instance)
 	{
-		using U = typename std::remove_reference<T>::type;
-		doDestroy(static_cast<U *>(instance));
+		doDestroy(static_cast<Decayed *>(instance));
 	}
 
 	static void * getAddress(const MetaTypeData & data)
@@ -170,8 +169,7 @@ struct DeclareMetaTypeRoot
 
 	static bool canCast(const MetaType * toMetaType)
 	{
-		using U = typename std::remove_reference<T>::type;
-		if(std::is_void<U>::value) {
+		if(std::is_void<Decayed>::value) {
 			return false;
 		}
 		const MetaType * fromMetaType = getMetaType<T>();
@@ -189,8 +187,7 @@ struct DeclareMetaTypeRoot
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
 	{
-		using U = typename std::remove_reference<T>::type;
-		return doCast<U>(value, toMetaType);
+		return doCast<Decayed>(value, toMetaType);
 	}
 
 	static void streamIn(std::istream & stream, Variant & value) {
@@ -241,6 +238,11 @@ private:
 	}
 };
 
+template <typename T, typename Enabled = void>
+struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
+{
+};
+
 template <typename T, typename Enabled>
 struct DeclareMetaType : public DeclareMetaTypeBase<T>
 {
@@ -274,11 +276,6 @@ const UnifiedType * getUnifiedType()
 
 template <typename T>
 const MetaType * getMetaType();
-
-template <typename T, typename Enabled>
-struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
-{
-};
 
 template <>
 struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>

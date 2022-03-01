@@ -31,11 +31,11 @@ Accessor<T> createReadOnlyAccessor(G && getter)
 }
 
 template <typename T, typename Policies>
-struct DeclareMetaType <accessorpp::Accessor<T, Policies> >
-	: public DeclareMetaTypeBase <accessorpp::Accessor<T, Policies> >
+struct DeclareMetaTypeBase <accessorpp::Accessor<T, Policies> >
+	: public DeclareMetaTypeRoot <accessorpp::Accessor<T, Policies> >
 {
 private:
-	using super = DeclareMetaTypeBase <accessorpp::Accessor<T, Policies> >;
+	using super = DeclareMetaTypeRoot <accessorpp::Accessor<T, Policies> >;
 	using AccessorType = accessorpp::Accessor<T, Policies>;
 
 public:
