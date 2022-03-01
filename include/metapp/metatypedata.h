@@ -2,7 +2,7 @@
 #define METATYPEDATA_H_969872685611
 
 #include "metapp/exception.h"
-#include "metapp/internal/typeutil_i.h"
+#include "metapp/implement/internal/typeutil_i.h"
 
 #include <memory>
 #include <array>

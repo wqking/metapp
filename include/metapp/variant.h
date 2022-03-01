@@ -2,7 +2,7 @@
 #define VARIANT_H_969872685611
 
 #include "metapp/metatypedata.h"
-#include "metapp/internal/typeutil_i.h"
+#include "metapp/implement/internal/typeutil_i.h"
 
 #include <type_traits>
 #include <cassert>

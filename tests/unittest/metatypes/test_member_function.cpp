@@ -2,7 +2,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
-#include "metapp/inspectors.h"
+#include "metapp/utilities/inspectors.h"
 
 namespace {
 

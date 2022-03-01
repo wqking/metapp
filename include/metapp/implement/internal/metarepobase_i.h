@@ -4,7 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/methodlist.h"
 #include "metapp/exception.h"
-#include "metapp/internal/util_i.h"
+#include "metapp/implement/internal/util_i.h"
 
 #include <map>
 #include <memory>

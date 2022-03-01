@@ -2,7 +2,7 @@
 #define METAREPOSITORY_H_969872685611
 
 #include "metapp/metatypes/metatypes.h"
-#include "metapp/internal/metarepobase_i.h"
+#include "metapp/implement/internal/metarepobase_i.h"
 
 namespace metapp {
 
