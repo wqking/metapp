@@ -27,6 +27,7 @@ class MetaCallable;
 class MetaAccessible;
 class MetaArray;
 class MetaEnum;
+class UnifiedType;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -34,13 +35,12 @@ struct DeclareMetaType;
 template <typename T>
 const MetaType * getMetaType();
 
+template <typename T>
+const UnifiedType * getUnifiedType();
+
 class UnifiedType
 {
 public:
-	constexpr UnifiedType(
-		const TypeKind typeKind,
-		const internal_::MetaMethodTable & metaMethodTable
-	) noexcept;
 	~UnifiedType() = default;
 
 	TypeKind getTypeKind() const noexcept;
@@ -64,23 +64,35 @@ public:
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
 private:
+	constexpr UnifiedType(
+		const TypeKind typeKind,
+		const internal_::MetaMethodTable & metaMethodTable
+	) noexcept;
 	UnifiedType() = delete;
 	UnifiedType(const UnifiedType &) = delete;
 	UnifiedType(UnifiedType &&) = delete;
+
+	template <typename T>
+	friend const UnifiedType * getUnifiedType();
 
 private:
 	TypeKind typeKind;
 	internal_::MetaMethodTable metaMethodTable;
 };
 
+namespace internal_ {
+
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type;
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type;
+} // namespace internal_
+
 class MetaType
 {
 public:
-	constexpr MetaType(
-		const UnifiedType * unifiedType,
-		const internal_::UpTypeData & upTypeData,
-		const TypeFlags typeFlags
-	) noexcept;
 	~MetaType() = default;
 
 	const UnifiedType * getUnifiedType() const noexcept;
@@ -118,9 +130,18 @@ public:
 	void streamOut(std::ostream & stream, const Variant & value) const;
 
 private:
+	constexpr MetaType(
+		const UnifiedType * unifiedType,
+		const internal_::UpTypeData & upTypeData,
+		const TypeFlags typeFlags
+	) noexcept;
 	MetaType() = delete;
 	MetaType(const MetaType &) = delete;
 	MetaType(MetaType &&) = delete;
+
+	template <typename T>
+	friend auto internal_::doGetMetaType()
+		-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
 
 private:
 	const UnifiedType * unifiedType;

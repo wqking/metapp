@@ -227,13 +227,6 @@ inline void MetaType::streamOut(std::ostream & stream, const Variant & value) co
 namespace internal_ {
 
 template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type;
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type;
-
-template <typename T>
 struct UpTypeGetter;
 
 template <typename Arg0, typename ...Args>
