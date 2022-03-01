@@ -65,6 +65,11 @@ public:
 		return nullptr;
 	}
 
+	void reset() {
+		setStorageType(storageNone);
+		object.reset();
+	}
+
 private:
 	template <typename T>
 	void doConstructOnBuffer(const void * copyFrom) {

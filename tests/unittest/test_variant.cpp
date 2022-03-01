@@ -72,6 +72,68 @@ TEST_CASE("Variant, clone, MyClass")
 	REQUIRE(cloned.get<MyClass &>().value == 38);
 }
 
+struct CtorCounter
+{
+	CtorCounter() = default;
+	CtorCounter(int * ctorCounter) : ctorCounter(ctorCounter) {
+		++*ctorCounter;
+	}
+	~CtorCounter() {
+		--*ctorCounter;
+	}
+
+	int * ctorCounter;
+
+};
+
+TEST_CASE("Variant, Variant & makeObject(const MetaType * metaType, void * object)")
+{
+	int counter = 0;
+	void * ctorCounter = new CtorCounter(&counter);
+	REQUIRE(counter == 1);
+
+	SECTION("out of scope") {
+		{
+			metapp::Variant v;
+			v.makeObject(metapp::getMetaType<CtorCounter>(), ctorCounter);
+			REQUIRE(counter == 1);
+		}
+		REQUIRE(counter == 0);
+	}
+
+	SECTION("assign") {
+		metapp::Variant v;
+		v.makeObject(metapp::getMetaType<CtorCounter>(), ctorCounter);
+		REQUIRE(counter == 1);
+		v = 5;
+		REQUIRE(counter == 0);
+	}
+}
+
+TEST_CASE("Variant, Variant & makeObject(const Variant & object)")
+{
+	int counter = 0;
+	CtorCounter * ctorCounter = new CtorCounter(&counter);
+	REQUIRE(counter == 1);
+
+	SECTION("out of scope") {
+		{
+			metapp::Variant v;
+			v.makeObject(ctorCounter);
+			REQUIRE(counter == 1);
+		}
+		REQUIRE(counter == 0);
+	}
+
+	SECTION("assign") {
+		metapp::Variant v;
+		v.makeObject(ctorCounter);
+		REQUIRE(counter == 1);
+		v = 5;
+		REQUIRE(counter == 0);
+	}
+}
+
 
 
 } // namespace

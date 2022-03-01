@@ -80,16 +80,8 @@ template <typename T>
 inline Variant & Variant::set(T value)
 {
 	metaType = metapp::getMetaType<T>();
+	data.reset();
 	metaType->constructData(&data, &value);
-
-	return *this;
-}
-
-template <typename T>
-inline Variant & Variant::makeObject(const MetaType * metaType_, T * object_)
-{
-	metaType = metaType_;
-	data.constructObject(std::static_pointer_cast<void>(std::shared_ptr<T>(object_)));
 
 	return *this;
 }
@@ -107,7 +99,7 @@ inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
 inline Variant & Variant::makeObject(const Variant & object_)
 {
 	const MetaType * mt = object_.getMetaType();
-	while(mt != nullptr && mt->getTypeKind() == tkPointer) {
+	if(mt != nullptr && mt->getTypeKind() == tkPointer) {
 		mt = mt->getUpType();
 	}
 	return makeObject(mt, object_.get<void *>());

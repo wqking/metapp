@@ -36,8 +36,6 @@ public:
 	template <typename T>
 	Variant & set(T value);
 
-	template <typename T>
-	Variant & makeObject(const MetaType * metaType, T * object);
 	Variant & makeObject(const MetaType * metaType, void * object);
 	Variant & makeObject(const Variant & object);
 
