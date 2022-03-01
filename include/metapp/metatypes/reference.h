@@ -30,7 +30,7 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeObject<T &>
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		return Variant(toMetaType, value.getMetaTypeData());
+		return Variant(toMetaType, &value.get<int &>());
 	}
 
 };

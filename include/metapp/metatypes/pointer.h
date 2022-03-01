@@ -24,7 +24,7 @@ public:
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		if(toMetaType->getTypeKind() == tkPointer) {
-			return Variant(toMetaType, value.getMetaTypeData());
+			return Variant(toMetaType, &value.get<void * &>());
 		}
 		else {
 			return super::cast(value, toMetaType);

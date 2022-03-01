@@ -25,11 +25,11 @@ inline Variant::Variant(const MetaType * metaType) noexcept
 	metaType->constructData(&data, nullptr);
 }
 
-inline Variant::Variant(const MetaType * metaType, const MetaTypeData & data) noexcept
+inline Variant::Variant(const MetaType * metaType, const void * copyFrom) noexcept
 	:
-		metaType(metaType),
-		data(data)
+		metaType(metaType)
 {
+	metaType->constructData(&data, copyFrom);
 }
 
 inline Variant::Variant(const Variant & other) noexcept
@@ -141,11 +141,6 @@ inline Variant Variant::cast() const
 inline const MetaType * Variant::getMetaType() const noexcept
 {
 	return metaType;
-}
-
-inline const MetaTypeData & Variant::getMetaTypeData() const noexcept
-{
-	return data;
 }
 
 inline std::istream & operator >> (std::istream & stream, Variant & value)

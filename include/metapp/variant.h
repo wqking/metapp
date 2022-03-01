@@ -21,7 +21,7 @@ public:
 	Variant(T value) noexcept;
 
 	explicit Variant(const MetaType * metaType) noexcept;
-	Variant(const MetaType * metaType, const MetaTypeData & data) noexcept;
+	Variant(const MetaType * metaType, const void * copyFrom) noexcept;
 
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;
@@ -54,7 +54,6 @@ public:
 	Variant cast() const;
 
 	const MetaType * getMetaType() const noexcept;
-	const MetaTypeData & getMetaTypeData() const noexcept;
 
 	friend std::istream & operator >> (std::istream & stream, Variant & v);
 	friend std::ostream & operator << (std::ostream & stream, const Variant & v);

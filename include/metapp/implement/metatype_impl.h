@@ -190,16 +190,12 @@ inline void * MetaType::copyConstruct(const void * copyFrom) const
 
 inline Variant MetaType::constructVariant() const
 {
-	MetaTypeData data;
-	constructData(&data, nullptr);
-	return Variant(this, data);
+	return Variant(this, nullptr);
 }
 
 inline Variant MetaType::copyConstructVariant(const void * copyFrom) const
 {
-	MetaTypeData data;
-	constructData(&data, copyFrom);
-	return Variant(this, data);
+	return Variant(this, copyFrom);
 }
 
 inline void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
