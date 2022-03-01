@@ -131,7 +131,7 @@ private:
 };
 
 template <typename T>
-struct DeclareMetaTypeRoot
+struct DeclareMetaTypeObject
 {
 private:
 	using Decayed = typename std::decay<typename std::remove_reference<T>::type>::type;
@@ -239,7 +239,7 @@ private:
 };
 
 template <typename T, typename Enabled = void>
-struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
+struct DeclareMetaTypeBase : public DeclareMetaTypeObject<T>
 {
 };
 
@@ -278,7 +278,7 @@ template <typename T>
 const MetaType * getMetaType();
 
 template <>
-struct DeclareMetaTypeBase <void> : public DeclareMetaTypeRoot<void>
+struct DeclareMetaTypeBase <void> : public DeclareMetaTypeObject<void>
 {
 	static constexpr TypeKind typeKind = tkVoid;
 

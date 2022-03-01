@@ -9,7 +9,7 @@ namespace metapp {
 
 template <typename T, typename Allocator>
 struct DeclareMetaTypeBase <std::deque<T, Allocator> >
-	: public DeclareMetaTypeRoot <std::deque<T, Allocator> >
+	: public DeclareMetaTypeObject <std::deque<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdDeque;

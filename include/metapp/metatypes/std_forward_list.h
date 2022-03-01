@@ -9,7 +9,7 @@ namespace metapp {
 
 template <typename T, typename Allocator>
 struct DeclareMetaTypeBase <std::forward_list<T, Allocator> >
-	: public DeclareMetaTypeRoot <std::forward_list<T, Allocator> >
+	: public DeclareMetaTypeObject <std::forward_list<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdForwardList;

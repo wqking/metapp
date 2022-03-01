@@ -8,10 +8,10 @@
 namespace metapp {
 
 template <>
-struct DeclareMetaTypeBase <std::string> : public DeclareMetaTypeRoot <std::string>
+struct DeclareMetaTypeBase <std::string> : public DeclareMetaTypeObject <std::string>
 {
 private:
-	using super = DeclareMetaTypeRoot<std::string>;
+	using super = DeclareMetaTypeObject<std::string>;
 
 public:
 	static constexpr TypeKind typeKind = tkStdString;
@@ -39,9 +39,9 @@ private:
 };
 
 template <>
-struct DeclareMetaTypeBase <std::wstring> : public DeclareMetaTypeRoot <std::wstring>
+struct DeclareMetaTypeBase <std::wstring> : public DeclareMetaTypeObject <std::wstring>
 {
-	using super = DeclareMetaTypeRoot<std::wstring>;
+	using super = DeclareMetaTypeObject<std::wstring>;
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 

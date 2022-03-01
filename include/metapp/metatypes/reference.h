@@ -9,7 +9,7 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeRoot<T &>
+struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeObject<T &>
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;

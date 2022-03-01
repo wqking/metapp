@@ -9,7 +9,7 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <std::shared_ptr<T> >
-	: DeclareMetaTypeRoot<std::shared_ptr<T> >
+	: DeclareMetaTypeObject<std::shared_ptr<T> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
