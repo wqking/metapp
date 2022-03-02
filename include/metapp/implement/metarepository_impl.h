@@ -1,42 +1,14 @@
 namespace metapp {
 
-namespace internal_ {
-
-inline void registerBuiltinTypes(MetaRepository * repo)
-{
-	repo->addType<void>();
-	repo->addType<bool>();
-	repo->addType<char>();
-	repo->addType<wchar_t>();
-	repo->addType<signed char>();
-	repo->addType<unsigned char>();
-	repo->addType<short>();
-	repo->addType<unsigned short>();
-	repo->addType<int>();
-	repo->addType<unsigned int>();
-	repo->addType<long>();
-	repo->addType<unsigned long>();
-	repo->addType<long long>();
-	repo->addType<unsigned long long>();
-	repo->addType<float>();
-	repo->addType<double>();
-	repo->addType<long double>();
-	repo->addType<std::string>();
-	repo->addType<std::wstring>();
-}
-
-} // namespace
-
 inline MetaRepository * getMetaRepository()
 {
-	struct RepoWrapper {
-		RepoWrapper() : repo() {
-			registerBuiltinTypes(&repo);
-		}
-		MetaRepository repo;
-	};
-	static RepoWrapper repoWrapper;
-	return &repoWrapper.repo;
+	static MetaRepository repo;
+	return &repo;
+}
+
+inline MetaRepository::MetaRepository()
+{
+	registerBuiltinTypes();
 }
 
 inline MetaRepository * MetaRepository::addRepository(const std::string & name)
@@ -52,6 +24,28 @@ inline std::vector<std::string> MetaRepository::getRepositionNameList() const
 	return internal_::getMapKeys(repositoryMap);
 }
 
+inline void MetaRepository::registerBuiltinTypes()
+{
+	addType<void>();
+	addType<bool>();
+	addType<char>();
+	addType<wchar_t>();
+	addType<signed char>();
+	addType<unsigned char>();
+	addType<short>();
+	addType<unsigned short>();
+	addType<int>();
+	addType<unsigned int>();
+	addType<long>();
+	addType<unsigned long>();
+	addType<long long>();
+	addType<unsigned long long>();
+	addType<float>();
+	addType<double>();
+	addType<long double>();
+	addType<std::string>();
+	addType<std::wstring>();
+}
 
 
 } // namespace metapp

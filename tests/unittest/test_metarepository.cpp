@@ -9,6 +9,8 @@
 
 TEST_CASE("MetaRepository")
 {
+	REQUIRE(metapp::getMetaRepository()->getTypeByKind(metapp::tkInt) != nullptr);
+	REQUIRE(metapp::getMetaRepository()->getTypeByName("int") != nullptr);
 }
 
 

@@ -9,7 +9,7 @@ namespace metapp {
 class MetaRepository : public internal_::MetaRepoBase
 {
 public:
-	MetaRepository() = default;
+	MetaRepository();
 	~MetaRepository() = default;
 
 	MetaRepository * addRepository(const std::string & name);
@@ -19,6 +19,8 @@ public:
 private:
 	MetaRepository(const MetaRepository &) = delete;
 	MetaRepository(MetaRepository &&) = delete;
+
+	void registerBuiltinTypes();
 
 private:
 	std::map<std::string, std::unique_ptr<MetaRepository> > repositoryMap;
