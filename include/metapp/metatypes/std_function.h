@@ -1,5 +1,5 @@
-#ifndef STD_FUNCTION_H_969872685611
-#define STD_FUNCTION_H_969872685611
+#ifndef METAPP_STD_FUNCTION_H_969872685611
+#define METAPP_STD_FUNCTION_H_969872685611
 
 #include "metapp/metatypes/utils/callablebase.h"
 

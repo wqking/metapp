@@ -1,5 +1,5 @@
-#ifndef METAENUM_H_969872685611
-#define METAENUM_H_969872685611
+#ifndef METAPP_METAENUM_H_969872685611
+#define METAPP_METAENUM_H_969872685611
 
 #include "metapp/implement/internal/util_i.h"
 

@@ -1,5 +1,5 @@
-#ifndef MEMBER_FUNCTION_H_969872685611
-#define MEMBER_FUNCTION_H_969872685611
+#ifndef METAPP_MEMBER_FUNCTION_H_969872685611
+#define METAPP_MEMBER_FUNCTION_H_969872685611
 
 #include "metapp/metatypes/utils/callablebase.h"
 #include "metapp/compiler.h"

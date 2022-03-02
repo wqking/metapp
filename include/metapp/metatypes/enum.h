@@ -1,5 +1,5 @@
-#ifndef ENUM_H_969872685611
-#define ENUM_H_969872685611
+#ifndef METAPP_ENUM_H_969872685611
+#define METAPP_ENUM_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metaenum.h"

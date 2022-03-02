@@ -1,5 +1,5 @@
-#ifndef METAREPOSITORY_H_969872685611
-#define METAREPOSITORY_H_969872685611
+#ifndef METAPP_METAREPOSITORY_H_969872685611
+#define METAPP_METAREPOSITORY_H_969872685611
 
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/implement/internal/metarepobase_i.h"

@@ -1,5 +1,5 @@
-#ifndef TYPEKIND_H_969872685611
-#define TYPEKIND_H_969872685611
+#ifndef METAPP_TYPEKIND_H_969872685611
+#define METAPP_TYPEKIND_H_969872685611
 
 #include <cstdint>
 #include <map>

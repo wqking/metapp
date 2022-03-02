@@ -1,5 +1,5 @@
-#ifndef METATYPEDATA_H_969872685611
-#define METATYPEDATA_H_969872685611
+#ifndef METAPP_METATYPEDATA_H_969872685611
+#define METAPP_METATYPEDATA_H_969872685611
 
 #include "metapp/exception.h"
 #include "metapp/implement/internal/typeutil_i.h"

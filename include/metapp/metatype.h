@@ -1,5 +1,5 @@
-#ifndef METATYPE_H_969872685611
-#define METATYPE_H_969872685611
+#ifndef METAPP_METATYPE_H_969872685611
+#define METAPP_METATYPE_H_969872685611
 
 #include "metapp/compiler.h"
 #include "metapp/typekind.h"
@@ -8,9 +8,9 @@
 #include "metapp/utilities//typelist.h"
 
 // The ugly macro trick is to bypass cyclic include variant.h and metatype.h
-#define VARIANT_IMPL_H_969872685611
+#define METAPP_VARIANT_IMPL_H_969872685611
 #include "metapp/variant.h"
-#undef VARIANT_IMPL_H_969872685611
+#undef METAPP_VARIANT_IMPL_H_969872685611
 
 #include "metapp/implement/internal/metatype_i.h"
 

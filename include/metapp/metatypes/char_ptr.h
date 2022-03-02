@@ -1,5 +1,5 @@
-#ifndef C_STRING_H_969872685611
-#define C_STRING_H_969872685611
+#ifndef METAPP_CHAR_PTR_H_969872685611
+#define METAPP_CHAR_PTR_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metatypes/utils/declareutil.h"

@@ -1,5 +1,5 @@
-#ifndef REFERENCE_H_969872685611
-#define REFERENCE_H_969872685611
+#ifndef METAPP_REFERENCE_H_969872685611
+#define METAPP_REFERENCE_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metaaccessible.h"

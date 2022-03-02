@@ -1,5 +1,5 @@
-#ifndef UTILITY_H_969872685611
-#define UTILITY_H_969872685611
+#ifndef METAPP_UTILITY_H_969872685611
+#define METAPP_UTILITY_H_969872685611
 
 #include "metapp/variant.h"
 #include "metapp/metatype.h"

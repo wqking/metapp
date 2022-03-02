@@ -1,5 +1,5 @@
-#ifndef MEMBER_DATA_H_969872685611
-#define MEMBER_DATA_H_969872685611
+#ifndef METAPP_MEMBER_DATA_H_969872685611
+#define METAPP_MEMBER_DATA_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metaaccessible.h"

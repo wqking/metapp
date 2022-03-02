@@ -1,5 +1,5 @@
-#ifndef CONSTRUCTOR_H_969872685611
-#define CONSTRUCTOR_H_969872685611
+#ifndef METAPP_CONSTRUCTOR_H_969872685611
+#define METAPP_CONSTRUCTOR_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/variant.h"

@@ -1,5 +1,5 @@
-#ifndef ARITHMETIC_H_969872685611
-#define ARITHMETIC_H_969872685611
+#ifndef METAPP_ARITHMETIC_H_969872685611
+#define METAPP_ARITHMETIC_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/utilities//typelist.h"

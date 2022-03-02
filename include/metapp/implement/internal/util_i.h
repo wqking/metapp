@@ -1,5 +1,5 @@
-#ifndef UTIL_I_H_969872685611
-#define UTIL_I_H_969872685611
+#ifndef METAPP_UTIL_I_H_969872685611
+#define METAPP_UTIL_I_H_969872685611
 
 #include <vector>
 

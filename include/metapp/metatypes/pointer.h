@@ -1,5 +1,5 @@
-#ifndef POINTER_H_969872685611
-#define POINTER_H_969872685611
+#ifndef METAPP_POINTER_H_969872685611
+#define METAPP_POINTER_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metaaccessible.h"

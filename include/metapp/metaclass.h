@@ -1,5 +1,5 @@
-#ifndef METACLASS_H_969872685611
-#define METACLASS_H_969872685611
+#ifndef METAPP_METACLASS_H_969872685611
+#define METAPP_METACLASS_H_969872685611
 
 #include "metapp/implement/internal/metaclass_i.h"
 #include "metapp/implement/internal/metarepobase_i.h"

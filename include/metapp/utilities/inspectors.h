@@ -1,5 +1,5 @@
-#ifndef INSPECTORS_H_969872685611
-#define INSPECTORS_H_969872685611
+#ifndef METAPP_INSPECTORS_H_969872685611
+#define METAPP_INSPECTORS_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/exception.h"

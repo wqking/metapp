@@ -1,5 +1,5 @@
-#ifndef METAREPOBASE_I_H_969872685611
-#define METAREPOBASE_I_H_969872685611
+#ifndef METAPP_METAREPOBASE_I_H_969872685611
+#define METAPP_METAREPOBASE_I_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/methodlist.h"

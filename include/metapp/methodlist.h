@@ -1,5 +1,5 @@
-#ifndef METHODLIST_H_969872685611
-#define METHODLIST_H_969872685611
+#ifndef METAPP_METHODLIST_H_969872685611
+#define METAPP_METHODLIST_H_969872685611
 
 #include "metapp/variant.h"
 #include "metapp/metacallable.h"

@@ -1,5 +1,5 @@
-#ifndef METATYPEDUMPER_H_969872685611
-#define METATYPEDUMPER_H_969872685611
+#ifndef METAPP_METATYPEDUMPER_H_969872685611
+#define METAPP_METATYPEDUMPER_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metarepository.h"

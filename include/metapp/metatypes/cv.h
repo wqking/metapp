@@ -1,5 +1,5 @@
-#ifndef CV_H_969872685611
-#define CV_H_969872685611
+#ifndef METAPP_CV_H_969872685611
+#define METAPP_CV_H_969872685611
 
 #include "metapp/metatype.h"
 

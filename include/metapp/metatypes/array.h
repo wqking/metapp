@@ -1,5 +1,5 @@
-#ifndef ARRAY_H_969872685611
-#define ARRAY_H_969872685611
+#ifndef METAPP_ARRAY_H_969872685611
+#define METAPP_ARRAY_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/metaarray.h"

@@ -1,5 +1,5 @@
-#ifndef VARIANT_H_969872685611
-#define VARIANT_H_969872685611
+#ifndef METAPP_VARIANT_H_969872685611
+#define METAPP_VARIANT_H_969872685611
 
 #include "metapp/metatypedata.h"
 #include "metapp/typekind.h"

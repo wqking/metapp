@@ -1,5 +1,5 @@
-#ifndef ACCESSOR_H_969872685611
-#define ACCESSOR_H_969872685611
+#ifndef METAPP_ACCESSOR_H_969872685611
+#define METAPP_ACCESSOR_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/thirdparty/accessorpp/accessor.h"
