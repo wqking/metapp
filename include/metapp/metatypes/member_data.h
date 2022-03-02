@@ -2,7 +2,7 @@
 #define METAPP_MEMBER_DATA_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metaaccessible.h"
+#include "metapp/interfaces/metaaccessible.h"
 
 namespace metapp {
 

@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "metapp/variant.h"
-#include "metapp/metaclass.h"
+#include "metapp/interfaces/metaclass.h"
 #include "metapp/metatypes/metatypes.h"
 
 #include <string>

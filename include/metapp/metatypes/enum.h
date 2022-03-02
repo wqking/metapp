@@ -2,7 +2,7 @@
 #define METAPP_ENUM_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metaenum.h"
+#include "metapp/interfaces/metaenum.h"
 
 namespace metapp {
 

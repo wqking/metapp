@@ -2,7 +2,7 @@
 #define METAPP_METHODLIST_H_969872685611
 
 #include "metapp/variant.h"
-#include "metapp/metacallable.h"
+#include "metapp/interfaces/metacallable.h"
 
 #include <vector>
 

@@ -2,7 +2,7 @@
 #define METAPP_ARRAY_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metaarray.h"
+#include "metapp/interfaces/metaarray.h"
 
 namespace metapp {
 

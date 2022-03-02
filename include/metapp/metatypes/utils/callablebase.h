@@ -2,7 +2,7 @@
 #define METAPP_CALLABLEBASE_FUNCTION_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metacallable.h"
+#include "metapp/interfaces/metacallable.h"
 #include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {

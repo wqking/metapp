@@ -2,7 +2,6 @@
 #define METAPP_REFERENCE_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metaaccessible.h"
 
 #include <functional>
 
