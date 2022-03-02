@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPEUTIL_I_H_582750282985
-#define TYPEUTIL_I_H_582750282985
+#ifndef ACCESSORPP_TYPEUTIL_I_H_582750282985
+#define ACCESSORPP_TYPEUTIL_I_H_582750282985
 
 #include <utility>
 #include <type_traits>

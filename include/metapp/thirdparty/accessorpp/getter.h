@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef GETTER_H_578722158669
-#define GETTER_H_578722158669
+#ifndef ACCESSORPP_GETTER_H_578722158669
+#define ACCESSORPP_GETTER_H_578722158669
 
 #include "internal/typeutil_i.h"
 

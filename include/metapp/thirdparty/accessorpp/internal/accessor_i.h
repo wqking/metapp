@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ACCESSOR_I_H_578722158669
-#define ACCESSOR_I_H_578722158669
+#ifndef ACCESSORPP_ACCESSOR_I_H_578722158669
+#define ACCESSORPP_ACCESSOR_I_H_578722158669
 
 namespace private_ {
 
