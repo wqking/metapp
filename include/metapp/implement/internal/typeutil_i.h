@@ -1,6 +1,8 @@
 #ifndef TYPEUTIL_I_H_969872685611
 #define TYPEUTIL_I_H_969872685611
 
+#include "metapp/utilities/typelist.h"
+
 #include <type_traits>
 #include <istream>
 #include <ostream>
@@ -113,6 +115,41 @@ struct HasFunctionGetMetaEnum
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename Result, typename TL, bool ...hasList>
+struct HelperFilterTypes
+{
+};
+
+template <typename Result>
+struct HelperFilterTypes <Result, TypeList<> >
+{
+	using Type = Result;
+};
+
+template <typename Result, typename Arg0, typename ...Args, bool has0, bool ...hasList>
+struct HelperFilterTypes <Result, TypeList<Arg0, Args...>, has0, hasList...>
+{
+	using Temp = typename std::conditional<
+		has0,
+		typename TypeListAppend<Result, Arg0>::Type,
+		Result
+	>::type;
+
+	using Type = typename HelperFilterTypes<
+		Temp,
+		TypeList<Args...>,
+		hasList...
+	>::Type;
+};
+
+// Give FilterTypes<TypeList<T1, T2, ..., Tn>, bool1, bool2, ..., booln>
+// The result Type is TypeList<Tx, Ty,...>, where boolx is true, booly is true, etc.
+template <typename TL, bool ...hasList>
+struct FilterTypes
+{
+	using Type = typename HelperFilterTypes<TypeList<>, TL, hasList...>::Type;
 };
 
 

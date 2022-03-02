@@ -77,6 +77,8 @@ private:
 	template <typename T>
 	friend const UnifiedType * getUnifiedType();
 
+	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
+
 private:
 	TypeKind typeKind;
 	internal_::MetaMethodTable metaMethodTable;
@@ -289,7 +291,7 @@ const UnifiedType * getUnifiedType()
 			&M::streamIn,
 			&M::streamOut,
 
-			internal_::makeExtraInfo<M>(),
+			internal_::MakeMetaInterfaceData<M>::getMetaInterfaceData(),
 		}
 	);
 	return &unifiedType;

@@ -18,52 +18,44 @@ inline TypeKind UnifiedType::getTypeKind() const noexcept
 
 inline const MetaClass * UnifiedType::getMetaClass() const
 {
-	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikClass) {
-		return static_cast<const MetaClass *>(metaMethodTable.extraInfo.getter());
-	}
-	else {
-		return nullptr;
-	}
+	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
 }
 
 inline const MetaCallable * UnifiedType::getMetaCallable() const
 {
-	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikCallable) {
-		return static_cast<const MetaCallable *>(metaMethodTable.extraInfo.getter());
-	}
-	else {
-		return nullptr;
-	}
+	return static_cast<const MetaCallable *>(doGetMetaInterface(internal_::mikMetaCallable));
 }
 
 inline const MetaAccessible * UnifiedType::getMetaAccessible() const
 {
-	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikAccessible) {
-		return static_cast<const MetaAccessible *>(metaMethodTable.extraInfo.getter());
-	}
-	else {
-		return nullptr;
-	}
+	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
 }
 
 inline const MetaArray * UnifiedType::getMetaArray() const
 {
-	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikArray) {
-		return static_cast<const MetaArray *>(metaMethodTable.extraInfo.getter());
-	}
-	else {
-		return nullptr;
-	}
+	return static_cast<const MetaArray *>(doGetMetaInterface(internal_::mikMetaArray));
 }
 
 inline const MetaEnum * UnifiedType::getMetaEnum() const
 {
-	if(metaMethodTable.extraInfo.kind == internal_::ExtraInfoKind::eikEnum) {
-		return static_cast<const MetaEnum *>(metaMethodTable.extraInfo.getter());
+	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
+}
+
+inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
+{
+	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
+		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
+			return metaMethodTable.metaInterfaceData.items[0].getter();
+		}
+		if(metaMethodTable.metaInterfaceData.count > 1) {
+			for(uint16_t i = 1; i < metaMethodTable.metaInterfaceData.count; ++i) {
+				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
+					return metaMethodTable.metaInterfaceData.items[i].getter();
+				}
+			}
+		}
 	}
-	else {
-		return nullptr;
-	}
+	return nullptr;
 }
 
 inline void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const

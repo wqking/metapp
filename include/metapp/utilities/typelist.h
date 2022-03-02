@@ -77,6 +77,17 @@ struct TypeListGetAt
 	using Type = typename HelperTypeListGetAt<0, N, TL>::Type;
 };
 
+template <typename TL, typename T>
+struct TypeListAppend
+{
+};
+
+template <typename T, typename ...Args>
+struct TypeListAppend <TypeList<Args...>, T>
+{
+	using Type = TypeList<Args..., T>;
+};
+
 
 } // namespace metapp
 

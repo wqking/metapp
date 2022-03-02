@@ -12,98 +12,154 @@ namespace internal_ {
 
 struct NoneUpType {};
 
-enum class ExtraInfoKind
+using MetaInterfaceKind = uint16_t;
+using MetaInterfaceGetter = const void * (*)();
+
+static constexpr MetaInterfaceKind mikMetaClass = (1 << 0);
+static constexpr MetaInterfaceKind mikMetaCallable = (1 << 1);
+static constexpr MetaInterfaceKind mikMetaAccessible = (1 << 2);
+static constexpr MetaInterfaceKind mikMetaArray = (1 << 3);
+static constexpr MetaInterfaceKind mikMetaEnum = (1 << 4);
+
+struct MetaInterfaceItem
 {
-	eikNone,
-	eikClass,
-	eikCallable,
-	eikAccessible,
-	eikArray,
-	eikEnum,
+	MetaInterfaceKind kind;
+	MetaInterfaceGetter getter;
 };
 
-struct ExtraInfo
+struct MetaInterfaceData
 {
-	ExtraInfoKind kind;
-	const void * (*getter)();
+	uint16_t count;
+	MetaInterfaceKind kinds;
+	const MetaInterfaceItem * items;
 };
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		HasFunctionGetMetaClass<T>::value
-	>::type * = nullptr)
+template <MetaInterfaceKind kind_>
+struct MakeMetaInterfaceItem
 {
-	return ExtraInfo {
-		ExtraInfoKind::eikClass,
-		(const void * (*)())&T::getMetaClass
-	};
-}
+};
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaClass<T>::value
-		&& HasFunctionGetMetaCallable<T>::value
-	>::type * = nullptr)
+template <>
+struct MakeMetaInterfaceItem <mikMetaClass>
 {
-	return ExtraInfo {
-		ExtraInfoKind::eikCallable,
-		(const void * (*)())&T::getMetaCallable
-	};
-}
+	static constexpr MetaInterfaceKind kind = mikMetaClass;
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaClass<T>::value
-		&& ! HasFunctionGetMetaCallable<T>::value
-		&& HasFunctionGetMetaAccessible<T>::value
-	>::type * = nullptr)
-{
-	return ExtraInfo {
-		ExtraInfoKind::eikAccessible,
-		(const void * (*)())&T::getMetaAccessible
-	};
-}
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaClass
+		};
+	}
+};
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaClass<T>::value
-		&& ! HasFunctionGetMetaCallable<T>::value
-		&& ! HasFunctionGetMetaAccessible<T>::value
-		&& HasFunctionGetMetaArray<T>::value
-	>::type * = nullptr)
+template <>
+struct MakeMetaInterfaceItem <mikMetaCallable>
 {
-	return ExtraInfo {
-		ExtraInfoKind::eikArray,
-		(const void * (*)())&T::getMetaArray
-	};
-}
+	static constexpr MetaInterfaceKind kind = mikMetaCallable;
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaClass<T>::value
-		&& ! HasFunctionGetMetaCallable<T>::value
-		&& ! HasFunctionGetMetaArray<T>::value
-		&& ! HasFunctionGetMetaAccessible<T>::value
-		&& HasFunctionGetMetaEnum<T>::value
-	>::type * = nullptr)
-{
-	return ExtraInfo {
-		ExtraInfoKind::eikEnum,
-		(const void * (*)())&T::getMetaEnum
-	};
-}
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaCallable
+		};
+	}
+};
 
-template <typename T>
-ExtraInfo makeExtraInfo(typename std::enable_if<
-		! HasFunctionGetMetaClass<T>::value
-		&& ! HasFunctionGetMetaCallable<T>::value
-		&& ! HasFunctionGetMetaAccessible<T>::value
-		&& ! HasFunctionGetMetaArray<T>::value
-		&& ! HasFunctionGetMetaEnum<T>::value
-	>::type * = nullptr)
+template <>
+struct MakeMetaInterfaceItem <mikMetaAccessible>
 {
-	return ExtraInfo { ExtraInfoKind::eikNone, nullptr };
-}
+	static constexpr MetaInterfaceKind kind = mikMetaAccessible;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaAccessible
+		};
+	}
+};
+
+template <>
+struct MakeMetaInterfaceItem <mikMetaArray>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaArray;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaArray
+		};
+	}
+};
+
+template <>
+struct MakeMetaInterfaceItem <mikMetaEnum>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaEnum;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaEnum
+		};
+	}
+};
+
+template <typename M>
+struct MakeMetaInterfaceData
+{
+	using ItemMakerList = typename FilterTypes<
+		TypeList<
+		MakeMetaInterfaceItem <mikMetaClass>,
+		MakeMetaInterfaceItem <mikMetaCallable>,
+		MakeMetaInterfaceItem <mikMetaAccessible>,
+		MakeMetaInterfaceItem <mikMetaArray>,
+		MakeMetaInterfaceItem <mikMetaEnum>
+		>,
+		HasFunctionGetMetaClass<M>::value,
+		HasFunctionGetMetaCallable<M>::value,
+		HasFunctionGetMetaAccessible<M>::value,
+		HasFunctionGetMetaArray<M>::value,
+		HasFunctionGetMetaEnum<M>::value
+	>::Type;
+
+	template <typename TL>
+	struct ItemListMaker
+	{
+		static constexpr MetaInterfaceKind kinds = 0;
+
+		static const MetaInterfaceItem * make() {
+			return nullptr;
+		}
+	};
+
+	template <typename Arg0, typename ...Args>
+	struct ItemListMaker <TypeList<Arg0, Args...> >
+	{
+		static constexpr MetaInterfaceKind kinds = Arg0::kind | ItemListMaker <TypeList<Args...> >::kinds;
+
+		static const MetaInterfaceItem * make() {
+			static const std::array<MetaInterfaceItem, sizeof...(Args) + 1> itemList {
+				Arg0::template make<M>(),
+				Args::template make<M>()...
+			};
+			return itemList.data();
+		}
+	};
+
+	static MetaInterfaceData getMetaInterfaceData() {
+		return {
+			TypeListCount<ItemMakerList>::value,
+			ItemListMaker<ItemMakerList>::kinds,
+			ItemListMaker<ItemMakerList>::make()
+		};
+	}
+
+};
 
 struct MetaMethodTable
 {
@@ -119,7 +175,7 @@ struct MetaMethodTable
 	void (*streamIn)(std::istream & stream, Variant & value);
 	void (*streamOut)(std::ostream & stream, const Variant & value);
 
-	ExtraInfo extraInfo;
+	MetaInterfaceData metaInterfaceData;
 };
 
 struct UpTypeData
