@@ -162,6 +162,16 @@ inline std::string getNameByTypeKind(const TypeKind typeKind)
 	return "";
 }
 
+inline constexpr bool typeKindIsInteger(const TypeKind typeKind)
+{
+	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;
+}
+
+inline constexpr bool typeKindIsReal(const TypeKind typeKind)
+{
+	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
+}
+
 
 } // namespace metapp
 

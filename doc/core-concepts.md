@@ -5,6 +5,8 @@
 `metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind. For example, `metapp::tkInt` is the meta type for `int`.  
 Each meta type has one and only one TypeKind, different meta types may have the same TypeKind, that's to say, TypeKind is not unique. For example, `metapp::tkStdSharedPtr` represents all meta types of `std::shared_ptr<T>`, in which T can be any C++ type.  
 
+See [TypeKind document](typekinds.md) for list of built-in type kinds.
+
 ## MetaType - the core meta type
 
 `metapp::MetaType` is the core class to represent the meta type. With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, streaming in/out the object, etc.  

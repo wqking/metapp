@@ -13,7 +13,7 @@ namespace {
 
 TEST_CASE("play camp")
 {
-	metapp::MetaTypeDumper().dump(std::cout, metapp::getMetaType<std::vector<const char * volatile * (*)(int)> >());
+	//metapp::MetaTypeDumper().dump(std::cout, metapp::getMetaType<std::vector<const char * volatile * (*)(int)> >());
 	
 	REQUIRE(metapp::getMetaType<int *>()->getTypeKind() == metapp::tkPointer);
 	REQUIRE(metapp::getMetaType<int *>()->getUpTypeCount() == 1);

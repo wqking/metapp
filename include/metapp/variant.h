@@ -2,6 +2,7 @@
 #define VARIANT_H_969872685611
 
 #include "metapp/metatypedata.h"
+#include "metapp/typekind.h"
 #include "metapp/implement/internal/typeutil_i.h"
 
 #include <type_traits>
@@ -10,6 +11,9 @@
 namespace metapp {
 
 class MetaType;
+
+template <typename T>
+const MetaType * getMetaType();
 
 class Variant
 {
@@ -91,7 +95,7 @@ auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
 
 #endif
 
-#include "metapp/implement/variant_impl.h"
-
 #include "metapp/metatype.h"
+
+#include "metapp/implement/variant_impl.h"
 

@@ -172,6 +172,35 @@ TEST_CASE("Variant, Variant & makeObject(const Variant & object)")
 	}
 }
 
+TEST_CASE("Variant, get/canGet")
+{
+	SECTION("int") {
+		metapp::Variant v(5);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.canGet<int>());
+		REQUIRE(v.canGet<int &>());
+		REQUIRE(v.canGet<const int &>());
+		REQUIRE(v.canGet<volatile int &>());
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.get<int &>() == 5);
+		REQUIRE(v.get<const int &>() == 5);
+		REQUIRE(v.get<volatile int &>() == 5);
+	}
 
+	SECTION("int &") {
+		int n = 38;
+		metapp::Variant v;
+		v.set<int &>(n);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+		REQUIRE(v.canGet<int>());
+		REQUIRE(v.canGet<int &>());
+		REQUIRE(v.canGet<const int &>());
+		REQUIRE(v.canGet<volatile int &>());
+		REQUIRE(v.get<int>() == 38);
+		REQUIRE(v.get<int &>() == 38);
+		REQUIRE(v.get<const int &>() == 38);
+		REQUIRE(v.get<volatile int &>() == 38);
+	}
+}
 
 } // namespace
