@@ -38,6 +38,8 @@ const MetaType * getMetaType();
 template <typename T>
 const UnifiedType * getUnifiedType();
 
+bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
+
 class UnifiedType
 {
 public:
@@ -192,7 +194,7 @@ public:
 			return false;
 		}
 		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::isPossibleSame(fromMetaType, toMetaType, true)) {
+		if(areMetaTypesMatched(fromMetaType, toMetaType, true)) {
 			return true;
 		}
 		if(fromMetaType->getTypeKind() != tkReference
@@ -243,7 +245,7 @@ private:
 	template <typename U>
 	static Variant doCast(const Variant & value, const MetaType * toMetaType, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
 		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::isPossibleSame(fromMetaType, toMetaType, true)) {
+		if(areMetaTypesMatched(fromMetaType, toMetaType, true)) {
 			return value;
 		}
 		if(fromMetaType->getTypeKind() != tkReference

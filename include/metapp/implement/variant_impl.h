@@ -108,7 +108,7 @@ inline Variant & Variant::makeObject(const Variant & object_)
 template <typename T>
 inline bool Variant::canGet(const bool strictMode) const
 {
-	return internal_::isPossibleSame(metaType, metapp::getMetaType<T>(), strictMode);
+	return areMetaTypesMatched(metaType, metapp::getMetaType<T>(), strictMode);
 }
 
 template <typename T>
