@@ -109,7 +109,9 @@ public:
 
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
+	
 	constexpr bool isClassMember() const noexcept;
+	const MetaType * getBelongedClass() const noexcept;
 
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;

@@ -85,6 +85,7 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
+			getMetaType<FunctionType>(),
 			&rankInvoke,
 			&canInvoke,
 			&invoke

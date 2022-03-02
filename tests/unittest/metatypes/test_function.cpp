@@ -2,7 +2,6 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
-#include "metapp/utilities//inspectors.h"
 #include "metapp/utilities/utility.h"
 
 namespace {
@@ -17,12 +16,11 @@ TEST_CASE("metatypes, free function, types")
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	metapp::CallableInspector inspector(metaType);
-	REQUIRE(inspector.getClassType() == nullptr);
-	REQUIRE(inspector.getParamCount() == 2);
-	REQUIRE(matchUpTypeKinds(inspector.getReturnType(), { tkPointer, tkVoid }));
-	REQUIRE(matchUpTypeKinds(inspector.getParamType(0), { tkInt }));
-	REQUIRE(matchUpTypeKinds(inspector.getParamType(1), { tkReference, tkStdVector, tkInt }));
+	REQUIRE(metaType->getBelongedClass() == nullptr);
+	REQUIRE(metaType->getMetaCallable()->getParamCount() == 2);
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(0), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(1), { tkReference, tkStdVector, tkInt }));
 }
 
 void myFunc(int & a, std::string & b)

@@ -145,6 +145,16 @@ inline constexpr bool MetaType::isClassMember() const noexcept
 	return typeFlags & tfClassMember;
 }
 
+inline const MetaType * MetaType::getBelongedClass() const noexcept
+{
+	if(isClassMember()) {
+		return getUpType(0);
+	}
+	else {
+		return nullptr;
+	}
+}
+
 inline const MetaClass * MetaType::getMetaClass() const
 {
 	return unifiedType->getMetaClass();

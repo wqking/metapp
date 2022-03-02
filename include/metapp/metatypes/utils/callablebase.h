@@ -24,6 +24,7 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
+			getMetaType<FT>(),
 			&rankInvoke,
 			&canInvoke,
 			&invoke
