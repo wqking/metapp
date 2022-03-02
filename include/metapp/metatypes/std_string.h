@@ -16,8 +16,8 @@ private:
 public:
 	static constexpr TypeKind typeKind = tkStdString;
 
-	static bool canCast(const MetaType * toMetaType) {
-		return super::canCast(toMetaType)
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return super::canCast(value, toMetaType)
 			|| canCastToCharPtr(toMetaType);
 	}
 
@@ -45,8 +45,8 @@ struct DeclareMetaTypeBase <std::wstring> : public DeclareMetaTypeObject <std::w
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 
-	static bool canCast(const MetaType * toMetaType) {
-		return super::canCast(toMetaType)
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return super::canCast(value, toMetaType)
 			|| canCastToWideCharPtr(toMetaType);
 	}
 

@@ -19,8 +19,8 @@ private:
 public:
 	static constexpr TypeKind typeKind = tkCharPtr;
 
-	static bool canCast(const MetaType * toMetaType) {
-		return super::canCast(toMetaType)
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return super::canCast(value, toMetaType)
 			|| canCastToStdString(toMetaType);
 	}
 
@@ -69,8 +69,8 @@ private:
 public:
 	static constexpr TypeKind typeKind = tkWideCharPtr;
 
-	static bool canCast(const MetaType * toMetaType) {
-		return super::canCast(toMetaType)
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return super::canCast(value, toMetaType)
 			|| canCastToStdWstring(toMetaType);
 	}
 

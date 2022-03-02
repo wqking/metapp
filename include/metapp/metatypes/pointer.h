@@ -18,8 +18,8 @@ public:
 
 	static constexpr TypeKind typeKind = tkPointer;
 
-	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer || super::canCast(toMetaType);
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return toMetaType->getTypeKind() == tkPointer || super::canCast(value, toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {

@@ -57,7 +57,7 @@ public:
 
 	void * getAddress(const MetaTypeData & data) const;
 	
-	bool canCast(const MetaType * toMetaType) const;
+	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
@@ -123,7 +123,7 @@ public:
 
 	void * getAddress(const MetaTypeData & data) const;
 	
-	bool canCast(const MetaType * toMetaType) const;
+	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 
 	void streamIn(std::istream & stream, Variant & value) const;
@@ -186,7 +186,7 @@ public:
 		return data.getAddress();
 	}
 
-	static bool canCast(const MetaType * toMetaType)
+	static bool canCast(const Variant & value, const MetaType * toMetaType)
 	{
 		if(std::is_void<Decayed>::value) {
 			return false;
@@ -197,7 +197,7 @@ public:
 		}
 		if(fromMetaType->getTypeKind() != tkReference
 			&& toMetaType->getTypeKind() == tkReference
-			&& fromMetaType->canCast(toMetaType->getUpType())
+			&& fromMetaType->canCast(value, toMetaType->getUpType())
 			) {
 			return true;
 		}
@@ -248,7 +248,7 @@ private:
 		}
 		if(fromMetaType->getTypeKind() != tkReference
 			&& toMetaType->getTypeKind() == tkReference
-			&& fromMetaType->canCast(toMetaType->getUpType())
+			&& fromMetaType->canCast(value, toMetaType->getUpType())
 			) {
 			return fromMetaType->cast(value, toMetaType->getUpType());
 		}

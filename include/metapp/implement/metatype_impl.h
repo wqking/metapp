@@ -81,9 +81,9 @@ inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 	return metaMethodTable.getAddress(data);
 }
 
-inline bool UnifiedType::canCast(const MetaType * toMetaType) const
+inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
-	return metaMethodTable.canCast(toMetaType);
+	return metaMethodTable.canCast(value, toMetaType);
 }
 
 inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
@@ -203,9 +203,9 @@ inline void * MetaType::getAddress(const MetaTypeData & data) const
 	return unifiedType->getAddress(data);
 }
 
-inline bool MetaType::canCast(const MetaType * toMetaType) const
+inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
-	return unifiedType->canCast(toMetaType);
+	return unifiedType->canCast(value, toMetaType);
 }
 
 inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const

@@ -125,7 +125,7 @@ inline void * Variant::getAddress() const
 
 inline bool Variant::canCast(const MetaType * toMetaType) const
 {
-	return metaType->canCast(toMetaType);
+	return metaType->canCast(*this, toMetaType);
 }
 
 template <typename T>
@@ -136,7 +136,7 @@ inline bool Variant::canCast() const
 
 inline Variant Variant::cast(const MetaType * toMetaType) const
 {
-	assert(metaType->canCast(toMetaType));
+	assert(canCast(toMetaType));
 	return metaType->cast(*this, toMetaType);
 }
 

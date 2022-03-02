@@ -11,6 +11,10 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeObject<T &>
 {
+private:
+	using super = DeclareMetaTypeObject<T &>;
+
+public:
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
@@ -25,12 +29,17 @@ struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeObject<T &>
 		return *(void **)data.getAddress();
 	}
 
-	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkReference;
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return (toMetaType->getTypeKind() == tkReference) || super::canCast(value, toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		return Variant(toMetaType, &value.get<int &>());
+		if(toMetaType->getTypeKind() == tkReference) {
+			return Variant(toMetaType, &value.get<int &>());
+		}
+		else {
+			return super::cast(value, toMetaType);
+		}
 	}
 
 };

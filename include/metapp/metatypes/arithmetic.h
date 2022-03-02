@@ -25,11 +25,19 @@ template <typename T>
 struct DeclareMetaTypeBase <T,
 	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclareMetaTypeObject<T>
 {
+private:
+	using super = DeclareMetaTypeObject<T>;
+
+	static bool doCanCastArithmetic(const MetaType * toMetaType) {
+		return (toMetaType->getTypeKind() >= tkArithmeticBegin
+			&& toMetaType->getTypeKind() <= tkArithmeticEnd);
+	}
+
+public:
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
 
-	static bool canCast(const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() >= tkArithmeticBegin
-			&& toMetaType->getTypeKind() <= tkArithmeticEnd;
+	static bool canCast(const Variant & value, const MetaType * toMetaType) {
+		return doCanCastArithmetic(toMetaType) || super::canCast(value, toMetaType);
 	}
 
 	using CastFunc = Variant (*)(const Variant & value);
@@ -48,7 +56,12 @@ struct DeclareMetaTypeBase <T,
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		return getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](value);
+		if(doCanCastArithmetic(toMetaType)) {
+			return getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](value);
+		}
+		else {
+			return super::cast(value, toMetaType);
+		}
 	}
 
 };

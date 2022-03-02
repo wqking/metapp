@@ -113,7 +113,7 @@ struct MetaMethodTable
 
 	void * (*getAddress)(const MetaTypeData & data);
 
-	bool (*canCast)(const MetaType * toMetaType);
+	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 
 	void (*streamIn)(std::istream & stream, Variant & value);
