@@ -24,6 +24,7 @@ struct DeclareMetaTypeArrayBase
 		return &metaIndexable;
 	}
 
+private:
 	static size_t metaIndexableGetSize(const Variant & /*value*/)
 	{
 		return length;

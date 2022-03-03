@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
+#include "metapp/metatypes/utils/indexablebase.h"
 
 #include <array>
 
@@ -10,30 +11,13 @@ namespace metapp {
 
 template <typename T, size_t length>
 struct DeclareMetaTypeBase <std::array<T, length> >
-	: public DeclareMetaTypeObject <std::array<T, length> >
+	: public DeclareMetaTypeObject <std::array<T, length> >,
+		public IndexableBase<std::array<T, length>, T>
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdArray;
 
 	using ArrayType = std::array<T, length>;
-
-	static const MetaIndexable * getMetaIndexable() {
-		static MetaIndexable metaIndexable(
-			&metaIndexableGetSize,
-			&metaIndexableGetAt
-		);
-		return &metaIndexable;
-	}
-
-	static size_t metaIndexableGetSize(const Variant & value)
-	{
-		return value.get<ArrayType &>().size();
-	}
-
-	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
-	{
-		return Variant::create<T &>(value.get<ArrayType &>()[index]);
-	}
 
 };
 
