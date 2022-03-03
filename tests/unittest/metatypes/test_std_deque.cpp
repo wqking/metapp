@@ -29,3 +29,19 @@ TEST_CASE("metatypes, std::deque<std::string>, MetaIndexable")
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<const std::string &>() == "perfect");
 }
 
+TEST_CASE("metatypes, std::deque<std::string>, MetaIterable")
+{
+	std::deque<std::string> original {
+		"good", "great", "perfect"
+	};
+	metapp::Variant v(original);
+	REQUIRE(v.getMetaType()->getMetaIterable() != nullptr);
+
+	std::deque<std::string> newDeque;
+	v.getMetaType()->getMetaIterable()->forEach(v, [&newDeque](const metapp::Variant & value) {
+		newDeque.push_back(value.get<std::string>());
+		return true;
+		});
+	REQUIRE(original == newDeque);
+}
+

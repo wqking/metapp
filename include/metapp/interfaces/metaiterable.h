@@ -1,19 +1,23 @@
 #ifndef METAPP_METAITERABLE_H_969872685611
 #define METAPP_METAITERABLE_H_969872685611
 
+#include <functional>
+
 namespace metapp {
+
+class Variant;
 
 class MetaIterable
 {
 public:
-	explicit MetaIterable(const int length) : length(length) {}
-
-	int getLength() const {
-		return length;
+	using Callback = std::function<bool (const Variant &)>;
+	explicit MetaIterable(
+			void (*forEach)(const Variant & value, Callback callback)
+		) : forEach(forEach)
+	{
 	}
 
-private:
-	const int length;
+	void (*forEach)(const Variant & value, Callback callback);
 };
 
 

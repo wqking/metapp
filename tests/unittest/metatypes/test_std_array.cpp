@@ -16,7 +16,11 @@ TEST_CASE("metatypes, std::array<int, 5>")
 	REQUIRE(v.get<Type>()[4] == 99);
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdArray, tkInt }));
+}
 
+TEST_CASE("metatypes, std::array<int, 5>, MetaIndexable")
+{
+	metapp::Variant v(std::array<int, 5>{ 38, 98, 5, 16, 99 });
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<int>() == 38);
@@ -24,5 +28,22 @@ TEST_CASE("metatypes, std::array<int, 5>")
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<int>() == 5);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 3).get<int>() == 16);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 4).get<int>() == 99);
+}
+
+TEST_CASE("metatypes, std::array<int, 5>, MetaIterable")
+{
+	std::array<int, 5> original { 38, 98, 5, 16, 99 };
+	metapp::Variant v(original);
+	REQUIRE(v.getMetaType()->getMetaIterable() != nullptr);
+
+	std::array<int, 5> newArray;
+	int index = 0;
+	v.getMetaType()->getMetaIterable()->forEach(v, [&newArray, &index](const metapp::Variant & value) {
+		REQUIRE(index < newArray.size());
+		newArray[index] = value.get<int>();
+		++index;
+		return true;
+	});
+	REQUIRE(original == newArray);
 }
 

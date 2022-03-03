@@ -7,7 +7,7 @@
 
 namespace metapp {
 
-template <typename ContainerType, typename ValueType>
+template <typename ContainerType>
 struct IndexableBase
 {
 	static const MetaIndexable * getMetaIndexable() {
@@ -26,7 +26,8 @@ private:
 
 	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
 	{
-		return Variant::create<ValueType &>(value.get<ContainerType &>()[index]);
+		using ValueType = decltype(std::declval<ContainerType &>()[0]);
+		return Variant::create<ValueType>(value.get<ContainerType &>()[index]);
 	}
 
 };

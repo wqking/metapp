@@ -24,8 +24,26 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIndexable")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdVector);
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).getMetaType()->getTypeKind() == metapp::tkReference);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<const std::string &>() == "good");
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<const std::string &>() == "great");
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<const std::string &>() == "perfect");
+}
+
+TEST_CASE("metatypes, std::vector<std::string>, MetaIterable")
+{
+	std::vector<std::string> original {
+		"good", "great", "perfect"
+	};
+	metapp::Variant v(original);
+	REQUIRE(v.getMetaType()->getMetaIterable() != nullptr);
+
+	std::vector<std::string> newVector;
+	v.getMetaType()->getMetaIterable()->forEach(v, [&newVector](const metapp::Variant & value) {
+		REQUIRE(metapp::getTypeKind(value) == metapp::tkReference);
+		newVector.push_back(value.get<std::string>());
+		return true;
+	});
+	REQUIRE(original == newVector);
 }
 

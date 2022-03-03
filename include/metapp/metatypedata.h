@@ -19,6 +19,16 @@ private:
 		sizeof(void *)
 	>::value;
 
+	template <typename T>
+	struct FitBuffer
+	{
+		static constexpr bool value = 
+			std::is_trivial<T>::value
+			&& std::is_standard_layout<T>::value
+			&& sizeof(T) <= bufferSize
+		;
+	};
+
 	static constexpr uint8_t storageNone = 0;
 	static constexpr uint8_t storageObject = 1;
 	static constexpr uint8_t storageBuffer = 2;
@@ -32,7 +42,7 @@ public:
 
 	template <typename T>
 	void construct(const void * copyFrom) {
-		if(fitBuffer<T>()) {
+		if(FitBuffer<T>::value) {
 			doConstructOnBuffer<T>(copyFrom);
 		}
 		else {
@@ -74,31 +84,79 @@ private:
 	template <typename T>
 	void doConstructOnBuffer(const void * copyFrom) {
 		if(copyFrom == nullptr) {
-			podAs<T>() = T();
+			doConstructOnBufferDefault<T>();
 		}
 		else {
-			podAs<T>() = *(T *)copyFrom;
+			doConstructOnBufferCopy<T>(copyFrom);
 		}
 		setStorageType(storageBuffer);
 	}
 
 	template <typename T>
+	void doConstructOnBufferDefault(
+		typename std::enable_if<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>::type * = nullptr
+		) {
+		podAs<T>() = T();
+	}
+
+	template <typename T>
+	void doConstructOnBufferDefault(
+		typename std::enable_if<! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)>::type * = nullptr
+		) {
+	}
+
+	template <typename T>
+	void doConstructOnBufferCopy(
+		const void * copyFrom,
+		typename std::enable_if<std::is_copy_assignable<T>::value>::type * = nullptr
+	) {
+		podAs<T>() = *(T *)copyFrom;
+	}
+
+	template <typename T>
+	void doConstructOnBufferCopy(
+		const void * /*copyFrom*/,
+		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
+	) {
+	}
+
+	template <typename T>
 	void doConstructOnObject(const void * copyFrom) {
 		if(copyFrom == nullptr) {
-			object = std::make_shared<T>();
+			doConstructOnObjectDefault<T>();
 		}
 		else {
-			object = std::make_shared<T>(*(T *)copyFrom);
+			doConstructOnObjectCopy<T>(copyFrom);
 		}
 		setStorageType(storageObject);
 	}
 
 	template <typename T>
-	static constexpr bool fitBuffer() {
-		return std::is_trivial<T>::value
-			&& std::is_standard_layout<T>::value
-			&& sizeof(T) <= bufferSize
-		;
+	void doConstructOnObjectDefault(
+		typename std::enable_if<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>::type * = nullptr
+	) {
+		object = std::make_shared<T>();
+	}
+
+	template <typename T>
+	void doConstructOnObjectDefault(
+		typename std::enable_if<! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)>::type * = nullptr
+	) {
+	}
+
+	template <typename T>
+	void doConstructOnObjectCopy(
+		const void * copyFrom,
+		typename std::enable_if<std::is_copy_assignable<T>::value>::type * = nullptr
+	) {
+		object = std::make_shared<T>(*(T *)copyFrom);
+	}
+
+	template <typename T>
+	void doConstructOnObjectCopy(
+		const void * /*copyFrom*/,
+		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
+	) {
 	}
 
 	template <typename T>
