@@ -22,12 +22,15 @@
 namespace metapp {
 
 class MetaType;
+class UnifiedType;
+
 class MetaClass;
 class MetaCallable;
 class MetaAccessible;
 class MetaArray;
 class MetaEnum;
-class UnifiedType;
+class MetaIndexable;
+class MetaIterable;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -50,8 +53,9 @@ public:
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
-	const MetaArray * getMetaArray() const;
 	const MetaEnum * getMetaEnum() const;
+	const MetaIndexable * getMetaIndexable() const;
+	const MetaIterable * getMetaIterable() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -116,8 +120,9 @@ public:
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
-	const MetaArray * getMetaArray() const;
 	const MetaEnum * getMetaEnum() const;
+	const MetaIndexable * getMetaIndexable() const;
+	const MetaIterable * getMetaIterable() const;
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;

@@ -100,18 +100,27 @@ struct HasFunctionGetMetaAccessible
 };
 
 template <typename T>
-struct HasFunctionGetMetaArray
+struct HasFunctionGetMetaEnum
 {
-	template <typename C> static std::true_type test(decltype(C::getMetaArray) *);
+	template <typename C> static std::true_type test(decltype(C::getMetaEnum) *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };
 };
 
 template <typename T>
-struct HasFunctionGetMetaEnum
+struct HasFunctionGetMetaIndexable
 {
-	template <typename C> static std::true_type test(decltype(C::getMetaEnum) *);
+	template <typename C> static std::true_type test(decltype(C::getMetaIndexable) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
+struct HasFunctionGetMetaIterable
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaIterable) *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };

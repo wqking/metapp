@@ -22,8 +22,7 @@ TEST_CASE("metatypes, char[6]")
 	REQUIRE(metapp::getMetaType<char[]>()->getTypeKind() == metapp::tkCharPtr);
 	REQUIRE(metapp::getMetaType<char[6]>()->getTypeKind() == metapp::tkCharPtr);
 	char s[6] = "hello";
-	metapp::Variant v;
-	v.set<char[6]>(s);
+	metapp::Variant v(metapp::Variant::create<char[6]>(s));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkCharPtr);
 	REQUIRE(v.cast<std::string>().get<const std::string &>() == s);
 }

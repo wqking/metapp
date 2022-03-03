@@ -68,8 +68,7 @@ TEST_CASE("Variant, cast Derived * to MyClass *")
 TEST_CASE("Variant, cast Derived & to MyClass &")
 {
 	Derived derived;
-	metapp::Variant v;
-	v.set<Derived &>(derived);
+	metapp::Variant v(metapp::Variant::create<Derived &>(derived));
 	REQUIRE(! v.canCast<MyClass *>());
 	REQUIRE(v.canCast<MyClass &>());
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);

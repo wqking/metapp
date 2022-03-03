@@ -2,7 +2,7 @@
 #define METAPP_STD_ARRAY_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/interfaces/metaarray.h"
+#include "metapp/interfaces/metaindexable.h"
 
 #include <array>
 
@@ -15,9 +15,24 @@ struct DeclareMetaTypeBase <std::array<T, length> >
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdArray;
 
-	static const MetaArray * getMetaArray() {
-		static MetaArray metaArray((int)length);
-		return &metaArray;
+	using ArrayType = std::array<T, length>;
+
+	static const MetaIndexable * getMetaIndexable() {
+		static MetaIndexable metaIndexable(
+			&metaIndexableGetSize,
+			&metaIndexableGetAt
+		);
+		return &metaIndexable;
+	}
+
+	static size_t metaIndexableGetSize(const Variant & value)
+	{
+		return value.get<ArrayType &>().size();
+	}
+
+	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
+	{
+		return Variant::create<T &>(value.get<ArrayType &>()[index]);
 	}
 
 };

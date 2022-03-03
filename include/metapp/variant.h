@@ -18,6 +18,9 @@ const MetaType * getMetaType();
 class Variant
 {
 public:
+	template <typename T>
+	static Variant create(T value);
+
 	Variant() noexcept;
 	~Variant() = default;
 
@@ -36,9 +39,6 @@ public:
 	Variant & operator = (Variant && other) noexcept;
 
 	Variant clone() const;
-
-	template <typename T>
-	Variant & set(T value);
 
 	Variant & makeObject(const MetaType * metaType, void * object);
 	Variant & makeObject(const Variant & object);

@@ -31,14 +31,19 @@ inline const MetaAccessible * UnifiedType::getMetaAccessible() const
 	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
 }
 
-inline const MetaArray * UnifiedType::getMetaArray() const
-{
-	return static_cast<const MetaArray *>(doGetMetaInterface(internal_::mikMetaArray));
-}
-
 inline const MetaEnum * UnifiedType::getMetaEnum() const
 {
 	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
+}
+
+inline const MetaIndexable * UnifiedType::getMetaIndexable() const
+{
+	return static_cast<const MetaIndexable *>(doGetMetaInterface(internal_::mikMetaIndexable));
+}
+
+inline const MetaIterable * UnifiedType::getMetaIterable() const
+{
+	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
 }
 
 inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
@@ -170,14 +175,19 @@ inline const MetaAccessible * MetaType::getMetaAccessible() const
 	return unifiedType->getMetaAccessible();
 }
 
-inline const MetaArray * MetaType::getMetaArray() const
-{
-	return unifiedType->getMetaArray();
-}
-
 inline const MetaEnum * MetaType::getMetaEnum() const
 {
 	return unifiedType->getMetaEnum();
+}
+
+inline const MetaIndexable * MetaType::getMetaIndexable() const
+{
+	return unifiedType->getMetaIndexable();
+}
+
+inline const MetaIterable * MetaType::getMetaIterable() const
+{
+	return unifiedType->getMetaIterable();
 }
 
 inline void * MetaType::construct() const

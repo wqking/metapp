@@ -6,27 +6,33 @@
 TEST_CASE("metatypes, int[]")
 {
 	int array[] = { 3, 8, 9 };
-	metapp::Variant v;
-	v.set<int[]>(array);
+	metapp::Variant v(metapp::Variant::create<int[]>(array));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
-	REQUIRE(v.getMetaType()->getMetaArray() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaArray()->getLength() == -1);
 	REQUIRE(v.get<int[]>()[0] == 3);
 	REQUIRE(v.get<int[]>()[1] == 8);
 	REQUIRE(v.get<int[3]>()[2] == 9);
+
+	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == metapp::MetaIndexable::unknowSize);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<int>() == 3);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<int>() == 8);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<int>() == 9);
 }
 
-TEST_CASE("metatypes, int[3]")
+TEST_CASE("metatypes, std::string[3]")
 {
-	int array[3] = { 3, 8, 9 };
-	metapp::Variant v;
-	v.set<int[3]>(array);
+	std::string array[3] = { "good", "great", "perfect" };
+	metapp::Variant v(metapp::Variant::create<std::string[3]>(array));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
-	REQUIRE(v.getMetaType()->getMetaArray() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaArray()->getLength() == 3);
-	REQUIRE(v.get<int[]>()[0] == 3);
-	REQUIRE(v.get<int[]>()[1] == 8);
-	REQUIRE(v.get<int[3]>()[2] == 9);
+	REQUIRE(v.get<std::string[]>()[0] == "good");
+	REQUIRE(v.get<std::string[]>()[1] == "great");
+	REQUIRE(v.get<std::string[3]>()[2] == "perfect");
+
+	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<const std::string &>() == "good");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<const std::string &>() == "great");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<const std::string &>() == "perfect");
 }
 
 TEST_CASE("metatypes, int[], constness")

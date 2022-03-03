@@ -27,7 +27,7 @@ TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")
 		metapp::Variant v(func);
 		int a = 0;
 		std::string b;
-		metapp::Variant arguments[] = { metapp::Variant().set<int &>(a), metapp::Variant().set<std::string &>(b) };
+		metapp::Variant arguments[] = { metapp::Variant::create<int &>(a), metapp::Variant::create<std::string &>(b) };
 		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2);
 		REQUIRE(a == 38);
 		REQUIRE(b == "hello");

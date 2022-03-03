@@ -18,8 +18,9 @@ using MetaInterfaceGetter = const void * (*)();
 static constexpr MetaInterfaceKind mikMetaClass = (1 << 0);
 static constexpr MetaInterfaceKind mikMetaCallable = (1 << 1);
 static constexpr MetaInterfaceKind mikMetaAccessible = (1 << 2);
-static constexpr MetaInterfaceKind mikMetaArray = (1 << 3);
-static constexpr MetaInterfaceKind mikMetaEnum = (1 << 4);
+static constexpr MetaInterfaceKind mikMetaEnum = (1 << 3);
+static constexpr MetaInterfaceKind mikMetaIndexable = (1 << 4);
+static constexpr MetaInterfaceKind mikMetaIterable = (1 << 5);
 
 struct MetaInterfaceItem
 {
@@ -82,20 +83,6 @@ struct MakeMetaInterfaceItem <mikMetaAccessible>
 };
 
 template <>
-struct MakeMetaInterfaceItem <mikMetaArray>
-{
-	static constexpr MetaInterfaceKind kind = mikMetaArray;
-
-	template <typename M>
-	static constexpr MetaInterfaceItem make() {
-		return {
-			kind,
-			(MetaInterfaceGetter)&M::getMetaArray
-		};
-	}
-};
-
-template <>
 struct MakeMetaInterfaceItem <mikMetaEnum>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaEnum;
@@ -109,6 +96,34 @@ struct MakeMetaInterfaceItem <mikMetaEnum>
 	}
 };
 
+template <>
+struct MakeMetaInterfaceItem <mikMetaIndexable>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaIndexable;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaIndexable
+		};
+	}
+};
+
+template <>
+struct MakeMetaInterfaceItem <mikMetaIterable>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaIterable;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaIterable
+		};
+	}
+};
+
 template <typename M>
 struct MakeMetaInterfaceData
 {
@@ -117,14 +132,16 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem <mikMetaClass>,
 		MakeMetaInterfaceItem <mikMetaCallable>,
 		MakeMetaInterfaceItem <mikMetaAccessible>,
-		MakeMetaInterfaceItem <mikMetaArray>,
-		MakeMetaInterfaceItem <mikMetaEnum>
+		MakeMetaInterfaceItem <mikMetaEnum>,
+		MakeMetaInterfaceItem <mikMetaIndexable>,
+		MakeMetaInterfaceItem <mikMetaIterable>
 		>,
 		HasFunctionGetMetaClass<M>::value,
 		HasFunctionGetMetaCallable<M>::value,
 		HasFunctionGetMetaAccessible<M>::value,
-		HasFunctionGetMetaArray<M>::value,
-		HasFunctionGetMetaEnum<M>::value
+		HasFunctionGetMetaEnum<M>::value,
+		HasFunctionGetMetaIndexable<M>::value,
+		HasFunctionGetMetaIterable<M>::value
 	>::Type;
 
 	template <typename TL>

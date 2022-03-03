@@ -5,8 +5,7 @@
 
 TEST_CASE("metatypes, int &") {
 	int n = 5;
-	metapp::Variant v;
-	v.set<int &>(n);
+	metapp::Variant v(metapp::Variant::create<int &>(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	SECTION("get") {
 		REQUIRE(v.canGet<int>());
@@ -32,8 +31,7 @@ TEST_CASE("metatypes, int &") {
 
 TEST_CASE("metatypes, int &&") {
 	int n = 5;
-	metapp::Variant v;
-	v.set<int &&>((int &&)n);
+	metapp::Variant v(metapp::Variant::create<int &&>((int &&)n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	SECTION("get") {
 		REQUIRE(v.canGet<int>());

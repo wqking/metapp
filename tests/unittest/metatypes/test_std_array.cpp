@@ -16,5 +16,13 @@ TEST_CASE("metatypes, std::array<int, 5>")
 	REQUIRE(v.get<Type>()[4] == 99);
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdArray, tkInt }));
+
+	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<int>() == 38);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<int>() == 98);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<int>() == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 3).get<int>() == 16);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 4).get<int>() == 99);
 }
 

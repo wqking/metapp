@@ -3,6 +3,12 @@
 
 namespace metapp {
 
+template <typename T>
+inline Variant Variant::create(T value)
+{
+	return Variant(metapp::getMetaType<T>(), &value);
+}
+
 inline Variant::Variant() noexcept
 	: 
 		metaType(metapp::getMetaType<void>()),
@@ -49,7 +55,9 @@ inline Variant::Variant(Variant && other) noexcept
 template <typename T>
 inline Variant & Variant::operator = (T value) noexcept
 {
-	return set<T>(value);
+	*this = Variant::create<T>(value);
+	
+	return *this;
 }
 
 inline Variant & Variant::operator = (const Variant & other) noexcept
@@ -74,16 +82,6 @@ inline Variant Variant::clone() const
 	result.metaType = metaType;
 	result.metaType->constructData(&result.data, metaType->getAddress(data));
 	return result;
-}
-
-template <typename T>
-inline Variant & Variant::set(T value)
-{
-	metaType = metapp::getMetaType<T>();
-	data.reset();
-	metaType->constructData(&data, &value);
-
-	return *this;
 }
 
 inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
