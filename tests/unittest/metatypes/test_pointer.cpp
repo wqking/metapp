@@ -25,9 +25,7 @@ TEST_CASE("metatypes, int **")
 {
 	metapp::Variant v((int **)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
-	REQUIRE(v.canGet<int **>(true));
-	REQUIRE(v.canGet<int **>(false));
-	REQUIRE(! v.canGet<int *>(true));
+	REQUIRE(v.canGet<int **>());
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 }

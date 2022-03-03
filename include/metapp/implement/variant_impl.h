@@ -106,9 +106,9 @@ inline Variant & Variant::makeObject(const Variant & object_)
 }
 
 template <typename T>
-inline bool Variant::canGet(const bool strictMode) const
+inline bool Variant::canGet() const
 {
-	return areMetaTypesMatched(metaType, metapp::getMetaType<T>(), strictMode);
+	return areMetaTypesMatched(metaType, metapp::getMetaType<T>(), false);
 }
 
 template <typename T>

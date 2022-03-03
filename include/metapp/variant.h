@@ -44,7 +44,7 @@ public:
 	Variant & makeObject(const Variant & object);
 
 	template <typename T>
-	bool canGet(const bool strictMode = false) const;
+	bool canGet() const;
 
 	template <typename T>
 	auto get() const -> typename internal_::VariantReturnType<T>::Type;

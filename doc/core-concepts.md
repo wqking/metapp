@@ -96,3 +96,6 @@ metapp::getMetaType<int>()->getUpType() == nullptr;
 UpType represents complicated C++ type recursively. With UpType, metapp can represent any C++ type.
 
 See [TypeKind document](typekinds.md) for the UpTypes for each TypeKind.
+
+## Meta interface 
+
