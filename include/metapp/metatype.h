@@ -12,6 +12,7 @@
 #include "metapp/variant.h"
 #undef METAPP_VARIANT_IMPL_H_969872685611
 
+// Must be included after previous macro hack
 #include "metapp/implement/internal/metatype_i.h"
 
 #include <type_traits>
@@ -31,6 +32,7 @@ class MetaArray;
 class MetaEnum;
 class MetaIndexable;
 class MetaIterable;
+class MetaStreaming;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -56,6 +58,7 @@ public:
 	const MetaEnum * getMetaEnum() const;
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
+	const MetaStreaming * getMetaStreaming() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -123,6 +126,7 @@ public:
 	const MetaEnum * getMetaEnum() const;
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
+	const MetaStreaming * getMetaStreaming() const;
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
@@ -303,9 +307,6 @@ const UnifiedType * getUnifiedType()
 	);
 	return &unifiedType;
 }
-
-template <typename T>
-const MetaType * getMetaType();
 
 template <>
 struct DeclareMetaTypeBase <void> : public DeclareMetaTypeObject<void>

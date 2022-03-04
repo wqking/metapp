@@ -41,7 +41,7 @@ struct VariantReturnType
 
 // In HasInputStreamOperator and HasOutputStreamOperator, we have to use std::declval<std::istream &>()
 // instead of std::declval<std::istream>(), because C++11 adds a generic function that accepts
-// std::istream && even if the right value doesn't apply to the << operator.
+// "std::istream &&" even if the right value doesn't apply to the << operator.
 // See https://stackoverflow.com/questions/37480778/declval-expression-for-sfinae-with-stdostream
 template <typename T>
 struct HasInputStreamOperator
@@ -121,6 +121,15 @@ template <typename T>
 struct HasFunctionGetMetaIterable
 {
 	template <typename C> static std::true_type test(decltype(C::getMetaIterable) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
+struct HasFunctionGetMetaStreaming
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaStreaming) *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };

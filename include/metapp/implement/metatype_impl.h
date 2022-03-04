@@ -46,6 +46,11 @@ inline const MetaIterable * UnifiedType::getMetaIterable() const
 	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
 }
 
+inline const MetaStreaming * UnifiedType::getMetaStreaming() const
+{
+	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
+}
+
 inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
 {
 	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
@@ -188,6 +193,11 @@ inline const MetaIndexable * MetaType::getMetaIndexable() const
 inline const MetaIterable * MetaType::getMetaIterable() const
 {
 	return unifiedType->getMetaIterable();
+}
+
+inline const MetaStreaming * MetaType::getMetaStreaming() const
+{
+	return unifiedType->getMetaStreaming();
 }
 
 inline void * MetaType::construct() const
