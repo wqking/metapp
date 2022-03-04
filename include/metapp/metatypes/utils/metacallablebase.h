@@ -1,5 +1,5 @@
-#ifndef METAPP_CALLABLEBASE_FUNCTION_H_969872685611
-#define METAPP_CALLABLEBASE_FUNCTION_H_969872685611
+#ifndef METAPP_METACALLABLEBASE_H_969872685611
+#define METAPP_METACALLABLEBASE_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metacallable.h"
@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename FT, typename Class, typename RT, typename ...Args>
-struct CallableBase
+struct MetaCallableBase
 {
 public:
 	using FunctionType = FT;

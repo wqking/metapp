@@ -2,7 +2,8 @@
 #define METAPP_STD_MAP_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metatypes/utils/iterablebase.h"
+#include "metapp/metatypes/utils/metaiterablebase.h"
+#include "metapp/metatypes/utils/metamapbase.h"
 
 #include <map>
 
@@ -11,7 +12,8 @@ namespace metapp {
 template <typename Key, typename T, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 	: public DeclareMetaTypeObject <std::map<Key, T, Compare, Allocator> >,
-		public IterableBase<std::map<Key, T, Compare, Allocator> >
+		public MetaIterableBase<std::map<Key, T, Compare, Allocator> >,
+		public MetaMapBase<std::map<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdMap;
@@ -21,7 +23,8 @@ struct DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 template <typename Key, typename T, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::multimap<Key, T, Compare, Allocator> >
 	: public DeclareMetaTypeObject <std::multimap<Key, T, Compare, Allocator> >,
-		public IterableBase<std::multimap<Key, T, Compare, Allocator> >
+		public MetaIterableBase<std::multimap<Key, T, Compare, Allocator> >,
+		public MetaMapBase<std::multimap<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdMultimap;

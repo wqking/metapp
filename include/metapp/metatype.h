@@ -33,6 +33,7 @@ class MetaEnum;
 class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
+class MetaMap;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -59,6 +60,7 @@ public:
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
+	const MetaMap * getMetaMap() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -124,6 +126,7 @@ public:
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
+	const MetaMap * getMetaMap() const;
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;

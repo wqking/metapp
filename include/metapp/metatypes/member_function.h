@@ -1,7 +1,7 @@
 #ifndef METAPP_MEMBER_FUNCTION_H_969872685611
 #define METAPP_MEMBER_FUNCTION_H_969872685611
 
-#include "metapp/metatypes/utils/callablebase.h"
+#include "metapp/metatypes/utils/metacallablebase.h"
 #include "metapp/compiler.h"
 
 namespace metapp {
@@ -9,7 +9,7 @@ namespace metapp {
 template <typename Class, typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
 	: public DeclareMetaTypeObject<RT (Class::*)(Args...)>,
-		public CallableBase<RT (Class::*)(Args...), Class, RT, Args...>
+		public MetaCallableBase<RT (Class::*)(Args...), Class, RT, Args...>
 {
 public:
 	using UpType = TypeList <Class, RT, Args...>;

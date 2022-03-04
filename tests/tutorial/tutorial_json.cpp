@@ -2,6 +2,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
+#include "metapp/utils/utility.h"
 
 #include <iostream>
 
@@ -22,20 +23,26 @@ public:
 private:
 	void doDump(const metapp::Variant & value, const int level)
 	{
-		if(metapp::typeKindIsInteger(metapp::getTypeKind(value))) {
+		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
+		auto typeKind = metaType->getTypeKind();
+		if(typeKind == metapp::tkVariant) {
+			doDump(value.get<metapp::Variant &>(), level);
+			return;
+		}
+		if(metapp::typeKindIsInteger(typeKind)) {
 			stream << value.cast<long long>();
 		}
-		else if(metapp::typeKindIsReal(metapp::getTypeKind(value))) {
+		else if(metapp::typeKindIsReal(typeKind)) {
 			stream << value.cast<long double>();
 		}
 		else if(value.canCast<JsonString>()) {
 			doDumpString(value.cast<JsonString>().get<JsonString>());
 		}
-		else if(value.canGet<JsonArray>()) {
-			doDumpArray(value, level);
-		}
-		else if(value.canGet<JsonObject>()) {
+		else if(metaType->getMetaMap() != nullptr) {
 			doDumpObject(value, level);
+		}
+		else if(metaType->getMetaIterable() != nullptr) {
+			doDumpArray(value, level);
 		}
 	}
 
@@ -46,18 +53,23 @@ private:
 
 	void doDumpArray(const metapp::Variant & value, const int level)
 	{
+		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
 		stream << "[" << std::endl;
-		const JsonArray & array = value.get<const JsonArray &>();
 		bool firstItem = true;
-		for(const auto & item : array) {
-			if(! firstItem) {
-				stream << ",";
-				stream << std::endl;
+		metaType->getMetaIterable()->forEach(
+			value,
+			[this, &firstItem, level](const metapp::Variant & item) -> bool {
+				if(! firstItem) {
+					stream << ",";
+					stream << std::endl;
+				}
+				firstItem = false;
+				doDumpIndent(level + 1);
+				doDump(item, level + 1);
+
+				return true;
 			}
-			firstItem = false;
-			doDumpIndent(level + 1);
-			doDump(item, level + 1);
-		}
+		);
 		if(! firstItem) {
 			stream << std::endl;
 		}
@@ -67,20 +79,26 @@ private:
 
 	void doDumpObject(const metapp::Variant & value, const int level)
 	{
+		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
 		stream << "{" << std::endl;
-		const JsonObject & object = value.get<const JsonObject &>();
 		bool firstItem = true;
-		for(const auto & item : object) {
-			if(! firstItem) {
-				stream << ",";
-				stream << std::endl;
+		metaType->getMetaIterable()->forEach(
+			value,
+			[this, &firstItem, level](const metapp::Variant & item) -> bool {
+				if(! firstItem) {
+					stream << ",";
+					stream << std::endl;
+				}
+				firstItem = false;
+				doDumpIndent(level + 1);
+				auto indexable = metapp::getNonReferenceUpType(item.getMetaType())->getMetaIndexable();
+				doDumpString(indexable->getAt(item, 0).cast<std::string>().get<std::string>());
+				stream << ": ";
+				doDump(indexable->getAt(item, 1), level + 1);
+
+				return true;
 			}
-			firstItem = false;
-			doDumpIndent(level + 1);
-			doDumpString(item.first);
-			stream << ": ";
-			doDump(item.second, level + 1);
-		}
+		);
 		if(! firstItem) {
 			stream << std::endl;
 		}
@@ -108,6 +126,9 @@ void tutorialJson()
 			JsonObject {
 				{ "what", "good" },
 				{ "next", 12345 },
+			},
+			std::unordered_map<std::string, std::string> {
+				{ "hello", "def" },
 			}
 		}}
 	});

@@ -3,7 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
-#include "metapp/metatypes/utils/callablebase.h"
+#include "metapp/metatypes/utils/metacallablebase.h"
 #include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
@@ -22,7 +22,7 @@ struct Constructor<Class (Args...)>
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
 	: public DeclareMetaTypeObject<Constructor<Class (Args...)> >,
-		public CallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
+		public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
 {
 public:
 	using UpType = TypeList<Class, Args...>;

@@ -135,6 +135,15 @@ struct HasFunctionGetMetaStreaming
 	enum { value = !! decltype(test<T>(0))() };
 };
 
+template <typename T>
+struct HasFunctionGetMetaMap
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaMap) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
 template <typename Result, typename TL, bool ...hasList>
 struct HelperFilterTypes
 {

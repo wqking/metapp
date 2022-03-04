@@ -1,5 +1,5 @@
-#ifndef METAPP_ITERABLEBASE_FUNCTION_H_969872685611
-#define METAPP_ITERABLEBASE_FUNCTION_H_969872685611
+#ifndef METAPP_METAITERABLEBASE_H_969872685611
+#define METAPP_METAITERABLEBASE_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaiterable.h"
@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename ContainerType>
-struct IterableBase
+struct MetaIterableBase
 {
 	static const MetaIterable * getMetaIterable() {
 		static MetaIterable metaIterable(

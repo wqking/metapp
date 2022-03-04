@@ -1,14 +1,13 @@
-#ifndef METAPP_INDEXABLEBASE_FUNCTION_H_969872685611
-#define METAPP_INDEXABLEBASE_FUNCTION_H_969872685611
+#ifndef METAPP_METAINDEXABLEBASE_H_969872685611
+#define METAPP_METAINDEXABLEBASE_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
-#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 
 template <typename ContainerType>
-struct IndexableBase
+struct MetaIndexableBase
 {
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(

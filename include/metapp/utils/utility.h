@@ -39,6 +39,14 @@ inline Variant invokeCallable(const Variant & func, void * instance, Args ...arg
 	return CallableInvoker<Args...>::invoke(func, instance, args...);
 }
 
+inline const MetaType * getNonReferenceUpType(const MetaType * metaType)
+{
+	if(metaType->getTypeKind() == tkReference) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
+}
+
 } // namespace metapp
 
 #endif
