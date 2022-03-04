@@ -124,7 +124,7 @@ struct CtorCounter
 
 };
 
-TEST_CASE("Variant, Variant & makeObject(const MetaType * metaType, void * object)")
+TEST_CASE("Variant, Variant::takeFrom(const MetaType * metaType, void * object)")
 {
 	int counter = 0;
 	void * ctorCounter = new CtorCounter(&counter);
@@ -132,23 +132,21 @@ TEST_CASE("Variant, Variant & makeObject(const MetaType * metaType, void * objec
 
 	SECTION("out of scope") {
 		{
-			metapp::Variant v;
-			v.makeObject(metapp::getMetaType<CtorCounter>(), ctorCounter);
+			metapp::Variant v(metapp::Variant::takeFrom(metapp::getMetaType<CtorCounter>(), ctorCounter));
 			REQUIRE(counter == 1);
 		}
 		REQUIRE(counter == 0);
 	}
 
 	SECTION("assign") {
-		metapp::Variant v;
-		v.makeObject(metapp::getMetaType<CtorCounter>(), ctorCounter);
+		metapp::Variant v(metapp::Variant::takeFrom(metapp::getMetaType<CtorCounter>(), ctorCounter));
 		REQUIRE(counter == 1);
 		v = 5;
 		REQUIRE(counter == 0);
 	}
 }
 
-TEST_CASE("Variant, Variant & makeObject(const Variant & object)")
+TEST_CASE("Variant, Variant::takeFrom(const Variant & object)")
 {
 	int counter = 0;
 	CtorCounter * ctorCounter = new CtorCounter(&counter);
@@ -156,16 +154,14 @@ TEST_CASE("Variant, Variant & makeObject(const Variant & object)")
 
 	SECTION("out of scope") {
 		{
-			metapp::Variant v;
-			v.makeObject(ctorCounter);
+			metapp::Variant v(metapp::Variant::takeFrom(ctorCounter));
 			REQUIRE(counter == 1);
 		}
 		REQUIRE(counter == 0);
 	}
 
 	SECTION("assign") {
-		metapp::Variant v;
-		v.makeObject(ctorCounter);
+		metapp::Variant v(metapp::Variant::takeFrom(ctorCounter));
 		REQUIRE(counter == 1);
 		v = 5;
 		REQUIRE(counter == 0);

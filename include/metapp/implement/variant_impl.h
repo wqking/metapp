@@ -26,6 +26,27 @@ inline Variant Variant::create(T value, const bool /*copyVariant*/,
 	return Variant(metapp::getMetaType<T>(), &value);
 }
 
+inline Variant Variant::takeFrom(const MetaType * metaType, void * object)
+{
+	Variant result;
+
+	result.metaType = metaType;
+	result.data.constructObject(std::shared_ptr<void>(object, [metaType](void * p) {
+		metaType->destroy(p);
+	}));
+
+	return result;
+}
+
+inline Variant Variant::takeFrom(const Variant & object)
+{
+	const MetaType * metaType = object.getMetaType();
+	if(metaType->getTypeKind() == tkPointer) {
+		metaType = metaType->getUpType();
+	}
+	return takeFrom(metaType, object.get<void *>());
+}
+
 inline Variant::Variant() noexcept
 	: 
 		metaType(metapp::getMetaType<void>()),
@@ -99,25 +120,6 @@ inline Variant Variant::clone() const
 	result.metaType = metaType;
 	result.metaType->constructData(&result.data, metaType->getAddress(data));
 	return result;
-}
-
-inline Variant & Variant::makeObject(const MetaType * metaType_, void * object_)
-{
-	metaType = metaType_;
-	data.constructObject(std::shared_ptr<void>(object_, [metaType_](void * p) {
-		metaType_->destroy(p);
-	}));
-
-	return *this;
-}
-
-inline Variant & Variant::makeObject(const Variant & object_)
-{
-	const MetaType * mt = object_.getMetaType();
-	if(mt != nullptr && mt->getTypeKind() == tkPointer) {
-		mt = mt->getUpType();
-	}
-	return makeObject(mt, object_.get<void *>());
 }
 
 template <typename T>

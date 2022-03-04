@@ -28,6 +28,8 @@ public:
 		typename std::enable_if<
 			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type * = 0);
+	static Variant takeFrom(const MetaType * metaType, void * object);
+	static Variant takeFrom(const Variant & object);
 
 	Variant() noexcept;
 	~Variant() = default;
@@ -47,9 +49,6 @@ public:
 	Variant & operator = (Variant && other) noexcept;
 
 	Variant clone() const;
-
-	Variant & makeObject(const MetaType * metaType, void * object);
-	Variant & makeObject(const Variant & object);
 
 	template <typename T>
 	bool canGet() const;

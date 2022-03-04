@@ -28,7 +28,7 @@ TEST_CASE("metatypes, constructor")
 	metapp::Variant arguments[] = { 7, &ctorCounter };
 	SECTION("free by Variant") {
 		{
-			metapp::Variant obj = metapp::Variant().makeObject(
+			metapp::Variant obj = metapp::Variant::takeFrom(
 				ctor.getMetaType()->getMetaCallable()->invoke(metapp::Variant(), nullptr, arguments, 2)
 			);
 			REQUIRE(ctorCounter == 1);
