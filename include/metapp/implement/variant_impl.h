@@ -140,6 +140,24 @@ inline void * Variant::getAddress() const
 	return metaType->getAddress(data);
 }
 
+inline Variant Variant::dereference() const
+{
+	const MetaType * mt = metaType;
+	void * address = nullptr;
+	if(mt->getTypeKind() == tkPointer) {
+		mt = mt->getUpType();
+		address = get<void *>();
+	}
+	else if(mt->getTypeKind() == tkReference) {
+		mt = mt->getUpType();
+		address = getAddress();
+	}
+	if(address != nullptr) {
+		return Variant(mt, address);
+	}
+	return *this;
+}
+
 inline bool Variant::canCast(const MetaType * toMetaType) const
 {
 	return metaType->canCast(*this, toMetaType);

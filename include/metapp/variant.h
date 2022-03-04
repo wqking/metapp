@@ -57,6 +57,7 @@ public:
 	auto get() const -> typename internal_::VariantReturnType<T>::Type;
 
 	void * getAddress() const;
+	Variant dereference() const;
 
 	bool canCast(const MetaType * toMetaType) const;
 	template <typename T>
