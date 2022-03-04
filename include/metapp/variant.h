@@ -19,7 +19,15 @@ class Variant
 {
 public:
 	template <typename T>
-	static Variant create(T value);
+	static Variant create(T value, const bool copyVariant = true,
+		typename std::enable_if<
+			std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
+	>::type * = 0);
+	template <typename T>
+	static Variant create(T value, const bool copyVariant = true,
+		typename std::enable_if<
+			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
+	>::type * = 0);
 
 	Variant() noexcept;
 	~Variant() = default;
