@@ -11,6 +11,22 @@ namespace metapp {
 
 namespace internal_ {
 
+template <size_t ...Indexes>
+struct IndexSequence
+{
+};
+
+template <size_t N, size_t ...Indexes>
+struct MakeIndexSequence : MakeIndexSequence <N - 1, N - 1, Indexes...>
+{
+};
+
+template <size_t ...Indexes>
+struct MakeIndexSequence<0, Indexes...>
+{
+	using Type = IndexSequence<Indexes...>;
+};
+
 template <size_t ...Ns>
 struct MaxOfInt
 {
