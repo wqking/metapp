@@ -8,7 +8,8 @@ namespace metapp {
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (*)(Args...)>
-	: public CallableBase<RT (*)(Args...), void, RT, Args...>
+	: public DeclareMetaTypeObject<RT (*)(Args...)>,
+		public CallableBase<RT (*)(Args...), void, RT, Args...>
 {
 public:
 	using UpType = TypeList<RT, Args...>;

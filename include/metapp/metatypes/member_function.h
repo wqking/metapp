@@ -8,11 +8,14 @@ namespace metapp {
 
 template <typename Class, typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
-	: public CallableBase <RT (Class::*)(Args...), Class, RT, Args...>
+	: public DeclareMetaTypeObject<RT (Class::*)(Args...)>,
+		public CallableBase<RT (Class::*)(Args...), Class, RT, Args...>
 {
 public:
 	using UpType = TypeList <Class, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
+
+	static constexpr TypeFlags typeFlags = DeclareMetaTypeObject<RT (Class::*)(Args...)>::typeFlags | tfClassMember;
 
 };
 

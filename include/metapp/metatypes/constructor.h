@@ -21,7 +21,8 @@ struct Constructor<Class (Args...)>
 
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
-	: public CallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
+	: public DeclareMetaTypeObject<Constructor<Class (Args...)> >,
+		public CallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
 {
 public:
 	using UpType = TypeList<Class, Args...>;

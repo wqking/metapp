@@ -7,7 +7,7 @@ namespace {
 
 struct Class1
 {
-	const void * func(int, const std::vector<int> &) { return nullptr; }
+	const void * func(int, const std::vector<int> &) const { return nullptr; }
 	const std::array<int, 5> * data;
 };
 
@@ -30,6 +30,7 @@ TEST_CASE("metatypes, member function, types")
 	
 	using namespace metapp;
 	auto metaType = v.getMetaType();
+	REQUIRE(metaType->isConst());
 	REQUIRE(metaType->getBelongedClass() != nullptr);
 	REQUIRE(metaType->getBelongedClass()->getTypeKind() == 2000);
 	REQUIRE(metaType->getMetaCallable()->getParamCount() == 2);

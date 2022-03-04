@@ -9,7 +9,6 @@ namespace metapp {
 
 template <typename FT, typename Class, typename RT, typename ...Args>
 struct CallableBase
-	: public DeclareMetaTypeObject<FT>
 {
 public:
 	using FunctionType = FT;
@@ -17,10 +16,6 @@ public:
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
-
-	static constexpr TypeFlags typeFlags = DeclareMetaTypeObject<FT>::typeFlags
-		| (std::is_void<Class>::value ? 0 : tfClassMember)
-	;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(

@@ -9,7 +9,8 @@ namespace metapp {
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <std::function<RT (Args...)> >
-	: public CallableBase <std::function<RT (Args...)>, void, RT, Args...>
+	: public DeclareMetaTypeObject<std::function<RT (Args...)> >,
+		public CallableBase <std::function<RT (Args...)>, void, RT, Args...>
 {
 public:
 	using UpType = TypeList<RT, Args...>;
