@@ -1,7 +1,7 @@
 #ifndef METAPP_MEMBER_FUNCTION_H_969872685611
 #define METAPP_MEMBER_FUNCTION_H_969872685611
 
-#include "metapp/metatypes/utils/metacallablebase.h"
+#include "metapp/interfaces/bases/metacallablebase.h"
 #include "metapp/compiler.h"
 
 namespace metapp {

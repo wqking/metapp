@@ -1,5 +1,5 @@
-#ifndef METAPP_STREAMINGBASE_H_969872685611
-#define METAPP_STREAMINGBASE_H_969872685611
+#ifndef METAPP_METASTREAMINGBASE_H_969872685611
+#define METAPP_METASTREAMINGBASE_H_969872685611
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metastreaming.h"
@@ -9,7 +9,7 @@
 namespace metapp {
 
 template <typename T>
-struct StreamingBase
+struct MetaStreamingBase
 {
 public:
 	static const MetaStreaming * getMetaStreaming() {
@@ -58,16 +58,16 @@ private:
 };
 
 namespace internal_ {
-	struct DummyStreamingBase{};
+	struct DummyMetaStreamingBase{};
 } // namespace internal_
 
 template <typename T>
-using SelectStreamingBase = typename std::conditional<
+using SelectMetaStreamingBase = typename std::conditional<
 	internal_::HasInputStreamOperator<T>::value
 		| internal_::HasOutputStreamOperator<T>::value
 	,
-	StreamingBase<T>,
-	internal_::DummyStreamingBase
+	MetaStreamingBase<T>,
+	internal_::DummyMetaStreamingBase
 >::type;
 
 

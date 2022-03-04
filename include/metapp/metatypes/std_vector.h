@@ -2,8 +2,8 @@
 #define METAPP_STD_VECTOR_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metatypes/utils/metaindexablebase.h"
-#include "metapp/metatypes/utils/metaiterablebase.h"
+#include "metapp/interfaces/bases/metaindexablebase.h"
+#include "metapp/interfaces/bases/metaiterablebase.h"
 
 #include <vector>
 

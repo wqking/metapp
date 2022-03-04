@@ -4,7 +4,6 @@
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/metarepository.h"
 #include "metapp/utils/metatypedumper.h"
-#include "metapp/metatypes/utils/streamingbase.h"
 
 #include <string>
 #include <iostream>

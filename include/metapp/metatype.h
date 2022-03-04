@@ -167,12 +167,12 @@ private:
 
 #include "metapp/implement/metatype_impl.h"
 
-#include "metapp/metatypes/utils/streamingbase.h"
+#include "metapp/interfaces/bases/metastreamingbase.h"
 
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeObject : public SelectStreamingBase<T>
+struct DeclareMetaTypeObject : public SelectMetaStreamingBase<T>
 {
 private:
 	using Decayed = typename std::decay<typename std::remove_reference<T>::type>::type;

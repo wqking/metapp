@@ -2,7 +2,7 @@
 #define METAPP_STD_LIST_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metatypes/utils/metaiterablebase.h"
+#include "metapp/interfaces/bases/metaiterablebase.h"
 
 #include <list>
 

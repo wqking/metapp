@@ -3,8 +3,8 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
-#include "metapp/metatypes/utils/metaindexablebase.h"
-#include "metapp/metatypes/utils/metaiterablebase.h"
+#include "metapp/interfaces/bases/metaindexablebase.h"
+#include "metapp/interfaces/bases/metaiterablebase.h"
 
 #include <array>
 

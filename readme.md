@@ -4,12 +4,13 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 
 ## Features
 
-- Theoretically supports any C++ types, such as primary, pointer, reference, function, template, and const-volatile qualifiers.
+- Supports any C++ types, such as primary, pointer, reference, function, template, and const-volatile qualifiers.
 - Building meta data doesn't require preprocessor or any external tool. Only use native C++ code, no need macros.
 - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior, no template parameters are needed. All parameters and return values are passed via metapp::Variant.
 - Automatically type conversion when getting/setting fields, invoking methods, etc.
 - Support multiple inheritance and hierarchy.
 - Non-intrusive. You don't need to change your code for reflection.
+- Loose coupled design. For example, constructors and member functions can be used without the class information.
 - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead. If you don't use the meta data, no any performance overhead. If you build and use the meta data, you get trivial memory and performance overhead beside very powerful reflection system.
 - Doesn't require C++ RTTI.
 - Written in standard and portable C++, only require C++11, and support later C++ standard.
