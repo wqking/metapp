@@ -74,21 +74,6 @@ TypeKind getTypeKind(const Variant & v);
 template <typename T, typename U>
 Variant variantCast(const Variant & value);
 
-template <typename T>
-auto variantStreamIn(std::istream & stream, Variant & value)
-	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type;
-
-template <typename T>
-auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
-	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type;
-
-template <typename T>
-auto variantStreamOut(std::ostream & stream, const Variant & value)
-	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type;
-
-template <typename T>
-auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
-	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type;
 
 } // namespace metapp
 

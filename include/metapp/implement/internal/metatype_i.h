@@ -206,9 +206,6 @@ struct MetaMethodTable
 	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 
-	void (*streamIn)(std::istream & stream, Variant & value);
-	void (*streamOut)(std::ostream & stream, const Variant & value);
-
 	MetaInterfaceData metaInterfaceData;
 };
 

@@ -69,9 +69,6 @@ public:
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 
-	void streamIn(std::istream & stream, Variant & value) const;
-	void streamOut(std::ostream & stream, const Variant & value) const;
-
 private:
 	constexpr UnifiedType(
 		const TypeKind typeKind,
@@ -141,9 +138,6 @@ public:
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 
-	void streamIn(std::istream & stream, Variant & value) const;
-	void streamOut(std::ostream & stream, const Variant & value) const;
-
 private:
 	constexpr MetaType(
 		const UnifiedType * unifiedType,
@@ -164,8 +158,18 @@ private:
 	TypeFlags typeFlags;
 };
 
+} // namespace metapp
+
+#include "metapp/variant.h"
+
+#include "metapp/implement/metatype_impl.h"
+
+#include "metapp/metatypes/utils/streamingbase.h"
+
+namespace metapp {
+
 template <typename T>
-struct DeclareMetaTypeObject
+struct DeclareMetaTypeObject : public SelectStreamingBase<T>
 {
 private:
 	using Decayed = typename std::decay<typename std::remove_reference<T>::type>::type;
@@ -224,14 +228,6 @@ public:
 		return doCast<Decayed>(value, toMetaType);
 	}
 
-	static void streamIn(std::istream & stream, Variant & value) {
-		variantStreamIn<T>(stream, value);
-	}
-
-	static void streamOut(std::ostream & stream, const Variant & value) {
-		variantStreamOut<T>(stream, value);
-	}
-
 private:
 	template <typename U>
 	static void doDestroy(U * /*instance*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
@@ -239,14 +235,14 @@ private:
 
 	template <typename U>
 	static void doDestroy(U * instance, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
-		#endif
-				delete instance;
-		#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-		#pragma GCC diagnostic pop
-		#endif
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+#endif
+		delete instance;
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic pop
+#endif
 	}
 
 	template <typename U>
@@ -282,32 +278,6 @@ struct DeclareMetaType : public DeclareMetaTypeBase<T>
 {
 };
 
-template <typename T>
-const UnifiedType * getUnifiedType()
-{
-	using M = DeclareMetaType<T>;
-
-	static const UnifiedType unifiedType (
-		M::typeKind,
-		internal_::MetaMethodTable {
-			&M::constructData,
-
-			&M::destroy,
-
-			&M::getAddress,
-
-			&M::canCast,
-			&M::cast,
-
-			&M::streamIn,
-			&M::streamOut,
-
-			internal_::MakeMetaInterfaceData<M>::getMetaInterfaceData(),
-		}
-	);
-	return &unifiedType;
-}
-
 template <>
 struct DeclareMetaTypeBase <void> : public DeclareMetaTypeObject<void>
 {
@@ -319,10 +289,7 @@ struct DeclareMetaTypeBase <void> : public DeclareMetaTypeObject<void>
 
 };
 
+
 } // namespace metapp
-
-#include "metapp/variant.h"
-
-#include "metapp/implement/metatype_impl.h"
 
 #endif

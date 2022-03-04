@@ -1,6 +1,8 @@
 #ifndef METAPP_VARIANT_IMPL_H_969872685611
 #define METAPP_VARIANT_IMPL_H_969872685611
 
+#include "metapp/interfaces/metastreaming.h"
+
 namespace metapp {
 
 template <typename T>
@@ -151,13 +153,21 @@ inline const MetaType * Variant::getMetaType() const noexcept
 
 inline std::istream & operator >> (std::istream & stream, Variant & value)
 {
-	value.metaType->streamIn(stream, value);
+	auto metaStreaming = value.metaType->getMetaStreaming();
+	if(metaStreaming == nullptr) {
+		errorNotSupported("No << input streaming operator.");
+	}
+	metaStreaming->streamIn(stream, value);
 	return stream;
 }
 
 inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 {
-	value.metaType->streamOut(stream, value);
+	auto metaStreaming = value.metaType->getMetaStreaming();
+	if(metaStreaming == nullptr) {
+		errorNotSupported("No >> output streaming operator.");
+	}
+	metaStreaming->streamOut(stream, value);
 	return stream;
 }
 
@@ -170,36 +180,6 @@ template <typename T, typename U>
 inline Variant variantCast(const Variant & value)
 {
 	return (U)(value.get<T>());
-}
-
-template <typename T>
-inline auto variantStreamIn(std::istream & stream, Variant & value)
-	-> typename std::enable_if<internal_::HasInputStreamOperator<T>::value, void>::type
-{
-	using U = typename std::remove_reference<T>::type;
-	stream >> *static_cast<U *>(value.getAddress());
-}
-
-template <typename T>
-inline auto variantStreamIn(std::istream & /*stream*/, Variant & /*value*/)
-	-> typename std::enable_if<! internal_::HasInputStreamOperator<T>::value, void>::type
-{
-	errorNotSupported("No << input streaming operator.");
-}
-
-template <typename T>
-inline auto variantStreamOut(std::ostream & stream, const Variant & value)
-	-> typename std::enable_if<internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	using U = typename std::remove_reference<T>::type;
-	stream << *static_cast<const U *>(value.getAddress());
-}
-
-template <typename T>
-inline auto variantStreamOut(std::ostream & /*stream*/, const Variant & /*value*/)
-	-> typename std::enable_if<! internal_::HasOutputStreamOperator<T>::value, void>::type
-{
-	errorNotSupported("No >> output streaming operator.");
 }
 
 

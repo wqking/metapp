@@ -93,16 +93,6 @@ inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaT
 	return metaMethodTable.cast(value, toMetaType);
 }
 
-inline void UnifiedType::streamIn(std::istream & stream, Variant & value) const
-{
-	metaMethodTable.streamIn(stream, value);
-}
-
-inline void UnifiedType::streamOut(std::ostream & stream, const Variant & value) const
-{
-	metaMethodTable.streamOut(stream, value);
-}
-
 
 inline constexpr MetaType::MetaType(
 		const UnifiedType * unifiedType,
@@ -235,17 +225,6 @@ inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType
 	return unifiedType->cast(value, toMetaType);
 }
 
-inline void MetaType::streamIn(std::istream & stream, Variant & value) const
-{
-	unifiedType->streamIn(stream, value);
-}
-
-inline void MetaType::streamOut(std::ostream & stream, const Variant & value) const
-{
-	unifiedType->streamOut(stream, value);
-}
-
-
 namespace internal_ {
 
 template <typename T>
@@ -339,6 +318,29 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 		}
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
+}
+
+template <typename T>
+const UnifiedType * getUnifiedType()
+{
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType (
+		M::typeKind,
+		internal_::MetaMethodTable {
+			&M::constructData,
+
+			&M::destroy,
+
+			&M::getAddress,
+
+			&M::canCast,
+			&M::cast,
+
+			internal_::MakeMetaInterfaceData<M>::getMetaInterfaceData(),
+		}
+	);
+	return &unifiedType;
 }
 
 template <typename T>

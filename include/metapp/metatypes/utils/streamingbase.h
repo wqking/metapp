@@ -5,7 +5,6 @@
 #include "metapp/interfaces/metastreaming.h"
 #include "metapp/implement/internal/typeutil_i.h"
 #include "metapp/exception.h"
-#include "metapp/variant.h"
 
 namespace metapp {
 
@@ -74,6 +73,7 @@ using SelectStreamingBase = typename std::conditional<
 
 } // namespace metapp
 
+#include "metapp/variant.h"
 
 #endif
 
