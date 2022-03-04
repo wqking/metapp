@@ -2,7 +2,7 @@
 #define METAPP_ARITHMETIC_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/utilities//typelist.h"
+#include "metapp/utils/typelist.h"
 
 namespace metapp {
 

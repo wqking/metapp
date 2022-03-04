@@ -5,7 +5,7 @@
 #include "metapp/typekind.h"
 #include "metapp/metatypedata.h"
 #include "metapp/exception.h"
-#include "metapp/utilities//typelist.h"
+#include "metapp/utils/typelist.h"
 
 // The ugly macro trick is to bypass cyclic include variant.h and metatype.h
 #define METAPP_VARIANT_IMPL_H_969872685611
