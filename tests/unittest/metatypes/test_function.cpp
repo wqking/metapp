@@ -16,7 +16,7 @@ TEST_CASE("metatypes, free function, types")
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
-	REQUIRE(metaType->getBelongedClass() == nullptr);
+	REQUIRE(metaType->getMetaMember() == nullptr);
 	REQUIRE(metaType->getMetaCallable()->getParamCount() == 2);
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(), { tkPointer, tkVoid }));
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(0), { tkInt }));

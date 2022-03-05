@@ -31,8 +31,8 @@ TEST_CASE("metatypes, member function, types")
 	using namespace metapp;
 	auto metaType = v.getMetaType();
 	REQUIRE(metaType->isConst());
-	REQUIRE(metaType->getBelongedClass() != nullptr);
-	REQUIRE(metaType->getBelongedClass()->getTypeKind() == 2000);
+	REQUIRE(metaType->getMetaMember() != nullptr);
+	REQUIRE(metaType->getMetaMember()->getClassType()->getTypeKind() == 2000);
 	REQUIRE(metaType->getMetaCallable()->getParamCount() == 2);
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(), { tkPointer, tkVoid }));
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(0), { tkInt }));

@@ -160,6 +160,24 @@ struct HasFunctionGetMetaMap
 	enum { value = !! decltype(test<T>(0))() };
 };
 
+template <typename T>
+struct HasFunctionGetMetaMember
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaMember) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+template <typename T>
+struct HasFunctionGetMetaUser
+{
+	template <typename C> static std::true_type test(decltype(C::getMetaUser) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
 template <typename Result, typename TL, bool ...hasList>
 struct HelperFilterTypes
 {

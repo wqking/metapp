@@ -23,6 +23,8 @@ static constexpr MetaInterfaceKind mikMetaIndexable = (1 << 4);
 static constexpr MetaInterfaceKind mikMetaIterable = (1 << 5);
 static constexpr MetaInterfaceKind mikMetaStreaming = (1 << 6);
 static constexpr MetaInterfaceKind mikMetaMap = (1 << 7);
+static constexpr MetaInterfaceKind mikMetaMember = (1 << 8);
+static constexpr MetaInterfaceKind mikMetaUser = (1 << 9);
 
 struct MetaInterfaceItem
 {
@@ -154,6 +156,34 @@ struct MakeMetaInterfaceItem <mikMetaMap>
 	}
 };
 
+template <>
+struct MakeMetaInterfaceItem <mikMetaMember>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaMember;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaMember
+		};
+	}
+};
+
+template <>
+struct MakeMetaInterfaceItem <mikMetaUser>
+{
+	static constexpr MetaInterfaceKind kind = mikMetaUser;
+
+	template <typename M>
+	static constexpr MetaInterfaceItem make() {
+		return {
+			kind,
+			(MetaInterfaceGetter)&M::getMetaUser
+		};
+	}
+};
+
 template <typename M>
 struct MakeMetaInterfaceData
 {
@@ -166,7 +196,9 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem <mikMetaIndexable>,
 		MakeMetaInterfaceItem <mikMetaIterable>,
 		MakeMetaInterfaceItem <mikMetaStreaming>,
-		MakeMetaInterfaceItem <mikMetaMap>
+		MakeMetaInterfaceItem <mikMetaMap>,
+		MakeMetaInterfaceItem <mikMetaMember>,
+		MakeMetaInterfaceItem <mikMetaUser>
 		>,
 		HasFunctionGetMetaClass<M>::value,
 		HasFunctionGetMetaCallable<M>::value,
@@ -175,7 +207,9 @@ struct MakeMetaInterfaceData
 		HasFunctionGetMetaIndexable<M>::value,
 		HasFunctionGetMetaIterable<M>::value,
 		HasFunctionGetMetaStreaming<M>::value,
-		HasFunctionGetMetaMap<M>::value
+		HasFunctionGetMetaMap<M>::value,
+		HasFunctionGetMetaMember<M>::value,
+		HasFunctionGetMetaUser<M>::value
 	>::Type;
 
 	template <typename TL>

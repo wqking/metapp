@@ -34,6 +34,7 @@ class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
 class MetaMap;
+class MetaMember;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -61,6 +62,8 @@ public:
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
 	const MetaMap * getMetaMap() const;
+	const MetaMember * getMetaMember() const;
+	const void * getMetaUser() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
@@ -116,9 +119,6 @@ public:
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
 	
-	constexpr bool isClassMember() const noexcept;
-	const MetaType * getBelongedClass() const noexcept;
-
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
@@ -127,6 +127,8 @@ public:
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
 	const MetaMap * getMetaMap() const;
+	const MetaMember * getMetaMember() const;
+	const void * getMetaUser() const;
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;

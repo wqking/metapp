@@ -3,18 +3,17 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
+#include "metapp/interfaces/bases/metamemberbase.h"
 
 namespace metapp {
 
 template <typename Class, typename T>
 struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
-	: public DeclareMetaTypeObject<T Class::*>
+	: public DeclareMetaTypeObject<T Class::*>,
+		public MetaMemberBase<Class>
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
-	static constexpr TypeFlags typeFlags = DeclareMetaTypeObject<T Class::*>::typeFlags
-		| tfClassMember
-	;
 
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(

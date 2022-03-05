@@ -2,6 +2,7 @@
 #define METAPP_MEMBER_FUNCTION_H_969872685611
 
 #include "metapp/interfaces/bases/metacallablebase.h"
+#include "metapp/interfaces/bases/metamemberbase.h"
 #include "metapp/compiler.h"
 
 namespace metapp {
@@ -9,13 +10,12 @@ namespace metapp {
 template <typename Class, typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
 	: public DeclareMetaTypeObject<RT (Class::*)(Args...)>,
-		public MetaCallableBase<RT (Class::*)(Args...), Class, RT, Args...>
+		public MetaCallableBase<RT (Class::*)(Args...), Class, RT, Args...>,
+		public MetaMemberBase<Class>
 {
 public:
 	using UpType = TypeList <Class, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
-
-	static constexpr TypeFlags typeFlags = DeclareMetaTypeObject<RT (Class::*)(Args...)>::typeFlags | tfClassMember;
 
 };
 

@@ -56,6 +56,16 @@ inline const MetaMap * UnifiedType::getMetaMap() const
 	return static_cast<const MetaMap *>(doGetMetaInterface(internal_::mikMetaMap));
 }
 
+inline const MetaMember * UnifiedType::getMetaMember() const
+{
+	return static_cast<const MetaMember *>(doGetMetaInterface(internal_::mikMetaMember));
+}
+
+inline const void * UnifiedType::getMetaUser() const
+{
+	return static_cast<const void *>(doGetMetaInterface(internal_::mikMetaUser));
+}
+
 inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
 {
 	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
@@ -145,21 +155,6 @@ inline constexpr bool MetaType::isVolatile() const noexcept
 	return typeFlags & tfVolatile;
 }
 
-inline constexpr bool MetaType::isClassMember() const noexcept
-{
-	return typeFlags & tfClassMember;
-}
-
-inline const MetaType * MetaType::getBelongedClass() const noexcept
-{
-	if(isClassMember()) {
-		return getUpType(0);
-	}
-	else {
-		return nullptr;
-	}
-}
-
 inline const MetaClass * MetaType::getMetaClass() const
 {
 	return unifiedType->getMetaClass();
@@ -198,6 +193,16 @@ inline const MetaStreaming * MetaType::getMetaStreaming() const
 inline const MetaMap * MetaType::getMetaMap() const
 {
 	return unifiedType->getMetaMap();
+}
+
+inline const MetaMember * MetaType::getMetaMember() const
+{
+	return unifiedType->getMetaMember();
+}
+
+inline const void * MetaType::getMetaUser() const
+{
+	return unifiedType->getMetaUser();
 }
 
 inline void * MetaType::construct() const

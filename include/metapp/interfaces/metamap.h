@@ -5,6 +5,7 @@ namespace metapp {
 
 class MetaMap
 {
+public:
 };
 
 

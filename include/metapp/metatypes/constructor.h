@@ -4,6 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/interfaces/bases/metacallablebase.h"
+#include "metapp/interfaces/bases/metamemberbase.h"
 #include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
@@ -22,7 +23,8 @@ struct Constructor<Class (Args...)>
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
 	: public DeclareMetaTypeObject<Constructor<Class (Args...)> >,
-		public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>
+		public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>,
+		public MetaMemberBase<Class>
 {
 public:
 	using UpType = TypeList<Class, Args...>;
