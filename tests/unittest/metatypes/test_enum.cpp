@@ -4,8 +4,8 @@
 #include "metapp/metatypes/metatypes.h"
 
 enum EnumAnimal {
-	cat,
-	dog
+	cat = 5,
+	dog = 38
 };
 
 TEST_CASE("metatypes, enum")
@@ -14,11 +14,14 @@ TEST_CASE("metatypes, enum")
 	REQUIRE(metaType->getTypeKind() == metapp::tkEnum);
 	// the underlying type may be different, on MSVC it's tkInt, on GCC it's tkUnsignedInt
 	//REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkInt);
+	metapp::Variant v(EnumAnimal::cat);
+	REQUIRE(v.canCast<int>());
+	REQUIRE(v.cast<int>().get<int>() == 5);
 }
 
 enum class EnumHuman : char {
-	male,
-	female
+	male = 9,
+	female = 10
 };
 
 namespace metapp {
@@ -48,5 +51,10 @@ TEST_CASE("metatypes, enum class")
 	REQUIRE(metaType->getMetaEnum() != nullptr);
 	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("male")) == EnumHuman::male);
 	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("female")) == EnumHuman::female);
+
+	metapp::Variant v(EnumHuman::female);
+	REQUIRE(v.canCast<int>());
+	REQUIRE(v.cast<int>().get<int>() == 10);
+
 }
 
