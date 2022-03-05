@@ -108,6 +108,15 @@ inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaT
 	return metaMethodTable.cast(value, toMetaType);
 }
 
+inline bool UnifiedType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return metaMethodTable.canCastFrom(value, fromMetaType);
+}
+
+inline Variant UnifiedType::castFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return metaMethodTable.castFrom(value, fromMetaType);
+}
 
 inline constexpr MetaType::MetaType(
 		const UnifiedType * unifiedType,
@@ -235,9 +244,19 @@ inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType
 	return unifiedType->canCast(value, toMetaType);
 }
 
-inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const
+inline Variant MetaType::cast(const Variant & value, const MetaType * fromMetaType) const
 {
-	return unifiedType->cast(value, toMetaType);
+	return unifiedType->cast(value, fromMetaType);
+}
+
+inline bool MetaType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return unifiedType->canCastFrom(value, fromMetaType);
+}
+
+inline Variant MetaType::castFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return unifiedType->castFrom(value, fromMetaType);
 }
 
 namespace internal_ {
@@ -351,6 +370,9 @@ const UnifiedType * getUnifiedType()
 
 			&M::canCast,
 			&M::cast,
+
+			&M::canCastFrom,
+			&M::castFrom,
 
 			internal_::MakeMetaInterfaceData<M>::getMetaInterfaceData(),
 		}

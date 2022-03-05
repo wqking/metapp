@@ -257,6 +257,9 @@ struct MetaMethodTable
 	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 
+	bool (*canCastFrom)(const Variant & value, const MetaType * fromMetaType);
+	Variant (*castFrom)(const Variant & value, const MetaType * fromMetaType);
+
 	MetaInterfaceData metaInterfaceData;
 };
 

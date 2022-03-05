@@ -6,6 +6,7 @@
 #include "metapp/metatypedata.h"
 #include "metapp/exception.h"
 #include "metapp/utils/typelist.h"
+#include "metapp/utils/knowntypes.h"
 
 // The ugly macro trick is to bypass cyclic include variant.h and metatype.h
 #define METAPP_VARIANT_IMPL_H_969872685611
@@ -77,6 +78,9 @@ public:
 	
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
+	
+	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
+	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
 
 private:
 	constexpr UnifiedType(
@@ -147,6 +151,9 @@ public:
 	
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
+
+	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
+	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
 
 private:
 	constexpr MetaType(
@@ -227,12 +234,107 @@ public:
 			) {
 			return true;
 		}
+		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
+			return true;
+		}
 		return false;
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
 	{
 		return doCast<Decayed>(value, toMetaType);
+	}
+
+	struct CastFromItem
+	{
+		const UnifiedType * fromUnifiedType;
+		bool (*canCastFrom)();
+		Variant (*castFrom)(const Variant & value);
+	};
+
+	template <typename FromType>
+	struct HelperCastFrom
+	{
+		static const CastFromItem * getCastFromItem() {
+			static CastFromItem item {
+				getMetaType<FromType>()->getUnifiedType(),
+				&canCastFrom,
+				&castFrom
+			};
+			return &item;
+		}
+
+	private:
+		using ToType = Decayed;
+		static constexpr bool canCastFrom() {
+			return std::is_convertible<FromType, ToType>::value;
+		}
+
+		static Variant castFrom(const Variant & value) {
+			return doCastFrom<FromType>(value);
+		}
+
+		template <typename F>
+		static Variant doCastFrom(const Variant & value,
+			typename std::enable_if<std::is_convertible<F, ToType>::value>::type * = 0) {
+			// Seems MSVC always issues warning C4244: 'argument': conversion from 'long double' to 'const int', possible loss of data
+			// We have to supporess that warning using pragma
+#ifdef METAPP_COMPILER_VC
+#pragma warning( push )
+#pragma warning( disable : 4244 )
+#endif
+			return static_cast<ToType>(value.get<F>());
+#ifdef METAPP_COMPILER_VC
+#pragma warning( pop )
+#endif
+		}
+
+		template <typename F>
+		static Variant doCastFrom(const Variant & /*value*/,
+			typename std::enable_if<! std::is_convertible<F, ToType>::value>::type * = 0) {
+			return Variant();
+		}
+	};
+
+	template <typename ...Types>
+	static const CastFromItem ** getCastFromItemList(TypeList<Types...>)
+	{
+		static const CastFromItem * itemList[] = {
+			HelperCastFrom<Types>::getCastFromItem()...,
+			nullptr
+		};
+		return itemList;
+	}
+
+	static const CastFromItem * doFindCastFromItem(const MetaType * fromMetaType)
+	{
+		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
+		auto itemList = getCastFromItemList(AllKnownTypeList());
+		while(*itemList != nullptr) {
+			if((*itemList)->fromUnifiedType == fromUnifiedType) {
+				return *itemList;
+			}
+			++itemList;
+		}
+		return nullptr;
+	}
+
+	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
+	{
+		auto castFromItem = doFindCastFromItem(fromMetaType);
+		if(castFromItem != nullptr) {
+			return castFromItem->canCastFrom();
+		}
+		return false;
+	}
+
+	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
+	{
+		auto castFromItem = doFindCastFromItem(fromMetaType);
+		if(castFromItem != nullptr) {
+			return castFromItem->castFrom(value);
+		}
+		return Variant();
 	}
 
 private:
@@ -269,6 +371,9 @@ private:
 			&& fromMetaType->canCast(value, toMetaType->getUpType())
 			) {
 			return fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
+			return toMetaType->castFrom(value, getMetaType<T>());
 		}
 		errorBadCast();
 		return Variant();

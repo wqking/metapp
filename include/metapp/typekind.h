@@ -161,6 +161,11 @@ inline std::string getNameByTypeKind(const TypeKind typeKind)
 	return "";
 }
 
+inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
+{
+	return typeKind >= tkArithmeticBegin && typeKind <= tkArithmeticEnd;
+}
+
 inline constexpr bool typeKindIsInteger(const TypeKind typeKind)
 {
 	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;

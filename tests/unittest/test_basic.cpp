@@ -11,8 +11,16 @@
 
 namespace {
 
+template <typename T, typename F>
+T xxx(F n)
+{
+	return static_cast<T>(n);
+}
+
 TEST_CASE("play camp")
 {
+	const int n = xxx<const int>((long double)5);
+	std::cout << n;
 	//metapp::MetaTypeDumper().dump(std::cout, metapp::getMetaType<std::vector<const char * volatile * (*)(int)> >());
 }
 

@@ -3,27 +3,13 @@
 
 #include "metapp/metatype.h"
 #include "metapp/utils/typelist.h"
+#include "metapp/utils/knowntypes.h"
 
 namespace metapp {
 
-namespace internal_ {
-
-using ArithmeticTypeList = TypeList<
-	bool,
-	char, wchar_t,
-	signed char, unsigned char,
-	short, unsigned short,
-	int, unsigned int,
-	long, unsigned long,
-	long long, unsigned long long,
-	float, double, long double
->;
-
-} // namespace internal_
-
 template <typename T>
 struct DeclareMetaTypeBase <T,
-	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type> : public DeclareMetaTypeObject<T>
+	typename std::enable_if<TypeListIn<ArithmeticTypeList, T>::value>::type> : public DeclareMetaTypeObject<T>
 {
 private:
 	using super = DeclareMetaTypeObject<T>;
@@ -34,7 +20,7 @@ private:
 	}
 
 public:
-	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
+	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<ArithmeticTypeList, T>::value);
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
 		return doCanCastArithmetic(toMetaType) || super::canCast(value, toMetaType);
@@ -42,7 +28,7 @@ public:
 
 	using CastFunc = Variant (*)(const Variant & value);
 	static const CastFunc * getCastFunctions() {
-		static const std::array<CastFunc, TypeListCount<internal_::ArithmeticTypeList>::value> castFunctions {
+		static const std::array<CastFunc, TypeListCount<ArithmeticTypeList>::value> castFunctions {
 			&variantCast<T, bool>,
 			&variantCast<T, char>, &variantCast<T, wchar_t>,
 			&variantCast<T, signed char>, &variantCast<T, unsigned char>,

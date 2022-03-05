@@ -88,6 +88,17 @@ struct TypeListAppend <TypeList<Args...>, T>
 	using Type = TypeList<Args..., T>;
 };
 
+template <typename TL1, typename TL2>
+struct TypeListConcat
+{
+};
+
+template <typename ...A, typename ...B>
+struct TypeListConcat <TypeList<A...>, TypeList<B...> >
+{
+	using Type = TypeList<A..., B...>;
+};
+
 
 } // namespace metapp
 

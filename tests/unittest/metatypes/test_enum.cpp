@@ -52,9 +52,17 @@ TEST_CASE("metatypes, enum class")
 	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("male")) == EnumHuman::male);
 	REQUIRE(EnumHuman(metaType->getMetaEnum()->getValue("female")) == EnumHuman::female);
 
-	metapp::Variant v(EnumHuman::female);
-	REQUIRE(v.canCast<int>());
-	REQUIRE(v.cast<int>().get<int>() == 10);
+	{
+		metapp::Variant v(EnumHuman::female);
+		REQUIRE(v.canCast<int>());
+		REQUIRE(v.cast<int>().get<int>() == 10);
+	}
+
+	{
+		metapp::Variant v(9);
+		REQUIRE(v.canCast<EnumHuman>());
+		REQUIRE(v.cast<EnumHuman>().get<EnumHuman>() == EnumHuman::male);
+	}
 
 }
 
