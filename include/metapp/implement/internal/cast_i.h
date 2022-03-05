@@ -8,27 +8,7 @@ namespace internal_ {
 template <typename MyType>
 struct CastFrom
 {
-	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
-	{
-		auto castFromItem = findCastFromItem(fromMetaType);
-		if(castFromItem != nullptr) {
-			return castFromItem->canCastFrom();
-		}
-		return false;
-	}
-
-	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
-	{
-		auto castFromItem = findCastFromItem(fromMetaType);
-		if(castFromItem != nullptr) {
-			return castFromItem->castFrom(value);
-		}
-		return Variant();
-	}
-
 private:
-	using Decayed = MyType;
-
 	struct CastFromItem
 	{
 		const UnifiedType * fromUnifiedType;
@@ -36,16 +16,37 @@ private:
 		Variant (*castFrom)(const Variant & value);
 	};
 
+public:
+	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
+	{
+		auto castFromItem = findCastFromItem(fromMetaType);
+		if(castFromItem.fromUnifiedType != nullptr) {
+			return castFromItem.canCastFrom();
+		}
+		return false;
+	}
+
+	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
+	{
+		auto castFromItem = findCastFromItem(fromMetaType);
+		if(castFromItem.fromUnifiedType != nullptr) {
+			return castFromItem.castFrom(value);
+		}
+		return Variant();
+	}
+
+private:
+	using Decayed = MyType;
+
 	template <typename FromType>
 	struct HelperCastFrom
 	{
-		static const CastFromItem * getCastFromItem() {
-			static CastFromItem item {
+		static CastFromItem getCastFromItem() {
+			return CastFromItem {
 				getMetaType<FromType>()->getUnifiedType(),
 				&canCastFrom,
 				&castFrom
 			};
-			return &item;
 		}
 
 	private:
@@ -72,33 +73,32 @@ private:
 	};
 
 	template <typename ...Types>
-	static const CastFromItem ** getCastFromItemList(TypeList<Types...>)
+	static CastFromItem doFindCastFromItemHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		static const CastFromItem * itemList[] = {
+		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
+		static const CastFromItem itemList[] = {
 			HelperCastFrom<Types>::getCastFromItem()...,
-			nullptr
+			CastFromItem {}
 		};
-		return itemList;
+		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]); ++i) {
+			if(itemList[i].fromUnifiedType == fromUnifiedType) {
+				return itemList[i];
+			}
+		}
+		return CastFromItem {};
 	}
 
 	template <typename ...Types>
-	static const CastFromItem * doFindCastFromItem(const MetaType * fromMetaType, TypeList<Types...>)
+	static CastFromItem doFindCastFromItem(const MetaType * fromMetaType, TypeList<Types...>)
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
 			std::is_convertible<Types, Decayed>::value...
 		>::Type;
-		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
-		auto itemList = getCastFromItemList(TL());
-		while(*itemList != nullptr) {
-			if((*itemList)->fromUnifiedType == fromUnifiedType) {
-				return *itemList;
-			}
-			++itemList;
-		}
-		return nullptr;
+		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
-	static const CastFromItem * findCastFromItem(const MetaType * fromMetaType)
+
+	static CastFromItem findCastFromItem(const MetaType * fromMetaType)
 	{
 		return doFindCastFromItem(fromMetaType, AllKnownTypeList());
 	}
@@ -108,27 +108,7 @@ private:
 template <typename MyType>
 struct CastTo
 {
-	static bool canCastTo(const Variant & /*value*/, const MetaType * toMetaType)
-	{
-		auto castToItem = findCastToItem(toMetaType);
-		if(castToItem != nullptr) {
-			return castToItem->canCastTo();
-		}
-		return false;
-	}
-
-	static Variant castTo(const Variant & value, const MetaType * toMetaType)
-	{
-		auto castToItem = findCastToItem(toMetaType);
-		if(castToItem != nullptr) {
-			return castToItem->castTo(value);
-		}
-		return Variant();
-	}
-
 private:
-	using Decayed = MyType;
-
 	struct CastToItem
 	{
 		const UnifiedType * toUnifiedType;
@@ -136,16 +116,37 @@ private:
 		Variant (*castTo)(const Variant & value);
 	};
 
+public:
+	static bool canCastTo(const Variant & /*value*/, const MetaType * toMetaType)
+	{
+		auto castToItem = findCastToItem(toMetaType);
+		if(castToItem.toUnifiedType != nullptr) {
+			return castToItem.canCastTo();
+		}
+		return false;
+	}
+
+	static Variant castTo(const Variant & value, const MetaType * toMetaType)
+	{
+		auto castToItem = findCastToItem(toMetaType);
+		if(castToItem.toUnifiedType != nullptr) {
+			return castToItem.castTo(value);
+		}
+		return Variant();
+	}
+
+private:
+	using Decayed = MyType;
+
 	template <typename ToType>
 	struct HelperCastTo
 	{
-		static const CastToItem * getCastToItem() {
-			static CastToItem item {
+		static CastToItem getCastToItem() {
+			return CastToItem {
 				getMetaType<ToType>()->getUnifiedType(),
 				&canCastTo,
 				&castTo
 			};
-			return &item;
 		}
 
 	private:
@@ -172,33 +173,32 @@ private:
 	};
 
 	template <typename ...Types>
-	static const CastToItem ** getCastToItemList(TypeList<Types...>)
+	static CastToItem doFindCastToItemHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		static const CastToItem * itemList[] = {
+		const UnifiedType * toUnifiedType = toMetaType->getUnifiedType();
+		static const CastToItem itemList[] = {
 			HelperCastTo<Types>::getCastToItem()...,
-			nullptr
+			CastToItem {}
 		};
-		return itemList;
+		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]); ++i) {
+			if(itemList[i].toUnifiedType == toUnifiedType) {
+				return itemList[i];
+			}
+		}
+		return CastToItem {};
 	}
 
 	template <typename ...Types>
-	static const CastToItem * doFindCastToItem(const MetaType * toMetaType, TypeList<Types...>)
+	static CastToItem doFindCastToItem(const MetaType * toMetaType, TypeList<Types...>)
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
 			std::is_convertible<Decayed, Types>::value...
 		>::Type;
-		const UnifiedType * toUnifiedType = toMetaType->getUnifiedType();
-		auto itemList = getCastToItemList(TL());
-		while(*itemList != nullptr) {
-			if((*itemList)->toUnifiedType == toUnifiedType) {
-				return *itemList;
-			}
-			++itemList;
-		}
-		return nullptr;
+		return doFindCastToItemHelper(toMetaType, TL());
 	}
-	static const CastToItem * findCastToItem(const MetaType * toMetaType)
+
+	static CastToItem findCastToItem(const MetaType * toMetaType)
 	{
 		return doFindCastToItem(toMetaType, AllKnownTypeList());
 	}
