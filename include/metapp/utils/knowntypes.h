@@ -2,8 +2,13 @@
 #define METAPP_KNOWNTYPES_H_969872685611
 
 #include "metapp/utils/typelist.h"
+#include "metapp/compiler.h"
 
 #include <string>
+
+#ifdef METAPP_SUPPORT_STANDARD_17
+#include <any>
+#endif
 
 namespace metapp {
 
@@ -19,8 +24,13 @@ using ArithmeticTypeList = TypeList<
 >;
 
 using OtherKnowTypeList = TypeList<
+#ifdef METAPP_SUPPORT_STANDARD_17
+	std::any,
+#endif
 	std::string, std::wstring,
-	const char *, const wchar_t 
+	const char *, const wchar_t *,
+	char *, wchar_t *,
+	char[], wchar_t[]
 >;
 
 using AllKnownTypeList = typename TypeListConcat<ArithmeticTypeList, OtherKnowTypeList>::Type;

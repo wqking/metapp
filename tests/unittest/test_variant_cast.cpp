@@ -79,5 +79,41 @@ TEST_CASE("Variant, cast Derived & to MyClass &")
 	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
 }
 
+struct ImplictConstruct
+{
+	ImplictConstruct(const std::string & text) : text(text) {}
+
+	std::string text;
+};
+
+TEST_CASE("Variant, implicitly cast std::string to ImplictConstruct")
+{
+	metapp::Variant v(std::string("abc"));
+	REQUIRE(v.canCast<ImplictConstruct>());
+	REQUIRE(v.cast<ImplictConstruct>().get<ImplictConstruct &>().text == "abc");
+}
+
+#if 0
+struct ImplicitTypeCast
+{
+	int value;
+
+	operator int () const {
+		return value;
+	}
+};
+
+TEST_CASE("Variant, implicitly cast ImplicitTypeCast to int")
+{
+	ImplicitTypeCast xxx {5};
+	int n = xxx;
+	REQUIRE(n == 5);
+	metapp::Variant v(ImplicitTypeCast {38});
+	v.canCast<int>();
+	REQUIRE(v.canCast<int>());
+	REQUIRE(v.cast<int>().get<int>() == 38);
+}
+#endif
+
 
 } // namespace

@@ -175,10 +175,9 @@ private:
 } // namespace metapp
 
 #include "metapp/variant.h"
-
 #include "metapp/implement/metatype_impl.h"
-
 #include "metapp/interfaces/bases/metastreamingbase.h"
+#include "metapp/implement/internal/cast_i.h"
 
 namespace metapp {
 
@@ -201,10 +200,10 @@ public:
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return new Decayed();
+				return doConstructDefault<Decayed>();
 			}
 			else {
-				return new Decayed(*(Decayed *)copyFrom);
+				return doConstructCopy<Decayed>(copyFrom);
 			}
 		}
 	}
@@ -245,99 +244,47 @@ public:
 		return doCast<Decayed>(value, toMetaType);
 	}
 
-	struct CastFromItem
+	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType)
 	{
-		const UnifiedType * fromUnifiedType;
-		bool (*canCastFrom)();
-		Variant (*castFrom)(const Variant & value);
-	};
-
-	template <typename FromType>
-	struct HelperCastFrom
-	{
-		static const CastFromItem * getCastFromItem() {
-			static CastFromItem item {
-				getMetaType<FromType>()->getUnifiedType(),
-				&canCastFrom,
-				&castFrom
-			};
-			return &item;
-		}
-
-	private:
-		using ToType = Decayed;
-		static constexpr bool canCastFrom() {
-			return std::is_convertible<FromType, ToType>::value;
-		}
-
-		static Variant castFrom(const Variant & value) {
-			return doCastFrom<FromType>(value);
-		}
-
-		template <typename F>
-		static Variant doCastFrom(const Variant & value,
-			typename std::enable_if<std::is_convertible<F, ToType>::value>::type * = 0) {
-			// Seems MSVC always issues warning C4244: 'argument': conversion from 'long double' to 'const int', possible loss of data
-			// We have to supporess that warning using pragma
-#ifdef METAPP_COMPILER_VC
-#pragma warning( push )
-#pragma warning( disable : 4244 )
-#endif
-			return static_cast<ToType>(value.get<F>());
-#ifdef METAPP_COMPILER_VC
-#pragma warning( pop )
-#endif
-		}
-
-		template <typename F>
-		static Variant doCastFrom(const Variant & /*value*/,
-			typename std::enable_if<! std::is_convertible<F, ToType>::value>::type * = 0) {
-			return Variant();
-		}
-	};
-
-	template <typename ...Types>
-	static const CastFromItem ** getCastFromItemList(TypeList<Types...>)
-	{
-		static const CastFromItem * itemList[] = {
-			HelperCastFrom<Types>::getCastFromItem()...,
-			nullptr
-		};
-		return itemList;
-	}
-
-	static const CastFromItem * doFindCastFromItem(const MetaType * fromMetaType)
-	{
-		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
-		auto itemList = getCastFromItemList(AllKnownTypeList());
-		while(*itemList != nullptr) {
-			if((*itemList)->fromUnifiedType == fromUnifiedType) {
-				return *itemList;
-			}
-			++itemList;
-		}
-		return nullptr;
-	}
-
-	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
-	{
-		auto castFromItem = doFindCastFromItem(fromMetaType);
-		if(castFromItem != nullptr) {
-			return castFromItem->canCastFrom();
-		}
-		return false;
+		return internal_::CastFrom<Decayed>::canCastFrom(value, fromMetaType);
 	}
 
 	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
 	{
-		auto castFromItem = doFindCastFromItem(fromMetaType);
-		if(castFromItem != nullptr) {
-			return castFromItem->castFrom(value);
-		}
-		return Variant();
+		return internal_::CastFrom<Decayed>::castFrom(value, fromMetaType);
 	}
 
 private:
+	template <typename U>
+	static void * doConstructDefault(
+		typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
+	) {
+		return new U();
+	}
+
+	template <typename U>
+	static void * doConstructDefault(
+		typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
+	) {
+		return nullptr;
+	}
+
+	template <typename U>
+	static void * doConstructCopy(
+		const void * copyFrom,
+		typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
+	) {
+		return new U(*(U *)copyFrom);
+	}
+
+	template <typename U>
+	static void * doConstructCopy(
+		const void * /*copyFrom*/,
+		typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
+	) {
+		return nullptr;
+	}
+
 	template <typename U>
 	static void doDestroy(U * /*instance*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
 	}

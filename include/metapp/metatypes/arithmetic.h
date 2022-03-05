@@ -27,23 +27,17 @@ public:
 	}
 
 	using CastFunc = Variant (*)(const Variant & value);
-	static const CastFunc * getCastFunctions() {
+	template <typename ...Types>
+	static const CastFunc * getCastFunctions(TypeList<Types...>) {
 		static const std::array<CastFunc, TypeListCount<ArithmeticTypeList>::value> castFunctions {
-			&variantCast<T, bool>,
-			&variantCast<T, char>, &variantCast<T, wchar_t>,
-			&variantCast<T, signed char>, &variantCast<T, unsigned char>,
-			&variantCast<T, short>, &variantCast<T, unsigned short>,
-			&variantCast<T, int>, &variantCast<T, unsigned int>,
-			&variantCast<T, long>, &variantCast<T, unsigned long>,
-			&variantCast<T, long long>, &variantCast<T, unsigned long long>,
-			&variantCast<T, float>, &variantCast<T, double>, &variantCast<T, long double>
+			&variantCast<T, Types>...
 		};
 		return castFunctions.data();
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
 		if(doCanCastArithmetic(toMetaType)) {
-			return getCastFunctions()[toMetaType->getTypeKind() - tkArithmeticBegin](value);
+			return getCastFunctions(ArithmeticTypeList())[toMetaType->getTypeKind() - tkArithmeticBegin](value);
 		}
 		else {
 			return super::cast(value, toMetaType);
