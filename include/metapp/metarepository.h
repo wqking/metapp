@@ -12,14 +12,14 @@ public:
 	MetaRepository();
 	~MetaRepository() = default;
 
+	MetaRepository(const MetaRepository &) = delete;
+	MetaRepository(MetaRepository &&) = delete;
+
 	MetaRepository * addRepository(const std::string & name);
 
 	std::vector<std::string> getRepositionNameList() const;
 
 private:
-	MetaRepository(const MetaRepository &) = delete;
-	MetaRepository(MetaRepository &&) = delete;
-
 	void registerBuiltinTypes();
 
 private:

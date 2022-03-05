@@ -50,6 +50,10 @@ bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaT
 class UnifiedType
 {
 public:
+	UnifiedType() = delete;
+	UnifiedType(const UnifiedType &) = delete;
+	UnifiedType(UnifiedType &&) = delete;
+
 	~UnifiedType() = default;
 
 	TypeKind getTypeKind() const noexcept;
@@ -79,9 +83,6 @@ private:
 		const TypeKind typeKind,
 		const internal_::MetaMethodTable & metaMethodTable
 	) noexcept;
-	UnifiedType() = delete;
-	UnifiedType(const UnifiedType &) = delete;
-	UnifiedType(UnifiedType &&) = delete;
 
 	template <typename T>
 	friend const UnifiedType * getUnifiedType();
@@ -106,6 +107,10 @@ auto doGetMetaType()
 class MetaType
 {
 public:
+	MetaType() = delete;
+	MetaType(const MetaType &) = delete;
+	MetaType(MetaType &&) = delete;
+
 	~MetaType() = default;
 
 	const UnifiedType * getUnifiedType() const noexcept;
@@ -149,9 +154,6 @@ private:
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
-	MetaType() = delete;
-	MetaType(const MetaType &) = delete;
-	MetaType(MetaType &&) = delete;
 
 	template <typename T>
 	friend auto internal_::doGetMetaType()

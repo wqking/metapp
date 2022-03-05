@@ -10,6 +10,8 @@ class MetaIndexable
 public:
 	enum { unknowSize = (size_t)-1 };
 
+	MetaIndexable() = delete;
+
 	MetaIndexable(
 		size_t (*getSize)(const Variant & value),
 		Variant (*getAt)(const Variant & value, const size_t index)
@@ -21,8 +23,6 @@ public:
 	size_t (*getSize)(const Variant & value);
 	Variant (*getAt)(const Variant & value, const size_t index);
 
-private:
-	MetaIndexable() = delete;
 };
 
 
