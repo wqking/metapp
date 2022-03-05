@@ -93,7 +93,6 @@ TEST_CASE("Variant, implicitly cast std::string to ImplictConstruct")
 	REQUIRE(v.cast<ImplictConstruct>().get<ImplictConstruct &>().text == "abc");
 }
 
-#if 0
 struct ImplicitTypeCast
 {
 	int value;
@@ -113,7 +112,6 @@ TEST_CASE("Variant, implicitly cast ImplicitTypeCast to int")
 	REQUIRE(v.canCast<int>());
 	REQUIRE(v.cast<int>().get<int>() == 38);
 }
-#endif
 
 
 } // namespace

@@ -233,6 +233,9 @@ public:
 			) {
 			return true;
 		}
+		if(internal_::CastTo<Decayed>::canCastTo(value, toMetaType)) {
+			return true;
+		}
 		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
 			return true;
 		}
@@ -318,6 +321,9 @@ private:
 			&& fromMetaType->canCast(value, toMetaType->getUpType())
 			) {
 			return fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		if(internal_::CastTo<Decayed>::canCastTo(value, toMetaType)) {
+			return internal_::CastTo<Decayed>::castTo(value, toMetaType);
 		}
 		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
 			return toMetaType->castFrom(value, getMetaType<T>());
