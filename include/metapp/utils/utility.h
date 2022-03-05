@@ -3,6 +3,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatype.h"
+#include "metapp/utils/typelist.h"
 
 #include <type_traits>
 
@@ -46,6 +47,27 @@ inline const MetaType * getNonReferenceUpType(const MetaType * metaType)
 	}
 	return metaType;
 }
+
+template <typename ...Types>
+inline const MetaType * getMetaTypeAt(const size_t index)
+{
+	const MetaType * metaTypeList[] = {
+		getMetaType<Types>()...,
+		nullptr
+	};
+	return metaTypeList[index];
+}
+
+template <typename ...Types>
+inline const MetaType * getMetaTypeAt(const size_t index, const TypeList<Types...> &)
+{
+	const MetaType * metaTypeList[] = {
+		getMetaType<Types>()...,
+		nullptr
+	};
+	return metaTypeList[index];
+}
+
 
 } // namespace metapp
 

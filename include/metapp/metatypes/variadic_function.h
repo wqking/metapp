@@ -5,6 +5,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/metatypes/utils/declareutil.h"
+#include "metapp/utils/utility.h"
 
 namespace metapp {
 
@@ -56,25 +57,42 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			getMetaType<FunctionType>()->getUpType(),
-			&rankInvoke,
-			&canInvoke,
-			&invoke
+			&metaCallableGetParamCount,
+			&metaCallableGetReturnType,
+			&metaCallableGetParamType,
+			&metaCallableRankInvoke,
+			&metaCallableCanInvoke,
+			&metaCallableInvoke
 		);
 		return &metaCallable;
 	}
 
-	static int rankInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static size_t metaCallableGetParamCount()
+	{
+		return 0;
+	}
+
+	static const MetaType * metaCallableGetReturnType()
+	{
+		return getMetaType<ReturnType>();
+	}
+
+	static const MetaType * metaCallableGetParamType(const size_t /*index*/)
+	{
+		return nullptr;
+	}
+
+	static int metaCallableRankInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		return 1;
 	}
 
-	static bool canInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static bool metaCallableCanInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		return true;
 	}
 
-	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		Variant newArguments[2] = { arguments, argumentCount };
 

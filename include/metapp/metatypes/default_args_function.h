@@ -5,6 +5,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/metatypes/utils/declareutil.h"
+#include "metapp/utils/utility.h"
 
 #include <vector>
 #include <initializer_list>
@@ -85,10 +86,12 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			getMetaType<FunctionType>(),
-			&rankInvoke,
-			&canInvoke,
-			&invoke
+			&metaCallableGetParamCount,
+			&metaCallableGetReturnType,
+			&metaCallableGetParamType,
+			&metaCallableRankInvoke,
+			&metaCallableCanInvoke,
+			&metaCallableInvoke
 		);
 		return &metaCallable;
 	}
@@ -98,7 +101,22 @@ public:
 		return argumentCount >= argsCount - defaultArgsCount && argumentCount <= argsCount;
 	}
 
-	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
+	static size_t metaCallableGetParamCount()
+	{
+		return argsCount;
+	}
+
+	static const MetaType * metaCallableGetReturnType()
+	{
+		return getMetaType<ReturnType>();
+	}
+
+	static const MetaType * metaCallableGetParamType(const size_t index)
+	{
+		return getMetaTypeAt(index, ArgumentTypeList());
+	}
+
+	static int metaCallableRankInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		if(! isValidArgumentCount(argumentCount)) {
 			return 0;
@@ -107,7 +125,7 @@ public:
 		return MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		if(! isValidArgumentCount(argumentCount)) {
 			return false;
@@ -116,7 +134,7 @@ public:
 		return MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		if(! isValidArgumentCount(argumentCount)) {
 			errorIllegalArgument();

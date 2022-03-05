@@ -4,6 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/metatypes/utils/declareutil.h"
+#include "metapp/utils/utility.h"
 
 namespace metapp {
 
@@ -19,15 +20,32 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			getMetaType<FT>(),
-			&rankInvoke,
-			&canInvoke,
-			&invoke
+			&metaCallableGetParamCount,
+			&metaCallableGetReturnType,
+			&metaCallableGetParamType,
+			&metaCallableRankInvoke,
+			&metaCallableCanInvoke,
+			&metaCallableInvoke
 		);
 		return &metaCallable;
 	}
 
-	static int rankInvoke(const Variant * arguments, const size_t argumentCount)
+	static size_t metaCallableGetParamCount()
+	{
+		return argsCount;
+	}
+
+	static const MetaType * metaCallableGetReturnType()
+	{
+		return getMetaType<RT>();
+	}
+
+	static const MetaType * metaCallableGetParamType(const size_t index)
+	{
+		return getMetaTypeAt<Args...>(index);
+	}
+
+	static int metaCallableRankInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return 0;
@@ -35,7 +53,7 @@ public:
 		return MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool canInvoke(const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return false;
@@ -43,7 +61,7 @@ public:
 		return MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			errorIllegalArgument();

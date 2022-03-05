@@ -11,39 +11,30 @@ class MetaCallable
 {
 public:
 	MetaCallable(
-		const MetaType * metaType,
+		size_t (*getParamCount)(),
+		const MetaType * (*getReturnType)(),
+		const MetaType * (*getParamType)(const size_t index),
 		int (*rankInvoke)(const Variant * arguments, const size_t argumentCount),
 		bool (*canInvoke)(const Variant * arguments, const size_t argumentCount),
 		Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
+			getParamCount(getParamCount),
+			getReturnType(getReturnType),
+			getParamType(getParamType),
 			rankInvoke(rankInvoke),
 			canInvoke(canInvoke),
-			invoke(invoke),
-			metaType(metaType),
-			classOffset(metaType->isClassMember() ? 0 : -1)
+			invoke(invoke)
 	{
 	}
 
-	size_t getParamCount() const {
-		return metaType->getUpTypeCount() - 1 - (classOffset + 1);
-	}
-
-	const MetaType * getReturnType() const {
-		return metaType->getUpType(classOffset + 1);
-	}
-
-	const MetaType * getParamType(const size_t index) const {
-		return metaType->getUpType(classOffset + 2 + index);
-	}
+	size_t (*getParamCount)();
+	const MetaType * (*getReturnType)();
+	const MetaType * (*getParamType)(const size_t index);
 
 	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
-
-private:
-	const MetaType * metaType;
-	int classOffset;
 };
 
 
