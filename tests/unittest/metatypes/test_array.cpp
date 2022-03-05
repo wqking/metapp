@@ -14,9 +14,9 @@ TEST_CASE("metatypes, int[]")
 
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == metapp::MetaIndexable::unknowSize);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<int>() == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<int>() == 8);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<int>() == 9);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 3);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 8);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 9);
 }
 
 TEST_CASE("metatypes, std::string[3]")
@@ -30,9 +30,9 @@ TEST_CASE("metatypes, std::string[3]")
 
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<const std::string &>() == "good");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<const std::string &>() == "great");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<const std::string &>() == "perfect");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
 }
 
 TEST_CASE("metatypes, int[], constness")

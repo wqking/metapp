@@ -14,14 +14,14 @@ public:
 
 	MetaIndexable(
 		size_t (*getSize)(const Variant & value),
-		Variant (*getAt)(const Variant & value, const size_t index)
+		Variant (*get)(const Variant & value, const size_t index)
 	)
-		: getSize(getSize), getAt(getAt)
+		: getSize(getSize), get(get)
 	{
 	}
 
 	size_t (*getSize)(const Variant & value);
-	Variant (*getAt)(const Variant & value, const size_t index);
+	Variant (*get)(const Variant & value, const size_t index);
 
 };
 

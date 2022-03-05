@@ -40,6 +40,7 @@ private:
 	static void doStreamIn(std::istream & /*stream*/, Variant & /*value*/,
 		typename std::enable_if<! internal_::HasInputStreamOperator<U>::value >::type * = 0) {
 		errorNotSupported("No << input streaming operator.");
+		return;
 	}
 
 	template <typename U>
@@ -53,6 +54,7 @@ private:
 	static void doStreamOut(std::ostream & /*stream*/, Variant & /*value*/,
 		typename std::enable_if<! internal_::HasOutputStreamOperator<U>::value >::type * = 0) {
 		errorNotSupported("No >> output streaming operator.");
+		return;
 	}
 
 };

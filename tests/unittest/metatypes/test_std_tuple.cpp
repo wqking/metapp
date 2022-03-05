@@ -27,9 +27,9 @@ TEST_CASE("metatypes, std::tuple, MetaIndexable")
 	auto metaIndexable = metaType->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(metaIndexable->getSize(v) == 3);
-	REQUIRE(metaIndexable->getAt(v, 0).get<const std::string &>() == "hello");
-	REQUIRE(metaIndexable->getAt(v, 1).get<int>() == 5);
-	REQUIRE(metaIndexable->getAt(v, 2).get<long>() == 38);
+	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "hello");
+	REQUIRE(metaIndexable->get(v, 1).get<int>() == 5);
+	REQUIRE(metaIndexable->get(v, 2).get<long>() == 38);
 }
 
 TEST_CASE("metatypes, std::tuple, MetaIterable")

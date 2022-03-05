@@ -23,11 +23,11 @@ TEST_CASE("metatypes, std::array<int, 5>, MetaIndexable")
 	metapp::Variant v(std::array<int, 5>{ 38, 98, 5, 16, 99 });
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<int>() == 38);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<int>() == 98);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<int>() == 5);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 3).get<int>() == 16);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 4).get<int>() == 99);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 38);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 98);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 3).get<int>() == 16);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 4).get<int>() == 99);
 }
 
 TEST_CASE("metatypes, std::array<int, 5>, MetaIterable")

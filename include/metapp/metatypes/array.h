@@ -19,7 +19,7 @@ struct DeclareMetaTypeArrayBase
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGetAt
+			&metaIndexableGet
 		);
 		return &metaIndexable;
 	}
@@ -30,7 +30,7 @@ private:
 		return length;
 	}
 
-	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & value, const size_t index)
 	{
 		return Variant::create<
 			typename std::remove_pointer<

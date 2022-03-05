@@ -65,6 +65,7 @@ public:
 	{
 		if(argumentCount != argsCount) {
 			errorIllegalArgument();
+			return Variant();
 		}
 
 		FunctionType f = func.get<FunctionType &>();

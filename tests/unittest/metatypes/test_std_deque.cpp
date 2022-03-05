@@ -24,9 +24,9 @@ TEST_CASE("metatypes, std::deque<std::string>, MetaIndexable")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdDeque);
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 0).get<const std::string &>() == "good");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 1).get<const std::string &>() == "great");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getAt(v, 2).get<const std::string &>() == "perfect");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
+	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
 }
 
 TEST_CASE("metatypes, std::deque<std::string>, MetaIterable")

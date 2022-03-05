@@ -191,6 +191,7 @@ inline std::istream & operator >> (std::istream & stream, Variant & value)
 	auto metaStreaming = value.metaType->getMetaStreaming();
 	if(metaStreaming == nullptr) {
 		errorNotSupported("No << input streaming operator.");
+		return stream;
 	}
 	metaStreaming->streamIn(stream, value);
 	return stream;
@@ -201,6 +202,7 @@ inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 	auto metaStreaming = value.metaType->getMetaStreaming();
 	if(metaStreaming == nullptr) {
 		errorNotSupported("No >> output streaming operator.");
+		return stream;
 	}
 	metaStreaming->streamOut(stream, value);
 	return stream;

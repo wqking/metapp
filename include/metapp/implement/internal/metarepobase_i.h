@@ -71,6 +71,7 @@ public:
 	void addMethod(const std::string & name, const Variant & method) {
 		if(method.getMetaType()->getMetaCallable() == nullptr) {
 			errorWrongMetaType();
+			return;
 		}
 		std::shared_ptr<MethodList> methodList;
 		auto it = methodListMap.find(name);
@@ -99,6 +100,7 @@ public:
 	void addField(const std::string & name, const Variant & field) {
 		if(field.getMetaType()->getMetaAccessible() == nullptr) {
 			errorWrongMetaType();
+			return;
 		}
 		fieldMap[name]= field;
 	}

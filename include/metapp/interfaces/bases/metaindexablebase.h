@@ -12,7 +12,7 @@ struct MetaIndexableBase
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGetAt
+			&metaIndexableGet
 		);
 		return &metaIndexable;
 	}
@@ -23,7 +23,7 @@ private:
 		return value.get<ContainerType &>().size();
 	}
 
-	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & value, const size_t index)
 	{
 		using ValueType = decltype(std::declval<ContainerType &>()[0]);
 		return Variant::create<ValueType>(value.get<ContainerType &>()[index]);

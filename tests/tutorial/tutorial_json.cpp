@@ -92,9 +92,9 @@ private:
 				firstItem = false;
 				doDumpIndent(level + 1);
 				auto indexable = metapp::getNonReferenceUpType(item.getMetaType())->getMetaIndexable();
-				doDumpString(indexable->getAt(item, 0).cast<std::string>().get<std::string>());
+				doDumpString(indexable->get(item, 0).cast<std::string>().get<std::string>());
 				stream << ": ";
-				doDump(indexable->getAt(item, 1), level + 1);
+				doDump(indexable->get(item, 1), level + 1);
 
 				return true;
 			}

@@ -62,6 +62,10 @@ public:
 	using super::super;
 };
 
+// When calling errorXXX function, the caller should put a "return" after the call,
+// because if exception is disabled, no exception will be throw and the execute flow
+// may coninue if there is no "return".
+
 #ifdef METAPP_EXCEPTION_ENABLED
 
 inline void errorNotSupported(const std::string & message = "Not supported")

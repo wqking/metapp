@@ -20,7 +20,7 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGetAt
+			&metaIndexableGet
 		);
 		return &metaIndexable;
 	}
@@ -38,7 +38,7 @@ private:
 		return sizeof...(Types);
 	}
 
-	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & value, const size_t index)
 	{
 		using IS = typename internal_::MakeIndexSequence<sizeof...(Types)>::Type;
 		return doGetAt(value, index, IS());

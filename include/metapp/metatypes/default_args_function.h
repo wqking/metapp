@@ -138,6 +138,7 @@ public:
 	{
 		if(! isValidArgumentCount(argumentCount)) {
 			errorIllegalArgument();
+			return Variant();
 		}
 
 		const FunctionType & defaultArgsFunc = func.get<FunctionType &>();

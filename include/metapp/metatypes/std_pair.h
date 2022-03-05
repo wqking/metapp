@@ -18,7 +18,7 @@ struct DeclareMetaTypeBase <std::pair<T1, T2> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGetAt
+			&metaIndexableGet
 		);
 		return &metaIndexable;
 	}
@@ -29,14 +29,14 @@ private:
 		return 2;
 	}
 
-	static Variant metaIndexableGetAt(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & value, const size_t index)
 	{
 		using PairType = std::pair<T1, T2>;
 
 		if(index == 0) {
-			return Variant::create<T1>(value.get<PairType &>().first);
+			return Variant::create<T1 &>(value.get<PairType &>().first);
 		}
-		return Variant::create<T2>(value.get<PairType &>().second);
+		return Variant::create<T2 &>(value.get<PairType &>().second);
 	}
 
 };
