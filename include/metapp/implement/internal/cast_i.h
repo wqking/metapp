@@ -12,7 +12,6 @@ private:
 	struct CastFromItem
 	{
 		const UnifiedType * fromUnifiedType;
-		bool (*canCastFrom)();
 		Variant (*castFrom)(const Variant & value);
 	};
 
@@ -20,10 +19,7 @@ public:
 	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
 	{
 		auto castFromItem = findCastFromItem(fromMetaType);
-		if(castFromItem.fromUnifiedType != nullptr) {
-			return castFromItem.canCastFrom();
-		}
-		return false;
+		return castFromItem.fromUnifiedType != nullptr;
 	}
 
 	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
@@ -44,16 +40,12 @@ private:
 		static CastFromItem getCastFromItem() {
 			return CastFromItem {
 				getMetaType<FromType>()->getUnifiedType(),
-				&canCastFrom,
 				&castFrom
 			};
 		}
 
 	private:
 		using ToType = Decayed;
-		static constexpr bool canCastFrom() {
-			return std::is_convertible<FromType, ToType>::value;
-		}
 
 		static Variant castFrom(const Variant & value) {
 			return doCastFrom<FromType>(value);
@@ -112,7 +104,6 @@ private:
 	struct CastToItem
 	{
 		const UnifiedType * toUnifiedType;
-		bool (*canCastTo)();
 		Variant (*castTo)(const Variant & value);
 	};
 
@@ -120,10 +111,7 @@ public:
 	static bool canCastTo(const Variant & /*value*/, const MetaType * toMetaType)
 	{
 		auto castToItem = findCastToItem(toMetaType);
-		if(castToItem.toUnifiedType != nullptr) {
-			return castToItem.canCastTo();
-		}
-		return false;
+		return castToItem.toUnifiedType != nullptr;
 	}
 
 	static Variant castTo(const Variant & value, const MetaType * toMetaType)
@@ -144,16 +132,12 @@ private:
 		static CastToItem getCastToItem() {
 			return CastToItem {
 				getMetaType<ToType>()->getUnifiedType(),
-				&canCastTo,
 				&castTo
 			};
 		}
 
 	private:
 		using FromType = Decayed;
-		static constexpr bool canCastTo() {
-			return std::is_convertible<FromType, ToType>::value;
-		}
 
 		static Variant castTo(const Variant & value) {
 			return doCastTo<ToType>(value);
