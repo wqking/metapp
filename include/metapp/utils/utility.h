@@ -2,8 +2,10 @@
 #define METAPP_UTILITY_H_969872685611
 
 #include "metapp/variant.h"
+#include "metapp/interfaces/metacallable.h"
 #include "metapp/metatype.h"
 #include "metapp/utils/typelist.h"
+#include "metapp/exception.h"
 
 #include <type_traits>
 
@@ -66,6 +68,20 @@ inline const MetaType * getMetaTypeAt(const size_t index, const TypeList<Types..
 		nullptr
 	};
 	return metaTypeList[index];
+}
+
+template <typename ToType, typename FromType>
+inline void assignValue(ToType & to, const FromType & from,
+	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = 0)
+{
+	to = (ToType)from;
+}
+
+template <typename ToType, typename FromType>
+inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
+	typename std::enable_if<! std::is_assignable<ToType &, FromType>::value>::type * = 0)
+{
+	errorUnwritable();
 }
 
 

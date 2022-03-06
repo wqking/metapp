@@ -4,6 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
 #include "metapp/interfaces/metaiterable.h"
+#include "metapp/utils/utility.h"
 
 #include <tuple>
 #include <array>
@@ -20,7 +21,8 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGet
+			&metaIndexableGet,
+			&metaIndexableSet
 		);
 		return &metaIndexable;
 	}
@@ -33,34 +35,65 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	}
 
 private:
-	static size_t metaIndexableGetSize(const Variant & /*value*/)
+	static size_t metaIndexableGetSize(const Variant & /*var*/)
 	{
 		return sizeof...(Types);
 	}
 
-	static Variant metaIndexableGet(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
-		return doGetAt(value, index, Sequence());
+		return doGetAt(var, index, Sequence());
+	}
+
+	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	{
+		if(index >= metaIndexableGetSize(var)) {
+			errorInvalidIndex();
+		}
+		else {
+			using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
+			doSetAt(var, index, value, Sequence());
+		}
 	}
 
 	template <size_t ...Indexes>
-	static Variant doGetAt(const Variant & value, const size_t index, internal_::SizeConstantList<Indexes...>)
+	static Variant doGetAt(const Variant & var, const size_t index, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = Variant (*)(const Variant & value);
 
 		std::array<Func, sizeof...(Types)> funcList {
 			&doGetAtHelper<Indexes>...
 		};
-		return funcList[index](value);
+		return funcList[index](var);
 	}
 
 	template <size_t index>
-	static Variant doGetAtHelper(const Variant & value)
+	static Variant doGetAtHelper(const Variant & var)
 	{
 		using TupleType = std::tuple<Types...>;
 
-		return std::get<index>(value.get<TupleType &>());
+		return std::get<index>(var.get<TupleType &>());
+	}
+
+	template <size_t ...Indexes>
+	static void doSetAt(const Variant & var, const size_t index, const Variant & value, internal_::SizeConstantList<Indexes...>)
+	{
+		using Func = void (*)(const Variant & var, const Variant & value);
+
+		std::array<Func, sizeof...(Types)> funcList {
+			&doSetAtHelper<Indexes>...
+		};
+		funcList[index](var, value);
+	}
+
+	template <size_t index>
+	static void doSetAtHelper(const Variant & var, const Variant & value)
+	{
+		using TupleType = std::tuple<Types...>;
+		using ValueType = typename std::tuple_element<index, TupleType>::type;
+
+		assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
 	}
 
 	static void metaIterableForEach(const Variant & value, MetaIterable::Callback callback)

@@ -50,45 +50,6 @@ auto getArgument(const Args & arguments) -> typename TypeListGetAt<TL, N>::Type
 
 } // namespace internal_
 
-template <typename T>
-struct AccessibleIsAssignable
-{
-	static constexpr bool value = true;
-};
-
-template <typename T>
-struct AccessibleIsAssignable <T *>
-{
-	template <typename C> static std::true_type test(
-		typename std::remove_reference<decltype(*std::declval<C>() = *std::declval<C>())>::type *);
-	template <typename C> static std::false_type test(...);
-
-	//static constexpr bool value = !! decltype(test<T *>(0))();
-	enum { value = !! decltype(test<T *>(0))() };
-};
-
-template <typename T>
-struct AccessibleIsAssignable <T &>
-{
-	template <typename C> static std::true_type test(
-		typename std::remove_reference<decltype(std::declval<C>() = std::declval<C>())>::type *);
-	template <typename C> static std::false_type test(...);
-
-	//static constexpr bool value = !! decltype(test<T *>(0))();
-	enum { value = !! decltype(test<T &>(0))() };
-};
-
-template <typename Class, typename T>
-struct AccessibleIsAssignable <T Class::*>
-{
-	template <typename C, typename U> static std::true_type test(
-		typename std::remove_reference<decltype(std::declval<C *>()->*std::declval<U C::*>() = std::declval<U>())>::type *);
-	template <typename C, typename U> static std::false_type test(...);
-
-	//static constexpr bool value = !! decltype(test<T *>(0))();
-	enum { value = !! decltype(test<Class, T>(0))() };
-};
-
 template <typename ArgList>
 struct MetaCallableInvokeChecker
 {

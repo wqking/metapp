@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
+#include "metapp/utils/utility.h"
 
 namespace metapp {
 
@@ -19,24 +20,35 @@ struct DeclareMetaTypeArrayBase
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGet
+			&metaIndexableGet,
+			&metaIndexableSet
 		);
 		return &metaIndexable;
 	}
 
 private:
-	static size_t metaIndexableGetSize(const Variant & /*value*/)
+	using ElementType = typename std::remove_pointer<
+			typename std::remove_cv<U>::type
+		>::type;
+
+	static size_t metaIndexableGetSize(const Variant & /*var*/)
 	{
 		return length;
 	}
 
-	static Variant metaIndexableGet(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		return Variant::create<
-			typename std::remove_pointer<
-				typename std::remove_cv<U>::type
-			>::type &
-		>(value.get<U>()[index]);
+		return Variant::create<ElementType &>(var.get<U>()[index]);
+	}
+
+	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	{
+		if(index >= metaIndexableGetSize(var)) {
+			errorInvalidIndex();
+		}
+		else {
+			assignValue(var.get<U>()[index], value.get<ElementType &>());
+		}
 	}
 
 };

@@ -4,6 +4,7 @@
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/interfaces/bases/metamemberbase.h"
+#include "metapp/utils/utility.h"
 
 namespace metapp {
 
@@ -28,27 +29,7 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	}
 
 	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
-		doAccessibleSet<Class, T>(accessible, instance, value);
-	}
-
-private:
-	template <typename C, typename U>
-	static void doAccessibleSet(
-		const Variant & /*accessible*/,
-		void * /*instance*/,
-		const Variant & /*value*/,
-		typename std::enable_if<! AccessibleIsAssignable<T C::*>::value>::type * = nullptr
-	) {
-	}
-
-	template <typename C, typename U>
-	static void doAccessibleSet(
-		const Variant & accessible,
-		void * instance,
-		const Variant & value,
-		typename std::enable_if<AccessibleIsAssignable<T C::*>::value>::type * = nullptr
-	) {
-		((Class *)instance)->*(accessible.get<T Class::*>()) = value.cast<U>().template get<const U &>();
+		assignValue(((Class *)instance)->*(accessible.get<T Class::*>()), value.cast<T>().template get<const T &>());
 	}
 
 };

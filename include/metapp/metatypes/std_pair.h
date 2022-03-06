@@ -3,6 +3,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaindexable.h"
+#include "metapp/utils/utility.h"
 
 #include <utility>
 
@@ -18,25 +19,41 @@ struct DeclareMetaTypeBase <std::pair<T1, T2> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
-			&metaIndexableGet
+			&metaIndexableGet,
+			&metaIndexableSet
 		);
 		return &metaIndexable;
 	}
 
 private:
-	static size_t metaIndexableGetSize(const Variant & /*value*/)
+	using PairType = std::pair<T1, T2>;
+
+	static size_t metaIndexableGetSize(const Variant & /*var*/)
 	{
 		return 2;
 	}
 
-	static Variant metaIndexableGet(const Variant & value, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		using PairType = std::pair<T1, T2>;
-
 		if(index == 0) {
-			return Variant::create<T1 &>(value.get<PairType &>().first);
+			return Variant::create<T1 &>(var.get<PairType &>().first);
 		}
-		return Variant::create<T2 &>(value.get<PairType &>().second);
+		return Variant::create<T2 &>(var.get<PairType &>().second);
+	}
+
+	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	{
+		if(index >= 2) {
+			errorInvalidIndex();
+		}
+		else {
+			if(index == 0) {
+				assignValue(var.get<PairType &>().first, value.get<T1 &>());
+			}
+			else {
+				assignValue(var.get<PairType &>().second, value.get<T2 &>());
+			}
+		}
 	}
 
 };

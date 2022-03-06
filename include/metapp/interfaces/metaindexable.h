@@ -13,15 +13,17 @@ public:
 	MetaIndexable() = delete;
 
 	MetaIndexable(
-		size_t (*getSize)(const Variant & value),
-		Variant (*get)(const Variant & value, const size_t index)
+		size_t (*getSize)(const Variant & var),
+		Variant (*get)(const Variant & var, const size_t index),
+		void (*set)(const Variant & var, const size_t index, const Variant & value)
 	)
-		: getSize(getSize), get(get)
+		: getSize(getSize), get(get), set(set)
 	{
 	}
 
-	size_t (*getSize)(const Variant & value);
-	Variant (*get)(const Variant & value, const size_t index);
+	size_t (*getSize)(const Variant & var);
+	Variant (*get)(const Variant & var, const size_t index);
+	void (*set)(const Variant & var, const size_t index, const Variant & value);
 
 };
 

@@ -75,6 +75,15 @@ public:
 	using super::super;
 };
 
+class UnwritableException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 // When calling errorXXX function, the caller should put a "return" after the call,
 // because if exception is disabled, no exception will be throw and the execute flow
 // may coninue if there is no "return".
@@ -106,6 +115,11 @@ inline void errorInvalidIndex(const std::string & message = "Invalid index")
 	throw InvalidIndexException(message);
 }
 
+inline void errorUnwritable(const std::string & message = "Unwritable")
+{
+	throw UnwritableException(message);
+}
+
 #else
 
 inline void errorUnsupported(const std::string & /*message*/ = "Not supported")
@@ -125,6 +139,10 @@ inline void errorWrongMetaType(const std::string & /*message*/ = "Wrong meta typ
 }
 
 inline void errorInvalidIndex(const std::string & /*message*/ = "Invalid index")
+{
+}
+
+inline void errorUnwritable(const std::string & /*message*/ = "Unwritable")
 {
 }
 
