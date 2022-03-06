@@ -7,10 +7,10 @@
 
 namespace metapp {
 
-template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
-	: public DeclareMetaTypeObject<RT (Class::*)(Args...)>,
-		public MetaCallableBase<RT (Class::*)(Args...), Class, RT, Args...>,
+template <typename FullType, typename Class, typename RT, typename ...Args>
+struct DeclareMetaTypeMemberFunctionBase
+	: public DeclareMetaTypeObject<FullType>,
+		public MetaCallableBase<FullType, Class, RT, Args...>,
 		public MetaMemberBase<Class>
 {
 public:
@@ -20,43 +20,67 @@ public:
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) const> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...)>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...), Class, RT, Args...>
 {
-	static constexpr TypeFlags typeFlags = tfConst | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...), Class, RT, Args...>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const, Class, RT, Args...>
 {
-	static constexpr TypeFlags typeFlags = tfVolatile | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const, Class, RT, Args...>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) volatile, Class, RT, Args...>
 {
-	static constexpr TypeFlags typeFlags = tfConst | tfVolatile | DeclareMetaTypeBase <RT (Class::*)(Args...)>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfVolatile
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) volatile, Class, RT, Args...>::typeFlags;
+};
+
+template <typename Class, typename RT, typename ...Args>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const volatile, Class, RT, Args...>
+{
+	static constexpr TypeFlags typeFlags = tfConst | tfVolatile
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const volatile, Class, RT, Args...>::typeFlags;
 };
 
 #ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...)>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) noexcept>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) noexcept, Class, RT, Args...>
 {
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) const noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) const>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const noexcept>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const noexcept, Class, RT, Args...>
 {
+	static constexpr TypeFlags typeFlags = tfConst
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const noexcept, Class, RT, Args...>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) volatile>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) volatile noexcept>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) volatile noexcept, Class, RT, Args...>
 {
+	static constexpr TypeFlags typeFlags = tfVolatile
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) volatile noexcept, Class, RT, Args...>::typeFlags;
 };
 
 template <typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile noexcept> : public DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile>
+struct DeclareMetaTypeBase <RT (Class::*)(Args...) const volatile noexcept>
+	: public DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const volatile noexcept, Class, RT, Args...>
 {
+	static constexpr TypeFlags typeFlags = tfConst | tfVolatile
+		| DeclareMetaTypeMemberFunctionBase <RT (Class::*)(Args...) const volatile noexcept, Class, RT, Args...>::typeFlags;
 };
 
 #endif

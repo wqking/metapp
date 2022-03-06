@@ -196,7 +196,7 @@ public:
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
-		| ((std::is_pointer<Decayed>::value || std::is_member_pointer<Decayed>::value) ? tfPointer : 0)
+		| (std::is_pointer<Decayed>::value ? tfPointer : 0)
 		| (std::is_reference<T>::value ? tfReference : 0)
 	;
 
