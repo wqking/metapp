@@ -85,7 +85,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			std::is_convertible<Types, Decayed>::value...
+			BoolConstantList<std::is_convertible<Types, Decayed>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -177,7 +177,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			std::is_convertible<Decayed, Types>::value...
+			BoolConstantList<std::is_convertible<Decayed, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}

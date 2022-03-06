@@ -97,12 +97,12 @@ struct MetaCallableInvokeChecker
 
 	template <typename Args>
 	static bool canInvoke(const Args & arguments, const size_t argumentCount) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doCanInvoke(arguments, argumentCount, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doCanInvoke(arguments, argumentCount, Sequence());
 	}
 
 	template <size_t ...Indexes, typename Args>
-	static bool doCanInvoke(const Args & arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
+	static bool doCanInvoke(const Args & arguments, const size_t argumentCount, internal_::SizeConstantList<Indexes...>) {
 		std::array<bool, argCount> canCastList {
 			internal_::canCastArgument<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
@@ -115,12 +115,12 @@ struct MetaCallableInvokeChecker
 
 	template <typename Args>
 	static int rankInvoke(const Args & arguments, const size_t argumentCount) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doRankInvoke(arguments, argumentCount, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doRankInvoke(arguments, argumentCount, Sequence());
 	}
 
 	template <size_t ...Indexes, typename Args>
-	static int doRankInvoke(const Args & arguments, const size_t argumentCount, internal_::IndexSequence<Indexes...>) {
+	static int doRankInvoke(const Args & arguments, const size_t argumentCount, internal_::SizeConstantList<Indexes...>) {
 		std::array<int, argCount> canCastList {
 			internal_::rankArgumentMatching<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
@@ -143,12 +143,12 @@ struct MetaCallableInvoker <void, RT, ArgList>
 
 	template <typename FT, typename Args>
 	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::SizeConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -167,12 +167,12 @@ struct MetaCallableInvoker <void, void, ArgList>
 
 	template <typename FT, typename Args>
 	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, internal_::SizeConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -192,12 +192,12 @@ struct MetaCallableInvoker
 
 	template <typename FT, typename Args>
 	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::SizeConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -216,12 +216,12 @@ struct MetaCallableInvoker <Class, void, ArgList>
 
 	template <typename FT, typename Args>
 	static Variant invoke(FT && func, void * instance, const Args & arguments, const size_t /*argumentCount*/) {
-		using IS = typename internal_::MakeIndexSequence<argCount>::Type;
-		return doInvoke(std::forward<FT>(func), instance, arguments, IS());
+		using Sequence = typename internal_::MakeSizeSequence<argCount>::Type;
+		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
 	template <typename FT, typename Args, size_t ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::IndexSequence<Indexes...>) {
+	static Variant doInvoke(FT func, void * instance, const Args & arguments, internal_::SizeConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			internal_::castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};

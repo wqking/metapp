@@ -11,21 +11,28 @@ namespace metapp {
 
 namespace internal_ {
 
-template <size_t ...Indexes>
-struct IndexSequence
+template <typename T, T ...values>
+struct ConstantList
 {
 };
+
+template <size_t ...values>
+using SizeConstantList = ConstantList<size_t, values...>;
+
+template <bool ...values>
+using BoolConstantList = ConstantList<bool, values...>;
 
 template <size_t N, size_t ...Indexes>
-struct MakeIndexSequence : MakeIndexSequence <N - 1, N - 1, Indexes...>
+struct MakeSizeSequence : MakeSizeSequence <N - 1, N - 1, Indexes...>
 {
 };
 
 template <size_t ...Indexes>
-struct MakeIndexSequence<0, Indexes...>
+struct MakeSizeSequence <0, Indexes...>
 {
-	using Type = IndexSequence<Indexes...>;
+	using Type = SizeConstantList<Indexes...>;
 };
+
 
 template <size_t ...Ns>
 struct MaxOfInt
@@ -178,19 +185,19 @@ struct HasFunctionGetMetaUser
 	enum { value = !! decltype(test<T>(0))() };
 };
 
-template <typename Result, typename TL, bool ...hasList>
+template <typename Result, typename TL, typename BoolList>
 struct HelperFilterTypes
 {
 };
 
 template <typename Result>
-struct HelperFilterTypes <Result, TypeList<> >
+struct HelperFilterTypes <Result, TypeList<>, BoolConstantList<> >
 {
 	using Type = Result;
 };
 
 template <typename Result, typename Arg0, typename ...Args, bool has0, bool ...hasList>
-struct HelperFilterTypes <Result, TypeList<Arg0, Args...>, has0, hasList...>
+struct HelperFilterTypes <Result, TypeList<Arg0, Args...>, BoolConstantList<has0, hasList...> >
 {
 	using Temp = typename std::conditional<
 		has0,
@@ -201,16 +208,16 @@ struct HelperFilterTypes <Result, TypeList<Arg0, Args...>, has0, hasList...>
 	using Type = typename HelperFilterTypes<
 		Temp,
 		TypeList<Args...>,
-		hasList...
+		BoolConstantList<hasList...>
 	>::Type;
 };
 
-// Give FilterTypes<TypeList<T1, T2, ..., Tn>, bool1, bool2, ..., booln>
+// Give FilterTypes<TypeList<T1, T2, ..., Tn>, BoolConstantList<bool1, bool2, ..., booln> >
 // The result Type is TypeList<Tx, Ty,...>, where boolx is true, booly is true, etc.
-template <typename TL, bool ...hasList>
+template <typename TL, typename BoolList>
 struct FilterTypes
 {
-	using Type = typename HelperFilterTypes<TypeList<>, TL, hasList...>::Type;
+	using Type = typename HelperFilterTypes<TypeList<>, TL, BoolList>::Type;
 };
 
 

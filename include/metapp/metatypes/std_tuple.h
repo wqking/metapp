@@ -40,12 +40,12 @@ private:
 
 	static Variant metaIndexableGet(const Variant & value, const size_t index)
 	{
-		using IS = typename internal_::MakeIndexSequence<sizeof...(Types)>::Type;
-		return doGetAt(value, index, IS());
+		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
+		return doGetAt(value, index, Sequence());
 	}
 
 	template <size_t ...Indexes>
-	static Variant doGetAt(const Variant & value, const size_t index, internal_::IndexSequence<Indexes...>)
+	static Variant doGetAt(const Variant & value, const size_t index, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = Variant (*)(const Variant & value);
 
@@ -65,12 +65,12 @@ private:
 
 	static void metaIterableForEach(const Variant & value, MetaIterable::Callback callback)
 	{
-		using IS = typename internal_::MakeIndexSequence<sizeof...(Types)>::Type;
-		doForEach(value, callback, IS());
+		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
+		doForEach(value, callback, Sequence());
 	}
 
 	template <size_t ...Indexes>
-	static void doForEach(const Variant & value, MetaIterable::Callback callback, internal_::IndexSequence<Indexes...>)
+	static void doForEach(const Variant & value, MetaIterable::Callback callback, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = bool (*)(const Variant & value, MetaIterable::Callback callback);
 

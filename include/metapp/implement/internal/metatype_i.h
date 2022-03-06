@@ -200,6 +200,7 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem <mikMetaMember>,
 		MakeMetaInterfaceItem <mikMetaUser>
 		>,
+		BoolConstantList<
 		HasFunctionGetMetaClass<M>::value,
 		HasFunctionGetMetaCallable<M>::value,
 		HasFunctionGetMetaAccessible<M>::value,
@@ -210,6 +211,7 @@ struct MakeMetaInterfaceData
 		HasFunctionGetMetaMap<M>::value,
 		HasFunctionGetMetaMember<M>::value,
 		HasFunctionGetMetaUser<M>::value
+		>
 	>::Type;
 
 	template <typename TL>
