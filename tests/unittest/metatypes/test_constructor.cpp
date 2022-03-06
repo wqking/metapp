@@ -29,7 +29,7 @@ TEST_CASE("metatypes, constructor")
 	SECTION("free by Variant") {
 		{
 			metapp::Variant obj = metapp::Variant::takeFrom(
-				ctor.getMetaType()->getMetaCallable()->invoke(metapp::Variant(), nullptr, arguments, 2)
+				ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments, 2)
 			);
 			REQUIRE(ctorCounter == 1);
 			Base & base = obj.get<Base &>();
@@ -40,7 +40,7 @@ TEST_CASE("metatypes, constructor")
 		REQUIRE(ctorCounter == 0);
 	}
 	SECTION("free by delete") {
-		Base * base = ctor.getMetaType()->getMetaCallable()->invoke(metapp::Variant(), nullptr, arguments, 2).get<Base *>();
+		Base * base = ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments, 2).get<Base *>();
 		REQUIRE(base->myValue == 7);
 		REQUIRE(ctorCounter == 1);
 		delete base;

@@ -17,6 +17,7 @@ private:
 	using super = DeclareMetaTypeBase <T>;
 
 public:
+	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
 	static constexpr TypeKind typeKind = tkCharPtr;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
@@ -67,6 +68,7 @@ private:
 	using super = DeclareMetaTypeBase <T>;
 
 public:
+	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
 	static constexpr TypeKind typeKind = tkWideCharPtr;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {

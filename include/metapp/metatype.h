@@ -127,6 +127,8 @@ public:
 
 	constexpr bool isConst() const noexcept;
 	constexpr bool isVolatile() const noexcept;
+	constexpr bool isPointer() const noexcept;
+	constexpr bool isReference() const noexcept;
 	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
@@ -185,32 +187,37 @@ template <typename T>
 struct DeclareMetaTypeObject : public SelectMetaStreamingBase<T>
 {
 private:
-	using Decayed = typename std::decay<typename std::remove_reference<T>::type>::type;
+	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
+	using NoCV = typename std::remove_cv<T>::type;
+	using Decayed = typename std::decay<NoCV>::type;
 
 public:
 	using UpType = internal_::NoneUpType;
 
 	static constexpr TypeKind typeKind = tkObject;
-	static constexpr TypeFlags typeFlags = 0;
+	static constexpr TypeFlags typeFlags = 0
+		| ((std::is_pointer<Decayed>::value || std::is_member_pointer<Decayed>::value) ? tfPointer : 0)
+		| (std::is_reference<T>::value ? tfReference : 0)
+	;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
-			data->construct<Decayed>(copyFrom);
+			data->construct<Underlying>(copyFrom);
 			return nullptr;
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return doConstructDefault<Decayed>();
+				return doConstructDefault<Underlying>();
 			}
 			else {
-				return doConstructCopy<Decayed>(copyFrom);
+				return doConstructCopy<Underlying>(copyFrom);
 			}
 		}
 	}
 
 	static void destroy(void * instance)
 	{
-		doDestroy(static_cast<Decayed *>(instance));
+		doDestroy(static_cast<Underlying *>(instance));
 	}
 
 	static void * getAddress(const MetaTypeData & data)
@@ -220,7 +227,7 @@ public:
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType)
 	{
-		if(std::is_void<Decayed>::value) {
+		if(std::is_void<Underlying>::value) {
 			return false;
 		}
 		const MetaType * fromMetaType = getMetaType<T>();
@@ -233,7 +240,7 @@ public:
 			) {
 			return true;
 		}
-		if(internal_::CastTo<Decayed>::canCastTo(value, toMetaType)) {
+		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
 			return true;
 		}
 		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
@@ -244,17 +251,17 @@ public:
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
 	{
-		return doCast<Decayed>(value, toMetaType);
+		return doCast<Underlying>(value, toMetaType);
 	}
 
 	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType)
 	{
-		return internal_::CastFrom<Decayed>::canCastFrom(value, fromMetaType);
+		return internal_::CastFrom<Underlying>::canCastFrom(value, fromMetaType);
 	}
 
 	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
 	{
-		return internal_::CastFrom<Decayed>::castFrom(value, fromMetaType);
+		return internal_::CastFrom<Underlying>::castFrom(value, fromMetaType);
 	}
 
 private:
@@ -314,7 +321,7 @@ private:
 	static Variant doCast(const Variant & value, const MetaType * toMetaType, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
 		const MetaType * fromMetaType = getMetaType<T>();
 		if(areMetaTypesMatched(fromMetaType, toMetaType, true)) {
-			return value;
+			return Variant::retype(toMetaType, value);
 		}
 		if(fromMetaType->getTypeKind() != tkReference
 			&& toMetaType->getTypeKind() == tkReference
@@ -322,8 +329,8 @@ private:
 			) {
 			return fromMetaType->cast(value, toMetaType->getUpType());
 		}
-		if(internal_::CastTo<Decayed>::canCastTo(value, toMetaType)) {
-			return internal_::CastTo<Decayed>::castTo(value, toMetaType);
+		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+			return internal_::CastTo<Underlying>::castTo(value, toMetaType);
 		}
 		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
 			return toMetaType->castFrom(value, getMetaType<T>());

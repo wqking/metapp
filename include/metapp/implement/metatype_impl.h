@@ -164,6 +164,16 @@ inline constexpr bool MetaType::isVolatile() const noexcept
 	return typeFlags & tfVolatile;
 }
 
+inline constexpr bool MetaType::isPointer() const noexcept
+{
+	return typeFlags & tfPointer;
+}
+
+inline constexpr bool MetaType::isReference() const noexcept
+{
+	return typeFlags & tfReference;
+}
+
 inline const MetaClass * MetaType::getMetaClass() const
 {
 	return unifiedType->getMetaClass();
@@ -244,9 +254,9 @@ inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType
 	return unifiedType->canCast(value, toMetaType);
 }
 
-inline Variant MetaType::cast(const Variant & value, const MetaType * fromMetaType) const
+inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const
 {
-	return unifiedType->cast(value, fromMetaType);
+	return unifiedType->cast(value, toMetaType);
 }
 
 inline bool MetaType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
@@ -344,10 +354,10 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 	else {
-		if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() == tkReference) {
+		if(toMetaType->isReference() && fromMetaType->isReference()) {
 			return true;
 		}
-		if(toMetaType->getTypeKind() == tkPointer && fromMetaType->getTypeKind() == tkPointer) {
+		if((toMetaType->isPointer()) && (fromMetaType->isPointer())) {
 			return true;
 		}
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();

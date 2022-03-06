@@ -8,6 +8,8 @@ TEST_CASE("metatypes, int[]")
 	int array[] = { 3, 8, 9 };
 	metapp::Variant v(metapp::Variant::create<int[]>(array));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+	REQUIRE(v.canGet<int[]>());
+	REQUIRE(v.canGet<int[3]>());
 	REQUIRE(v.get<int[]>()[0] == 3);
 	REQUIRE(v.get<int[]>()[1] == 8);
 	REQUIRE(v.get<int[3]>()[2] == 9);

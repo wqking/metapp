@@ -26,6 +26,14 @@ inline Variant Variant::create(T value, const bool /*copyVariant*/,
 	return Variant(metapp::getMetaType<T>(), &value);
 }
 
+inline Variant Variant::retype(const MetaType * metaType, const Variant & var)
+{
+	Variant result;
+	result.metaType = metaType;
+	result.data = var.data;
+	return result;
+}
+
 inline Variant Variant::takeFrom(const MetaType * metaType, void * object)
 {
 	Variant result;
@@ -125,12 +133,17 @@ inline Variant Variant::clone() const
 template <typename T>
 inline bool Variant::canGet() const
 {
-	return areMetaTypesMatched(metaType, metapp::getMetaType<T>(), false);
+	using U = typename internal_::VariantReturnType<T>::Type;
+	return areMetaTypesMatched(metaType, metapp::getMetaType<U>(), false);
 }
 
 template <typename T>
 inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Type
 {
+	if(! canGet<T>()) {
+		errorBadCast();
+	}
+
 	using U = typename internal_::VariantReturnType<T>::Type;
 	return (U)(*(typename std::remove_reference<U>::type *)(metaType->getAddress(data)));
 }
@@ -179,6 +192,11 @@ template <typename T>
 inline Variant Variant::cast() const
 {
 	return cast(metapp::getMetaType<T>());
+}
+
+inline bool Variant::isEmpty() const noexcept
+{
+	return metaType->getTypeKind() == tkVoid;
 }
 
 inline const MetaType * Variant::getMetaType() const noexcept

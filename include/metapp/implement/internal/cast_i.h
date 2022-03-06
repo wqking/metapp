@@ -53,13 +53,13 @@ private:
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & value,
-			typename std::enable_if<std::is_convertible<F, ToType>::value>::type * = 0) {
-			return static_cast<ToType>(value.get<F>());
+			typename std::enable_if<internal_::CanStaticCast<F, ToType>::value>::type * = 0) {
+			return static_cast<ToType>(*(F *)(value.getAddress()));
 		}
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & /*value*/,
-			typename std::enable_if<! std::is_convertible<F, ToType>::value>::type * = 0) {
+			typename std::enable_if<! internal_::CanStaticCast<F, ToType>::value>::type * = 0) {
 			return Variant();
 		}
 	};
@@ -68,7 +68,7 @@ private:
 	static CastFromItem doFindCastFromItemHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
 		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
-		static const CastFromItem itemList[] = {
+		const CastFromItem itemList[] = {
 			HelperCastFrom<Types>::getCastFromItem()...,
 			CastFromItem {}
 		};
@@ -85,7 +85,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<std::is_convertible<Types, Decayed>::value...>
+			BoolConstantList<internal_::CanStaticCast<Types, Decayed>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -145,13 +145,13 @@ private:
 
 		template <typename T>
 		static Variant doCastTo(const Variant & value,
-			typename std::enable_if<std::is_convertible<FromType, T>::value>::type * = 0) {
-			return static_cast<T>(value.get<FromType>());
+			typename std::enable_if<internal_::CanStaticCast<FromType, T>::value>::type * = 0) {
+			return static_cast<T>(*(FromType *)(value.getAddress()));
 		}
 
 		template <typename T>
 		static Variant doCastTo(const Variant & /*value*/,
-			typename std::enable_if<! std::is_convertible<FromType, T>::value>::type * = 0) {
+			typename std::enable_if<! internal_::CanStaticCast<FromType, T>::value>::type * = 0) {
 			return Variant();
 		}
 	};
@@ -160,7 +160,7 @@ private:
 	static CastToItem doFindCastToItemHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
 		const UnifiedType * toUnifiedType = toMetaType->getUnifiedType();
-		static const CastToItem itemList[] = {
+		const CastToItem itemList[] = {
 			HelperCastTo<Types>::getCastToItem()...,
 			CastToItem {}
 		};
@@ -177,7 +177,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<std::is_convertible<Decayed, Types>::value...>
+			BoolConstantList<internal_::CanStaticCast<Decayed, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}

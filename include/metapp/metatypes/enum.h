@@ -8,7 +8,7 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_enum<T>::value>::type>
-	: public DeclareMetaTypeBase <typename std::underlying_type<T>::type>
+	: public DeclareMetaTypeObject <T>
 {
 	using UpType = typename std::underlying_type<T>::type;
 	static constexpr TypeKind typeKind = tkEnum;

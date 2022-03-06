@@ -16,6 +16,8 @@ TEST_CASE("metatypes, enum")
 	//REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkInt);
 	metapp::Variant v(EnumAnimal::cat);
 	REQUIRE(v.canCast<int>());
+	REQUIRE(metapp::getTypeKind(v.cast<int>()) == metapp::tkInt);
+	REQUIRE(v.cast<int>().canGet<int>());
 	REQUIRE(v.cast<int>().get<int>() == 5);
 }
 
@@ -41,7 +43,6 @@ struct DeclareMetaType <EnumHuman> : public DeclareMetaTypeBase <EnumHuman>
 };
 
 } // metapp
-
 
 TEST_CASE("metatypes, enum class")
 {

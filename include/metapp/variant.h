@@ -4,6 +4,7 @@
 #include "metapp/metatypedata.h"
 #include "metapp/typekind.h"
 #include "metapp/implement/internal/typeutil_i.h"
+#include "metapp/exception.h"
 
 #include <type_traits>
 #include <cassert>
@@ -28,6 +29,7 @@ public:
 		typename std::enable_if<
 			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type * = 0);
+	static Variant retype(const MetaType * metaType, const Variant & var);
 	static Variant takeFrom(const MetaType * metaType, void * object);
 	static Variant takeFrom(const Variant & object);
 
@@ -66,6 +68,8 @@ public:
 	Variant cast(const MetaType * toMetaType) const;
 	template <typename T>
 	Variant cast() const;
+
+	bool isEmpty() const noexcept;
 
 	const MetaType * getMetaType() const noexcept;
 
