@@ -31,3 +31,12 @@ TEST_CASE("metatypes, std::multimap<int, std::string>")
 	REQUIRE(v.getMetaType()->getUpType(1)->getTypeKind() == metapp::tkStdString);
 }
 
+TEST_CASE("metatypes, std::map<int, std::string>, MetaMap")
+{
+	using Type = std::map<int, std::string>;
+	metapp::Variant v(Type { { 1, "perfect" } });
+	auto metaType = v.getMetaType();
+	auto metaMap = metaType->getMetaMap();
+	REQUIRE(metaMap != nullptr);
+	REQUIRE(metaMap->get(v, 1).get<std::string &>() == "perfect");
+}
