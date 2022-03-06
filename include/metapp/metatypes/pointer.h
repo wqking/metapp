@@ -8,23 +8,15 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <T *> : public DeclareMetaTypeObject<T *>
+struct DeclareMetaTypePointerBase : public DeclareMetaTypeObject<T>
 {
 private:
-	using super = DeclareMetaTypeObject<T *>;
+	using super = DeclareMetaTypeObject<T>;
 
 public:
-	using UpType = T;
+	using UpType = typename std::remove_pointer<T>::type;
 
 	static constexpr TypeKind typeKind = tkPointer;
-
-	static const MetaAccessible * getMetaAccessible() {
-		static MetaAccessible metaAccessible(
-			&accessibleGet,
-			&accessibleSet
-		);
-		return &metaAccessible;
-	}
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
 		return toMetaType->getTypeKind() == tkPointer || super::canCast(value, toMetaType);
@@ -39,52 +31,57 @@ public:
 		}
 	}
 
-	static Variant accessibleGet(const Variant & accessible, const void * instance) {
-		return doAccessibleGet<T>(accessible, instance);
-	}
+};
 
-	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
-		doAccessibleSet<T>(accessible, instance, value);
-	}
-
+template <typename T>
+struct DeclareMetaTypeBase <T *> : public DeclareMetaTypePointerBase<T *>
+{
 private:
-	template <typename U>
-	static Variant doAccessibleGet(
-		const Variant & /*accessible*/,
-		const void * /*instance*/,
-		typename std::enable_if<std::is_void<U>::value>::type * = nullptr
-	) {
-		return Variant();
+	static_assert(! std::is_void<T>::value, "T should not be void");
+
+public:
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
 	}
 
-	template <typename U>
-	static Variant doAccessibleGet(
-		const Variant & accessible,
-		const void * /*instance*/,
-		typename std::enable_if<! std::is_void<U>::value>::type * = nullptr
-	) {
-		return *accessible.get<U *>();
+	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+		return *accessible.get<T *>();
 	}
 
-	template <typename U>
-	static void doAccessibleSet(
-		const Variant & /*accessible*/,
-		void * /*instance*/,
-		const Variant & /*value*/,
-		typename std::enable_if<std::is_void<U>::value>::type * = nullptr
-	) {
-	}
-
-	template <typename U>
-	static void doAccessibleSet(
-		const Variant & accessible,
-		void * /*instance*/,
-		const Variant & value,
-		typename std::enable_if<! std::is_void<U>::value>::type * = nullptr
-	) {
+	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
 		assignValue(*(accessible.get<T *>()), value.cast<T>().template get<const T &>());
 	}
 
+};
+
+template <typename T>
+struct DeclareMetaTypeVoidPtrBase : public DeclareMetaTypePointerBase<T>
+{
+public:
+};
+
+template <>
+struct DeclareMetaTypeBase <void *> : public DeclareMetaTypeVoidPtrBase<void *>
+{
+};
+
+template <>
+struct DeclareMetaTypeBase <const void *> : public DeclareMetaTypeVoidPtrBase<const void *>
+{
+};
+
+template <>
+struct DeclareMetaTypeBase <volatile void *> : public DeclareMetaTypeVoidPtrBase<volatile void *>
+{
+};
+
+template <>
+struct DeclareMetaTypeBase <const volatile void *> : public DeclareMetaTypeVoidPtrBase<const volatile void *>
+{
 };
 
 template <>
