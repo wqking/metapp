@@ -134,7 +134,7 @@ template <typename T>
 inline bool Variant::canGet() const
 {
 	using U = typename internal_::VariantReturnType<T>::Type;
-	return areMetaTypesMatched(metaType, metapp::getMetaType<U>(), false);
+	return internal_::areMetaTypesMatched(metaType, metapp::getMetaType<U>(), false);
 }
 
 template <typename T>

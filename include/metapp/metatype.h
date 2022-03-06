@@ -46,8 +46,6 @@ const MetaType * getMetaType();
 template <typename T>
 const UnifiedType * getUnifiedType();
 
-bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
-
 class UnifiedType
 {
 public:
@@ -99,6 +97,8 @@ private:
 };
 
 namespace internal_ {
+
+bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
 
 template <typename T>
 auto doGetMetaType()
@@ -183,13 +183,62 @@ private:
 
 namespace metapp {
 
+namespace internal_ {
+
+// Non-template base class to reduce binary size
+struct DeclareMetaTypeObjectBase
+{
+	static void * getAddress(const MetaTypeData & data)
+	{
+		return data.getAddress();
+	}
+
+};
+
+template <typename U>
+static void * doConstructDefault(
+	typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
+) {
+	return new U();
+}
+
+template <typename U>
+static void * doConstructDefault(
+	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
+) {
+	return nullptr;
+}
+
+template <typename U>
+static void * doConstructCopy(
+	const void * copyFrom,
+	typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
+) {
+	return new U(*(U *)copyFrom);
+}
+
+template <typename U>
+static void * doConstructCopy(
+	const void * /*copyFrom*/,
+	typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
+) {
+	return nullptr;
+}
+
+
+} // namespace internal_
+
 template <typename T>
-struct DeclareMetaTypeObject : public SelectMetaStreamingBase<T>
+struct DeclareMetaTypeObject
+	: public internal_::DeclareMetaTypeObjectBase,
+		public SelectMetaStreamingBase<T>
 {
 private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
 	using NoCV = typename std::remove_cv<T>::type;
 	using Decayed = typename std::decay<NoCV>::type;
+
+	static_assert(! std::is_void<T>::value, "DeclareMetaTypeObject can't be initialized with void.");
 
 public:
 	using UpType = internal_::NoneUpType;
@@ -207,31 +256,30 @@ public:
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return doConstructDefault<Underlying>();
+				return internal_::doConstructDefault<Underlying>();
 			}
 			else {
-				return doConstructCopy<Underlying>(copyFrom);
+				return internal_::doConstructCopy<Underlying>(copyFrom);
 			}
 		}
 	}
 
 	static void destroy(void * instance)
 	{
-		doDestroy(static_cast<Underlying *>(instance));
-	}
-
-	static void * getAddress(const MetaTypeData & data)
-	{
-		return data.getAddress();
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+#endif
+		delete static_cast<Underlying *>(instance);
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic pop
+#endif
 	}
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType)
 	{
-		if(std::is_void<Underlying>::value) {
-			return false;
-		}
 		const MetaType * fromMetaType = getMetaType<T>();
-		if(areMetaTypesMatched(fromMetaType, toMetaType, true)) {
+		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType, true)) {
 			return true;
 		}
 		if(fromMetaType->getTypeKind() != tkReference
@@ -243,7 +291,7 @@ public:
 		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
 			return true;
 		}
-		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
+		if(toMetaType->canCastFrom(value, fromMetaType)) {
 			return true;
 		}
 		return false;
@@ -251,7 +299,24 @@ public:
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
 	{
-		return doCast<Underlying>(value, toMetaType);
+		const MetaType * fromMetaType = getMetaType<T>();
+		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType, true)) {
+			return Variant::retype(toMetaType, value);
+		}
+		if(fromMetaType->getTypeKind() != tkReference
+			&& toMetaType->getTypeKind() == tkReference
+			&& fromMetaType->canCast(value, toMetaType->getUpType())
+			) {
+			return fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+			return internal_::CastTo<Underlying>::castTo(value, toMetaType);
+		}
+		if(toMetaType->canCastFrom(value, fromMetaType)) {
+			return toMetaType->castFrom(value, fromMetaType);
+		}
+		errorBadCast();
+		return Variant();
 	}
 
 	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType)
@@ -264,80 +329,6 @@ public:
 		return internal_::CastFrom<Underlying>::castFrom(value, fromMetaType);
 	}
 
-private:
-	template <typename U>
-	static void * doConstructDefault(
-		typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
-	) {
-		return new U();
-	}
-
-	template <typename U>
-	static void * doConstructDefault(
-		typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
-	) {
-		return nullptr;
-	}
-
-	template <typename U>
-	static void * doConstructCopy(
-		const void * copyFrom,
-		typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
-	) {
-		return new U(*(U *)copyFrom);
-	}
-
-	template <typename U>
-	static void * doConstructCopy(
-		const void * /*copyFrom*/,
-		typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
-	) {
-		return nullptr;
-	}
-
-	template <typename U>
-	static void doDestroy(U * /*instance*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
-	}
-
-	template <typename U>
-	static void doDestroy(U * instance, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
-#endif
-		delete instance;
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-#pragma GCC diagnostic pop
-#endif
-	}
-
-	template <typename U>
-	static Variant doCast(const Variant & /*value*/, const MetaType * /*toMetaType*/, typename std::enable_if<std::is_void<U>::value>::type * = nullptr) {
-		errorBadCast();
-		return Variant();
-	}
-
-	template <typename U>
-	static Variant doCast(const Variant & value, const MetaType * toMetaType, typename std::enable_if<! std::is_void<U>::value>::type * = nullptr) {
-		const MetaType * fromMetaType = getMetaType<T>();
-		if(areMetaTypesMatched(fromMetaType, toMetaType, true)) {
-			return Variant::retype(toMetaType, value);
-		}
-		if(fromMetaType->getTypeKind() != tkReference
-			&& toMetaType->getTypeKind() == tkReference
-			&& fromMetaType->canCast(value, toMetaType->getUpType())
-			) {
-			return fromMetaType->cast(value, toMetaType->getUpType());
-		}
-		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
-			return internal_::CastTo<Underlying>::castTo(value, toMetaType);
-		}
-		if(toMetaType->canCastFrom(value, getMetaType<T>())) {
-			return toMetaType->castFrom(value, getMetaType<T>());
-		}
-		errorBadCast();
-		return Variant();
-	}
 };
 
 template <typename T, typename Enabled = void>
@@ -351,12 +342,46 @@ struct DeclareMetaType : public DeclareMetaTypeBase<T>
 };
 
 template <>
-struct DeclareMetaTypeBase <void> : public DeclareMetaTypeObject<void>
+struct DeclareMetaTypeBase <void>
 {
+	using UpType = internal_::NoneUpType;
+
 	static constexpr TypeKind typeKind = tkVoid;
+	static constexpr TypeFlags typeFlags = 0;
 
 	static void * constructData(MetaTypeData * /*data*/, const void * /*value*/) {
 		return nullptr;
+	}
+
+	static void destroy(void * /*instance*/)
+	{
+	}
+
+	static void * getAddress(const MetaTypeData & /*data*/)
+	{
+		return nullptr;
+	}
+
+	static bool canCast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
+	{
+		return false;
+	}
+
+	static Variant cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
+	{
+		errorBadCast();
+		return Variant();
+	}
+
+	static bool canCastFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+	{
+		return false;
+	}
+
+	static Variant castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+	{
+		errorBadCast();
+		return Variant();
 	}
 
 };

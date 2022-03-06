@@ -37,7 +37,7 @@ template <typename T>
 struct DeclareMetaTypeBase <T *> : public DeclareMetaTypePointerBase<T *>
 {
 private:
-	static_assert(! std::is_void<T>::value, "T should not be void");
+	static_assert(! std::is_void<T>::value, "T should not be void in T * specialization.");
 
 public:
 	static const MetaAccessible * getMetaAccessible() {

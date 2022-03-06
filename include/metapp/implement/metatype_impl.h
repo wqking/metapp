@@ -334,8 +334,6 @@ auto doGetMetaType()
 	return &metaType;
 }
 
-} // namespace internal_
-
 inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
 {
 	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
@@ -363,6 +361,8 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 	}
 }
+
+} // namespace internal_
 
 template <typename T>
 const UnifiedType * getUnifiedType()
