@@ -3,6 +3,8 @@
 
 #include "metapp/compiler.h"
 
+#ifndef METAPP_DISABLE_EXCEPTION
+
 #ifdef METAPP_COMPILER_VC
 	#if defined(_CPPUNWIND ) && _CPPUNWIND 
 		#define METAPP_EXCEPTION_ENABLED
@@ -11,6 +13,8 @@
 	#if (defined(__EXCEPTIONS) && __EXCEPTIONS) || (defined(__cpp_exceptions) && __cpp_exceptions >= 199711)
 		#define METAPP_EXCEPTION_ENABLED
 	#endif
+#endif
+
 #endif
 
 #include <stdexcept>
@@ -26,7 +30,7 @@ public:
 	using super::super;
 };
 
-class NotSupportedException : public MetaException
+class UnsupportedException : public MetaException
 {
 private:
 	using super = MetaException;
@@ -62,15 +66,24 @@ public:
 	using super::super;
 };
 
+class InvalidIndexException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 // When calling errorXXX function, the caller should put a "return" after the call,
 // because if exception is disabled, no exception will be throw and the execute flow
 // may coninue if there is no "return".
 
 #ifdef METAPP_EXCEPTION_ENABLED
 
-inline void errorNotSupported(const std::string & message = "Not supported")
+inline void errorUnsupported(const std::string & message = "Not supported")
 {
-	throw NotSupportedException(message);
+	throw UnsupportedException(message);
 }
 
 inline void errorBadCast(const std::string & message = "Bad cast")
@@ -88,9 +101,14 @@ inline void errorWrongMetaType(const std::string & message = "Wrong meta type")
 	throw WrongMetaTypeException(message);
 }
 
+inline void errorInvalidIndex(const std::string & message = "Invalid index")
+{
+	throw InvalidIndexException(message);
+}
+
 #else
 
-inline void errorNotSupported(const std::string & /*message*/ = "Not supported")
+inline void errorUnsupported(const std::string & /*message*/ = "Not supported")
 {
 }
 
@@ -103,6 +121,10 @@ inline void errorIllegalArgument(const std::string & /*message*/ = "Illegal argu
 }
 
 inline void errorWrongMetaType(const std::string & /*message*/ = "Wrong meta type")
+{
+}
+
+inline void errorInvalidIndex(const std::string & /*message*/ = "Invalid index")
 {
 }
 

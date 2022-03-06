@@ -264,14 +264,14 @@ namespace internal_ {
 template <typename T>
 struct UpTypeGetter;
 
-template <typename Arg0, typename ...Args>
-struct UpTypeGetter <TypeList<Arg0, Args...> >
+template <typename Type0, typename ...Types>
+struct UpTypeGetter <TypeList<Type0, Types...> >
 {
 	static const MetaType ** makeUpTypeList()
 	{
-		static std::array<const MetaType *, sizeof...(Args) + 1> upTypeList {
-			getMetaType<Arg0>(),
-			getMetaType<Args>()...,
+		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList {
+			getMetaType<Type0>(),
+			getMetaType<Types>()...,
 		};
 		return upTypeList.data();
 	}
@@ -279,7 +279,7 @@ struct UpTypeGetter <TypeList<Arg0, Args...> >
 	static UpTypeData getUpType() {
 		return {
 			makeUpTypeList(),
-			(uint16_t)(sizeof...(Args) + 1)
+			(uint16_t)(sizeof...(Types) + 1)
 		};
 	}
 };

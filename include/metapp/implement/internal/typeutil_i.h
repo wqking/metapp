@@ -196,18 +196,18 @@ struct HelperFilterTypes <Result, TypeList<>, BoolConstantList<> >
 	using Type = Result;
 };
 
-template <typename Result, typename Arg0, typename ...Args, bool has0, bool ...hasList>
-struct HelperFilterTypes <Result, TypeList<Arg0, Args...>, BoolConstantList<has0, hasList...> >
+template <typename Result, typename Type0, typename ...Types, bool has0, bool ...hasList>
+struct HelperFilterTypes <Result, TypeList<Type0, Types...>, BoolConstantList<has0, hasList...> >
 {
 	using Temp = typename std::conditional<
 		has0,
-		typename TypeListAppend<Result, Arg0>::Type,
+		typename TypeListAppend<Result, Type0>::Type,
 		Result
 	>::type;
 
 	using Type = typename HelperFilterTypes<
 		Temp,
-		TypeList<Args...>,
+		TypeList<Types...>,
 		BoolConstantList<hasList...>
 	>::Type;
 };

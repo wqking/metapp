@@ -224,15 +224,15 @@ struct MakeMetaInterfaceData
 		}
 	};
 
-	template <typename Arg0, typename ...Args>
-	struct ItemListMaker <TypeList<Arg0, Args...> >
+	template <typename Type0, typename ...Types>
+	struct ItemListMaker <TypeList<Type0, Types...> >
 	{
-		static constexpr MetaInterfaceKind kinds = Arg0::kind | ItemListMaker <TypeList<Args...> >::kinds;
+		static constexpr MetaInterfaceKind kinds = Type0::kind | ItemListMaker <TypeList<Types...> >::kinds;
 
 		static const MetaInterfaceItem * make() {
-			static const std::array<MetaInterfaceItem, sizeof...(Args) + 1> itemList {
-				Arg0::template make<M>(),
-				Args::template make<M>()...
+			static const std::array<MetaInterfaceItem, sizeof...(Types) + 1> itemList {
+				Type0::template make<M>(),
+				Types::template make<M>()...
 			};
 			return itemList.data();
 		}
