@@ -6,6 +6,7 @@
 TEST_CASE("metatypes, void")
 {
 	REQUIRE(metapp::getTypeKind(metapp::Variant((void *)0)) == metapp::tkPointer);
+	REQUIRE(metapp::getMetaType<void>()->getTypeKind() == metapp::tkVoid);
 }
 
 TEST_CASE("metatypes, nullptr")

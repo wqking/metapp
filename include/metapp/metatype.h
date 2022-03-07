@@ -337,7 +337,7 @@ public:
 };
 
 template <typename T, typename Enabled = void>
-struct DeclareMetaTypeBase : public DeclareMetaTypeObject<T>
+struct DeclareMetaTypeBase
 {
 };
 
@@ -346,8 +346,7 @@ struct DeclareMetaType : public DeclareMetaTypeBase<T>
 {
 };
 
-template <>
-struct DeclareMetaTypeObject <void>
+struct DeclareMetaTypeVoidBase
 {
 	using UpType = internal_::NoneUpType;
 
@@ -390,6 +389,11 @@ struct DeclareMetaTypeObject <void>
 	}
 
 };
+
+template<> struct DeclareMetaTypeObject<void> : DeclareMetaTypeVoidBase {};
+template<> struct DeclareMetaTypeObject<const void> : DeclareMetaTypeVoidBase {};
+template<> struct DeclareMetaTypeObject<volatile void> : DeclareMetaTypeVoidBase {};
+template<> struct DeclareMetaTypeObject<const volatile void> : DeclareMetaTypeVoidBase {};
 
 } // namespace metapp
 

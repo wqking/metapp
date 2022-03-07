@@ -148,7 +148,7 @@ struct MakeMetaInterfaceItem <mikMetaStreaming>
 	template <typename T>
 	static constexpr MetaInterfaceItem make() {
 		using M = typename std::conditional<
-			HasFunctionGetMetaStreaming<DeclareMetaType<T> >::value,
+			HasMember_getMetaStreaming<DeclareMetaType<T> >::value,
 			DeclareMetaType<T>,
 			DeclareMetaTypeObject<T>
 		>::type;
@@ -227,16 +227,16 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem <mikMetaUser>
 		>,
 		BoolConstantList<
-		HasFunctionGetMetaClass<M>::value,
-		HasFunctionGetMetaCallable<M>::value,
-		HasFunctionGetMetaAccessible<M>::value,
-		HasFunctionGetMetaEnum<M>::value,
-		HasFunctionGetMetaIndexable<M>::value,
-		HasFunctionGetMetaIterable<M>::value,
-		HasFunctionGetMetaStreaming<M>::value || HasFunctionGetMetaStreaming<DeclareMetaTypeObject<T> >::value,
-		HasFunctionGetMetaMap<M>::value,
-		HasFunctionGetMetaMember<M>::value,
-		HasFunctionGetMetaUser<M>::value
+		HasMember_getMetaClass<M>::value,
+		HasMember_getMetaCallable<M>::value,
+		HasMember_getMetaAccessible<M>::value,
+		HasMember_getMetaEnum<M>::value,
+		HasMember_getMetaIndexable<M>::value,
+		HasMember_getMetaIterable<M>::value,
+		HasMember_getMetaStreaming<M>::value || HasMember_getMetaStreaming<DeclareMetaTypeObject<T> >::value,
+		HasMember_getMetaMap<M>::value,
+		HasMember_getMetaMember<M>::value,
+		HasMember_getMetaUser<M>::value
 		>
 	>::Type;
 

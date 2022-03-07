@@ -86,102 +86,23 @@ struct HasOutputStreamOperator
 	enum { value = !! decltype(test<T>(0))() };
 };
 
-template <typename T>
-struct HasFunctionGetMetaClass
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaClass) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaCallable
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaCallable) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaAccessible
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaAccessible) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaEnum
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaEnum) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaIndexable
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaIndexable) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaIterable
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaIterable) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaStreaming
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaStreaming) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaMap
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaMap) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaMember
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaMember) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
-struct HasFunctionGetMetaUser
-{
-	template <typename C> static std::true_type test(decltype(C::getMetaUser) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
 #define METAPP_HAS_MEMBER(member) \
 	template <typename T> struct HasMember_ ## member { \
 		template <typename C> static std::true_type test(decltype(C::member) *); \
 		template <typename C> static std::false_type test(...); \
 		enum { value = !! decltype(test<T>(0))() }; \
 	}
+
+METAPP_HAS_MEMBER(getMetaClass);
+METAPP_HAS_MEMBER(getMetaCallable);
+METAPP_HAS_MEMBER(getMetaAccessible);
+METAPP_HAS_MEMBER(getMetaEnum);
+METAPP_HAS_MEMBER(getMetaIndexable);
+METAPP_HAS_MEMBER(getMetaIterable);
+METAPP_HAS_MEMBER(getMetaStreaming);
+METAPP_HAS_MEMBER(getMetaMap);
+METAPP_HAS_MEMBER(getMetaMember);
+METAPP_HAS_MEMBER(getMetaUser);
 
 METAPP_HAS_MEMBER(constructData);
 METAPP_HAS_MEMBER(destroy);

@@ -338,9 +338,7 @@ auto doGetMetaType()
 		UpTypeGetter<
 			typename internal_::SelectDeclareClass<T, internal_::HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
-		//UpTypeGetter<typename M::UpType>::getUpType(),
 		internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<M>::value>::typeFlags
-		//M::typeFlags
 	);
 	return &metaType;
 }
@@ -383,7 +381,6 @@ const UnifiedType * getUnifiedType()
 
 	static const UnifiedType unifiedType (
 		internal_::SelectDeclareClass<T, internal_::HasMember_typeKind<M>::value>::typeKind,
-		//M::typeKind,
 		internal_::MetaMethodTable {
 			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
@@ -393,14 +390,6 @@ const UnifiedType * getUnifiedType()
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_castFrom<M>::value>::castFrom,
 			
-			//&M::constructData,
-			//&M::destroy,
-			//&M::getAddress,
-			//&M::canCast,
-			//&M::cast,
-			//&M::canCastFrom,
-			//&M::castFrom,
-
 			internal_::MakeMetaInterfaceData<T>::getMetaInterfaceData(),
 		}
 	);
