@@ -87,15 +87,6 @@ struct HasOutputStreamOperator
 };
 
 template <typename T>
-struct HasFunctionAccessibleGet
-{
-	template <typename C> static std::true_type test(decltype(C::accessibleGet) *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
-template <typename T>
 struct HasFunctionGetMetaClass
 {
 	template <typename C> static std::true_type test(decltype(C::getMetaClass) *);
@@ -180,6 +171,34 @@ template <typename T>
 struct HasFunctionGetMetaUser
 {
 	template <typename C> static std::true_type test(decltype(C::getMetaUser) *);
+	template <typename C> static std::false_type test(...);
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+
+#define METAPP_HAS_MEMBER(member) \
+	template <typename T> struct HasMember_ ## member { \
+		template <typename C> static std::true_type test(decltype(C::member) *); \
+		template <typename C> static std::false_type test(...); \
+		enum { value = !! decltype(test<T>(0))() }; \
+	}
+
+METAPP_HAS_MEMBER(constructData);
+METAPP_HAS_MEMBER(destroy);
+METAPP_HAS_MEMBER(getAddress);
+METAPP_HAS_MEMBER(canCast);
+METAPP_HAS_MEMBER(cast);
+METAPP_HAS_MEMBER(canCastFrom);
+METAPP_HAS_MEMBER(castFrom);
+METAPP_HAS_MEMBER(typeKind);
+METAPP_HAS_MEMBER(typeFlags);
+
+#undef METAPP_HAS_MEMBER
+
+template <typename T>
+struct HasMember_UpType
+{
+	template <typename C> static std::true_type test(typename C::UpType *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };

@@ -66,7 +66,7 @@ namespace internal_ {
 template <typename T>
 using SelectMetaStreamingBase = typename std::conditional<
 	internal_::HasInputStreamOperator<T>::value
-		| internal_::HasOutputStreamOperator<T>::value
+		&& internal_::HasOutputStreamOperator<T>::value
 	,
 	MetaStreamingBase<T>,
 	internal_::DummyMetaStreamingBase

@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypePointerBase : public DeclareMetaTypeObject<T>
+struct DeclareMetaTypePointerBase
 {
 private:
 	using super = DeclareMetaTypeObject<T>;

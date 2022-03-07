@@ -49,8 +49,10 @@ struct MakeMetaInterfaceItem <mikMetaClass>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaClass;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaClass
@@ -63,8 +65,10 @@ struct MakeMetaInterfaceItem <mikMetaCallable>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaCallable;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaCallable
@@ -77,8 +81,10 @@ struct MakeMetaInterfaceItem <mikMetaAccessible>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaAccessible;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaAccessible
@@ -91,8 +97,10 @@ struct MakeMetaInterfaceItem <mikMetaEnum>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaEnum;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaEnum
@@ -105,8 +113,10 @@ struct MakeMetaInterfaceItem <mikMetaIndexable>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaIndexable;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaIndexable
@@ -119,8 +129,10 @@ struct MakeMetaInterfaceItem <mikMetaIterable>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaIterable;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaIterable
@@ -133,8 +145,14 @@ struct MakeMetaInterfaceItem <mikMetaStreaming>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaStreaming;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = typename std::conditional<
+			HasFunctionGetMetaStreaming<DeclareMetaType<T> >::value,
+			DeclareMetaType<T>,
+			DeclareMetaTypeObject<T>
+		>::type;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaStreaming
@@ -147,8 +165,10 @@ struct MakeMetaInterfaceItem <mikMetaMap>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaMap;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaMap
@@ -161,8 +181,10 @@ struct MakeMetaInterfaceItem <mikMetaMember>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaMember;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaMember
@@ -175,8 +197,10 @@ struct MakeMetaInterfaceItem <mikMetaUser>
 {
 	static constexpr MetaInterfaceKind kind = mikMetaUser;
 
-	template <typename M>
+	template <typename T>
 	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
 		return {
 			kind,
 			(MetaInterfaceGetter)&M::getMetaUser
@@ -184,9 +208,11 @@ struct MakeMetaInterfaceItem <mikMetaUser>
 	}
 };
 
-template <typename M>
+template <typename T>
 struct MakeMetaInterfaceData
 {
+	using M = DeclareMetaType<T>;
+
 	using ItemMakerList = typename FilterTypes<
 		TypeList<
 		MakeMetaInterfaceItem <mikMetaClass>,
@@ -207,7 +233,7 @@ struct MakeMetaInterfaceData
 		HasFunctionGetMetaEnum<M>::value,
 		HasFunctionGetMetaIndexable<M>::value,
 		HasFunctionGetMetaIterable<M>::value,
-		HasFunctionGetMetaStreaming<M>::value,
+		HasFunctionGetMetaStreaming<M>::value || HasFunctionGetMetaStreaming<DeclareMetaTypeObject<T> >::value,
 		HasFunctionGetMetaMap<M>::value,
 		HasFunctionGetMetaMember<M>::value,
 		HasFunctionGetMetaUser<M>::value
@@ -231,8 +257,8 @@ struct MakeMetaInterfaceData
 
 		static const MetaInterfaceItem * make() {
 			static const std::array<MetaInterfaceItem, sizeof...(Types) + 1> itemList {
-				Type0::template make<M>(),
-				Types::template make<M>()...
+				Type0::template make<T>(),
+				Types::template make<T>()...
 			};
 			return itemList.data();
 		}

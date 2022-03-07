@@ -9,13 +9,13 @@ namespace metapp {
 
 template <typename FullType, typename Class, typename RT, typename ...Args>
 struct DeclareMetaTypeMemberFunctionBase
-	: public DeclareMetaTypeObject<FullType>,
-		public MetaCallableBase<FullType, Class, RT, Args...>,
+	: public MetaCallableBase<FullType, Class, RT, Args...>,
 		public MetaMemberBase<Class>
 {
 public:
 	using UpType = TypeList <Class, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
+	static constexpr TypeFlags typeFlags = 0; //GetMetaTypeFlags<FullType>::typeFlags;
 
 };
 

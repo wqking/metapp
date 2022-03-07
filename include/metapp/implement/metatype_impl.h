@@ -313,6 +313,13 @@ struct UpTypeGetter
 	}
 };
 
+template <typename T, bool has>
+using SelectDeclareClass = typename std::conditional<
+	has,
+	DeclareMetaType<T>,
+	DeclareMetaTypeObject<T>
+>::type;
+
 template <typename T>
 auto doGetMetaType()
 	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
@@ -328,8 +335,12 @@ auto doGetMetaType()
 
 	static const MetaType metaType (
 		getUnifiedType<typename std::remove_cv<T>::type>(),
-		UpTypeGetter<typename M::UpType>::getUpType(),
-		M::typeFlags
+		UpTypeGetter<
+			typename internal_::SelectDeclareClass<T, internal_::HasMember_UpType<M>::value>::UpType
+		>::getUpType(),
+		//UpTypeGetter<typename M::UpType>::getUpType(),
+		internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<M>::value>::typeFlags
+		//M::typeFlags
 	);
 	return &metaType;
 }
@@ -362,6 +373,7 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 	}
 }
 
+
 } // namespace internal_
 
 template <typename T>
@@ -370,21 +382,26 @@ const UnifiedType * getUnifiedType()
 	using M = DeclareMetaType<T>;
 
 	static const UnifiedType unifiedType (
-		M::typeKind,
+		internal_::SelectDeclareClass<T, internal_::HasMember_typeKind<M>::value>::typeKind,
+		//M::typeKind,
 		internal_::MetaMethodTable {
-			&M::constructData,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_getAddress<M>::value>::getAddress,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_canCast<M>::value>::canCast,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_cast<M>::value>::cast,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_castFrom<M>::value>::castFrom,
+			
+			//&M::constructData,
+			//&M::destroy,
+			//&M::getAddress,
+			//&M::canCast,
+			//&M::cast,
+			//&M::canCastFrom,
+			//&M::castFrom,
 
-			&M::destroy,
-
-			&M::getAddress,
-
-			&M::canCast,
-			&M::cast,
-
-			&M::canCastFrom,
-			&M::castFrom,
-
-			internal_::MakeMetaInterfaceData<M>::getMetaInterfaceData(),
+			internal_::MakeMetaInterfaceData<T>::getMetaInterfaceData(),
 		}
 	);
 	return &unifiedType;

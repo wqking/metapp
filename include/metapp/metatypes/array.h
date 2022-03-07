@@ -9,10 +9,9 @@ namespace metapp {
 
 template <typename T, typename U, size_t length>
 struct DeclareMetaTypeArrayBase
-	: public DeclareMetaTypeBase <U>
 {
 	static constexpr TypeKind typeKind = tkArray;
-	static constexpr TypeFlags typeFlags = DeclareMetaTypeBase<U>::typeFlags
+	static constexpr TypeFlags typeFlags = GetMetaTypeFlags<U>::typeFlags
 		| (std::is_const<U>::value ? tfConst : 0)
 		| (std::is_volatile<U>::value ? tfVolatile : 0)
 	;

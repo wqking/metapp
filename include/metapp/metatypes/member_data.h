@@ -10,8 +10,7 @@ namespace metapp {
 
 template <typename Class, typename T>
 struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
-	: public DeclareMetaTypeObject<T Class::*>,
-		public MetaMemberBase<Class>
+	: public MetaMemberBase<Class>
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;

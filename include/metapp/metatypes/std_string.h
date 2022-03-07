@@ -8,7 +8,7 @@
 namespace metapp {
 
 template <>
-struct DeclareMetaTypeBase <std::string> : public DeclareMetaTypeObject <std::string>
+struct DeclareMetaTypeBase <std::string>
 {
 private:
 	using super = DeclareMetaTypeObject<std::string>;
@@ -39,7 +39,7 @@ private:
 };
 
 template <>
-struct DeclareMetaTypeBase <std::wstring> : public DeclareMetaTypeObject <std::wstring>
+struct DeclareMetaTypeBase <std::wstring>
 {
 	using super = DeclareMetaTypeObject<std::wstring>;
 

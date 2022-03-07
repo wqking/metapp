@@ -9,7 +9,7 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <T,
-	typename std::enable_if<TypeListIn<ArithmeticTypeList, T>::value>::type> : public DeclareMetaTypeObject<T>
+	typename std::enable_if<TypeListIn<ArithmeticTypeList, T>::value>::type>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<ArithmeticTypeList, T>::value);
 

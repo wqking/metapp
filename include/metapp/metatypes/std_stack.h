@@ -9,7 +9,6 @@ namespace metapp {
 
 template <typename T, typename Container>
 struct DeclareMetaTypeBase <std::stack<T, Container> >
-	: public DeclareMetaTypeObject <std::stack<T, Container> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdStack;

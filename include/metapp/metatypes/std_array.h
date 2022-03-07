@@ -12,8 +12,7 @@ namespace metapp {
 
 template <typename T, size_t length>
 struct DeclareMetaTypeBase <std::array<T, length> >
-	: public DeclareMetaTypeObject <std::array<T, length> >,
-		public MetaIndexableBase<std::array<T, length> >,
+	: public MetaIndexableBase<std::array<T, length> >,
 		public MetaIterableBase<std::array<T, length> >
 {
 	using UpType = T;

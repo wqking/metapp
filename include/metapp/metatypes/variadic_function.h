@@ -40,7 +40,6 @@ namespace internal_ {
 
 template <typename FT>
 struct DeclareMetaType <VariadicFunction<FT> >
-	: public DeclareMetaTypeBase<VariadicFunction<FT> >
 {
 private:
 	using Underlying = DeclareMetaType<FT>;

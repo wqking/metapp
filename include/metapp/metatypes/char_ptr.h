@@ -11,10 +11,10 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareCharPtrBase : public DeclareMetaTypeBase <T>
+struct DeclareCharPtrBase
 {
 private:
-	using super = DeclareMetaTypeBase <T>;
+	using super = DeclareMetaTypeObject <T>;
 
 public:
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
@@ -62,10 +62,10 @@ struct DeclareMetaType <char[length]> : public DeclareCharPtrBase <char[length]>
 
 
 template <typename T>
-struct DeclareWideCharPtrBase : public DeclareMetaTypeBase <T>
+struct DeclareWideCharPtrBase
 {
 private:
-	using super = DeclareMetaTypeBase <T>;
+	using super = DeclareMetaTypeObject <T>;
 
 public:
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;

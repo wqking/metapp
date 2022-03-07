@@ -22,8 +22,7 @@ struct Constructor<Class (Args...)>
 
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
-	: public DeclareMetaTypeObject<Constructor<Class (Args...)> >,
-		public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>,
+	: public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>,
 		public MetaMemberBase<Class>
 {
 public:

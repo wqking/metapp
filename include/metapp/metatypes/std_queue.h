@@ -9,7 +9,6 @@ namespace metapp {
 
 template <typename T, typename Container>
 struct DeclareMetaTypeBase <std::queue<T, Container> >
-	: public DeclareMetaTypeObject <std::queue<T, Container> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdQueue;
@@ -18,7 +17,6 @@ struct DeclareMetaTypeBase <std::queue<T, Container> >
 
 template <typename T, typename Container>
 struct DeclareMetaTypeBase <std::priority_queue<T, Container> >
-	: public DeclareMetaTypeObject <std::priority_queue<T, Container> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdPriorityQueue;

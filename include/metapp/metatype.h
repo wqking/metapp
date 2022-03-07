@@ -13,13 +13,22 @@
 #include "metapp/variant.h"
 #undef METAPP_VARIANT_IMPL_H_969872685611
 
-// Must be included after previous macro hack
-#include "metapp/implement/internal/metatype_i.h"
-
 #include <type_traits>
 #include <initializer_list>
 #include <istream>
 #include <ostream>
+
+namespace metapp {
+
+template <typename T, typename Enabled = void>
+struct DeclareMetaType;
+template <typename T>
+struct DeclareMetaTypeObject;
+
+} // namespace metapp
+ 
+// Must be included after previous macro hack
+#include "metapp/implement/internal/metatype_i.h"
 
 namespace metapp {
 
@@ -36,9 +45,6 @@ class MetaIterable;
 class MetaStreaming;
 class MetaMap;
 class MetaMember;
-
-template <typename T, typename Enabled = void>
-struct DeclareMetaType;
 
 template <typename T>
 const MetaType * getMetaType();
@@ -177,7 +183,6 @@ private:
 } // namespace metapp
 
 #include "metapp/variant.h"
-#include "metapp/implement/metatype_impl.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 #include "metapp/implement/internal/cast_i.h"
 
@@ -342,7 +347,7 @@ struct DeclareMetaType : public DeclareMetaTypeBase<T>
 };
 
 template <>
-struct DeclareMetaTypeBase <void>
+struct DeclareMetaTypeObject <void>
 {
 	using UpType = internal_::NoneUpType;
 
@@ -386,7 +391,16 @@ struct DeclareMetaTypeBase <void>
 
 };
 
+} // namespace metapp
+
+#include "metapp/implement/metatype_impl.h"
+
+namespace metapp {
+
+template <typename T>
+using GetMetaTypeFlags = typename internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<DeclareMetaType<T> >::value>;
 
 } // namespace metapp
+
 
 #endif
