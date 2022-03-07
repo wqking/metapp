@@ -7,23 +7,19 @@ namespace metapp {
 
 template <>
 struct DeclareMetaTypeBase <Variant>
-	: public DeclareMetaTypeObject <Variant>
 {
-private:
-	using super = DeclareMetaTypeObject <Variant>;
-
-public:
+	using Fallback = DeclareMetaTypeObject <Variant>;
 	static constexpr TypeKind typeKind = tkVariant;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return super::canCast(value, toMetaType)
+		return Fallback::canCast(value, toMetaType)
 			|| value.get<Variant &>().canCast(toMetaType)
 		;
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		if(super::canCast(value, toMetaType)) {
-			return super::cast(value, toMetaType);
+		if(Fallback::canCast(value, toMetaType)) {
+			return Fallback::cast(value, toMetaType);
 		}
 		else {
 			return value.get<Variant &>().cast(toMetaType);

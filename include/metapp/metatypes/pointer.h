@@ -10,16 +10,13 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypePointerBase
 {
-private:
-	using super = DeclareMetaTypeObject<T>;
-
-public:
+	using Fallback = DeclareMetaTypeObject<T>;
 	using UpType = typename std::remove_pointer<T>::type;
 
 	static constexpr TypeKind typeKind = tkPointer;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer || super::canCast(value, toMetaType);
+		return toMetaType->getTypeKind() == tkPointer || Fallback::canCast(value, toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
@@ -27,7 +24,7 @@ public:
 			return Variant(toMetaType, &value.get<void * &>());
 		}
 		else {
-			return super::cast(value, toMetaType);
+			return Fallback::cast(value, toMetaType);
 		}
 	}
 

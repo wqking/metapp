@@ -314,10 +314,25 @@ struct UpTypeGetter
 };
 
 template <typename T, bool has>
+struct SelectFallback;
+
+template <typename T>
+struct SelectFallback <T, true>
+{
+	using Type = typename DeclareMetaType<T>::Fallback;
+};
+
+template <typename T>
+struct SelectFallback <T, false>
+{
+	using Type = DeclareMetaTypeObject<T>;
+};
+
+template <typename T, bool has>
 using SelectDeclareClass = typename std::conditional<
 	has,
 	DeclareMetaType<T>,
-	DeclareMetaTypeObject<T>
+	typename SelectFallback<T, HasMember_Fallback<DeclareMetaType<T> >::value>::Type
 >::type;
 
 template <typename T>

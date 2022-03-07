@@ -8,12 +8,9 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <T &> : public DeclareMetaTypeObject<T &>
+struct DeclareMetaTypeBase <T &>
 {
-private:
-	using super = DeclareMetaTypeObject<T &>;
-
-public:
+	using Fallback = DeclareMetaTypeObject<T &>;
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
@@ -29,7 +26,7 @@ public:
 	}
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return (toMetaType->getTypeKind() == tkReference) || super::canCast(value, toMetaType);
+		return (toMetaType->getTypeKind() == tkReference) || Fallback::canCast(value, toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
@@ -37,7 +34,7 @@ public:
 			return Variant(toMetaType, &value.get<int &>());
 		}
 		else {
-			return super::cast(value, toMetaType);
+			return Fallback::cast(value, toMetaType);
 		}
 	}
 
