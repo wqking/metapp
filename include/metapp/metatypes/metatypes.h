@@ -29,6 +29,7 @@
 #include "metapp/metatypes/std_array.h"
 #include "metapp/metatypes/std_function.h"
 #include "metapp/metatypes/std_tuple.h"
+#include "metapp/metatypes/std_unique_ptr.h"
 #include "metapp/metatypes/std_unordered_map.h"
 #include "metapp/metatypes/std_unordered_set.h"
 #include "metapp/metatypes/std_vector.h"

@@ -84,6 +84,15 @@ public:
 	using super::super;
 };
 
+class NotConstructibleException : public MetaException
+{
+private:
+	using super = MetaException;
+
+public:
+	using super::super;
+};
+
 // When calling errorXXX function, the caller should put a "return" after the call,
 // because if exception is disabled, no exception will be throw and the execute flow
 // may coninue if there is no "return".
@@ -120,6 +129,11 @@ inline void errorUnwritable(const std::string & message = "Unwritable")
 	throw UnwritableException(message);
 }
 
+inline void errorNotConstructible(const std::string & message = "Not constructible")
+{
+	throw NotConstructibleException(message);
+}
+
 #else
 
 inline void errorUnsupported(const std::string & /*message*/ = "Not supported")
@@ -143,6 +157,10 @@ inline void errorInvalidIndex(const std::string & /*message*/ = "Invalid index")
 }
 
 inline void errorUnwritable(const std::string & /*message*/ = "Unwritable")
+{
+}
+
+inline void errorNotConstructible(const std::string & /*message*/ = "Not constructible")
 {
 }
 

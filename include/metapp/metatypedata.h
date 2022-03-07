@@ -142,6 +142,7 @@ private:
 	void doConstructOnObjectDefault(
 		typename std::enable_if<! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)>::type * = nullptr
 	) {
+		errorNotConstructible();
 	}
 
 	template <typename T>
@@ -154,9 +155,26 @@ private:
 
 	template <typename T>
 	void doConstructOnObjectCopy(
-		const void * /*copyFrom*/,
+		const void * copyFrom,
 		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
 	) {
+		doConstructOnObjectMove<T>(copyFrom);
+	}
+
+	template <typename T>
+	void doConstructOnObjectMove(
+		const void * copyFrom,
+		typename std::enable_if<std::is_move_assignable<T>::value>::type * = nullptr
+	) {
+		object = std::make_shared<T>(std::move(*(T *)copyFrom));
+	}
+
+	template <typename T>
+	void doConstructOnObjectMove(
+		const void * /*copyFrom*/,
+		typename std::enable_if<! std::is_move_assignable<T>::value>::type * = nullptr
+	) {
+		errorNotConstructible();
 	}
 
 	template <typename T>
