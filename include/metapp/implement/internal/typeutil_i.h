@@ -143,6 +143,15 @@ struct CanStaticCast
 	enum { value = ! std::is_void<From>::value && ! std::is_void<To>::value && !! decltype(test<From, To>(0))() };
 };
 
+template <typename From, typename To>
+struct IsNarrowingCast
+{
+	template <typename F, typename T> static std::true_type test(decltype(T {std::declval<F>()}) *);
+	template <typename F, typename T> static std::false_type test(...);
+
+	enum { value = ! std::is_void<From>::value && ! std::is_void<To>::value && ! decltype(test<From, To>(0))() };
+};
+
 template <typename Result, typename TL, typename BoolList>
 struct HelperFilterTypes
 {

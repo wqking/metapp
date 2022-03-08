@@ -6,21 +6,18 @@
 namespace metapp {
 
 template <typename T>
-inline Variant Variant::create(T value, const bool copyVariant,
+inline Variant Variant::create(T value,
 	typename std::enable_if<
-	std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
+		std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type *)
 {
-	if(copyVariant) {
-		return value;
-	}
-	return Variant(metapp::getMetaType<T>(), &value);
+	return value;
 }
 
 template <typename T>
-inline Variant Variant::create(T value, const bool /*copyVariant*/,
+inline Variant Variant::create(T value,
 	typename std::enable_if<
-	! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
+		! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type *)
 {
 	return Variant(metapp::getMetaType<T>(), &value);

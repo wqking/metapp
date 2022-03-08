@@ -5,6 +5,20 @@ namespace metapp {
 
 namespace internal_ {
 
+template <typename From, typename To>
+struct CanCastSafely
+{
+	static constexpr bool value =
+		CanStaticCast<From, To>::value
+		&& (
+			! (
+				std::is_class<typename std::remove_reference<To>::type>::value
+				)
+			|| ! IsNarrowingCast<From, To>::value
+			)
+		;
+};
+
 template <typename MyType>
 struct CastFrom
 {
@@ -53,13 +67,20 @@ private:
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & value,
-			typename std::enable_if<internal_::CanStaticCast<F, ToType>::value>::type * = 0) {
+			typename std::enable_if<CanCastSafely<F, ToType>::value>::type * = 0) {
+			// If ToType is a class which is constructible from F, but the argument in its constructor
+			// is narrow than F, warning C4244 will be issued on MSVC.
+			// std::unordered_map is such an example, because it can be construct from size_type,
+			// and cause warning when F is long double.
+			// Current to avoid the warning, we don't allow narrowing casting to class, see CanCastSafely
+			// But that can't suppress warning when ToType is container with element of metapp::Variant,
+			// such as std::vector<metapp::Variant>
 			return static_cast<ToType>(*(F *)(value.getAddress()));
 		}
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & /*value*/,
-			typename std::enable_if<! internal_::CanStaticCast<F, ToType>::value>::type * = 0) {
+			typename std::enable_if<! CanCastSafely<F, ToType>::value>::type * = 0) {
 			return Variant();
 		}
 	};
@@ -83,9 +104,9 @@ private:
 	template <typename ...Types>
 	static CastFromItem doFindCastFromItem(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		using TL = typename internal_::FilterTypes<
+		using TL = typename FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<internal_::CanStaticCast<Types, Decayed>::value...>
+			BoolConstantList<CanCastSafely<Types, Decayed>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -145,13 +166,13 @@ private:
 
 		template <typename T>
 		static Variant doCastTo(const Variant & value,
-			typename std::enable_if<internal_::CanStaticCast<FromType, T>::value>::type * = 0) {
+			typename std::enable_if<CanStaticCast<FromType, T>::value>::type * = 0) {
 			return static_cast<T>(*(FromType *)(value.getAddress()));
 		}
 
 		template <typename T>
 		static Variant doCastTo(const Variant & /*value*/,
-			typename std::enable_if<! internal_::CanStaticCast<FromType, T>::value>::type * = 0) {
+			typename std::enable_if<! CanStaticCast<FromType, T>::value>::type * = 0) {
 			return Variant();
 		}
 	};
@@ -175,9 +196,9 @@ private:
 	template <typename ...Types>
 	static CastToItem doFindCastToItem(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		using TL = typename internal_::FilterTypes<
+		using TL = typename FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<internal_::CanStaticCast<Decayed, Types>::value...>
+			BoolConstantList<CanStaticCast<Decayed, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}
