@@ -150,7 +150,7 @@ struct MakeMetaInterfaceItem <mikMetaStreaming>
 		using M = typename std::conditional<
 			HasMember_getMetaStreaming<DeclareMetaType<T> >::value,
 			DeclareMetaType<T>,
-			DeclareMetaTypeObject<T>
+			CommonDeclareMetaType<T>
 		>::type;
 
 		return {
@@ -233,7 +233,7 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaEnum<M>::value,
 		HasMember_getMetaIndexable<M>::value,
 		HasMember_getMetaIterable<M>::value,
-		HasMember_getMetaStreaming<M>::value || HasMember_getMetaStreaming<DeclareMetaTypeObject<T> >::value,
+		HasMember_getMetaStreaming<M>::value || HasMember_getMetaStreaming<CommonDeclareMetaType<T> >::value,
 		HasMember_getMetaMap<M>::value,
 		HasMember_getMetaMember<M>::value,
 		HasMember_getMetaUser<M>::value

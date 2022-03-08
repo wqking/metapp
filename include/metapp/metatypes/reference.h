@@ -10,7 +10,7 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T &>
 {
-	using Fallback = DeclareMetaTypeObject<T &>;
+	using Fallback = CommonDeclareMetaType<T &>;
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 

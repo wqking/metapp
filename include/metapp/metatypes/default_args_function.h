@@ -69,7 +69,7 @@ struct DefaultArgsGetter
 
 template <typename FT, size_t defaultArgsCount>
 struct DeclareMetaTypeBase <DefaultArgsFunction<FT, defaultArgsCount> >
-	: public DeclareMetaTypeObject<DefaultArgsFunction<FT, defaultArgsCount> >
+	: public CommonDeclareMetaType<DefaultArgsFunction<FT, defaultArgsCount> >
 {
 private:
 	using Underlying = DeclareMetaType<FT>;

@@ -10,7 +10,7 @@ namespace metapp {
 template <>
 struct DeclareMetaTypeBase <std::string>
 {
-	using Fallback = DeclareMetaTypeObject<std::string>;
+	using Fallback = CommonDeclareMetaType<std::string>;
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
@@ -38,7 +38,7 @@ private:
 template <>
 struct DeclareMetaTypeBase <std::wstring>
 {
-	using Fallback = DeclareMetaTypeObject<std::wstring>;
+	using Fallback = CommonDeclareMetaType<std::wstring>;
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 

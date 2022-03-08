@@ -325,7 +325,7 @@ struct SelectFallback <T, true>
 template <typename T>
 struct SelectFallback <T, false>
 {
-	using Type = DeclareMetaTypeObject<T>;
+	using Type = CommonDeclareMetaType<T>;
 };
 
 template <typename T, bool has>

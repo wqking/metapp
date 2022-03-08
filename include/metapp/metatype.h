@@ -23,7 +23,7 @@ namespace metapp {
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
 template <typename T>
-struct DeclareMetaTypeObject;
+struct CommonDeclareMetaType;
 
 } // namespace metapp
  
@@ -191,7 +191,7 @@ namespace metapp {
 namespace internal_ {
 
 // Non-template base class to reduce binary size
-struct DeclareMetaTypeObjectBase
+struct CommonDeclareMetaTypeBase
 {
 	static void * getAddress(const MetaTypeData & data)
 	{
@@ -234,8 +234,8 @@ static void * doConstructCopy(
 } // namespace internal_
 
 template <typename T>
-struct DeclareMetaTypeObject
-	: public internal_::DeclareMetaTypeObjectBase,
+struct CommonDeclareMetaType
+	: public internal_::CommonDeclareMetaTypeBase,
 		public SelectMetaStreamingBase<T>
 {
 private:
@@ -243,7 +243,7 @@ private:
 	using NoCV = typename std::remove_cv<T>::type;
 	using Decayed = typename std::decay<NoCV>::type;
 
-	static_assert(! std::is_void<T>::value, "DeclareMetaTypeObject can't be initialized with void.");
+	static_assert(! std::is_void<T>::value, "CommonDeclareMetaType can't be initialized with void.");
 
 public:
 	using UpType = internal_::NoneUpType;
@@ -390,10 +390,10 @@ struct DeclareMetaTypeVoidBase
 
 };
 
-template<> struct DeclareMetaTypeObject<void> : DeclareMetaTypeVoidBase {};
-template<> struct DeclareMetaTypeObject<const void> : DeclareMetaTypeVoidBase {};
-template<> struct DeclareMetaTypeObject<volatile void> : DeclareMetaTypeVoidBase {};
-template<> struct DeclareMetaTypeObject<const volatile void> : DeclareMetaTypeVoidBase {};
+template<> struct CommonDeclareMetaType<void> : DeclareMetaTypeVoidBase {};
+template<> struct CommonDeclareMetaType<const void> : DeclareMetaTypeVoidBase {};
+template<> struct CommonDeclareMetaType<volatile void> : DeclareMetaTypeVoidBase {};
+template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVoidBase {};
 
 } // namespace metapp
 

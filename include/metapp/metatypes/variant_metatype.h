@@ -8,7 +8,7 @@ namespace metapp {
 template <>
 struct DeclareMetaTypeBase <Variant>
 {
-	using Fallback = DeclareMetaTypeObject <Variant>;
+	using Fallback = CommonDeclareMetaType <Variant>;
 	static constexpr TypeKind typeKind = tkVariant;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {

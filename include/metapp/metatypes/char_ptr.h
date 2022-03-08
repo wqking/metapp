@@ -13,7 +13,7 @@ namespace metapp {
 template <typename T>
 struct DeclareCharPtrBase
 {
-	using Fallback = DeclareMetaTypeObject <T>;
+	using Fallback = CommonDeclareMetaType <T>;
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
 	static constexpr TypeKind typeKind = tkCharPtr;
 
@@ -62,7 +62,7 @@ template <typename T>
 struct DeclareWideCharPtrBase
 {
 private:
-	using Fallback = DeclareMetaTypeObject <T>;
+	using Fallback = CommonDeclareMetaType <T>;
 
 public:
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;

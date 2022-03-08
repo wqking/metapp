@@ -10,7 +10,7 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypePointerBase
 {
-	using Fallback = DeclareMetaTypeObject<T>;
+	using Fallback = CommonDeclareMetaType<T>;
 	using UpType = typename std::remove_pointer<T>::type;
 
 	static constexpr TypeKind typeKind = tkPointer;
