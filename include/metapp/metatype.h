@@ -104,7 +104,7 @@ private:
 
 namespace internal_ {
 
-bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode);
+bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType);
 
 template <typename T>
 auto doGetMetaType()
@@ -284,7 +284,7 @@ public:
 	static bool canCast(const Variant & value, const MetaType * toMetaType)
 	{
 		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType, true)) {
+		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 			return true;
 		}
 		if(fromMetaType->getTypeKind() != tkReference
@@ -305,7 +305,7 @@ public:
 	static Variant cast(const Variant & value, const MetaType * toMetaType)
 	{
 		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType, true)) {
+		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 			return Variant::retype(toMetaType, value);
 		}
 		if(fromMetaType->getTypeKind() != tkReference

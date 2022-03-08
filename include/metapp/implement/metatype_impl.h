@@ -358,7 +358,7 @@ auto doGetMetaType()
 	return &metaType;
 }
 
-inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType, const bool strictMode)
+inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType)
 {
 	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
 		toMetaType = toMetaType->getUpType();
@@ -366,24 +366,15 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 	else if(toMetaType->getTypeKind() != tkReference && fromMetaType->getTypeKind() == tkReference) {
 		fromMetaType = fromMetaType->getUpType();
 	}
-	if(strictMode) {
-		if(toMetaType == fromMetaType) {
-			return true;
-		}
-		if(toMetaType == nullptr || fromMetaType == nullptr) {
-			return false;
-		}
-		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
+
+	if(toMetaType->isReference() && fromMetaType->isReference()) {
+		return true;
 	}
-	else {
-		if(toMetaType->isReference() && fromMetaType->isReference()) {
-			return true;
-		}
-		if((toMetaType->isPointer()) && (fromMetaType->isPointer())) {
-			return true;
-		}
-		return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
+	if((toMetaType->isPointer()) && (fromMetaType->isPointer())) {
+		return true;
 	}
+
+	return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
 }
 
 

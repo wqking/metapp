@@ -122,13 +122,14 @@ private:
 
 	template <typename T>
 	void doConstructOnObject(const void * copyFrom) {
+		setStorageType(storageObject);
+
 		if(copyFrom == nullptr) {
 			doConstructOnObjectDefault<T>();
 		}
 		else {
 			doConstructOnObjectCopy<T>(copyFrom);
 		}
-		setStorageType(storageObject);
 	}
 
 	template <typename T>

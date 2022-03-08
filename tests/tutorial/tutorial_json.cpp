@@ -6,10 +6,6 @@
 
 #include <iostream>
 
-using JsonString = std::string;
-using JsonObject = std::map<std::string, metapp::Variant>;
-using JsonArray = std::vector<metapp::Variant>;
-
 class JsonDumper
 {
 public:
@@ -35,8 +31,8 @@ private:
 		else if(metapp::typeKindIsReal(typeKind)) {
 			stream << value.cast<long double>();
 		}
-		else if(value.canCast<JsonString>()) {
-			doDumpString(value.cast<JsonString>().get<JsonString>());
+		else if(value.canCast<std::string>()) {
+			doDumpString(value.cast<std::string>().get<std::string>());
 		}
 		else if(metaType->getMetaMap() != nullptr) {
 			doDumpObject(value, level);
@@ -46,7 +42,7 @@ private:
 		}
 	}
 
-	void doDumpString(const JsonString & s)
+	void doDumpString(const std::string & s)
 	{
 		stream << '"' << s << '"';
 	}
@@ -118,12 +114,12 @@ private:
 
 void tutorialJson()
 {
-	metapp::Variant value(JsonObject {
-		{ "first",  JsonArray{
+	metapp::Variant value(std::map<std::string, metapp::Variant> {
+		{ "first",  std::vector<metapp::Variant> {
 			"abc",
 			1,
 			5.38,
-			JsonObject {
+			std::map<std::string, metapp::Variant> {
 				{ "what", "good" },
 				{ "next", 12345 },
 			},
