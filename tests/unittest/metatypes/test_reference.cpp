@@ -3,7 +3,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, int &") {
+TEST_CASE("metatypes, tkReference, int &") {
 	int n = 5;
 	metapp::Variant v(metapp::Variant::create<int &>(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
@@ -29,7 +29,7 @@ TEST_CASE("metatypes, int &") {
 	}
 }
 
-TEST_CASE("metatypes, int &&") {
+TEST_CASE("metatypes, tkReference, int &&") {
 	int n = 5;
 	metapp::Variant v(metapp::Variant::create<int &&>((int &&)n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
@@ -55,7 +55,7 @@ TEST_CASE("metatypes, int &&") {
 	}
 }
 
-TEST_CASE("metatypes, std::reference_wrapper<int>") {
+TEST_CASE("metatypes, tkReference, std::reference_wrapper<int>") {
 	int n = 5;
 	std::reference_wrapper<int> ref = n;
 	metapp::Variant v(ref);

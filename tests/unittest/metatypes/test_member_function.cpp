@@ -23,7 +23,7 @@ struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
 
 namespace {
 
-TEST_CASE("metatypes, member function, types")
+TEST_CASE("metatypes, tkMemberFunction, types")
 {
 	metapp::Variant v(&Class1::func);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberFunction);
@@ -68,7 +68,7 @@ struct Derived : Base
 	}
 };
 
-TEST_CASE("metatypes, member function, invoke")
+TEST_CASE("metatypes, tkMemberFunction, invoke")
 {
 	SECTION("Non-virtual") {
 		metapp::Variant v(&Base::func1);

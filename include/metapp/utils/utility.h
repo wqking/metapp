@@ -84,6 +84,16 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 	errorUnwritable();
 }
 
+inline void verifyVariantWritable(const Variant & var)
+{
+	auto metaType = var.getMetaType();
+	if(metaType->isPointer() || metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	if(metaType->isConst()) {
+		errorUnwritable();
+	}
+}
 
 } // namespace metapp
 

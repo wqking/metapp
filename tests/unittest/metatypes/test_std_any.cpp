@@ -7,7 +7,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, std::any")
+TEST_CASE("metatypes, tkStdAny, std::any")
 {
 	std::any var;
 	var = std::string("perfect");

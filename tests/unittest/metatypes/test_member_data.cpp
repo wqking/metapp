@@ -27,7 +27,7 @@ struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
 
 namespace {
 
-TEST_CASE("metatypes, member data, types")
+TEST_CASE("metatypes, tkMemberPointer, types")
 {
 	metapp::Variant v(&Class1::data);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
@@ -38,7 +38,7 @@ TEST_CASE("metatypes, member data, types")
 	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkStdArray, tkInt }));
 }
 
-TEST_CASE("metatypes, member data, MetaAccessible, non-const")
+TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, non-const")
 {
 	metapp::Variant v(&Class1::value);
 	Class1 obj;

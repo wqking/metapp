@@ -2,6 +2,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
+#include "metapp/utils/utility.h"
 
 namespace {
 
@@ -25,9 +26,11 @@ TEST_CASE("metatypes, constructor")
 {
 	int ctorCounter = 0;
 	metapp::Variant ctor = metapp::Constructor<Base (int, int *)>();
-	metapp::Variant arguments[] = { 7, &ctorCounter };
+	REQUIRE(metapp::getTypeKind(ctor) == metapp::tkConstructor);
+
 	SECTION("free by Variant") {
 		{
+			metapp::Variant arguments[] = { 7, &ctorCounter };
 			metapp::Variant obj = metapp::Variant::takeFrom(
 				ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments, 2)
 			);
@@ -35,12 +38,12 @@ TEST_CASE("metatypes, constructor")
 			Base & base = obj.get<Base &>();
 			REQUIRE(obj.getMetaType() == metapp::getMetaType<Base>());
 			REQUIRE(base.myValue == 7);
-			REQUIRE(static_cast<const Base *>(obj.getAddress())->myValue == 7);
+			REQUIRE(obj.get<const Base *>()->myValue == 7);
 		}
 		REQUIRE(ctorCounter == 0);
 	}
-	SECTION("free by delete") {
-		Base * base = ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments, 2).get<Base *>();
+	SECTION("free by delete, using metapp::invokeCallable") {
+		Base * base = metapp::invokeCallable(ctor, nullptr, 7, &ctorCounter).get<Base *>();
 		REQUIRE(base->myValue == 7);
 		REQUIRE(ctorCounter == 1);
 		delete base;

@@ -35,6 +35,8 @@ private:
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
 	{
+		verifyVariantWritable(var);
+
 		if(index >= metaIndexableGetSize(var)) {
 			errorInvalidIndex();
 		}

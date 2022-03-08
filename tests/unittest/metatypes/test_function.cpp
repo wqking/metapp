@@ -8,7 +8,7 @@ namespace {
 
 const void * func1(int, const std::vector<int> &) { return nullptr; }
 
-TEST_CASE("metatypes, free function, types")
+TEST_CASE("metatypes, tkFunction, free function, types")
 {
 	metapp::Variant v(&func1);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
@@ -39,7 +39,7 @@ int myFunc3()
 	return 38;
 }
 
-TEST_CASE("metatypes, free function, invoke")
+TEST_CASE("metatypes, tkFunction, free function, invoke")
 {
 	{
 		metapp::Variant v(&myFunc);

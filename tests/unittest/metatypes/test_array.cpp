@@ -63,7 +63,7 @@ TEST_CASE("metatypes, tkArray, int[], constness")
 	REQUIRE(metapp::getMetaType<const volatile int[]>()->isVolatile());
 }
 
-TEST_CASE("metatypes, tkArray, std::string[3], can't set to const array")
+TEST_CASE("metatypes, tkArray, const std::string[3], can't set to const array")
 {
 	const std::string array[3] = { "good", "great", "perfect" };
 	metapp::Variant v(metapp::Variant::create<const std::string[3]>(array));

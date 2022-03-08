@@ -3,7 +3,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, void *")
+TEST_CASE("metatypes, tkPointer, void *")
 {
 	metapp::Variant v((void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -11,7 +11,7 @@ TEST_CASE("metatypes, void *")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 }
 
-TEST_CASE("metatypes, const volatile void *")
+TEST_CASE("metatypes, tkPointer, const volatile void *")
 {
 	metapp::Variant v((const volatile void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -21,7 +21,7 @@ TEST_CASE("metatypes, const volatile void *")
 	REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 }
 
-TEST_CASE("metatypes, int **")
+TEST_CASE("metatypes, tkPointer, int **")
 {
 	metapp::Variant v((int **)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -30,7 +30,7 @@ TEST_CASE("metatypes, int **")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 }
 
-TEST_CASE("metatypes, void ***")
+TEST_CASE("metatypes, tkPointer, void ***")
 {
 	void *** p = nullptr;
 	metapp::Variant v(p);
