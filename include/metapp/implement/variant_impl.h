@@ -181,7 +181,10 @@ inline bool Variant::canCast() const
 
 inline Variant Variant::cast(const MetaType * toMetaType) const
 {
-	assert(canCast(toMetaType));
+	if(! canCast(toMetaType)) {
+		errorBadCast();
+	}
+
 	return metaType->cast(*this, toMetaType);
 }
 

@@ -3,7 +3,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, int[]")
+TEST_CASE("metatypes, tkArray, int[]")
 {
 	int array[] = { 3, 8, 9 };
 	metapp::Variant v(metapp::Variant::create<int[]>(array));
@@ -19,9 +19,17 @@ TEST_CASE("metatypes, int[]")
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 3);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 8);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 9);
+
+	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 1, "abc"));
+	v.getMetaType()->getMetaIndexable()->set(v, 0, 5);
+	v.getMetaType()->getMetaIndexable()->set(v, 1, 6);
+	v.getMetaType()->getMetaIndexable()->set(v, 2, 7);
+	REQUIRE(array[0] == 5);
+	REQUIRE(array[1] == 6);
+	REQUIRE(array[2] == 7);
 }
 
-TEST_CASE("metatypes, std::string[3]")
+TEST_CASE("metatypes, tkArray, std::string[3]")
 {
 	std::string array[3] = { "good", "great", "perfect" };
 	metapp::Variant v(metapp::Variant::create<std::string[3]>(array));
@@ -35,9 +43,14 @@ TEST_CASE("metatypes, std::string[3]")
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
+
+	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 1, 5));
+	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 18, "abc"));
+	v.getMetaType()->getMetaIndexable()->set(v, 0, "def");
+	REQUIRE(array[0] == "def");
 }
 
-TEST_CASE("metatypes, int[], constness")
+TEST_CASE("metatypes, tkArray, int[], constness")
 {
 	REQUIRE(metapp::getMetaType<const int[]>()->getTypeKind() == metapp::tkArray);
 	REQUIRE(metapp::getMetaType<const int[]>()->isConst());
@@ -48,5 +61,17 @@ TEST_CASE("metatypes, int[], constness")
 	REQUIRE(metapp::getMetaType<const volatile int[]>()->getTypeKind() == metapp::tkArray);
 	REQUIRE(metapp::getMetaType<const volatile int[]>()->isConst());
 	REQUIRE(metapp::getMetaType<const volatile int[]>()->isVolatile());
+}
+
+TEST_CASE("metatypes, tkArray, std::string[3], can't set to const array")
+{
+	const std::string array[3] = { "good", "great", "perfect" };
+	metapp::Variant v(metapp::Variant::create<const std::string[3]>(array));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+	REQUIRE(v.getMetaType()->isConst());
+
+	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
+
+	REQUIRE_THROWS_AS(v.getMetaType()->getMetaIndexable()->set(v, 0, "abc"), metapp::UnwritableException);
 }
 

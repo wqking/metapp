@@ -42,11 +42,14 @@ private:
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
 	{
+		if(var.getMetaType()->isConst()) {
+			errorUnwritable();
+		}
 		if(index >= metaIndexableGetSize(var)) {
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(var.get<U>()[index], value.get<ElementType &>());
+			assignValue(var.get<U>()[index], value.cast<ElementType>().template get<ElementType &>());
 		}
 	}
 
@@ -66,37 +69,37 @@ struct DeclareMetaTypeBase <T[N]>
 
 template <typename T>
 struct DeclareMetaTypeBase <const T[]>
-	: public DeclareMetaTypeArrayBase <const T[], T * const, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <const T[], const T * const, MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const T[N]>
-	: public DeclareMetaTypeArrayBase <const T[N], T * const, N>
+	: public DeclareMetaTypeArrayBase <const T[N], const T * const, N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <volatile T[]>
-	: public DeclareMetaTypeArrayBase <volatile T[], T * volatile, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <volatile T[], volatile T * volatile, MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <volatile T[N]>
-	: public DeclareMetaTypeArrayBase <volatile T[N], T * volatile, N>
+	: public DeclareMetaTypeArrayBase <volatile T[N], volatile T * volatile, N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <const volatile T[]>
-	: public DeclareMetaTypeArrayBase <const volatile T[], T * const volatile, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <const volatile T[], const volatile  T * const volatile, MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const volatile T[N]>
-	: public DeclareMetaTypeArrayBase <const volatile T[N], T * const volatile, N>
+	: public DeclareMetaTypeArrayBase <const volatile T[N], const volatile T * const volatile, N>
 {
 };
 
