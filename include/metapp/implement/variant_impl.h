@@ -20,7 +20,7 @@ inline Variant Variant::create(T value,
 		! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type *)
 {
-	return Variant(metapp::getMetaType<T>(), &value);
+	return Variant(metapp::getMetaType<T>(), (const void *)&value);
 }
 
 inline Variant Variant::retype(const MetaType * metaType, const Variant & var)
@@ -148,6 +148,11 @@ inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Ty
 inline void * Variant::getAddress() const
 {
 	return metaType->getAddress(data);
+}
+
+inline Variant Variant::toReference() const
+{
+	return metaType->toReference(*this);
 }
 
 inline Variant Variant::dereference() const

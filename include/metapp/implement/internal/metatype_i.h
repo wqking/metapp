@@ -281,6 +281,7 @@ struct MetaMethodTable
 	void (*destroy)(void * instance);
 
 	void * (*getAddress)(const MetaTypeData & data);
+	Variant (*toReference)(const Variant & value);
 
 	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);

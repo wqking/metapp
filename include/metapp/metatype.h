@@ -79,7 +79,8 @@ public:
 	void destroy(void * instance) const;
 
 	void * getAddress(const MetaTypeData & data) const;
-	
+	Variant toReference(const Variant & value) const;
+
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
@@ -150,18 +151,20 @@ public:
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
 
-	// re-implementable meta methods
+	// re-implementable meta methods, begin
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
 
 	void * getAddress(const MetaTypeData & data) const;
+	Variant toReference(const Variant & value) const;
 	
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 
 	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
 	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
+	// re-implementable meta methods, end
 
 private:
 	constexpr MetaType(
@@ -281,6 +284,42 @@ public:
 #endif
 	}
 
+	static Variant toReference(const Variant & value)
+	{
+		const MetaType * metaType = value.getMetaType();
+		if(metaType->isReference()) {
+			return value;
+		}
+		const MetaType * myMetaType = getMetaType<T>();
+		if(metaType->isPointer()) {
+			if(! myMetaType->isPointer()) {
+				errorBadCast();
+			}
+			if(metaType->getUpType()->getUnifiedType() != myMetaType->getUpType()->getUnifiedType()) {
+				errorBadCast();
+			}
+		}
+		if(metaType->isPointer()) {
+			using P = typename std::remove_pointer<typename std::remove_reference<T>::type>::type;
+			return doToReference<P>(value);
+		}
+		using U = typename std::remove_reference<T>::type;
+		return Variant::create<U &>(value.get<U &>());
+	}
+	
+	template <typename P>
+	static Variant doToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = 0) {
+		return Variant::create<P &>(**(P **)value.getAddress());
+		
+		// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
+		//return Variant::create<P &>(*value.get<P *>());
+	}
+
+	template <typename P>
+	static Variant doToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = 0) {
+		return value;
+	}
+
 	static bool canCast(const Variant & value, const MetaType * toMetaType)
 	{
 		const MetaType * fromMetaType = getMetaType<T>();
@@ -364,6 +403,10 @@ struct DeclareMetaTypeVoidBase
 	static void * getAddress(const MetaTypeData & /*data*/)
 	{
 		return nullptr;
+	}
+
+	static Variant toReference(const Variant & value) {
+		return value;
 	}
 
 	static bool canCast(const Variant & /*value*/, const MetaType * /*toMetaType*/)

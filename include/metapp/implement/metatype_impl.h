@@ -98,6 +98,11 @@ inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 	return metaMethodTable.getAddress(data);
 }
 
+inline Variant UnifiedType::toReference(const Variant & value) const
+{
+	return metaMethodTable.toReference(value);
+}
+
 inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
 	return metaMethodTable.canCast(value, toMetaType);
@@ -249,6 +254,11 @@ inline void * MetaType::getAddress(const MetaTypeData & data) const
 	return unifiedType->getAddress(data);
 }
 
+inline Variant MetaType::toReference(const Variant & value) const
+{
+	return unifiedType->toReference(value);
+}
+
 inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
 	return unifiedType->canCast(value, toMetaType);
@@ -391,6 +401,7 @@ const UnifiedType * getUnifiedType()
 			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_getAddress<M>::value>::getAddress,
+			&internal_::SelectDeclareClass<T, internal_::HasMember_toReference<M>::value>::toReference,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCast<M>::value>::canCast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_cast<M>::value>::cast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,
