@@ -272,7 +272,12 @@ public:
 };
 
 template <typename T, typename Enabled = void>
-struct DeclareMetaTypeBase
+struct DeclareMetaTypeRoot
+{
+};
+
+template <typename T, typename Enabled = void>
+struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
 {
 };
 
