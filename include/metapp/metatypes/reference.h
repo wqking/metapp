@@ -51,6 +51,7 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
+	using Common = CommonDeclareMetaType<T &>;
 	static constexpr TypeFlags typeFlags = tfReference | Common::typeFlags;
 
 	using WrapperType = std::reference_wrapper<T>;

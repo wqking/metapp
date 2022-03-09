@@ -126,15 +126,6 @@ struct HasMember_UpType
 	enum { value = !! decltype(test<T>(0))() };
 };
 
-template <typename T>
-struct HasMember_Delegate
-{
-	template <typename C> static std::true_type test(typename C::Delegate *);
-	template <typename C> static std::false_type test(...);
-
-	enum { value = !! decltype(test<T>(0))() };
-};
-
 template <typename From, typename To>
 struct CanStaticCast
 {

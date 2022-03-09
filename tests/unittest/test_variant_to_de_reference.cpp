@@ -96,6 +96,45 @@ TEST_CASE("Variant, toReference, const std::string, constness")
 	REQUIRE(ref.canGet<std::string>());
 	REQUIRE(ref.get<std::string>() == "hello");
 	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(! ref.getMetaType()->isConst());
+	REQUIRE(ref.getMetaType()->getUpType()->isConst());
+}
+
+TEST_CASE("Variant, toReference, const std::string &, constness")
+{
+	std::string s = "hello";
+	metapp::Variant v(metapp::Variant::create<const std::string &>(s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(v.canGet<std::string>());
+	REQUIRE(v.get<std::string &>() == "hello");
+	REQUIRE(! v.getMetaType()->isConst());
+	REQUIRE(v.getMetaType()->getUpType()->isConst());
+
+	metapp::Variant ref(v.toReference());
+	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
+	REQUIRE(ref.canGet<std::string>());
+	REQUIRE(ref.get<std::string>() == "hello");
+	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(! ref.getMetaType()->isConst());
+	REQUIRE(ref.getMetaType()->getUpType()->isConst());
+}
+
+TEST_CASE("Variant, toReference, const std::string *, constness")
+{
+	std::string s = "hello";
+	metapp::Variant v(metapp::Variant::create<const std::string *>(&s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(v.canGet<std::string *>());
+	REQUIRE(*v.get<std::string *>() == "hello");
+	REQUIRE(! v.getMetaType()->isConst());
+	REQUIRE(v.getMetaType()->getUpType()->isConst());
+
+	metapp::Variant ref(v.toReference());
+	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
+	REQUIRE(ref.canGet<std::string>());
+	REQUIRE(ref.get<std::string>() == "hello");
+	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(! ref.getMetaType()->isConst());
 	REQUIRE(ref.getMetaType()->getUpType()->isConst());
 }
 

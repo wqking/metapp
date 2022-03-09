@@ -321,25 +321,10 @@ struct UpTypeGetter
 };
 
 template <typename T, bool has>
-struct SelectDelegate;
-
-template <typename T>
-struct SelectDelegate <T, true>
-{
-	using Type = typename DeclareMetaType<T>::Delegate;
-};
-
-template <typename T>
-struct SelectDelegate <T, false>
-{
-	using Type = CommonDeclareMetaType<T>;
-};
-
-template <typename T, bool has>
 using SelectDeclareClass = typename std::conditional<
 	has,
 	DeclareMetaType<T>,
-	typename SelectDelegate<T, HasMember_Delegate<DeclareMetaType<T> >::value>::Type
+	CommonDeclareMetaType<T>
 >::type;
 
 template <typename T>

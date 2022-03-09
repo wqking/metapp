@@ -46,10 +46,18 @@ TEST_CASE("Variant, cast std::string & to std::string")
 	metapp::Variant v(metapp::Variant::create<std::string &>(s));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 
-	REQUIRE(v.canGet<std::string>());
-	auto v2 = v.cast<std::string>();
-	v2.get<std::string>();
+	REQUIRE(v.canCast<std::string>());
 	REQUIRE(v.cast<std::string>().get<std::string>() == "hello");
+}
+
+TEST_CASE("Variant, cast std::string to std::string &")
+{
+	std::string s = "hello";
+	metapp::Variant v(metapp::Variant::create<std::string>(s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
+
+	REQUIRE(v.canCast<std::string &>());
+	REQUIRE(v.cast<std::string &>().get<std::string &>() == "hello");
 }
 
 TEST_CASE("Variant, cast std::wstring to wchar_t *")
