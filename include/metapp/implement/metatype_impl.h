@@ -5,7 +5,7 @@ namespace metapp {
 
 inline constexpr UnifiedType::UnifiedType(
 		const TypeKind typeKind,
-		const internal_::MetaMethodTable & metaMethodTable
+		const internal_::UnifiedMetaTable & metaMethodTable
 	) noexcept
 	: typeKind(typeKind), metaMethodTable(metaMethodTable)
 {
@@ -98,11 +98,6 @@ inline void * UnifiedType::getAddress(const MetaTypeData & data) const
 	return metaMethodTable.getAddress(data);
 }
 
-inline Variant UnifiedType::toReference(const Variant & value) const
-{
-	return metaMethodTable.toReference(value);
-}
-
 inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
 	return metaMethodTable.canCast(value, toMetaType);
@@ -125,10 +120,12 @@ inline Variant UnifiedType::castFrom(const Variant & value, const MetaType * fro
 
 inline constexpr MetaType::MetaType(
 		const UnifiedType * unifiedType,
+		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept :
 	unifiedType(unifiedType),
+	metaTable(metaTable),
 	upTypeData(upTypeData),
 	typeFlags(typeFlags)
 {
@@ -256,7 +253,7 @@ inline void * MetaType::getAddress(const MetaTypeData & data) const
 
 inline Variant MetaType::toReference(const Variant & value) const
 {
-	return unifiedType->toReference(value);
+	return metaTable.toReference(value);
 }
 
 inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType) const
@@ -360,6 +357,9 @@ auto doGetMetaType()
 
 	static const MetaType metaType (
 		getUnifiedType<typename std::remove_cv<T>::type>(),
+		internal_::MetaTable {
+			&internal_::SelectDeclareClass<T, internal_::HasMember_toReference<M>::value>::toReference,
+		},
 		UpTypeGetter<
 			typename internal_::SelectDeclareClass<T, internal_::HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
@@ -447,11 +447,11 @@ inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
 inline void CommonDeclareMetaTypeBase::checkCanToReference(
 	const MetaType * fromMetaType, const MetaType * myMetaType)
 {
+	if(fromMetaType != myMetaType) {
+		errorBadCast();
+	}
 	if(fromMetaType->isPointer()) {
 		if(! myMetaType->isPointer()) {
-			errorBadCast();
-		}
-		if(fromMetaType->getUpType()->getUnifiedType() != myMetaType->getUpType()->getUnifiedType()) {
 			errorBadCast();
 		}
 	}
@@ -538,15 +538,6 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 		return doToReference<P>(value);
 	}
 	using U = typename std::remove_reference<T>::type;
-	if(fromMetaType->isConst()) {
-		if(fromMetaType->isVolatile()) {
-			//return Variant::create<const volatile U &>(value.get<const volatile U &>());
-		}
-		return Variant::create<const U &>(value.get<const U &>());
-	}
-	if(fromMetaType->isVolatile()) {
-		//return Variant::create<volatile U &>(value.get<volatile U &>());
-	}
 	return Variant::create<U &>(value.get<U &>());
 }
 
@@ -646,11 +637,10 @@ const UnifiedType * getUnifiedType()
 
 	static const UnifiedType unifiedType (
 		internal_::SelectDeclareClass<T, internal_::HasMember_typeKind<M>::value>::typeKind,
-		internal_::MetaMethodTable {
+		internal_::UnifiedMetaTable {
 			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_getAddress<M>::value>::getAddress,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_toReference<M>::value>::toReference,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCast<M>::value>::canCast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_cast<M>::value>::cast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,

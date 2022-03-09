@@ -274,14 +274,13 @@ struct MakeMetaInterfaceData
 
 };
 
-struct MetaMethodTable
+struct UnifiedMetaTable
 {
 	void * (*constructData)(MetaTypeData * data, const void * copyFrom);
 
 	void (*destroy)(void * instance);
 
 	void * (*getAddress)(const MetaTypeData & data);
-	Variant (*toReference)(const Variant & value);
 
 	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
@@ -290,6 +289,11 @@ struct MetaMethodTable
 	Variant (*castFrom)(const Variant & value, const MetaType * fromMetaType);
 
 	MetaInterfaceData metaInterfaceData;
+};
+
+struct MetaTable
+{
+	Variant (*toReference)(const Variant & value);
 };
 
 struct UpTypeData

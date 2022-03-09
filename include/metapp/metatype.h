@@ -79,7 +79,6 @@ public:
 	void destroy(void * instance) const;
 
 	void * getAddress(const MetaTypeData & data) const;
-	Variant toReference(const Variant & value) const;
 
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
@@ -90,7 +89,7 @@ public:
 private:
 	constexpr UnifiedType(
 		const TypeKind typeKind,
-		const internal_::MetaMethodTable & metaMethodTable
+		const internal_::UnifiedMetaTable & metaMethodTable
 	) noexcept;
 
 	template <typename T>
@@ -100,7 +99,7 @@ private:
 
 private:
 	TypeKind typeKind;
-	internal_::MetaMethodTable metaMethodTable;
+	internal_::UnifiedMetaTable metaMethodTable;
 };
 
 namespace internal_ {
@@ -169,6 +168,7 @@ public:
 private:
 	constexpr MetaType(
 		const UnifiedType * unifiedType,
+		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
@@ -179,6 +179,7 @@ private:
 
 private:
 	const UnifiedType * unifiedType;
+	internal_::MetaTable metaTable;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
