@@ -10,7 +10,7 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T &>
 {
-	using Fallback = CommonDeclareMetaType<T &>;
+	using Common = CommonDeclareMetaType<T &>;
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
@@ -26,7 +26,7 @@ struct DeclareMetaTypeBase <T &>
 	}
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return (toMetaType->getTypeKind() == tkReference) || Fallback::canCast(value, toMetaType);
+		return (toMetaType->getTypeKind() == tkReference) || Common::canCast(value, toMetaType);
 	}
 
 	static Variant cast(const Variant & value, const MetaType * toMetaType) {
@@ -34,7 +34,7 @@ struct DeclareMetaTypeBase <T &>
 			return Variant(toMetaType, &value.get<int &>());
 		}
 		else {
-			return Fallback::cast(value, toMetaType);
+			return Common::cast(value, toMetaType);
 		}
 	}
 
@@ -51,6 +51,8 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
+	static constexpr TypeFlags typeFlags = tfReference | Common::typeFlags;
+
 	using WrapperType = std::reference_wrapper<T>;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {

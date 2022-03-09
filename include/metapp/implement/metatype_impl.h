@@ -321,16 +321,16 @@ struct UpTypeGetter
 };
 
 template <typename T, bool has>
-struct SelectFallback;
+struct SelectDelegate;
 
 template <typename T>
-struct SelectFallback <T, true>
+struct SelectDelegate <T, true>
 {
-	using Type = typename DeclareMetaType<T>::Fallback;
+	using Type = typename DeclareMetaType<T>::Delegate;
 };
 
 template <typename T>
-struct SelectFallback <T, false>
+struct SelectDelegate <T, false>
 {
 	using Type = CommonDeclareMetaType<T>;
 };
@@ -339,7 +339,7 @@ template <typename T, bool has>
 using SelectDeclareClass = typename std::conditional<
 	has,
 	DeclareMetaType<T>,
-	typename SelectFallback<T, HasMember_Fallback<DeclareMetaType<T> >::value>::Type
+	typename SelectDelegate<T, HasMember_Delegate<DeclareMetaType<T> >::value>::Type
 >::type;
 
 template <typename T>
@@ -370,10 +370,10 @@ auto doGetMetaType()
 
 inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType)
 {
-	if(toMetaType->getTypeKind() == tkReference && fromMetaType->getTypeKind() != tkReference) {
+	if(toMetaType->isReference() && ! fromMetaType->isReference()) {
 		toMetaType = toMetaType->getUpType();
 	}
-	else if(toMetaType->getTypeKind() != tkReference && fromMetaType->getTypeKind() == tkReference) {
+	else if(! toMetaType->isReference() && fromMetaType->isReference()) {
 		fromMetaType = fromMetaType->getUpType();
 	}
 

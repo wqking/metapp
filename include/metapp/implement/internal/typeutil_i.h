@@ -127,9 +127,9 @@ struct HasMember_UpType
 };
 
 template <typename T>
-struct HasMember_Fallback
+struct HasMember_Delegate
 {
-	template <typename C> static std::true_type test(typename C::Fallback *);
+	template <typename C> static std::true_type test(typename C::Delegate *);
 	template <typename C> static std::false_type test(...);
 
 	enum { value = !! decltype(test<T>(0))() };

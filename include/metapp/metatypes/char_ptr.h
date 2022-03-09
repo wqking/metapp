@@ -13,12 +13,12 @@ namespace metapp {
 template <typename T>
 struct DeclareCharPtrBase
 {
-	using Fallback = CommonDeclareMetaType <T>;
+	using Common = CommonDeclareMetaType <T>;
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
 	static constexpr TypeKind typeKind = tkCharPtr;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Fallback::canCast(value, toMetaType)
+		return Common::canCast(value, toMetaType)
 			|| canCastToStdString(toMetaType);
 	}
 
@@ -27,7 +27,7 @@ struct DeclareCharPtrBase
 			return std::string(value.get<const char *>());
 		}
 		else {
-			return Fallback::cast(value, toMetaType);
+			return Common::cast(value, toMetaType);
 		}
 	}
 
@@ -62,14 +62,14 @@ template <typename T>
 struct DeclareWideCharPtrBase
 {
 private:
-	using Fallback = CommonDeclareMetaType <T>;
+	using Common = CommonDeclareMetaType <T>;
 
 public:
 	using UpType = typename std::remove_pointer<typename std::decay<T>::type>::type;
 	static constexpr TypeKind typeKind = tkWideCharPtr;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Fallback::canCast(value, toMetaType)
+		return Common::canCast(value, toMetaType)
 			|| canCastToStdWstring(toMetaType);
 	}
 
@@ -78,7 +78,7 @@ public:
 			return std::wstring(value.get<const wchar_t *>());
 		}
 		else {
-			return Fallback::cast(value, toMetaType);
+			return Common::cast(value, toMetaType);
 		}
 	}
 

@@ -10,11 +10,12 @@ namespace metapp {
 template <>
 struct DeclareMetaTypeBase <std::string>
 {
-	using Fallback = CommonDeclareMetaType<std::string>;
+	using Common = CommonDeclareMetaType<std::string>;
+
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Fallback::canCast(value, toMetaType)
+		return Common::canCast(value, toMetaType)
 			|| canCastToCharPtr(toMetaType);
 	}
 
@@ -23,7 +24,7 @@ struct DeclareMetaTypeBase <std::string>
 			return value.get<const std::string &>().c_str();
 		}
 		else {
-			return Fallback::cast(value, toMetaType);
+			return Common::cast(value, toMetaType);
 		}
 	}
 
@@ -38,12 +39,12 @@ private:
 template <>
 struct DeclareMetaTypeBase <std::wstring>
 {
-	using Fallback = CommonDeclareMetaType<std::wstring>;
+	using Common = CommonDeclareMetaType<std::wstring>;
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 
 	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Fallback::canCast(value, toMetaType)
+		return Common::canCast(value, toMetaType)
 			|| canCastToWideCharPtr(toMetaType);
 	}
 
@@ -52,7 +53,7 @@ struct DeclareMetaTypeBase <std::wstring>
 			return value.get<const std::wstring &>().c_str();
 		}
 		else {
-			return Fallback::cast(value, toMetaType);
+			return Common::cast(value, toMetaType);
 		}
 	}
 
