@@ -10,6 +10,8 @@ namespace metapp {
 template <typename T, typename U, size_t length>
 struct DeclareMetaTypeArrayBase
 {
+	using UpType = typename std::remove_pointer<U>::type;
+
 	static constexpr TypeKind typeKind = tkArray;
 	static constexpr TypeFlags typeFlags = GetMetaTypeFlags<U>::typeFlags
 		| (std::is_const<U>::value ? tfConst : 0)
