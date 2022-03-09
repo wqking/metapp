@@ -25,23 +25,25 @@ private:
 
 	static size_t metaIndexableGetSize(const Variant & var)
 	{
-		return var.get<ContainerType &>().size();
+		return var.toReference().get<ContainerType &>().size();
 	}
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		return Variant::create<ValueType>(var.get<ContainerType &>()[index]);
+		return Variant::create<ValueType>(var.toReference().get<ContainerType &>()[index]);
 	}
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
 	{
-		verifyVariantWritable(var);
+		const Variant ref = var.toReference();
 
-		if(index >= metaIndexableGetSize(var)) {
+		verifyVariantWritable(ref);
+
+		if(index >= metaIndexableGetSize(ref)) {
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(var.get<ContainerType &>()[index], value.get<ValueType &>());
+			assignValue(ref.toReference().get<ContainerType &>()[index], value.get<ValueType &>());
 		}
 	}
 

@@ -235,7 +235,7 @@ TEST_CASE("Variant, toReference()")
 		REQUIRE(v.get<int>() == 38);
 	}
 
-	SECTION("reference, int") {
+	SECTION("value, int") {
 		metapp::Variant v(5);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
 		REQUIRE(v.canGet<int>());
@@ -249,6 +249,24 @@ TEST_CASE("Variant, toReference()")
 		v.get<int &>() = 38;
 		REQUIRE(ref.get<int>() == 38);
 		REQUIRE(v.get<int>() == 38);
+	}
+
+	SECTION("value, std::string") {
+		std::string s = "hello";
+		metapp::Variant v(s);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
+		REQUIRE(v.canGet<std::string>());
+		REQUIRE(v.get<std::string &>() == "hello");
+
+		metapp::Variant ref(v.toReference());
+		REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
+		REQUIRE(ref.canGet<std::string>());
+		REQUIRE(ref.get<std::string>() == "hello");
+		REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
+
+		v.get<std::string &>() = "world";
+		REQUIRE(ref.get<std::string>() == "world");
+		REQUIRE(v.get<std::string>() == "world");
 	}
 
 	struct MyClass

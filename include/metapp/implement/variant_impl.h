@@ -105,16 +105,20 @@ inline Variant & Variant::operator = (T value) noexcept
 
 inline Variant & Variant::operator = (const Variant & other) noexcept
 {
-	metaType = other.metaType;
-	data = other.data;
+	if(this != &other) {
+		metaType = other.metaType;
+		data = other.data;
+	}
 
 	return *this;
 }
 
 inline Variant & Variant::operator = (Variant && other) noexcept
 {
-	metaType = std::move(other.metaType);
-	data = std::move(other.data);
+	if(this != &other) {
+		metaType = std::move(other.metaType);
+		data = std::move(other.data);
+	}
 
 	return *this;
 }

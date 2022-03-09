@@ -460,7 +460,8 @@ inline void CommonDeclareMetaTypeBase::checkCanToReference(
 inline bool CommonDeclareMetaTypeBase::doCanCast(
 	const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
 {
-	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+	if((fromMetaType->isReference() == toMetaType->isReference())
+		&& internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 		return true;
 	}
 	if(fromMetaType->getTypeKind() != tkReference
@@ -475,12 +476,13 @@ inline bool CommonDeclareMetaTypeBase::doCanCast(
 inline bool CommonDeclareMetaTypeBase::doCast(
 	Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
 {
-	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+	if((fromMetaType->isReference() == toMetaType->isReference())
+		&& internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 		result = Variant::retype(toMetaType, value);
 		return true;
 	}
-	if(fromMetaType->getTypeKind() != tkReference
-		&& toMetaType->getTypeKind() == tkReference
+	if(! fromMetaType->isReference()
+		&& toMetaType->isReference()
 		&& fromMetaType->canCast(value, toMetaType->getUpType())
 		) {
 		result = fromMetaType->cast(value, toMetaType->getUpType());
@@ -536,6 +538,15 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 		return doToReference<P>(value);
 	}
 	using U = typename std::remove_reference<T>::type;
+	if(fromMetaType->isConst()) {
+		if(fromMetaType->isVolatile()) {
+			//return Variant::create<const volatile U &>(value.get<const volatile U &>());
+		}
+		return Variant::create<const U &>(value.get<const U &>());
+	}
+	if(fromMetaType->isVolatile()) {
+		//return Variant::create<volatile U &>(value.get<volatile U &>());
+	}
 	return Variant::create<U &>(value.get<U &>());
 }
 

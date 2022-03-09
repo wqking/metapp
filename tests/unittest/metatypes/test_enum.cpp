@@ -21,6 +21,19 @@ TEST_CASE("metatypes, enum")
 	REQUIRE(v.cast<int>().get<int>() == 5);
 }
 
+TEST_CASE("metatypes, const enum")
+{
+	auto metaType = metapp::getMetaType<const EnumAnimal>();
+	REQUIRE(metaType->getTypeKind() == metapp::tkEnum);
+	// the underlying type may be different, on MSVC it's tkInt, on GCC it's tkUnsignedInt
+	//REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkInt);
+	metapp::Variant v(EnumAnimal::cat);
+	REQUIRE(v.canCast<int>());
+	REQUIRE(metapp::getTypeKind(v.cast<int>()) == metapp::tkInt);
+	REQUIRE(v.cast<int>().canGet<int>());
+	REQUIRE(v.cast<int>().get<int>() == 5);
+}
+
 enum class EnumHuman : char {
 	male = 9,
 	female = 10

@@ -19,26 +19,32 @@ public:
 private:
 	void doDump(const metapp::Variant & value, const int level)
 	{
-		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
+		if(value.getMetaType()->isPointer() && value.get<void *>() == nullptr) {
+			stream << "null";
+			return;
+		}
+
+		metapp::Variant ref = value.toReference();
+		auto metaType = metapp::getReferredMetaType(ref.getMetaType());
 		auto typeKind = metaType->getTypeKind();
 		if(typeKind == metapp::tkVariant) {
-			doDump(value.get<metapp::Variant &>(), level);
+			doDump(ref.get<metapp::Variant &>(), level);
 			return;
 		}
 		if(metapp::typeKindIsInteger(typeKind)) {
-			stream << value.cast<long long>();
+			stream << ref.cast<long long>();
 		}
 		else if(metapp::typeKindIsReal(typeKind)) {
-			stream << value.cast<long double>();
+			stream << ref.cast<long double>();
 		}
-		else if(value.canCast<std::string>()) {
-			doDumpString(value.cast<std::string>().get<std::string>());
+		else if(ref.canCast<std::string>()) {
+			doDumpString(ref.cast<std::string>().get<std::string>());
 		}
 		else if(metaType->getMetaMap() != nullptr) {
-			doDumpObject(value, level);
+			doDumpObject(ref, level);
 		}
 		else if(metaType->getMetaIterable() != nullptr) {
-			doDumpArray(value, level);
+			doDumpArray(ref, level);
 		}
 	}
 
@@ -49,7 +55,7 @@ private:
 
 	void doDumpArray(const metapp::Variant & value, const int level)
 	{
-		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
+		auto metaType = metapp::getReferredMetaType(value.getMetaType());
 		stream << "[" << std::endl;
 		bool firstItem = true;
 		metaType->getMetaIterable()->forEach(
@@ -75,7 +81,7 @@ private:
 
 	void doDumpObject(const metapp::Variant & value, const int level)
 	{
-		auto metaType = metapp::getNonReferenceUpType(value.getMetaType());
+		auto metaType = metapp::getReferredMetaType(value.getMetaType());
 		stream << "{" << std::endl;
 		bool firstItem = true;
 		metaType->getMetaIterable()->forEach(
@@ -87,7 +93,7 @@ private:
 				}
 				firstItem = false;
 				doDumpIndent(level + 1);
-				auto indexable = metapp::getNonReferenceUpType(item.getMetaType())->getMetaIndexable();
+				auto indexable = metapp::getReferredMetaType(item.getMetaType())->getMetaIndexable();
 				doDumpString(indexable->get(item, 0).cast<std::string>().get<std::string>());
 				stream << ": ";
 				doDump(indexable->get(item, 1), level + 1);
@@ -114,10 +120,14 @@ private:
 
 void tutorialJson()
 {
+	long ln = 987654321L;
+	auto myTuple = std::make_tuple("def", 1, 'w');
+
 	metapp::Variant value(std::map<std::string, metapp::Variant> {
 		{ "first",  std::vector<metapp::Variant> {
 			"abc",
 			1,
+			&ln,
 			5.38,
 			std::map<std::string, metapp::Variant> {
 				{ "what", "good" },
@@ -125,8 +135,10 @@ void tutorialJson()
 			},
 			std::unordered_map<std::string, std::string> {
 				{ "hello", "def" },
-			}
-		}}
+			},
+			&myTuple
+		}},
+		{ "second", nullptr }
 	});
 	JsonDumper(std::cout).dump(value);
 }

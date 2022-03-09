@@ -42,12 +42,17 @@ inline Variant invokeCallable(const Variant & func, void * instance, Args ...arg
 	return CallableInvoker<Args...>::invoke(func, instance, args...);
 }
 
-inline const MetaType * getNonReferenceUpType(const MetaType * metaType)
+inline const MetaType * getReferredMetaType(const MetaType * metaType)
 {
-	if(metaType->getTypeKind() == tkReference) {
+	if(metaType->isPointer() || metaType->isReference()) {
 		metaType = metaType->getUpType();
 	}
 	return metaType;
+}
+
+inline const MetaType * getReferredMetaType(const Variant & value)
+{
+	return getReferredMetaType(value.getMetaType());
 }
 
 template <typename ...Types>
@@ -86,10 +91,7 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 
 inline void verifyVariantWritable(const Variant & var)
 {
-	auto metaType = var.getMetaType();
-	if(metaType->isPointer() || metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
+	auto metaType = getReferredMetaType(var);
 	if(metaType->isConst()) {
 		errorUnwritable();
 	}
