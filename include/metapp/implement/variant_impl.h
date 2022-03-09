@@ -11,7 +11,9 @@ inline Variant Variant::create(T value,
 		std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 	>::type *)
 {
-	return value;
+	// The ugly pointer castings are to avoid compile error
+	// when value is const volatile Variant &, or any type involved volatile
+	return *(Variant *)(void *)&value;
 }
 
 template <typename T>
