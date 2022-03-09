@@ -196,42 +196,43 @@ namespace internal_ {
 // Non-template base class to reduce binary size
 struct CommonDeclareMetaTypeBase
 {
-	static void * getAddress(const MetaTypeData & data)
-	{
-		return data.getAddress();
-	}
+	static void * getAddress(const MetaTypeData & data);
+
+protected:
+	template <typename U>
+	static void * doConstructDefault(
+		typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
+	);
+
+	template <typename U>
+	static void * doConstructDefault(
+		typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
+	);
+
+	template <typename U>
+	static void * doConstructCopy(
+		const void * copyFrom,
+		typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
+	);
+
+	template <typename U>
+	static void * doConstructCopy(
+		const void * /*copyFrom*/,
+		typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
+	);
+
+	template <typename P>
+	static Variant doToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = nullptr);
+
+	template <typename P>
+	static Variant doToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = nullptr);
+
+	static void checkCanToReference(const MetaType * fromMetaType, const MetaType * myMetaType);
+
+	static bool doCanCast(const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType);
+	static bool doCast(Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType);
 
 };
-
-template <typename U>
-static void * doConstructDefault(
-	typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
-) {
-	return new U();
-}
-
-template <typename U>
-static void * doConstructDefault(
-	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
-) {
-	return nullptr;
-}
-
-template <typename U>
-static void * doConstructCopy(
-	const void * copyFrom,
-	typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
-) {
-	return new U(*(U *)copyFrom);
-}
-
-template <typename U>
-static void * doConstructCopy(
-	const void * /*copyFrom*/,
-	typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
-) {
-	return nullptr;
-}
 
 
 } // namespace internal_
@@ -257,121 +258,16 @@ public:
 		| (std::is_reference<T>::value ? tfReference : 0)
 	;
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
-		if(data != nullptr) {
-			data->construct<Underlying>(copyFrom);
-			return nullptr;
-		}
-		else {
-			if(copyFrom == nullptr) {
-				return internal_::doConstructDefault<Underlying>();
-			}
-			else {
-				return internal_::doConstructCopy<Underlying>(copyFrom);
-			}
-		}
-	}
+	static void * constructData(MetaTypeData * data, const void * copyFrom);
+	static void destroy(void * instance);
 
-	static void destroy(void * instance)
-	{
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
-#endif
-		delete static_cast<Underlying *>(instance);
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-#pragma GCC diagnostic pop
-#endif
-	}
+	static Variant toReference(const Variant & value);
 
-	static Variant toReference(const Variant & value)
-	{
-		const MetaType * metaType = value.getMetaType();
-		if(metaType->isReference()) {
-			return value;
-		}
-		const MetaType * myMetaType = getMetaType<T>();
-		if(metaType->isPointer()) {
-			if(! myMetaType->isPointer()) {
-				errorBadCast();
-			}
-			if(metaType->getUpType()->getUnifiedType() != myMetaType->getUpType()->getUnifiedType()) {
-				errorBadCast();
-			}
-		}
-		if(metaType->isPointer()) {
-			using P = typename std::remove_pointer<typename std::remove_reference<T>::type>::type;
-			return doToReference<P>(value);
-		}
-		using U = typename std::remove_reference<T>::type;
-		return Variant::create<U &>(value.get<U &>());
-	}
-	
-	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = 0) {
-		return Variant::create<P &>(**(P **)value.getAddress());
-		
-		// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
-		//return Variant::create<P &>(*value.get<P *>());
-	}
+	static bool canCast(const Variant & value, const MetaType * toMetaType);
+	static Variant cast(const Variant & value, const MetaType * toMetaType);
 
-	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = 0) {
-		return value;
-	}
-
-	static bool canCast(const Variant & value, const MetaType * toMetaType)
-	{
-		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-			return true;
-		}
-		if(fromMetaType->getTypeKind() != tkReference
-			&& toMetaType->getTypeKind() == tkReference
-			&& fromMetaType->canCast(value, toMetaType->getUpType())
-			) {
-			return true;
-		}
-		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
-			return true;
-		}
-		if(toMetaType->canCastFrom(value, fromMetaType)) {
-			return true;
-		}
-		return false;
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType)
-	{
-		const MetaType * fromMetaType = getMetaType<T>();
-		if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-			return Variant::retype(toMetaType, value);
-		}
-		if(fromMetaType->getTypeKind() != tkReference
-			&& toMetaType->getTypeKind() == tkReference
-			&& fromMetaType->canCast(value, toMetaType->getUpType())
-			) {
-			return fromMetaType->cast(value, toMetaType->getUpType());
-		}
-		if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
-			return internal_::CastTo<Underlying>::castTo(value, toMetaType);
-		}
-		if(toMetaType->canCastFrom(value, fromMetaType)) {
-			return toMetaType->castFrom(value, fromMetaType);
-		}
-		errorBadCast();
-		return Variant();
-	}
-
-	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType)
-	{
-		return internal_::CastFrom<Underlying>::canCastFrom(value, fromMetaType);
-	}
-
-	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
-	{
-		return internal_::CastFrom<Underlying>::castFrom(value, fromMetaType);
-	}
+	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType);
+	static Variant castFrom(const Variant & value, const MetaType * fromMetaType);
 
 };
 
@@ -392,44 +288,18 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;
 
-	static void * constructData(MetaTypeData * /*data*/, const void * /*value*/) {
-		return nullptr;
-	}
+	static void * constructData(MetaTypeData * data, const void * copyFrom);
+	static void destroy(void * instance);
 
-	static void destroy(void * /*instance*/)
-	{
-	}
+	static void * getAddress(const MetaTypeData & data);
 
-	static void * getAddress(const MetaTypeData & /*data*/)
-	{
-		return nullptr;
-	}
+	static Variant toReference(const Variant & value);
 
-	static Variant toReference(const Variant & value) {
-		return value;
-	}
+	static bool canCast(const Variant & value, const MetaType * toMetaType);
+	static Variant cast(const Variant & value, const MetaType * toMetaType);
 
-	static bool canCast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
-	{
-		return false;
-	}
-
-	static Variant cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
-	{
-		errorBadCast();
-		return Variant();
-	}
-
-	static bool canCastFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
-	{
-		return false;
-	}
-
-	static Variant castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
-	{
-		errorBadCast();
-		return Variant();
-	}
+	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType);
+	static Variant castFrom(const Variant & value, const MetaType * fromMetaType);
 
 };
 

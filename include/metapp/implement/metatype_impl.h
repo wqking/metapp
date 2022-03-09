@@ -388,7 +388,245 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 }
 
 
+inline void * CommonDeclareMetaTypeBase::getAddress(const MetaTypeData & data)
+{
+	return data.getAddress();
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructDefault(
+	typename std::enable_if<std::is_default_constructible<U>::value>::type *
+)
+{
+	return new U();
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructDefault(
+	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type *
+)
+{
+	return nullptr;
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructCopy(
+	const void * copyFrom,
+	typename std::enable_if<std::is_copy_assignable<U>::value>::type *
+)
+{
+	return new U(*(U *)copyFrom);
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructCopy(
+	const void * /*copyFrom*/,
+	typename std::enable_if<! std::is_copy_assignable<U>::value>::type *
+)
+{
+	return nullptr;
+}
+
+template <typename P>
+inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+	typename std::enable_if<! std::is_void<P>::value>::type *)
+{
+	return Variant::create<P &>(**(P **)value.getAddress());
+
+	// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
+	//return Variant::create<P &>(*value.get<P *>());
+}
+
+template <typename P>
+inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+	typename std::enable_if<std::is_void<P>::value>::type *)
+{
+	return value;
+}
+
+inline void CommonDeclareMetaTypeBase::checkCanToReference(
+	const MetaType * fromMetaType, const MetaType * myMetaType)
+{
+	if(fromMetaType->isPointer()) {
+		if(! myMetaType->isPointer()) {
+			errorBadCast();
+		}
+		if(fromMetaType->getUpType()->getUnifiedType() != myMetaType->getUpType()->getUnifiedType()) {
+			errorBadCast();
+		}
+	}
+}
+
+inline bool CommonDeclareMetaTypeBase::doCanCast(
+	const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
+{
+	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+		return true;
+	}
+	if(fromMetaType->getTypeKind() != tkReference
+		&& toMetaType->getTypeKind() == tkReference
+		&& fromMetaType->canCast(value, toMetaType->getUpType())
+		) {
+		return true;
+	}
+	return false;
+}
+
+inline bool CommonDeclareMetaTypeBase::doCast(
+	Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
+{
+	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+		result = Variant::retype(toMetaType, value);
+		return true;
+	}
+	if(fromMetaType->getTypeKind() != tkReference
+		&& toMetaType->getTypeKind() == tkReference
+		&& fromMetaType->canCast(value, toMetaType->getUpType())
+		) {
+		result = fromMetaType->cast(value, toMetaType->getUpType());
+		return true;
+	}
+	return false;
+}
+
+
 } // namespace internal_
+
+template <typename T>
+inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const void * copyFrom)
+{
+	if(data != nullptr) {
+		data->construct<Underlying>(copyFrom);
+		return nullptr;
+	}
+	else {
+		if(copyFrom == nullptr) {
+			return doConstructDefault<Underlying>();
+		}
+		else {
+			return doConstructCopy<Underlying>(copyFrom);
+		}
+	}
+}
+
+template <typename T>
+inline void CommonDeclareMetaType<T>::destroy(void * instance)
+{
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+#endif
+	delete static_cast<Underlying *>(instance);
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#pragma GCC diagnostic pop
+#endif
+}
+
+template <typename T>
+inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
+{
+	const MetaType * fromMetaType = value.getMetaType();
+	if(fromMetaType->isReference()) {
+		return value;
+	}
+	const MetaType * myMetaType = getMetaType<T>();
+	checkCanToReference(fromMetaType, myMetaType);
+	if(fromMetaType->isPointer()) {
+		using P = typename std::remove_pointer<typename std::remove_reference<T>::type>::type;
+		return doToReference<P>(value);
+	}
+	using U = typename std::remove_reference<T>::type;
+	return Variant::create<U &>(value.get<U &>());
+}
+
+template <typename T>
+inline bool CommonDeclareMetaType<T>::canCast(const Variant & value, const MetaType * toMetaType)
+{
+	const MetaType * fromMetaType = getMetaType<T>();
+	if(doCanCast(fromMetaType, value, toMetaType)) {
+		return true;
+	}
+	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+		return true;
+	}
+	if(toMetaType->canCastFrom(value, fromMetaType)) {
+		return true;
+	}
+	return false;
+}
+
+template <typename T>
+inline Variant CommonDeclareMetaType<T>::cast(const Variant & value, const MetaType * toMetaType)
+{
+	const MetaType * fromMetaType = getMetaType<T>();
+	Variant result;
+	if(doCast(result, fromMetaType, value, toMetaType)) {
+		return result;
+	}
+	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+		return internal_::CastTo<Underlying>::castTo(value, toMetaType);
+	}
+	if(toMetaType->canCastFrom(value, fromMetaType)) {
+		return toMetaType->castFrom(value, fromMetaType);
+	}
+	errorBadCast();
+	return Variant();
+}
+
+template <typename T>
+inline bool CommonDeclareMetaType<T>::canCastFrom(const Variant & value, const MetaType * fromMetaType)
+{
+	return internal_::CastFrom<Underlying>::canCastFrom(value, fromMetaType);
+}
+
+template <typename T>
+inline Variant CommonDeclareMetaType<T>::castFrom(const Variant & value, const MetaType * fromMetaType)
+{
+	return internal_::CastFrom<Underlying>::castFrom(value, fromMetaType);
+}
+
+
+inline void * DeclareMetaTypeVoidBase::constructData(MetaTypeData * /*data*/, const void * /*value*/)
+{
+	return nullptr;
+}
+
+inline void DeclareMetaTypeVoidBase::destroy(void * /*instance*/)
+{
+}
+
+inline void * DeclareMetaTypeVoidBase::getAddress(const MetaTypeData & /*data*/)
+{
+	return nullptr;
+}
+
+inline Variant DeclareMetaTypeVoidBase::toReference(const Variant & value)
+{
+	return value;
+}
+
+inline bool DeclareMetaTypeVoidBase::canCast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
+{
+	return false;
+}
+
+inline Variant DeclareMetaTypeVoidBase::cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
+{
+	errorBadCast();
+	return Variant();
+}
+
+inline bool DeclareMetaTypeVoidBase::canCastFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+{
+	return false;
+}
+
+inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+{
+	errorBadCast();
+	return Variant();
+}
+
 
 template <typename T>
 const UnifiedType * getUnifiedType()

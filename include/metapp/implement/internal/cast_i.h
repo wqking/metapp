@@ -67,7 +67,7 @@ private:
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & value,
-			typename std::enable_if<CanCastSafely<F, ToType>::value>::type * = 0) {
+			typename std::enable_if<CanCastSafely<F, ToType>::value>::type * = nullptr) {
 			// If ToType is a class which is constructible from F, but the argument in its constructor
 			// is narrow than F, warning C4244 will be issued on MSVC.
 			// std::unordered_map is such an example, because it can be construct from size_type,
@@ -80,7 +80,7 @@ private:
 
 		template <typename F>
 		static Variant doCastFrom(const Variant & /*value*/,
-			typename std::enable_if<! CanCastSafely<F, ToType>::value>::type * = 0) {
+			typename std::enable_if<! CanCastSafely<F, ToType>::value>::type * = nullptr) {
 			return Variant();
 		}
 	};
@@ -166,13 +166,13 @@ private:
 
 		template <typename T>
 		static Variant doCastTo(const Variant & value,
-			typename std::enable_if<CanStaticCast<FromType, T>::value>::type * = 0) {
+			typename std::enable_if<CanStaticCast<FromType, T>::value>::type * = nullptr) {
 			return static_cast<T>(*(FromType *)(value.getAddress()));
 		}
 
 		template <typename T>
 		static Variant doCastTo(const Variant & /*value*/,
-			typename std::enable_if<! CanStaticCast<FromType, T>::value>::type * = 0) {
+			typename std::enable_if<! CanStaticCast<FromType, T>::value>::type * = nullptr) {
 			return Variant();
 		}
 	};

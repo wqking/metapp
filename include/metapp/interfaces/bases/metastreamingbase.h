@@ -31,28 +31,28 @@ private:
 
 	template <typename U>
 	static void doStreamIn(std::istream & stream, Variant & value,
-		typename std::enable_if<internal_::HasInputStreamOperator<U>::value >::type * = 0) {
+		typename std::enable_if<internal_::HasInputStreamOperator<U>::value >::type * = nullptr) {
 		using M = typename std::remove_reference<U>::type;
 		stream >> *static_cast<M *>(value.getAddress());
 	}
 
 	template <typename U>
 	static void doStreamIn(std::istream & /*stream*/, Variant & /*value*/,
-		typename std::enable_if<! internal_::HasInputStreamOperator<U>::value >::type * = 0) {
+		typename std::enable_if<! internal_::HasInputStreamOperator<U>::value >::type * = nullptr) {
 		errorUnsupported("No << input streaming operator.");
 		return;
 	}
 
 	template <typename U>
 	static void doStreamOut(std::ostream & stream, const Variant & value,
-		typename std::enable_if<internal_::HasOutputStreamOperator<U>::value >::type * = 0) {
+		typename std::enable_if<internal_::HasOutputStreamOperator<U>::value >::type * = nullptr) {
 		using M = typename std::remove_reference<U>::type;
 		stream << *static_cast<const M *>(value.getAddress());
 	}
 
 	template <typename U>
 	static void doStreamOut(std::ostream & /*stream*/, Variant & /*value*/,
-		typename std::enable_if<! internal_::HasOutputStreamOperator<U>::value >::type * = 0) {
+		typename std::enable_if<! internal_::HasOutputStreamOperator<U>::value >::type * = nullptr) {
 		errorUnsupported("No >> output streaming operator.");
 		return;
 	}

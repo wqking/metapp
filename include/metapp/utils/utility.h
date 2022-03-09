@@ -72,14 +72,14 @@ inline const MetaType * getMetaTypeAt(const size_t index, const TypeList<Types..
 
 template <typename ToType, typename FromType>
 inline void assignValue(ToType & to, const FromType & from,
-	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = 0)
+	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
 {
 	to = (ToType)from;
 }
 
 template <typename ToType, typename FromType>
 inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
-	typename std::enable_if<! std::is_assignable<ToType &, FromType>::value>::type * = 0)
+	typename std::enable_if<! std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
 {
 	errorUnwritable();
 }

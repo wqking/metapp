@@ -23,12 +23,12 @@ public:
 	static Variant create(T value,
 		typename std::enable_if<
 			std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-		>::type * = 0);
+		>::type * = nullptr);
 	template <typename T>
 	static Variant create(T value,
 		typename std::enable_if<
 			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-		>::type * = 0);
+		>::type * = nullptr);
 	static Variant retype(const MetaType * metaType, const Variant & var);
 	static Variant takeFrom(const MetaType * metaType, void * object);
 	static Variant takeFrom(const Variant & object);
