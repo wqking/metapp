@@ -33,6 +33,7 @@ private:
 	static constexpr uint8_t storageObject = 1;
 	static constexpr uint8_t storageBuffer = 2;
 	static constexpr uint8_t storageSharedPtr = 3;
+	static constexpr uint8_t storageReference = 4;
 
 public:
 	MetaTypeData()
@@ -60,6 +61,11 @@ public:
 		setStorageType(storageSharedPtr);
 	}
 
+	void constructReference(const void * copyFrom) {
+		podAs<void *>() = *(void **)&copyFrom;
+		setStorageType(storageReference);
+	}
+
 	void * getAddress() const {
 		switch(getStorageType()) {
 		case storageObject:
@@ -70,6 +76,9 @@ public:
 
 		case storageSharedPtr:
 			return (void *)&object;
+
+		case storageReference:
+			return *(void **)(buffer.data());
 		}
 
 		return nullptr;

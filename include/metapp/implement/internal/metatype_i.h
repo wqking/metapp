@@ -280,8 +280,6 @@ struct UnifiedMetaTable
 
 	void (*destroy)(void * instance);
 
-	void * (*getAddress)(const MetaTypeData & data);
-
 	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
 	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
 

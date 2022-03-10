@@ -106,7 +106,6 @@ METAPP_HAS_MEMBER(getMetaUser);
 
 METAPP_HAS_MEMBER(constructData);
 METAPP_HAS_MEMBER(destroy);
-METAPP_HAS_MEMBER(getAddress);
 METAPP_HAS_MEMBER(toReference);
 METAPP_HAS_MEMBER(canCast);
 METAPP_HAS_MEMBER(cast);

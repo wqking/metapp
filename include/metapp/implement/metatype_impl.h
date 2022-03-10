@@ -93,11 +93,6 @@ inline void UnifiedType::destroy(void * instance) const
 	metaMethodTable.destroy(instance);
 }
 
-inline void * UnifiedType::getAddress(const MetaTypeData & data) const
-{
-	return metaMethodTable.getAddress(data);
-}
-
 inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
 	return metaMethodTable.canCast(value, toMetaType);
@@ -246,11 +241,6 @@ inline void MetaType::destroy(void * instance) const
 	unifiedType->destroy(instance);
 }
 
-inline void * MetaType::getAddress(const MetaTypeData & data) const
-{
-	return unifiedType->getAddress(data);
-}
-
 inline Variant MetaType::toReference(const Variant & value) const
 {
 	return metaTable.toReference(value);
@@ -373,11 +363,6 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 }
 
 
-inline void * CommonDeclareMetaTypeBase::getAddress(const MetaTypeData & data)
-{
-	return data.getAddress();
-}
-
 template <typename U>
 inline void * CommonDeclareMetaTypeBase::doConstructDefault(
 	typename std::enable_if<std::is_default_constructible<U>::value>::type *
@@ -427,19 +412,6 @@ inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
 	typename std::enable_if<std::is_void<P>::value>::type *)
 {
 	return value;
-}
-
-inline void CommonDeclareMetaTypeBase::checkCanToReference(
-	const MetaType * fromMetaType, const MetaType * myMetaType)
-{
-	if(fromMetaType != myMetaType) {
-		errorBadCast();
-	}
-	if(fromMetaType->isPointer()) {
-		if(! myMetaType->isPointer()) {
-			errorBadCast();
-		}
-	}
 }
 
 inline bool CommonDeclareMetaTypeBase::doCanCast(
@@ -513,11 +485,12 @@ template <typename T>
 inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 {
 	const MetaType * fromMetaType = value.getMetaType();
+
+	assert(fromMetaType == getMetaType<T>());
+
 	if(fromMetaType->isReference()) {
 		return value;
 	}
-	const MetaType * myMetaType = getMetaType<T>();
-	checkCanToReference(fromMetaType, myMetaType);
 	if(fromMetaType->isPointer()) {
 		using P = typename std::remove_pointer<typename std::remove_reference<T>::type>::type;
 		return doToReference<P>(value);
@@ -582,11 +555,6 @@ inline void DeclareMetaTypeVoidBase::destroy(void * /*instance*/)
 {
 }
 
-inline void * DeclareMetaTypeVoidBase::getAddress(const MetaTypeData & /*data*/)
-{
-	return nullptr;
-}
-
 inline Variant DeclareMetaTypeVoidBase::toReference(const Variant & value)
 {
 	return value;
@@ -625,7 +593,6 @@ const UnifiedType * getUnifiedType()
 		internal_::UnifiedMetaTable {
 			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_getAddress<M>::value>::getAddress,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCast<M>::value>::canCast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_cast<M>::value>::cast,
 			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,

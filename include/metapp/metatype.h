@@ -78,8 +78,6 @@ public:
 	
 	void destroy(void * instance) const;
 
-	void * getAddress(const MetaTypeData & data) const;
-
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
 	Variant cast(const Variant & value, const MetaType * toMetaType) const;
 	
@@ -155,7 +153,6 @@ public:
 
 	void destroy(void * instance) const;
 
-	void * getAddress(const MetaTypeData & data) const;
 	Variant toReference(const Variant & value) const;
 	
 	bool canCast(const Variant & value, const MetaType * toMetaType) const;
@@ -197,8 +194,6 @@ namespace internal_ {
 // Non-template base class to reduce binary size
 struct CommonDeclareMetaTypeBase
 {
-	static void * getAddress(const MetaTypeData & data);
-
 protected:
 	template <typename U>
 	static void * doConstructDefault(
@@ -296,8 +291,6 @@ struct DeclareMetaTypeVoidBase
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
-
-	static void * getAddress(const MetaTypeData & data);
 
 	static Variant toReference(const Variant & value);
 

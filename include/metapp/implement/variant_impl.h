@@ -129,7 +129,7 @@ inline Variant Variant::clone() const
 {
 	Variant result;
 	result.metaType = metaType;
-	result.metaType->constructData(&result.data, metaType->getAddress(data));
+	result.metaType->constructData(&result.data, getAddress());
 	return result;
 }
 
@@ -148,12 +148,12 @@ inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Ty
 	}
 
 	using U = typename internal_::VariantReturnType<T>::Type;
-	return (U)(*(typename std::remove_reference<U>::type *)(metaType->getAddress(data)));
+	return (U)(*(typename std::remove_reference<U>::type *)(getAddress()));
 }
 
 inline void * Variant::getAddress() const
 {
-	return metaType->getAddress(data);
+	return data.getAddress();
 }
 
 inline Variant Variant::toReference() const
