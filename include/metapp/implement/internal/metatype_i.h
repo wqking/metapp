@@ -10,6 +10,11 @@ class MetaClass;
 
 namespace internal_ {
 
+class UnifiedType;
+
+template <typename T>
+const UnifiedType * getUnifiedType();
+
 struct NoneUpType {};
 
 using MetaInterfaceKind = uint16_t;
@@ -299,6 +304,165 @@ struct UpTypeData
 	const MetaType ** upTypeList;
 	uint16_t count;
 };
+
+class UnifiedType
+{
+private:
+	UnifiedType() = delete;
+	UnifiedType(const UnifiedType &) = delete;
+	UnifiedType(UnifiedType &&) = delete;
+
+	~UnifiedType() = default;
+
+	TypeKind getTypeKind() const noexcept;
+
+	const MetaClass * getMetaClass() const;
+	const MetaCallable * getMetaCallable() const;
+	const MetaAccessible * getMetaAccessible() const;
+	const MetaEnum * getMetaEnum() const;
+	const MetaIndexable * getMetaIndexable() const;
+	const MetaIterable * getMetaIterable() const;
+	const MetaStreaming * getMetaStreaming() const;
+	const MetaMap * getMetaMap() const;
+	const MetaMember * getMetaMember() const;
+	const void * getMetaUser() const;
+
+	void * constructData(MetaTypeData * data, const void * copyFrom) const;
+
+	void destroy(void * instance) const;
+
+	bool canCast(const Variant & value, const MetaType * toMetaType) const;
+	Variant cast(const Variant & value, const MetaType * toMetaType) const;
+
+	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
+	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
+
+private:
+	constexpr UnifiedType(
+		const TypeKind typeKind,
+		const internal_::UnifiedMetaTable & metaMethodTable
+	) noexcept;
+
+	template <typename T>
+	friend const UnifiedType * getUnifiedType();
+	friend class metapp::MetaType;
+
+	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
+
+private:
+	TypeKind typeKind;
+	internal_::UnifiedMetaTable metaMethodTable;
+};
+
+inline constexpr UnifiedType::UnifiedType(
+	const TypeKind typeKind,
+	const internal_::UnifiedMetaTable & metaMethodTable
+) noexcept
+	: typeKind(typeKind), metaMethodTable(metaMethodTable)
+{
+}
+
+inline TypeKind UnifiedType::getTypeKind() const noexcept
+{
+	return typeKind;
+}
+
+inline const MetaClass * UnifiedType::getMetaClass() const
+{
+	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
+}
+
+inline const MetaCallable * UnifiedType::getMetaCallable() const
+{
+	return static_cast<const MetaCallable *>(doGetMetaInterface(internal_::mikMetaCallable));
+}
+
+inline const MetaAccessible * UnifiedType::getMetaAccessible() const
+{
+	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
+}
+
+inline const MetaEnum * UnifiedType::getMetaEnum() const
+{
+	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
+}
+
+inline const MetaIndexable * UnifiedType::getMetaIndexable() const
+{
+	return static_cast<const MetaIndexable *>(doGetMetaInterface(internal_::mikMetaIndexable));
+}
+
+inline const MetaIterable * UnifiedType::getMetaIterable() const
+{
+	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
+}
+
+inline const MetaStreaming * UnifiedType::getMetaStreaming() const
+{
+	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
+}
+
+inline const MetaMap * UnifiedType::getMetaMap() const
+{
+	return static_cast<const MetaMap *>(doGetMetaInterface(internal_::mikMetaMap));
+}
+
+inline const MetaMember * UnifiedType::getMetaMember() const
+{
+	return static_cast<const MetaMember *>(doGetMetaInterface(internal_::mikMetaMember));
+}
+
+inline const void * UnifiedType::getMetaUser() const
+{
+	return static_cast<const void *>(doGetMetaInterface(internal_::mikMetaUser));
+}
+
+inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
+{
+	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
+		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
+			return metaMethodTable.metaInterfaceData.items[0].getter();
+		}
+		if(metaMethodTable.metaInterfaceData.count > 1) {
+			for(uint16_t i = 1; i < metaMethodTable.metaInterfaceData.count; ++i) {
+				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
+					return metaMethodTable.metaInterfaceData.items[i].getter();
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
+inline void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const
+{
+	return metaMethodTable.constructData(data, copyFrom);
+}
+
+inline void UnifiedType::destroy(void * instance) const
+{
+	metaMethodTable.destroy(instance);
+}
+
+inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
+{
+	return metaMethodTable.canCast(value, toMetaType);
+}
+
+inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
+{
+	return metaMethodTable.cast(value, toMetaType);
+}
+
+inline bool UnifiedType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return metaMethodTable.canCastFrom(value, fromMetaType);
+}
+
+inline Variant UnifiedType::castFrom(const Variant & value, const MetaType * fromMetaType) const
+{
+	return metaMethodTable.castFrom(value, fromMetaType);
+}
 
 } // namespace internal_
 

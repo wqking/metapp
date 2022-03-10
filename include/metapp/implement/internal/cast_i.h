@@ -25,7 +25,7 @@ struct CastFrom
 private:
 	struct CastFromItem
 	{
-		const UnifiedType * fromUnifiedType;
+		const void * fromUnifiedType;
 		Variant (*castFrom)(const Variant & value);
 	};
 
@@ -88,7 +88,7 @@ private:
 	template <typename ...Types>
 	static CastFromItem doFindCastFromItemHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		const UnifiedType * fromUnifiedType = fromMetaType->getUnifiedType();
+		const void * fromUnifiedType = fromMetaType->getUnifiedType();
 		const CastFromItem itemList[] = {
 			HelperCastFrom<Types>::getCastFromItem()...,
 			CastFromItem {}
@@ -124,7 +124,7 @@ struct CastTo
 private:
 	struct CastToItem
 	{
-		const UnifiedType * toUnifiedType;
+		const void * toUnifiedType;
 		Variant (*castTo)(const Variant & value);
 	};
 
@@ -180,7 +180,7 @@ private:
 	template <typename ...Types>
 	static CastToItem doFindCastToItemHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		const UnifiedType * toUnifiedType = toMetaType->getUnifiedType();
+		const void * toUnifiedType = toMetaType->getUnifiedType();
 		const CastToItem itemList[] = {
 			HelperCastTo<Types>::getCastToItem()...,
 			CastToItem {}

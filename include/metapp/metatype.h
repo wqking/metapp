@@ -27,13 +27,9 @@ struct CommonDeclareMetaType;
 
 } // namespace metapp
  
-// Must be included after previous macro hack
-#include "metapp/implement/internal/metatype_i.h"
-
 namespace metapp {
 
 class MetaType;
-class UnifiedType;
 
 class MetaClass;
 class MetaCallable;
@@ -46,59 +42,15 @@ class MetaStreaming;
 class MetaMap;
 class MetaMember;
 
+} // namespace metapp
+
+// Must be included after previous macro hack
+#include "metapp/implement/internal/metatype_i.h"
+
+namespace metapp {
+
 template <typename T>
 const MetaType * getMetaType();
-
-template <typename T>
-const UnifiedType * getUnifiedType();
-
-class UnifiedType
-{
-public:
-	UnifiedType() = delete;
-	UnifiedType(const UnifiedType &) = delete;
-	UnifiedType(UnifiedType &&) = delete;
-
-	~UnifiedType() = default;
-
-	TypeKind getTypeKind() const noexcept;
-
-	const MetaClass * getMetaClass() const;
-	const MetaCallable * getMetaCallable() const;
-	const MetaAccessible * getMetaAccessible() const;
-	const MetaEnum * getMetaEnum() const;
-	const MetaIndexable * getMetaIndexable() const;
-	const MetaIterable * getMetaIterable() const;
-	const MetaStreaming * getMetaStreaming() const;
-	const MetaMap * getMetaMap() const;
-	const MetaMember * getMetaMember() const;
-	const void * getMetaUser() const;
-
-	void * constructData(MetaTypeData * data, const void * copyFrom) const;
-	
-	void destroy(void * instance) const;
-
-	bool canCast(const Variant & value, const MetaType * toMetaType) const;
-	Variant cast(const Variant & value, const MetaType * toMetaType) const;
-	
-	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
-	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
-
-private:
-	constexpr UnifiedType(
-		const TypeKind typeKind,
-		const internal_::UnifiedMetaTable & metaMethodTable
-	) noexcept;
-
-	template <typename T>
-	friend const UnifiedType * getUnifiedType();
-
-	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
-
-private:
-	TypeKind typeKind;
-	internal_::UnifiedMetaTable metaMethodTable;
-};
 
 namespace internal_ {
 
@@ -121,7 +73,7 @@ public:
 
 	~MetaType() = default;
 
-	const UnifiedType * getUnifiedType() const noexcept;
+	const void * getUnifiedType() const noexcept;
 
 	const MetaType * getUpType() const noexcept;
 	const MetaType * getUpType(const size_t i) const;
@@ -164,7 +116,7 @@ public:
 
 private:
 	constexpr MetaType(
-		const UnifiedType * unifiedType,
+		const internal_::UnifiedType * unifiedType,
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
@@ -175,7 +127,7 @@ private:
 		-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
 
 private:
-	const UnifiedType * unifiedType;
+	const internal_::UnifiedType * unifiedType;
 	internal_::MetaTable metaTable;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;

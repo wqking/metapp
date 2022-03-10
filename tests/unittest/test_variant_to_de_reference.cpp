@@ -183,86 +183,81 @@ TEST_CASE("Variant, toReference, MyClass &")
 	REQUIRE(v.get<MyClass &>().text == "world");
 }
 
-TEST_CASE("Variant, dereference()")
+TEST_CASE("Variant, dereference, int *")
 {
-	SECTION("pointer, int *") {
-		int n = 5;
-		metapp::Variant v(&n);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
-		REQUIRE(! v.canGet<int>());
-		REQUIRE(v.canGet<int *>());
-		REQUIRE(*v.get<int *>() == 5);
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(! v.canGet<int>());
+	REQUIRE(v.canGet<int *>());
+	REQUIRE(*v.get<int *>() == 5);
 
-		metapp::Variant deref(v.dereference());
-		REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
-		REQUIRE(deref.canGet<int>());
-		REQUIRE(deref.get<int>() == 5);
+	metapp::Variant deref(v.dereference());
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
+	REQUIRE(deref.canGet<int>());
+	REQUIRE(deref.get<int>() == 5);
 
-		n = 38;
-		REQUIRE(deref.get<int>() == 5);
-		REQUIRE(*v.get<int *>() == 38);
-	}
-
-	SECTION("reference, int &") {
-		int n = 5;
-		metapp::Variant v(metapp::Variant::create<int &>(n));
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
-		REQUIRE(v.canGet<int>());
-		REQUIRE(v.get<int>() == 5);
-
-		metapp::Variant deref(v.dereference());
-		REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
-		REQUIRE(deref.canGet<int>());
-		REQUIRE(deref.get<int>() == 5);
-
-		n = 38;
-		REQUIRE(deref.get<int>() == 5);
-		REQUIRE(v.get<int>() == 38);
-	}
-
-	struct MyClass
-	{
-		std::string text;
-		int data[100]; // be sure it can't be stored in Variant internal buffer
-	};
-
-	SECTION("pointer, MyClass *") {
-		MyClass n { "hello", {0} };
-		metapp::Variant v(&n);
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
-		REQUIRE(! v.canGet<MyClass>());
-		REQUIRE(v.canGet<MyClass *>());
-		REQUIRE(v.get<MyClass *>()->text == "hello");
-
-		metapp::Variant deref(v.dereference());
-		REQUIRE(metapp::getTypeKind(deref) == metapp::tkObject);
-		REQUIRE(deref.getMetaType() == metapp::getMetaType<MyClass>());
-		REQUIRE(deref.canGet<MyClass>());
-		REQUIRE(deref.get<MyClass &>().text == "hello");
-
-		n.text = "world";
-		REQUIRE(deref.get<MyClass &>().text == "hello");
-		REQUIRE(v.get<MyClass *>()->text == "world");
-	}
-
-	SECTION("reference, MyClass &") {
-		MyClass n { "hello", {0} };
-		metapp::Variant v(metapp::Variant::create<MyClass &>(n));
-		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
-		REQUIRE(v.canGet<MyClass>());
-		REQUIRE(v.get<MyClass &>().text == "hello");
-
-		metapp::Variant deref(v.dereference());
-		REQUIRE(metapp::getTypeKind(deref) == metapp::tkObject);
-		REQUIRE(deref.getMetaType() == metapp::getMetaType<MyClass>());
-		REQUIRE(deref.canGet<MyClass>());
-		REQUIRE(deref.get<MyClass &>().text == "hello");
-
-		n.text = "world";
-		REQUIRE(deref.get<MyClass &>().text == "hello");
-		REQUIRE(v.get<MyClass &>().text == "world");
-	}
-
+	n = 38;
+	REQUIRE(deref.get<int>() == 5);
+	REQUIRE(*v.get<int *>() == 38);
 }
+
+TEST_CASE("Variant, dereference, int &")
+{
+	int n = 5;
+	metapp::Variant v(metapp::Variant::create<int &>(n));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(v.canGet<int>());
+	REQUIRE(v.get<int>() == 5);
+
+	metapp::Variant deref(v.dereference());
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
+	REQUIRE(deref.canGet<int>());
+	REQUIRE(deref.get<int>() == 5);
+
+	n = 38;
+	REQUIRE(deref.get<int>() == 5);
+	REQUIRE(v.get<int>() == 38);
+}
+
+TEST_CASE("Variant, dereference, MyClass *")
+{
+	MyClass n { "hello", {0} };
+	metapp::Variant v(&n);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(! v.canGet<MyClass>());
+	REQUIRE(v.canGet<MyClass *>());
+	REQUIRE(v.get<MyClass *>()->text == "hello");
+
+	metapp::Variant deref(v.dereference());
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkObject);
+	REQUIRE(deref.getMetaType() == metapp::getMetaType<MyClass>());
+	REQUIRE(deref.canGet<MyClass>());
+	REQUIRE(deref.get<MyClass &>().text == "hello");
+
+	n.text = "world";
+	REQUIRE(deref.get<MyClass &>().text == "hello");
+	REQUIRE(v.get<MyClass *>()->text == "world");
+}
+
+TEST_CASE("Variant, dereference, MyClass &")
+{
+	MyClass n { "hello", {0} };
+	metapp::Variant v(metapp::Variant::create<MyClass &>(n));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(v.canGet<MyClass>());
+	REQUIRE(v.get<MyClass &>().text == "hello");
+
+	metapp::Variant deref(v.dereference());
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkObject);
+	REQUIRE(deref.getMetaType() == metapp::getMetaType<MyClass>());
+	REQUIRE(deref.canGet<MyClass>());
+	REQUIRE(deref.get<MyClass &>().text == "hello");
+
+	n.text = "world";
+	REQUIRE(deref.get<MyClass &>().text == "hello");
+	REQUIRE(v.get<MyClass &>().text == "world");
+}
+
 
 } // namespace

@@ -3,118 +3,8 @@
 
 namespace metapp {
 
-inline constexpr UnifiedType::UnifiedType(
-		const TypeKind typeKind,
-		const internal_::UnifiedMetaTable & metaMethodTable
-	) noexcept
-	: typeKind(typeKind), metaMethodTable(metaMethodTable)
-{
-}
-
-inline TypeKind UnifiedType::getTypeKind() const noexcept
-{
-	return typeKind;
-}
-
-inline const MetaClass * UnifiedType::getMetaClass() const
-{
-	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
-}
-
-inline const MetaCallable * UnifiedType::getMetaCallable() const
-{
-	return static_cast<const MetaCallable *>(doGetMetaInterface(internal_::mikMetaCallable));
-}
-
-inline const MetaAccessible * UnifiedType::getMetaAccessible() const
-{
-	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
-}
-
-inline const MetaEnum * UnifiedType::getMetaEnum() const
-{
-	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
-}
-
-inline const MetaIndexable * UnifiedType::getMetaIndexable() const
-{
-	return static_cast<const MetaIndexable *>(doGetMetaInterface(internal_::mikMetaIndexable));
-}
-
-inline const MetaIterable * UnifiedType::getMetaIterable() const
-{
-	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
-}
-
-inline const MetaStreaming * UnifiedType::getMetaStreaming() const
-{
-	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
-}
-
-inline const MetaMap * UnifiedType::getMetaMap() const
-{
-	return static_cast<const MetaMap *>(doGetMetaInterface(internal_::mikMetaMap));
-}
-
-inline const MetaMember * UnifiedType::getMetaMember() const
-{
-	return static_cast<const MetaMember *>(doGetMetaInterface(internal_::mikMetaMember));
-}
-
-inline const void * UnifiedType::getMetaUser() const
-{
-	return static_cast<const void *>(doGetMetaInterface(internal_::mikMetaUser));
-}
-
-inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
-{
-	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
-		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
-			return metaMethodTable.metaInterfaceData.items[0].getter();
-		}
-		if(metaMethodTable.metaInterfaceData.count > 1) {
-			for(uint16_t i = 1; i < metaMethodTable.metaInterfaceData.count; ++i) {
-				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
-					return metaMethodTable.metaInterfaceData.items[i].getter();
-				}
-			}
-		}
-	}
-	return nullptr;
-}
-
-inline void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const
-{
-	return metaMethodTable.constructData(data, copyFrom);
-}
-
-inline void UnifiedType::destroy(void * instance) const
-{
-	metaMethodTable.destroy(instance);
-}
-
-inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
-{
-	return metaMethodTable.canCast(value, toMetaType);
-}
-
-inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
-{
-	return metaMethodTable.cast(value, toMetaType);
-}
-
-inline bool UnifiedType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return metaMethodTable.canCastFrom(value, fromMetaType);
-}
-
-inline Variant UnifiedType::castFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return metaMethodTable.castFrom(value, fromMetaType);
-}
-
 inline constexpr MetaType::MetaType(
-		const UnifiedType * unifiedType,
+		const internal_::UnifiedType * unifiedType,
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
@@ -126,7 +16,7 @@ inline constexpr MetaType::MetaType(
 {
 }
 
-inline const UnifiedType * MetaType::getUnifiedType() const noexcept
+inline const void * MetaType::getUnifiedType() const noexcept
 {
 	return unifiedType;
 }
@@ -448,6 +338,26 @@ inline bool CommonDeclareMetaTypeBase::doCast(
 	return false;
 }
 
+template <typename T>
+const UnifiedType * getUnifiedType()
+{
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType (
+		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
+		UnifiedMetaTable {
+			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
+			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
+			&SelectDeclareClass<T, HasMember_canCast<M>::value>::canCast,
+			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
+			&SelectDeclareClass<T, HasMember_canCastFrom<M>::value>::canCastFrom,
+			&SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+
+			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
+		}
+	);
+	return &unifiedType;
+}
 
 } // namespace internal_
 
@@ -580,28 +490,6 @@ inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, cons
 {
 	errorBadCast();
 	return Variant();
-}
-
-
-template <typename T>
-const UnifiedType * getUnifiedType()
-{
-	using M = DeclareMetaType<T>;
-
-	static const UnifiedType unifiedType (
-		internal_::SelectDeclareClass<T, internal_::HasMember_typeKind<M>::value>::typeKind,
-		internal_::UnifiedMetaTable {
-			&internal_::SelectDeclareClass<T, internal_::HasMember_constructData<M>::value>::constructData,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_destroy<M>::value>::destroy,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_canCast<M>::value>::canCast,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_cast<M>::value>::cast,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_canCastFrom<M>::value>::canCastFrom,
-			&internal_::SelectDeclareClass<T, internal_::HasMember_castFrom<M>::value>::castFrom,
-			
-			internal_::MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-		}
-	);
-	return &unifiedType;
 }
 
 template <typename T>
