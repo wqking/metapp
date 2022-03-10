@@ -116,7 +116,7 @@ public:
 
 private:
 	constexpr MetaType(
-		const internal_::UnifiedType * unifiedType,
+		const internal_::UnifiedType * (*doGetUnifiedType)(),
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
@@ -127,7 +127,7 @@ private:
 		-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
 
 private:
-	const internal_::UnifiedType * unifiedType;
+	const internal_::UnifiedType * (*doGetUnifiedType)();
 	internal_::MetaTable metaTable;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;

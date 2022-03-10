@@ -4,12 +4,12 @@
 namespace metapp {
 
 inline constexpr MetaType::MetaType(
-		const internal_::UnifiedType * unifiedType,
+		const internal_::UnifiedType * (*doGetUnifiedType)(),
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept :
-	unifiedType(unifiedType),
+	doGetUnifiedType(doGetUnifiedType),
 	metaTable(metaTable),
 	upTypeData(upTypeData),
 	typeFlags(typeFlags)
@@ -18,7 +18,7 @@ inline constexpr MetaType::MetaType(
 
 inline const void * MetaType::getUnifiedType() const noexcept
 {
-	return unifiedType;
+	return doGetUnifiedType();
 }
 
 inline const MetaType * MetaType::getUpType() const noexcept
@@ -38,7 +38,7 @@ inline size_t MetaType::getUpTypeCount() const noexcept
 
 inline TypeKind MetaType::getTypeKind() const noexcept
 {
-	return unifiedType->getTypeKind();
+	return doGetUnifiedType()->getTypeKind();
 }
 
 inline constexpr bool MetaType::isConst() const noexcept
@@ -63,52 +63,52 @@ inline constexpr bool MetaType::isReference() const noexcept
 
 inline const MetaClass * MetaType::getMetaClass() const
 {
-	return unifiedType->getMetaClass();
+	return doGetUnifiedType()->getMetaClass();
 }
 
 inline const MetaCallable * MetaType::getMetaCallable() const
 {
-	return unifiedType->getMetaCallable();
+	return doGetUnifiedType()->getMetaCallable();
 }
 
 inline const MetaAccessible * MetaType::getMetaAccessible() const
 {
-	return unifiedType->getMetaAccessible();
+	return doGetUnifiedType()->getMetaAccessible();
 }
 
 inline const MetaEnum * MetaType::getMetaEnum() const
 {
-	return unifiedType->getMetaEnum();
+	return doGetUnifiedType()->getMetaEnum();
 }
 
 inline const MetaIndexable * MetaType::getMetaIndexable() const
 {
-	return unifiedType->getMetaIndexable();
+	return doGetUnifiedType()->getMetaIndexable();
 }
 
 inline const MetaIterable * MetaType::getMetaIterable() const
 {
-	return unifiedType->getMetaIterable();
+	return doGetUnifiedType()->getMetaIterable();
 }
 
 inline const MetaStreaming * MetaType::getMetaStreaming() const
 {
-	return unifiedType->getMetaStreaming();
+	return doGetUnifiedType()->getMetaStreaming();
 }
 
 inline const MetaMap * MetaType::getMetaMap() const
 {
-	return unifiedType->getMetaMap();
+	return doGetUnifiedType()->getMetaMap();
 }
 
 inline const MetaMember * MetaType::getMetaMember() const
 {
-	return unifiedType->getMetaMember();
+	return doGetUnifiedType()->getMetaMember();
 }
 
 inline const void * MetaType::getMetaUser() const
 {
-	return unifiedType->getMetaUser();
+	return doGetUnifiedType()->getMetaUser();
 }
 
 inline void * MetaType::construct() const
@@ -123,12 +123,12 @@ inline void * MetaType::copyConstruct(const void * copyFrom) const
 
 inline void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
 {
-	return unifiedType->constructData(data, copyFrom);
+	return doGetUnifiedType()->constructData(data, copyFrom);
 }
 
 inline void MetaType::destroy(void * instance) const
 {
-	unifiedType->destroy(instance);
+	doGetUnifiedType()->destroy(instance);
 }
 
 inline Variant MetaType::toReference(const Variant & value) const
@@ -138,22 +138,22 @@ inline Variant MetaType::toReference(const Variant & value) const
 
 inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType) const
 {
-	return unifiedType->canCast(value, toMetaType);
+	return doGetUnifiedType()->canCast(value, toMetaType);
 }
 
 inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const
 {
-	return unifiedType->cast(value, toMetaType);
+	return doGetUnifiedType()->cast(value, toMetaType);
 }
 
 inline bool MetaType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
 {
-	return unifiedType->canCastFrom(value, fromMetaType);
+	return doGetUnifiedType()->canCastFrom(value, fromMetaType);
 }
 
 inline Variant MetaType::castFrom(const Variant & value, const MetaType * fromMetaType) const
 {
-	return unifiedType->castFrom(value, fromMetaType);
+	return doGetUnifiedType()->castFrom(value, fromMetaType);
 }
 
 namespace internal_ {
@@ -221,7 +221,7 @@ auto doGetMetaType()
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType (
-		getUnifiedType<typename std::remove_cv<T>::type>(),
+		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
 		internal_::MetaTable {
 			&internal_::SelectDeclareClass<T, internal_::HasMember_toReference<M>::value>::toReference,
 		},
@@ -339,7 +339,7 @@ inline bool CommonDeclareMetaTypeBase::doCast(
 }
 
 template <typename T>
-const UnifiedType * getUnifiedType()
+const UnifiedType * unifiedTypeGetter()
 {
 	using M = DeclareMetaType<T>;
 

@@ -13,7 +13,7 @@ namespace internal_ {
 class UnifiedType;
 
 template <typename T>
-const UnifiedType * getUnifiedType();
+const UnifiedType * unifiedTypeGetter();
 
 struct NoneUpType {};
 
@@ -344,7 +344,7 @@ private:
 	) noexcept;
 
 	template <typename T>
-	friend const UnifiedType * getUnifiedType();
+	friend const UnifiedType * unifiedTypeGetter();
 	friend class metapp::MetaType;
 
 	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
