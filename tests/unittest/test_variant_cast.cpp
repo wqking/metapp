@@ -8,6 +8,45 @@
 
 namespace {
 
+TEMPLATE_LIST_TEST_CASE("Variant, cast T to T", "", TestTypes_All)
+{
+	auto dataProvider = TestDataProvider<TestType>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		metapp::Variant v(dataProvider.getData(dataIndex));
+		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
+
+		REQUIRE(v.canCast<TestType>());
+		REQUIRE(v.cast<TestType>().template get<TestType>() == dataProvider.getData(dataIndex));
+	}
+}
+
+TEMPLATE_LIST_TEST_CASE("Variant, cast T to T &", "", TestTypes_All)
+{
+	auto dataProvider = TestDataProvider<TestType>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		metapp::Variant v(dataProvider.getData(dataIndex));
+		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
+
+		REQUIRE(v.canCast<TestType &>());
+		REQUIRE(v.cast<TestType &>().template get<TestType &>() == dataProvider.getData(dataIndex));
+	}
+}
+
+TEMPLATE_LIST_TEST_CASE("Variant, cast T to U", "", TestTypes_Pairs_Arithmetic)
+{
+	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
+	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
+	//printf("%d %d\n", metapp::getMetaType<First>()->getTypeKind(), metapp::getMetaType<Second>()->getTypeKind());
+
+	auto dataProvider = TestDataProvider<First>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		metapp::Variant v(dataProvider.getData(dataIndex));
+		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
+		REQUIRE(v.canCast<Second>());
+		REQUIRE(v.cast<Second>().template get<Second>() == (Second)dataProvider.getData(dataIndex));
+	}
+}
+
 struct MyClass
 {
 	int value;

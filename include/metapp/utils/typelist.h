@@ -78,14 +78,21 @@ struct TypeListGetAt
 };
 
 template <typename TL, typename T>
-struct TypeListAppend
-{
-};
+struct TypeListAppend;
 
 template <typename T, typename ...Args>
 struct TypeListAppend <TypeList<Args...>, T>
 {
 	using Type = TypeList<Args..., T>;
+};
+
+template <typename TL, typename T>
+struct TypeListPreppend;
+
+template <typename T, typename ...Args>
+struct TypeListPreppend <TypeList<Args...>, T>
+{
+	using Type = TypeList<T, Args...>;
 };
 
 template <typename TL1, typename TL2>
@@ -97,6 +104,36 @@ template <typename ...A, typename ...B>
 struct TypeListConcat <TypeList<A...>, TypeList<B...> >
 {
 	using Type = TypeList<A..., B...>;
+};
+
+template <typename Result, typename TL1, typename TL2, typename FullTL2>
+struct HelperTypeListProduct;
+
+template <typename Result, typename A0, typename ...A, typename B0, typename ...B, typename FullTL2>
+struct HelperTypeListProduct <Result, TypeList<A0, A...>, TypeList<B0, B...>, FullTL2>
+{
+	using Item = TypeList<A0, B0>;
+	using Next = typename HelperTypeListProduct<Result, TypeList<A0, A...>, TypeList<B...>, FullTL2>::Type;
+	using Type = typename TypeListPreppend<Next, Item>::Type;
+};
+
+template <typename Result, typename A0, typename ...A, typename FullTL2>
+struct HelperTypeListProduct <Result, TypeList<A0, A...>, TypeList<>, FullTL2>
+{
+	using Type = typename HelperTypeListProduct<Result, TypeList<A...>, FullTL2, FullTL2>::Type;
+};
+
+template <typename Result, typename ...B, typename FullTL2>
+struct HelperTypeListProduct <Result, TypeList<>, TypeList<B...>, FullTL2>
+{
+	using Type = Result;
+};
+
+// TL1 * TL2, Used by unit tests
+template <typename TL1, typename TL2>
+struct TypeListProduct
+{
+	using Type = typename HelperTypeListProduct<TypeList<>, TL1, TL2, TL2>::Type;
 };
 
 
