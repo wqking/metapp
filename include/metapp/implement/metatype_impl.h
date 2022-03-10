@@ -10,6 +10,9 @@ inline constexpr MetaType::MetaType(
 		const TypeFlags typeFlags
 	) noexcept :
 	doGetUnifiedType(doGetUnifiedType),
+#ifdef METAPP_DEBUG_ENABLED
+	debugUnifiedType(doGetUnifiedType()),
+#endif
 	metaTable(metaTable),
 	upTypeData(upTypeData),
 	typeFlags(typeFlags)

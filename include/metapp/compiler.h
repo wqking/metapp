@@ -24,6 +24,12 @@
 	#endif
 #endif
 
+#ifndef NDEBUG
+
+#define METAPP_DEBUG_ENABLED
+
+#endif
+
 
 #endif
 

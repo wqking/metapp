@@ -60,6 +60,20 @@ TEST_CASE("Variant, cast std::string to std::string &")
 	REQUIRE(v.cast<std::string &>().get<std::string &>() == "hello");
 }
 
+TEST_CASE("Variant, cast std::string to const std::string &")
+{
+	std::string s = "hello";
+	metapp::Variant v(metapp::Variant::create<std::string>(s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
+	REQUIRE(! v.getMetaType()->isConst());
+
+	REQUIRE(v.canCast<const std::string &>());
+	auto casted = v.cast<const std::string &>();
+	REQUIRE(casted.get<const std::string &>() == "hello");
+	REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkStdString);
+	REQUIRE(casted.getMetaType()->isConst());
+}
+
 TEST_CASE("Variant, cast std::wstring to wchar_t *")
 {
 	std::wstring ws(L"abcdef");

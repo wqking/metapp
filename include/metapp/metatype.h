@@ -128,6 +128,12 @@ private:
 
 private:
 	const internal_::UnifiedType * (*doGetUnifiedType)();
+
+#ifdef METAPP_DEBUG_ENABLED
+	// need this in debug window to ease debugging
+	const internal_::UnifiedType * debugUnifiedType;
+#endif
+
 	internal_::MetaTable metaTable;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
