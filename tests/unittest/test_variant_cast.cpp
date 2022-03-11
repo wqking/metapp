@@ -89,6 +89,65 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to const U &", "", TestTypes_Pa
 	}
 }
 
+TEMPLATE_LIST_TEST_CASE("Variant, cast const T * to const U *", "", TestTypes_Pairs_Arithmetic)
+{
+	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
+	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
+
+	auto dataProvider = TestDataProvider<First>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		First n = dataProvider.getData(dataIndex);
+		metapp::Variant v(&n);
+		REQUIRE((v.getMetaType()->getTypeKind() == metapp::tkPointer
+			|| v.getMetaType()->getTypeKind() == metapp::tkCharPtr
+			|| v.getMetaType()->getTypeKind() == metapp::tkWideCharPtr
+			));
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
+		
+		REQUIRE(v.canCast<const Second *>());
+		auto casted = v.cast<const Second *>();
+		auto castedDataProvider = TestDataProvider<Second>();
+		REQUIRE((casted.getMetaType()->getTypeKind() == metapp::tkPointer
+			|| casted.getMetaType()->getTypeKind() == metapp::tkCharPtr
+			|| casted.getMetaType()->getTypeKind() == metapp::tkWideCharPtr
+		));
+		REQUIRE(casted.getMetaType()->getUpType()->getTypeKind() == castedDataProvider.getTypeKind());
+	}
+}
+
+TEST_CASE("Variant, can't cast int * to int or int &")
+{
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(! v.canCast<int>());
+	REQUIRE(! v.canCast<int &>());
+	REQUIRE_THROWS(v.cast<int>());
+	REQUIRE_THROWS(v.cast<int &>());
+}
+
+TEST_CASE("Variant, can't cast int & to int *")
+{
+	int n = 5;
+	metapp::Variant v(metapp::Variant::create<int &>(n));
+	REQUIRE(! v.canCast<int *>());
+	REQUIRE_THROWS(v.cast<int *>());
+}
+
+TEST_CASE("Variant, can't cast int to int *")
+{
+	metapp::Variant v(5);
+	REQUIRE(! v.canCast<int *>());
+	REQUIRE_THROWS(v.cast<int *>());
+}
+
+TEST_CASE("Variant, cast int * to * &")
+{
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(v.canCast<int * &>());
+	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
+}
+
 struct MyClass
 {
 	int value;

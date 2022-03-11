@@ -15,19 +15,6 @@ struct DeclareMetaTypePointerBase
 
 	static constexpr TypeKind typeKind = tkPointer;
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return toMetaType->getTypeKind() == tkPointer || Common::canCast(value, toMetaType);
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->getTypeKind() == tkPointer) {
-			return Variant(toMetaType, &value.get<void * &>());
-		}
-		else {
-			return Common::cast(value, toMetaType);
-		}
-	}
-
 };
 
 template <typename T>
