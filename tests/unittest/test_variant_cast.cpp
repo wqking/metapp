@@ -1,4 +1,5 @@
 #include "test.h"
+#include "include/dataprovider.h"
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
@@ -140,12 +141,24 @@ TEST_CASE("Variant, can't cast int to int *")
 	REQUIRE_THROWS(v.cast<int *>());
 }
 
-TEST_CASE("Variant, cast int * to * &")
+TEST_CASE("Variant, cast int * to int * &")
 {
 	int n = 5;
 	metapp::Variant v(&n);
 	REQUIRE(v.canCast<int * &>());
 	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
+}
+
+TEST_CASE("Variant, cast int * & to int *")
+{
+	int n = 5;
+	int * pn = &n;
+	metapp::Variant v(metapp::Variant::create<int * &>(pn));
+	REQUIRE(v.canCast<int *>());
+	REQUIRE(v.cast<int *>().get<int *>() == &n);
+	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
+	REQUIRE(v.cast<int * &>().get<int *>() == &n);
+	REQUIRE(v.cast<int *>().get<int * &>() == &n);
 }
 
 struct MyClass
