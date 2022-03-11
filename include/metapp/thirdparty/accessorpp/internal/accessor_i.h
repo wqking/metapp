@@ -197,7 +197,7 @@ public:
 	{
 	}
 
-	AccessorRoot(const AccessorRoot & other) noexcept
+	AccessorRoot(const AccessorRoot & other)
 		:
 			getter(other.getter),
 			setter(other.setter),
@@ -205,7 +205,7 @@ public:
 	{
 	}
 
-	AccessorRoot(AccessorRoot && other) noexcept
+	AccessorRoot(AccessorRoot && other)
 		:
 			getter(std::move(other.getter)),
 			setter(std::move(other.setter)),
@@ -214,7 +214,7 @@ public:
 	}
 
 	template <typename G, typename S>
-	AccessorRoot(G && getter, S && setter) noexcept
+	AccessorRoot(G && getter, S && setter)
 		:
 			getter(std::forward<G>(getter)),
 			setter(std::forward<S>(setter)),
@@ -223,7 +223,7 @@ public:
 	}
 
 	template <typename G>
-	AccessorRoot(G && getter, NoSetter) noexcept
+	AccessorRoot(G && getter, NoSetter)
 		:
 			getter(std::forward<G>(getter)),
 			setter(),
@@ -235,7 +235,7 @@ public:
 	AccessorRoot(
 			G && getter, IG && getterInstance,
 			S && setter, IS && setterInstance
-		) noexcept
+		)
 		:
 			getter(std::forward<G>(getter), std::forward<IG>(getterInstance)),
 			setter(std::forward<S>(setter), std::forward<IS>(setterInstance)),
@@ -275,21 +275,21 @@ public:
 	using SetterType = typename super::SetterType;
 
 public:
-	AccessorBase(const ValueType & newValue = ValueType()) noexcept
+	AccessorBase(const ValueType & newValue = ValueType())
 		:
 			super(&AccessorBase::value, this, &AccessorBase::value, this),
 			value(newValue)
 	{
 	}
 
-	AccessorBase(const AccessorBase & other) noexcept
+	AccessorBase(const AccessorBase & other)
 		:
 			super(&AccessorBase::value, this, &AccessorBase::value, this),
 			value(other.value)
 	{
 	}
 
-	AccessorBase(AccessorBase && other) noexcept
+	AccessorBase(AccessorBase && other)
 		:
 			super(static_cast<super &&>(other)),
 			value(std::move(other.value))
@@ -297,7 +297,7 @@ public:
 	}
 
 	template <typename G, typename S>
-	AccessorBase(G && getter, S && setter, const ValueType & newValue = ValueType()) noexcept
+	AccessorBase(G && getter, S && setter, const ValueType & newValue = ValueType())
 		:
 			super(std::forward<G>(getter),
 				std::forward<S>(setter)),
@@ -306,7 +306,7 @@ public:
 	}
 
 	template <typename S>
-	AccessorBase(DefaultGetter, S && setter, const ValueType & newValue = ValueType()) noexcept
+	AccessorBase(DefaultGetter, S && setter, const ValueType & newValue = ValueType())
 		:
 			super(GetterType(&AccessorBase::value, this),
 				std::forward<S>(setter)),
@@ -315,7 +315,7 @@ public:
 	}
 
 	template <typename G>
-	AccessorBase(G && getter, DefaultSetter, const ValueType & newValue = ValueType()) noexcept
+	AccessorBase(G && getter, DefaultSetter, const ValueType & newValue = ValueType())
 		:
 			super(GetterType(std::forward<G>(getter)),
 				SetterType(&AccessorBase::value, this)),
@@ -323,7 +323,7 @@ public:
 	{
 	}
 
-	AccessorBase(DefaultGetter, DefaultSetter, const ValueType & newValue = ValueType()) noexcept
+	AccessorBase(DefaultGetter, DefaultSetter, const ValueType & newValue = ValueType())
 		:
 			super(GetterType(&AccessorBase::value, this),
 				SetterType(&AccessorBase::value, this)),
@@ -336,7 +336,7 @@ public:
 			G && getter, IG && getterInstance,
 			S && setter, IS && setterInstance,
 			const ValueType & newValue = ValueType()
-		) noexcept
+		)
 		:
 			super(std::forward<G>(getter), std::forward<IG>(getterInstance),
 				std::forward<S>(setter), std::forward<IS>(setterInstance)),

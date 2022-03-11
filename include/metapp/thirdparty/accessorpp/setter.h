@@ -37,64 +37,64 @@ public:
 
 	template <typename U>
 	explicit Setter(U * address,
-		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr) noexcept
+		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr)
 		: setterFunc([address](void *, const ValueType & value) { *address = (U)(value); })
 	{
 	}
 
 	template <typename U, typename C>
 	Setter(U C::* address, C * instance,
-		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr) noexcept
+		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr)
 		: setterFunc([address, instance](void *, const ValueType & value) { instance->*address = (U)(value); })
 	{
 	}
 
 	template <typename U, typename C>
 	Setter(U C::* address,
-		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr) noexcept
+		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr)
 		: setterFunc([address](void * instance, const ValueType & value) { static_cast<C *>(instance)->*address = (U)(value); })
 	{
 	}
 
 	template <typename F>
 	explicit Setter(F func,
-		typename std::enable_if<private_::CanInvoke<F, ValueType>::value>::type * = nullptr) noexcept
+		typename std::enable_if<private_::CanInvoke<F, ValueType>::value>::type * = nullptr)
 		: setterFunc([func](void *, const ValueType & value) { func(value); })
 	{
 	}
 
 	template <typename F, typename C>
 	Setter(F func, C * instance,
-		typename std::enable_if<std::is_member_function_pointer<F>::value>::type * = nullptr) noexcept
+		typename std::enable_if<std::is_member_function_pointer<F>::value>::type * = nullptr)
 		: setterFunc([func, instance](void *, const ValueType & value) { (instance->*func)(value); })
 	{
 	}
 
 	template <typename F>
 	Setter(F func,
-		typename std::enable_if<std::is_member_function_pointer<F>::value>::type * = nullptr) noexcept
+		typename std::enable_if<std::is_member_function_pointer<F>::value>::type * = nullptr)
 		: setterFunc([func](void * instance, const ValueType & value) {
 			(static_cast<typename private_::CallableTypeChecker<F>::ClassType *>(instance)->*func)(value);
 		})
 	{
 	}
 
-	Setter(const Setter & other) noexcept
+	Setter(const Setter & other)
 		: setterFunc(other.setterFunc)
 	{
 	}
 
-	Setter(Setter && other) noexcept
+	Setter(Setter && other)
 		: setterFunc(std::move(other.setterFunc))
 	{
 	}
 
-	Setter & operator = (const Setter & other) noexcept {
+	Setter & operator = (const Setter & other) {
 		setterFunc = other.setterFunc;
 		return *this;
 	}
 
-	Setter & operator = (Setter && other) noexcept {
+	Setter & operator = (Setter && other) {
 		setterFunc = std::move(other.setterFunc);
 		return *this;
 	}

@@ -91,7 +91,7 @@ public:
 
 	// The explict static_cast is required, otherwise it will call
 	// template <typename P1> explicit AccessorBase(P1 && p2)
-	Accessor(const Accessor & other) noexcept
+	Accessor(const Accessor & other)
 		: BaseType(static_cast<const BaseType &>(other)) {
 	}
 
