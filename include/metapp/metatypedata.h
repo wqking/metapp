@@ -89,6 +89,11 @@ public:
 		object.reset();
 	}
 
+	void swap(MetaTypeData & other) noexcept {
+		object.swap(other.object);
+		buffer.swap(other.buffer);
+	}
+
 private:
 	template <typename T>
 	void doConstructOnBuffer(const void * copyFrom) {
@@ -204,6 +209,11 @@ private:
 	std::shared_ptr<void> object;
 	std::array<uint8_t, bufferSize + 1> buffer;
 };
+
+inline void swap(MetaTypeData & a, MetaTypeData & b) noexcept
+{
+	a.swap(b);
+}
 
 
 } // namespace metapp

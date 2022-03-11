@@ -37,10 +37,10 @@ public:
 	~Variant() = default;
 
 	template <typename T>
-	Variant(T value) noexcept;
+	Variant(T value);
 
-	explicit Variant(const MetaType * metaType) noexcept;
-	Variant(const MetaType * metaType, const void * copyFrom) noexcept;
+	explicit Variant(const MetaType * metaType);
+	Variant(const MetaType * metaType, const void * copyFrom);
 
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;
@@ -74,6 +74,8 @@ public:
 
 	const MetaType * getMetaType() const noexcept;
 
+	void swap(Variant & other) noexcept;
+
 	friend std::istream & operator >> (std::istream & stream, Variant & v);
 	friend std::ostream & operator << (std::ostream & stream, const Variant & v);
 
@@ -81,6 +83,8 @@ private:
 	const MetaType * metaType;
 	MetaTypeData data;
 };
+
+void swap(Variant & a, Variant & b) noexcept;
 
 TypeKind getTypeKind(const Variant & v);
 

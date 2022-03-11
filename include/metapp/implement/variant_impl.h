@@ -62,21 +62,21 @@ inline Variant::Variant() noexcept
 }
 
 template <typename T>
-inline Variant::Variant(T value) noexcept
+inline Variant::Variant(T value)
 	:
 		metaType(metapp::getMetaType<T>())
 {
 	metaType->constructData(&data, &value);
 }
 
-inline Variant::Variant(const MetaType * metaType) noexcept
+inline Variant::Variant(const MetaType * metaType)
 	:
 		metaType(metaType)
 {
 	metaType->constructData(&data, nullptr);
 }
 
-inline Variant::Variant(const MetaType * metaType, const void * copyFrom) noexcept
+inline Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
 		metaType(metaType)
 {
@@ -215,6 +215,14 @@ inline const MetaType * Variant::getMetaType() const noexcept
 	return metaType;
 }
 
+inline void Variant::swap(Variant & other) noexcept
+{
+	using std::swap;
+
+	swap(metaType, other.metaType);
+	swap(data, other.data);
+}
+
 inline std::istream & operator >> (std::istream & stream, Variant & value)
 {
 	auto metaStreaming = value.metaType->getMetaStreaming();
@@ -235,6 +243,11 @@ inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 	}
 	metaStreaming->streamOut(stream, value);
 	return stream;
+}
+
+inline void swap(Variant & a, Variant & b) noexcept
+{
+	a.swap(b);
 }
 
 inline TypeKind getTypeKind(const Variant & v)
