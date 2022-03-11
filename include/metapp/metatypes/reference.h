@@ -21,19 +21,6 @@ struct DeclareMetaTypeBase <T &>
 		return nullptr;
 	}
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return (toMetaType->getTypeKind() == tkReference) || Common::canCast(value, toMetaType);
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->getTypeKind() == tkReference) {
-			return Variant(toMetaType, &value.get<int &>());
-		}
-		else {
-			return Common::cast(value, toMetaType);
-		}
-	}
-
 };
 
 template <typename T>

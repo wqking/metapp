@@ -204,7 +204,6 @@ private:
 		buffer[bufferSize] = value;
 	}
 
-
 private:
 	std::shared_ptr<void> object;
 	std::array<uint8_t, bufferSize + 1> buffer;

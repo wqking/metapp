@@ -47,6 +47,48 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast T to U", "", TestTypes_Pairs_Arithmetic)
 	}
 }
 
+TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arithmetic)
+{
+	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
+	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
+
+	auto dataProvider = TestDataProvider<First>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		First n = dataProvider.getData(dataIndex);
+		metapp::Variant v(metapp::Variant::create<const First &>(n));
+		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
+		
+		REQUIRE(v.canCast<Second>());
+		auto casted = v.cast<Second>();
+		auto castedDataProvider = TestDataProvider<Second>();
+		REQUIRE(casted.getMetaType()->getTypeKind() == castedDataProvider.getTypeKind());
+		REQUIRE(casted.template get<Second>() == (Second)dataProvider.getData(dataIndex));
+	}
+}
+
+TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to const U &", "", TestTypes_Pairs_Arithmetic)
+{
+	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
+	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
+
+	auto dataProvider = TestDataProvider<First>();
+	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		First n = dataProvider.getData(dataIndex);
+		metapp::Variant v(metapp::Variant::create<const First &>(n));
+		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
+		
+		REQUIRE(v.canCast<const Second &>());
+		auto casted = v.cast<const Second &>();
+		auto castedDataProvider = TestDataProvider<Second>();
+		REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(casted.getMetaType()->getUpType()->getTypeKind() == castedDataProvider.getTypeKind());
+		// This doesn't work because the cast is similar as (double &)n, which n is int &
+		//REQUIRE(casted.get<Second>() == (Second)dataProvider.getData(dataIndex));
+	}
+}
+
 struct MyClass
 {
 	int value;

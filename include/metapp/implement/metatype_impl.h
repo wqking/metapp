@@ -310,14 +310,12 @@ inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
 inline bool CommonDeclareMetaTypeBase::doCanCast(
 	const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
 {
-	if((fromMetaType->isReference() == toMetaType->isReference())
-		&& internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-		return true;
-	}
-	if(fromMetaType->getTypeKind() != tkReference
-		&& toMetaType->getTypeKind() == tkReference
+	if(! fromMetaType->isReference() && toMetaType->isReference()
 		&& fromMetaType->canCast(value, toMetaType->getUpType())
 		) {
+		return true;
+	}
+	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 		return true;
 	}
 	return false;
@@ -326,16 +324,14 @@ inline bool CommonDeclareMetaTypeBase::doCanCast(
 inline bool CommonDeclareMetaTypeBase::doCast(
 	Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
 {
-	if((fromMetaType->isReference() == toMetaType->isReference())
-		&& internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-		result = Variant::retype(toMetaType, value);
-		return true;
-	}
-	if(! fromMetaType->isReference()
-		&& toMetaType->isReference()
+	if(! fromMetaType->isReference() && toMetaType->isReference()
 		&& fromMetaType->canCast(value, toMetaType->getUpType())
 		) {
 		result = fromMetaType->cast(value, toMetaType->getUpType());
+		return true;
+	}
+	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+		result = Variant::retype(toMetaType, value);
 		return true;
 	}
 	return false;
