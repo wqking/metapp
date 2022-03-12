@@ -52,7 +52,6 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set", "", TestTypes_Indexables)
 TEMPLATE_LIST_TEST_CASE("MetaIndexable set T &", "", TestTypes_Indexables)
 {
 	using Container = TestType;
-	using ValueType = typename Container::value_type;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container container = dataProvider.getContainer();
 	metapp::Variant v(metapp::Variant::create<Container &>(container));
