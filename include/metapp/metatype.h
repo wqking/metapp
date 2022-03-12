@@ -85,6 +85,7 @@ public:
 	constexpr bool isVolatile() const noexcept;
 	constexpr bool isPointer() const noexcept;
 	constexpr bool isReference() const noexcept;
+	constexpr bool isClass() const noexcept;
 	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
@@ -210,6 +211,7 @@ public:
 	static constexpr TypeFlags typeFlags = 0
 		| (std::is_pointer<Decayed>::value ? tfPointer : 0)
 		| (std::is_reference<T>::value ? tfReference : 0)
+		| (std::is_class<T>::value ? tfClass : 0)
 	;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);

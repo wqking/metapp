@@ -91,6 +91,7 @@ constexpr TypeFlags tfConst = 1 << 0;
 constexpr TypeFlags tfVolatile = 1 << 1;
 constexpr TypeFlags tfPointer = 1 << 2;
 constexpr TypeFlags tfReference = 1 << 3;
+constexpr TypeFlags tfClass = 1 << 4;
 
 inline std::map<TypeKind, std::string> & getTypeKindNameMap()
 {

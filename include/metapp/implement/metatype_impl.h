@@ -64,6 +64,11 @@ inline constexpr bool MetaType::isReference() const noexcept
 	return typeFlags & tfReference;
 }
 
+inline constexpr bool MetaType::isClass() const noexcept
+{
+	return typeFlags & tfClass;
+}
+
 inline const MetaClass * MetaType::getMetaClass() const
 {
 	return doGetUnifiedType()->getMetaClass();
