@@ -232,6 +232,7 @@ auto doGetMetaType()
 			typename internal_::SelectDeclareClass<T, internal_::HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
 		internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<M>::value>::typeFlags
+			| CommonDeclareMetaType<T>::typeFlags
 	);
 	return &metaType;
 }

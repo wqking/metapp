@@ -269,12 +269,5 @@ template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVo
 
 #include "metapp/implement/metatype_impl.h"
 
-namespace metapp {
-
-template <typename T>
-using GetMetaTypeFlags = typename internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<DeclareMetaType<T> >::value>;
-
-} // namespace metapp
-
 
 #endif

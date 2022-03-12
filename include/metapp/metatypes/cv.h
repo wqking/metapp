@@ -8,19 +8,19 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeRoot <const T> : public DeclareMetaType<T>
 {
-	static constexpr TypeFlags typeFlags = tfConst | GetMetaTypeFlags<T>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst;
 };
 
 template <typename T>
 struct DeclareMetaTypeRoot <volatile T> : public DeclareMetaType<T>
 {
-	static constexpr TypeFlags typeFlags = tfVolatile | GetMetaTypeFlags<T>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfVolatile;
 };
 
 template <typename T>
 struct DeclareMetaTypeRoot <const volatile T> : public DeclareMetaType<T>
 {
-	static constexpr TypeFlags typeFlags = tfConst | tfVolatile | GetMetaTypeFlags<T>::typeFlags;
+	static constexpr TypeFlags typeFlags = tfConst | tfVolatile;
 };
 
 

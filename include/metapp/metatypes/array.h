@@ -13,7 +13,7 @@ struct DeclareMetaTypeArrayBase
 	using UpType = typename std::remove_pointer<U>::type;
 
 	static constexpr TypeKind typeKind = tkArray;
-	static constexpr TypeFlags typeFlags = GetMetaTypeFlags<U>::typeFlags
+	static constexpr TypeFlags typeFlags = 0
 		| (std::is_const<U>::value ? tfConst : 0)
 		| (std::is_volatile<U>::value ? tfVolatile : 0)
 	;

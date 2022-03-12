@@ -170,6 +170,7 @@ TEST_CASE("InheritanceRepo, cast between ancestors")
 
 		REQUIRE(repo->cast(pa2, metapp::getMetaType<A2>(), metapp::getMetaType<B2>()) == pb2);
 		REQUIRE(repo->cast(pa2, metapp::getMetaType<A2>(), metapp::getMetaType<C2>()) == pc2);
+		REQUIRE(repo->cast<A2, C2>(pa2) == pc2);
 
 		REQUIRE(repo->cast(pa2, metapp::getMetaType<A2>(), metapp::getMetaType<B1>()) == nullptr);
 	}
