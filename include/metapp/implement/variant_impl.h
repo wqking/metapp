@@ -137,7 +137,17 @@ template <typename T>
 inline bool Variant::canGet() const
 {
 	using U = typename internal_::VariantReturnType<T>::Type;
-	return internal_::areMetaTypesMatched(metaType, metapp::getMetaType<U>());
+	const MetaType * toMetaType = metapp::getMetaType<U>();
+	const MetaType * fromMetaType = metaType;
+	if(fromMetaType->isReference() && toMetaType->isReference()) {
+		return true;
+	}
+	fromMetaType = getNonReferenceMetaType(fromMetaType);
+	toMetaType = getNonReferenceMetaType(toMetaType);
+	if(fromMetaType->isPointer() && toMetaType->isPointer()) {
+		return true;
+	}
+	return fromMetaType->getUnifiedType() == toMetaType->getUnifiedType();
 }
 
 template <typename T>

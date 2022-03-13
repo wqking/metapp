@@ -140,6 +140,14 @@ private:
 	TypeFlags typeFlags;
 };
 
+inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
+{
+	if(metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
+}
+
 } // namespace metapp
 
 #include "metapp/variant.h"
@@ -184,9 +192,6 @@ protected:
 
 	static void checkCanToReference(const MetaType * fromMetaType, const MetaType * myMetaType);
 
-	static bool doCanCast(const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType);
-	static bool doCast(Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType);
-
 };
 
 
@@ -225,6 +230,8 @@ public:
 	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType);
 	static Variant castFrom(const Variant & value, const MetaType * fromMetaType);
 
+private:
+	static bool doCast(Variant * result, const Variant & value, const MetaType * toMetaType);
 };
 
 template <typename T, typename Enabled = void>
@@ -266,6 +273,7 @@ template<> struct CommonDeclareMetaType<void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<volatile void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVoidBase {};
+
 
 } // namespace metapp
 

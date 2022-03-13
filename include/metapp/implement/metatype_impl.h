@@ -254,6 +254,7 @@ inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * 
 	if(toMetaType->isReference() && fromMetaType->isReference()) {
 		return true;
 	}
+
 	if((toMetaType->isPointer()) && (fromMetaType->isPointer())) {
 		return true;
 	}
@@ -311,36 +312,6 @@ inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
 	typename std::enable_if<std::is_void<P>::value>::type *)
 {
 	return value;
-}
-
-inline bool CommonDeclareMetaTypeBase::doCanCast(
-	const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
-{
-	if(! fromMetaType->isReference() && toMetaType->isReference()
-		&& fromMetaType->canCast(value, toMetaType->getUpType())
-		) {
-		return true;
-	}
-	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-		return true;
-	}
-	return false;
-}
-
-inline bool CommonDeclareMetaTypeBase::doCast(
-	Variant & result, const MetaType * fromMetaType, const Variant & value, const MetaType * toMetaType)
-{
-	if(! fromMetaType->isReference() && toMetaType->isReference()
-		&& fromMetaType->canCast(value, toMetaType->getUpType())
-		) {
-		result = fromMetaType->cast(value, toMetaType->getUpType());
-		return true;
-	}
-	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
-		result = Variant::retype(toMetaType, value);
-		return true;
-	}
-	return false;
 }
 
 template <typename T>
@@ -415,34 +386,51 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 }
 
 template <typename T>
-inline bool CommonDeclareMetaType<T>::canCast(const Variant & value, const MetaType * toMetaType)
+inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & value, const MetaType * toMetaType)
 {
 	const MetaType * fromMetaType = getMetaType<T>();
-	if(doCanCast(fromMetaType, value, toMetaType)) {
+
+	if(! fromMetaType->isReference() && toMetaType->isReference()
+		&& fromMetaType->canCast(value, toMetaType->getUpType())
+		) {
+		if(result != nullptr) {
+			*result = fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		return true;
+	}
+	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+		if(result != nullptr) {
+			*result = Variant::retype(toMetaType, value);
+		}
 		return true;
 	}
 	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+		if(result != nullptr) {
+			*result = internal_::CastTo<Underlying>::castTo(value, toMetaType);
+		}
 		return true;
 	}
 	if(toMetaType->canCastFrom(value, fromMetaType)) {
+		if(result != nullptr) {
+			*result = toMetaType->castFrom(value, fromMetaType);
+		}
 		return true;
 	}
 	return false;
 }
 
 template <typename T>
+inline bool CommonDeclareMetaType<T>::canCast(const Variant & value, const MetaType * toMetaType)
+{
+	return doCast(nullptr, value, toMetaType);
+}
+
+template <typename T>
 inline Variant CommonDeclareMetaType<T>::cast(const Variant & value, const MetaType * toMetaType)
 {
-	const MetaType * fromMetaType = getMetaType<T>();
 	Variant result;
-	if(doCast(result, fromMetaType, value, toMetaType)) {
+	if(doCast(&result, value, toMetaType)) {
 		return result;
-	}
-	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
-		return internal_::CastTo<Underlying>::castTo(value, toMetaType);
-	}
-	if(toMetaType->canCastFrom(value, fromMetaType)) {
-		return toMetaType->castFrom(value, fromMetaType);
 	}
 	errorBadCast();
 	return Variant();
