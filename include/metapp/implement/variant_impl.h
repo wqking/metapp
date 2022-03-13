@@ -48,7 +48,7 @@ inline Variant Variant::takeFrom(const MetaType * metaType, void * object)
 inline Variant Variant::takeFrom(const Variant & object)
 {
 	const MetaType * metaType = object.getMetaType();
-	if(metaType->getTypeKind() == tkPointer) {
+	if(metaType->isPointer()) {
 		metaType = metaType->getUpType();
 	}
 	return takeFrom(metaType, object.get<void *>());
@@ -165,11 +165,11 @@ inline Variant Variant::dereference() const
 {
 	const MetaType * mt = metaType;
 	void * address = nullptr;
-	if(mt->getTypeKind() == tkPointer) {
+	if(mt->isPointer()) {
 		mt = mt->getUpType();
 		address = get<void *>();
 	}
-	else if(mt->getTypeKind() == tkReference) {
+	else if(mt->isReference()) {
 		mt = mt->getUpType();
 		address = getAddress();
 	}
