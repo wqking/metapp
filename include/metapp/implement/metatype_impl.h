@@ -242,26 +242,6 @@ auto doGetMetaType()
 	return &metaType;
 }
 
-inline bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType)
-{
-	if(toMetaType->isReference() && ! fromMetaType->isReference()) {
-		toMetaType = toMetaType->getUpType();
-	}
-	else if(! toMetaType->isReference() && fromMetaType->isReference()) {
-		fromMetaType = fromMetaType->getUpType();
-	}
-
-	if(toMetaType->isReference() && fromMetaType->isReference()) {
-		return true;
-	}
-
-	if((toMetaType->isPointer()) && (fromMetaType->isPointer())) {
-		return true;
-	}
-
-	return toMetaType->getUnifiedType() == fromMetaType->getUnifiedType();
-}
-
 
 template <typename U>
 inline void * CommonDeclareMetaTypeBase::doConstructDefault(
@@ -394,6 +374,57 @@ enum class TristateBool
 	unknown
 };
 
+inline TristateBool doCastObject(
+		Variant * result,
+		const Variant & value,
+		const MetaType * fromMetaType,
+		const MetaType * toMetaType
+	)
+{
+	const MetaType * fromUpType = fromMetaType;
+	const MetaType * toUpType = toMetaType;
+	if(toMetaType->isReference()) {
+		toUpType = toMetaType->getUpType();
+		if(fromMetaType->isReference()) {
+			fromUpType = fromMetaType->getUpType();
+		}
+	}
+	else if(toMetaType->isPointer() && fromMetaType->isPointer()) {
+		toUpType = toMetaType->getUpType();
+		fromUpType = fromMetaType->getUpType();
+	}
+	else {
+		return TristateBool::unknown;
+	}
+	if(fromUpType->isClass() && toUpType->isClass()) {
+		const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
+		if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
+			if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
+				if(result != nullptr) {
+					void * instance = nullptr;
+					if(fromMetaType->isPointer()) {
+						instance = value.get<void *>();
+					}
+					else {
+						instance = value.getAddress();
+					}
+					instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
+					if(toMetaType->isReference()) {
+						Variant temp = Variant::create<int &>(*(int *)instance);
+						*result = Variant::retype(toMetaType, temp);
+					}
+					else {
+						Variant temp = Variant::create<void *>(instance);
+						*result = Variant::retype(toMetaType, temp);
+					}
+				}
+				return TristateBool::yes;
+			}
+		}
+	}
+	return TristateBool::unknown;
+}
+
 inline TristateBool doCastPointerReference(
 		Variant * result,
 		const Variant & value,
@@ -409,36 +440,11 @@ inline TristateBool doCastPointerReference(
 			}
 			return TristateBool::yes;
 		}
-		const MetaType * fromUpType = fromMetaType->getUpType();
-		const MetaType * toUpType = toMetaType->getUpType();
-		if(fromUpType->isClass() && toUpType->isClass()) {
-			const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
-			if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
-				if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
-					if(result != nullptr) {
-						void * instance = nullptr;
-						if(fromMetaType->isReference()) {
-							instance = value.getAddress();
-						}
-						else {
-							instance = value.get<void *>();
-						}
-						instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
-						if(fromMetaType->isReference()) {
-							Variant temp = Variant::create<int &>(*(int *)instance);
-							*result = Variant::retype(toMetaType, temp);
-						}
-						else {
-							Variant temp = Variant::create<void *>(instance);
-							*result = Variant::retype(toMetaType, temp);
-						}
-					}
-					return TristateBool::yes;
-				}
-			}
-		}
+	}
 
-		return TristateBool::no;
+	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
+	if(tristateResult != TristateBool::unknown) {
+		return tristateResult;
 	}
 
 	if(! fromMetaType->isReference() && toMetaType->isReference()
@@ -449,7 +455,8 @@ inline TristateBool doCastPointerReference(
 		}
 		return TristateBool::yes;
 	}
-	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
+
+	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
 		if(result != nullptr) {
 			*result = Variant::retype(toMetaType, value);
 		}

@@ -54,8 +54,6 @@ const MetaType * getMetaType();
 
 namespace internal_ {
 
-bool areMetaTypesMatched(const MetaType * fromMetaType, const MetaType * toMetaType);
-
 template <typename T>
 auto doGetMetaType()
 	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type;

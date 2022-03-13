@@ -167,10 +167,22 @@ TEST_CASE("Variant, cast int * & to int *")
 struct MyClass
 {
 	int value;
+
+	MyClass() : value(0) {}
+	explicit MyClass(const int n) : value(n) {}
+
+	virtual std::string getName() const {
+		return "MyClass";
+	}
 };
 
 struct Derived : public MyClass
 {
+	using MyClass::MyClass;
+
+	virtual std::string getName() const override {
+		return "Derived";
+	}
 };
 
 TEST_CASE("Variant, cast object")
@@ -258,12 +270,31 @@ TEST_CASE("Variant, cast Derived * to MyClass *")
 	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
 }
 
-TEST_CASE("Variant, cast Derived & to MyClass &")
+TEST_CASE("Variant, cast MyClass * to Derived *")
 {
 	metapp::getInheritanceRepo()->clear();
 	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
 
 	Derived derived;
+	MyClass * myClass = &derived;
+	metapp::Variant v(myClass);
+	REQUIRE(v.canCast<MyClass *>());
+	REQUIRE(v.canCast<Derived *>());
+	REQUIRE(! v.canCast<MyClass &>());
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(v.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+
+	metapp::Variant casted = v.cast<Derived *>();
+	REQUIRE(metapp::getTypeKind(casted) == metapp::tkPointer);
+	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<Derived>());
+}
+
+TEST_CASE("Variant, cast Derived & to MyClass &")
+{
+	metapp::getInheritanceRepo()->clear();
+	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+
+	Derived derived {};
 	metapp::Variant v(metapp::Variant::create<Derived &>(derived));
 	REQUIRE(! v.canCast<MyClass *>());
 	REQUIRE(v.canCast<MyClass &>());
@@ -273,6 +304,22 @@ TEST_CASE("Variant, cast Derived & to MyClass &")
 	metapp::Variant casted = v.cast<MyClass &>();
 	REQUIRE(metapp::getTypeKind(casted) == metapp::tkReference);
 	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+}
+
+TEST_CASE("Variant, cast Derived to MyClass &")
+{
+	metapp::getInheritanceRepo()->clear();
+	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+
+	metapp::Variant v(metapp::Variant::create<Derived>(Derived {}));
+	REQUIRE(! v.canCast<MyClass *>());
+	REQUIRE(v.canCast<MyClass &>());
+	REQUIRE(v.getMetaType() == metapp::getMetaType<Derived>());
+
+	metapp::Variant casted = v.cast<MyClass &>();
+	REQUIRE(metapp::getTypeKind(casted) == metapp::tkReference);
+	REQUIRE(casted.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+	REQUIRE(casted.get<MyClass &>().getName() == "Derived");
 }
 
 struct ImplictConstruct
