@@ -214,10 +214,11 @@ public:
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
-		| (std::is_pointer<Decayed>::value ? tfPointer : 0)
+		| ((std::is_pointer<Decayed>::value && ! std::is_reference<T>::value) ? tfPointer : 0)
 		| (std::is_reference<T>::value ? tfReference : 0)
 		| (std::is_class<T>::value ? tfClass : 0)
 	;
+	static_assert((typeFlags & (tfPointer | tfReference)) != (tfPointer | tfReference), "typeFlags can't be both pointer and reference.");
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
@@ -276,6 +277,8 @@ template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVo
 
 
 } // namespace metapp
+
+#include "metapp/inheritancerepo.h"
 
 #include "metapp/implement/metatype_impl.h"
 

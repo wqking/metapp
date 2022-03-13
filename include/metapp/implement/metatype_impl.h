@@ -385,10 +385,61 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 	return Variant::create<U &>(value.get<U &>());
 }
 
-template <typename T>
-inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & value, const MetaType * toMetaType)
+namespace internal_ {
+
+enum class TristateBool
 {
-	const MetaType * fromMetaType = getMetaType<T>();
+	yes,
+	no,
+	unknown
+};
+
+inline TristateBool doCastPointerReference(
+		Variant * result,
+		const Variant & value,
+		const MetaType * fromMetaType,
+		const MetaType * toMetaType
+	)
+{
+	if((fromMetaType->isReference() && toMetaType->isReference())
+		|| (fromMetaType->isPointer() && toMetaType->isPointer())) {
+		if(fromMetaType->getUpType() == toMetaType->getUpType()) {
+			if(result != nullptr) {
+				*result = Variant::retype(toMetaType, value);
+			}
+			return TristateBool::yes;
+		}
+		const MetaType * fromUpType = fromMetaType->getUpType();
+		const MetaType * toUpType = toMetaType->getUpType();
+		if(fromUpType->isClass() && toUpType->isClass()) {
+			const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
+			if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
+				if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
+					if(result != nullptr) {
+						void * instance = nullptr;
+						if(fromMetaType->isReference()) {
+							instance = value.getAddress();
+						}
+						else {
+							instance = value.get<void *>();
+						}
+						instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
+						if(fromMetaType->isReference()) {
+							Variant temp = Variant::create<int &>(*(int *)instance);
+							*result = Variant::retype(toMetaType, temp);
+						}
+						else {
+							Variant temp = Variant::create<void *>(instance);
+							*result = Variant::retype(toMetaType, temp);
+						}
+					}
+					return TristateBool::yes;
+				}
+			}
+		}
+
+		return TristateBool::no;
+	}
 
 	if(! fromMetaType->isReference() && toMetaType->isReference()
 		&& fromMetaType->canCast(value, toMetaType->getUpType())
@@ -396,14 +447,30 @@ inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & v
 		if(result != nullptr) {
 			*result = fromMetaType->cast(value, toMetaType->getUpType());
 		}
-		return true;
+		return TristateBool::yes;
 	}
 	if(internal_::areMetaTypesMatched(fromMetaType, toMetaType)) {
 		if(result != nullptr) {
 			*result = Variant::retype(toMetaType, value);
 		}
-		return true;
+		return TristateBool::yes;
 	}
+
+	return TristateBool::unknown;
+}
+
+} // namespace internal_
+
+template <typename T>
+inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & value, const MetaType * toMetaType)
+{
+	const MetaType * fromMetaType = getMetaType<T>();
+
+	const internal_::TristateBool tristate = internal_::doCastPointerReference(result, value, fromMetaType, toMetaType);
+	if(tristate != internal_::TristateBool::unknown) {
+		return tristate == internal_::TristateBool::yes;
+	}
+
 	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
 		if(result != nullptr) {
 			*result = internal_::CastTo<Underlying>::castTo(value, toMetaType);

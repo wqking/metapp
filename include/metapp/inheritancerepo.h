@@ -4,6 +4,7 @@
 #include "metapp/variant.h"
 #include "metapp/metatype.h"
 
+#include <vector>
 #include <unordered_map>
 #include <type_traits>
 #include <cmath>
@@ -165,6 +166,12 @@ public:
 	bool doesClassExist(const MetaType * classMetaType) const
 	{
 		return doFindClassInfo(classMetaType->getUnifiedType()) != nullptr;
+	}
+
+	// for test purpose, don't call it in production code
+	void clear()
+	{
+		classInfoMap.clear();
 	}
 
 private:

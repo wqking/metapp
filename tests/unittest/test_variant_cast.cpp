@@ -3,6 +3,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
+#include "metapp/inheritancerepo.h"
 
 #include <string>
 #include <cstring>
@@ -68,6 +69,7 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arit
 	}
 }
 
+#if 0
 TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to const U &", "", TestTypes_Pairs_Arithmetic)
 {
 	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
@@ -115,6 +117,7 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T * to const U *", "", TestTypes_Pa
 		REQUIRE(casted.getMetaType()->getUpType()->getTypeKind() == castedDataProvider.getTypeKind());
 	}
 }
+#endif
 
 TEST_CASE("Variant, can't cast int * to int or int &")
 {
@@ -240,6 +243,9 @@ TEST_CASE("Variant, cast std::wstring to wchar_t *")
 
 TEST_CASE("Variant, cast Derived * to MyClass *")
 {
+	metapp::getInheritanceRepo()->clear();
+	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+
 	Derived derived;
 	metapp::Variant v(&derived);
 	REQUIRE(v.canCast<MyClass *>());
@@ -254,6 +260,9 @@ TEST_CASE("Variant, cast Derived * to MyClass *")
 
 TEST_CASE("Variant, cast Derived & to MyClass &")
 {
+	metapp::getInheritanceRepo()->clear();
+	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+
 	Derived derived;
 	metapp::Variant v(metapp::Variant::create<Derived &>(derived));
 	REQUIRE(! v.canCast<MyClass *>());
