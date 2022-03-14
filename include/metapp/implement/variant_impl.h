@@ -33,25 +33,25 @@ inline Variant Variant::retype(const MetaType * metaType, const Variant & var)
 	return result;
 }
 
-inline Variant Variant::takeFrom(const MetaType * metaType, void * object)
+inline Variant Variant::takeFrom(const MetaType * metaType, void * instance)
 {
 	Variant result;
 
 	result.metaType = metaType;
-	result.data.constructObject(std::shared_ptr<void>(object, [metaType](void * p) {
+	result.data.constructObject(std::shared_ptr<void>(instance, [metaType](void * p) {
 		metaType->destroy(p);
 	}));
 
 	return result;
 }
 
-inline Variant Variant::takeFrom(const Variant & object)
+inline Variant Variant::takeFrom(const Variant & var)
 {
-	const MetaType * metaType = object.getMetaType();
+	const MetaType * metaType = var.getMetaType();
 	if(metaType->isPointer()) {
 		metaType = metaType->getUpType();
 	}
-	return takeFrom(metaType, object.get<void *>());
+	return takeFrom(metaType, var.get<void *>());
 }
 
 inline Variant::Variant() noexcept
@@ -154,7 +154,7 @@ template <typename T>
 inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Type
 {
 	if(! canGet<T>()) {
-		errorBadCast();
+		errorBadCast("Can't get from Variant");
 	}
 
 	using U = typename internal_::VariantReturnType<T>::Type;
@@ -202,10 +202,6 @@ inline bool Variant::canCast() const
 
 inline Variant Variant::cast(const MetaType * toMetaType) const
 {
-	if(! canCast(toMetaType)) {
-		errorBadCast();
-	}
-
 	return metaType->cast(*this, toMetaType);
 }
 
