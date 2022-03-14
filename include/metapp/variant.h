@@ -46,7 +46,7 @@ public:
 	Variant(Variant && other) noexcept;
 
 	template <typename T>
-	Variant & operator = (T value) noexcept;
+	Variant & operator = (T value);
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 

@@ -9,7 +9,8 @@ See [TypeKind document](typekinds.md) for list of built-in type kinds.
 
 ## MetaType - the core meta type
 
-`metapp::MetaType` is the core class to represent the meta type. With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, streaming in/out the object, etc.  
+`metapp::MetaType` is the core class to represent the meta type. Unlike some other reflection libraries which are meta class based, everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions, constructors, containers, etc.  
+With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, streaming in/out the object, etc.  
 A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at run time via class `MetaRepository`.  
 
 Prototype of `getMetaType()`  
@@ -30,13 +31,15 @@ getMetaType<int>() != getMetaType<const int>();
 getMetaType<std::string>() != getMetaType<volatile std::string>();
 ```
 
+**Note**: `getMetaType()` can be used on any C++ type, the tye doesn't need to be registered to metapp.  
+
 ## UnifiedType -- CV-unaware meta type
 
 MetaType member function `getUnifiedType()` can retrieve the underlying UnifiedType.  
 
 Prototype of `getUnifiedType()`  
 ```c++
-const UnifiedType * getUnifiedType() const noexcept;
+const void * getUnifiedType() const noexcept;
 ```
 
 Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaType, except that UnifiedType is CV-unaware. That's to say, for the same T, no matter it's qualified with const or volatile, the UnifiedType is always the same. So,  
@@ -44,6 +47,7 @@ Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaTy
 getMetaType<int>()->getUnifiedType() == getMetaType<const int>()->getUnifiedType();
 getMetaType<std::string>()->getUnifiedType() == getMetaType<volatile std::string>()->getUnifiedType();
 ```
+`UnifiedType` is an opaque type, that's why it's a `const void *`. It's function is to identify a type.  
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
 

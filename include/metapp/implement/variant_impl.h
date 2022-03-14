@@ -98,7 +98,7 @@ inline Variant::Variant(Variant && other) noexcept
 }
 
 template <typename T>
-inline Variant & Variant::operator = (T value) noexcept
+inline Variant & Variant::operator = (T value)
 {
 	*this = Variant::create<T>(value);
 	
