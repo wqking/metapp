@@ -69,56 +69,6 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arit
 	}
 }
 
-#if 0
-TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to const U &", "", TestTypes_Pairs_Arithmetic)
-{
-	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
-	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
-
-	auto dataProvider = TestDataProvider<First>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
-		First n = dataProvider.getData(dataIndex);
-		metapp::Variant v(metapp::Variant::create<const First &>(n));
-		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
-		
-		REQUIRE(v.canCast<const Second &>());
-		auto casted = v.cast<const Second &>();
-		auto castedDataProvider = TestDataProvider<Second>();
-		REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkReference);
-		REQUIRE(casted.getMetaType()->getUpType()->getTypeKind() == castedDataProvider.getTypeKind());
-		// This doesn't work because the cast is similar as (double &)n, which n is int &
-		//REQUIRE(casted.get<Second>() == (Second)dataProvider.getData(dataIndex));
-	}
-}
-
-TEMPLATE_LIST_TEST_CASE("Variant, cast const T * to const U *", "", TestTypes_Pairs_Arithmetic)
-{
-	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
-	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
-
-	auto dataProvider = TestDataProvider<First>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
-		First n = dataProvider.getData(dataIndex);
-		metapp::Variant v(&n);
-		REQUIRE((v.getMetaType()->getTypeKind() == metapp::tkPointer
-			|| v.getMetaType()->getTypeKind() == metapp::tkCharPtr
-			|| v.getMetaType()->getTypeKind() == metapp::tkWideCharPtr
-			));
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
-		
-		REQUIRE(v.canCast<const Second *>());
-		auto casted = v.cast<const Second *>();
-		auto castedDataProvider = TestDataProvider<Second>();
-		REQUIRE((casted.getMetaType()->getTypeKind() == metapp::tkPointer
-			|| casted.getMetaType()->getTypeKind() == metapp::tkCharPtr
-			|| casted.getMetaType()->getTypeKind() == metapp::tkWideCharPtr
-		));
-		REQUIRE(casted.getMetaType()->getUpType()->getTypeKind() == castedDataProvider.getTypeKind());
-	}
-}
-#endif
-
 TEST_CASE("Variant, can't cast int * to int or int &")
 {
 	int n = 5;

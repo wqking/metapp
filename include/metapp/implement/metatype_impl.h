@@ -3,6 +3,259 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+template <typename T>
+struct UpTypeGetter;
+
+template <typename Type0, typename ...Types>
+struct UpTypeGetter <TypeList<Type0, Types...> >
+{
+	static const MetaType ** makeUpTypeList()
+	{
+		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList {
+			getMetaType<Type0>(),
+			getMetaType<Types>()...,
+		};
+		return upTypeList.data();
+	}
+
+	static UpTypeData getUpType() {
+		return {
+			makeUpTypeList(),
+			(uint16_t)(sizeof...(Types) + 1)
+		};
+	}
+};
+
+template <>
+struct UpTypeGetter <TypeList<> >
+{
+	static UpTypeData getUpType() {
+		return {
+			nullptr,
+			(uint16_t)0
+		};
+	}
+};
+
+template <typename T>
+struct UpTypeGetter
+{
+	static UpTypeData getUpType() {
+		return UpTypeGetter<TypeList<T> >::getUpType();
+	}
+};
+
+template <typename T, bool has>
+using SelectDeclareClass = typename std::conditional<
+	has,
+	DeclareMetaType<T>,
+	CommonDeclareMetaType<T>
+>::type;
+
+template <typename T>
+auto doGetMetaType()
+-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
+{
+	return nullptr;
+}
+
+template <typename T>
+auto doGetMetaType()
+-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type
+{
+	using M = DeclareMetaType<T>;
+
+	static const MetaType metaType (
+		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
+		MetaTable {
+			&SelectDeclareClass<T, HasMember_toReference<M>::value>::toReference,
+		},
+		UpTypeGetter<
+		typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
+		>::getUpType(),
+		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags
+		| CommonDeclareMetaType<T>::typeFlags
+	);
+	return &metaType;
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructDefault(
+	typename std::enable_if<std::is_default_constructible<U>::value>::type *
+)
+{
+	return new U();
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructDefault(
+	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type *
+)
+{
+	return nullptr;
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructCopy(
+	const void * copyFrom,
+	typename std::enable_if<std::is_copy_assignable<U>::value>::type *
+)
+{
+	return new U(*(U *)copyFrom);
+}
+
+template <typename U>
+inline void * CommonDeclareMetaTypeBase::doConstructCopy(
+	const void * /*copyFrom*/,
+	typename std::enable_if<! std::is_copy_assignable<U>::value>::type *
+)
+{
+	return nullptr;
+}
+
+template <typename P>
+inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+	typename std::enable_if<! std::is_void<P>::value>::type *)
+{
+	return Variant::create<P &>(**(P **)value.getAddress());
+
+	// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
+	//return Variant::create<P &>(*value.get<P *>());
+}
+
+template <typename P>
+inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+	typename std::enable_if<std::is_void<P>::value>::type *)
+{
+	return value;
+}
+
+template <typename T>
+const UnifiedType * unifiedTypeGetter()
+{
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType (
+		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
+		UnifiedMetaTable {
+			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
+			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
+			&SelectDeclareClass<T, HasMember_canCast<M>::value>::canCast,
+			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
+			&SelectDeclareClass<T, HasMember_canCastFrom<M>::value>::canCastFrom,
+			&SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+
+			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
+		}
+	);
+	return &unifiedType;
+}
+
+enum class TristateBool
+{
+	yes,
+	no,
+	unknown
+};
+
+inline TristateBool doCastObject(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+)
+{
+	const MetaType * fromUpType = fromMetaType;
+	const MetaType * toUpType = toMetaType;
+	if(toMetaType->isReference()) {
+		toUpType = toMetaType->getUpType();
+		if(fromMetaType->isReference()) {
+			fromUpType = fromMetaType->getUpType();
+		}
+	}
+	else if(toMetaType->isPointer() && fromMetaType->isPointer()) {
+		toUpType = toMetaType->getUpType();
+		fromUpType = fromMetaType->getUpType();
+	}
+	else {
+		return TristateBool::unknown;
+	}
+	if(fromUpType->isClass() && toUpType->isClass()) {
+		const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
+		if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
+			if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
+				if(result != nullptr) {
+					void * instance = nullptr;
+					if(fromMetaType->isPointer()) {
+						instance = value.get<void *>();
+					}
+					else {
+						instance = value.getAddress();
+					}
+					instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
+					if(toMetaType->isReference()) {
+						Variant temp = Variant::create<int &>(*(int *)instance);
+						*result = Variant::retype(toMetaType, temp);
+					}
+					else {
+						Variant temp = Variant::create<void *>(instance);
+						*result = Variant::retype(toMetaType, temp);
+					}
+				}
+				return TristateBool::yes;
+			}
+		}
+	}
+	return TristateBool::unknown;
+}
+
+inline TristateBool doCastPointerReference(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+)
+{
+	if((fromMetaType->isReference() && toMetaType->isReference())
+		|| (fromMetaType->isPointer() && toMetaType->isPointer())) {
+		if(fromMetaType->getUpType() == toMetaType->getUpType()) {
+			if(result != nullptr) {
+				*result = Variant::retype(toMetaType, value);
+			}
+			return TristateBool::yes;
+		}
+	}
+
+	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
+	if(tristateResult != TristateBool::unknown) {
+		return tristateResult;
+	}
+
+	if(! fromMetaType->isReference() && toMetaType->isReference()
+		&& fromMetaType->canCast(value, toMetaType->getUpType())
+		) {
+		if(result != nullptr) {
+			*result = fromMetaType->cast(value, toMetaType->getUpType());
+		}
+		return TristateBool::yes;
+	}
+
+	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
+		if(result != nullptr) {
+			*result = Variant::retype(toMetaType, value);
+		}
+		return TristateBool::yes;
+	}
+
+	return TristateBool::unknown;
+}
+
+
+} // namespace internal_
+
+
 inline constexpr MetaType::MetaType(
 		const internal_::UnifiedType * (*doGetUnifiedType)(),
 		const internal_::MetaTable & metaTable,
@@ -164,159 +417,6 @@ inline Variant MetaType::castFrom(const Variant & value, const MetaType * fromMe
 	return doGetUnifiedType()->castFrom(value, fromMetaType);
 }
 
-namespace internal_ {
-
-template <typename T>
-struct UpTypeGetter;
-
-template <typename Type0, typename ...Types>
-struct UpTypeGetter <TypeList<Type0, Types...> >
-{
-	static const MetaType ** makeUpTypeList()
-	{
-		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList {
-			getMetaType<Type0>(),
-			getMetaType<Types>()...,
-		};
-		return upTypeList.data();
-	}
-
-	static UpTypeData getUpType() {
-		return {
-			makeUpTypeList(),
-			(uint16_t)(sizeof...(Types) + 1)
-		};
-	}
-};
-
-template <>
-struct UpTypeGetter <TypeList<> >
-{
-	static UpTypeData getUpType() {
-		return {
-			nullptr,
-			(uint16_t)0
-		};
-	}
-};
-
-template <typename T>
-struct UpTypeGetter
-{
-	static UpTypeData getUpType() {
-		return UpTypeGetter<TypeList<T> >::getUpType();
-	}
-};
-
-template <typename T, bool has>
-using SelectDeclareClass = typename std::conditional<
-	has,
-	DeclareMetaType<T>,
-	CommonDeclareMetaType<T>
->::type;
-
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
-{
-	return nullptr;
-}
-
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type
-{
-	using M = DeclareMetaType<T>;
-
-	static const MetaType metaType (
-		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
-		internal_::MetaTable {
-			&internal_::SelectDeclareClass<T, internal_::HasMember_toReference<M>::value>::toReference,
-		},
-		UpTypeGetter<
-			typename internal_::SelectDeclareClass<T, internal_::HasMember_UpType<M>::value>::UpType
-		>::getUpType(),
-		internal_::SelectDeclareClass<T, internal_::HasMember_typeFlags<M>::value>::typeFlags
-			| CommonDeclareMetaType<T>::typeFlags
-	);
-	return &metaType;
-}
-
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructDefault(
-	typename std::enable_if<std::is_default_constructible<U>::value>::type *
-)
-{
-	return new U();
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructDefault(
-	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type *
-)
-{
-	return nullptr;
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructCopy(
-	const void * copyFrom,
-	typename std::enable_if<std::is_copy_assignable<U>::value>::type *
-)
-{
-	return new U(*(U *)copyFrom);
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructCopy(
-	const void * /*copyFrom*/,
-	typename std::enable_if<! std::is_copy_assignable<U>::value>::type *
-)
-{
-	return nullptr;
-}
-
-template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
-	typename std::enable_if<! std::is_void<P>::value>::type *)
-{
-	return Variant::create<P &>(**(P **)value.getAddress());
-
-	// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
-	//return Variant::create<P &>(*value.get<P *>());
-}
-
-template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
-	typename std::enable_if<std::is_void<P>::value>::type *)
-{
-	return value;
-}
-
-template <typename T>
-const UnifiedType * unifiedTypeGetter()
-{
-	using M = DeclareMetaType<T>;
-
-	static const UnifiedType unifiedType (
-		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
-		UnifiedMetaTable {
-			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
-			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
-			&SelectDeclareClass<T, HasMember_canCast<M>::value>::canCast,
-			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-			&SelectDeclareClass<T, HasMember_canCastFrom<M>::value>::canCastFrom,
-			&SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
-
-			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-		}
-	);
-	return &unifiedType;
-}
-
-} // namespace internal_
-
 template <typename T>
 inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const void * copyFrom)
 {
@@ -364,109 +464,6 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 	using U = typename std::remove_reference<T>::type;
 	return Variant::create<U &>(value.get<U &>());
 }
-
-namespace internal_ {
-
-enum class TristateBool
-{
-	yes,
-	no,
-	unknown
-};
-
-inline TristateBool doCastObject(
-		Variant * result,
-		const Variant & value,
-		const MetaType * fromMetaType,
-		const MetaType * toMetaType
-	)
-{
-	const MetaType * fromUpType = fromMetaType;
-	const MetaType * toUpType = toMetaType;
-	if(toMetaType->isReference()) {
-		toUpType = toMetaType->getUpType();
-		if(fromMetaType->isReference()) {
-			fromUpType = fromMetaType->getUpType();
-		}
-	}
-	else if(toMetaType->isPointer() && fromMetaType->isPointer()) {
-		toUpType = toMetaType->getUpType();
-		fromUpType = fromMetaType->getUpType();
-	}
-	else {
-		return TristateBool::unknown;
-	}
-	if(fromUpType->isClass() && toUpType->isClass()) {
-		const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
-		if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
-			if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
-				if(result != nullptr) {
-					void * instance = nullptr;
-					if(fromMetaType->isPointer()) {
-						instance = value.get<void *>();
-					}
-					else {
-						instance = value.getAddress();
-					}
-					instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
-					if(toMetaType->isReference()) {
-						Variant temp = Variant::create<int &>(*(int *)instance);
-						*result = Variant::retype(toMetaType, temp);
-					}
-					else {
-						Variant temp = Variant::create<void *>(instance);
-						*result = Variant::retype(toMetaType, temp);
-					}
-				}
-				return TristateBool::yes;
-			}
-		}
-	}
-	return TristateBool::unknown;
-}
-
-inline TristateBool doCastPointerReference(
-		Variant * result,
-		const Variant & value,
-		const MetaType * fromMetaType,
-		const MetaType * toMetaType
-	)
-{
-	if((fromMetaType->isReference() && toMetaType->isReference())
-		|| (fromMetaType->isPointer() && toMetaType->isPointer())) {
-		if(fromMetaType->getUpType() == toMetaType->getUpType()) {
-			if(result != nullptr) {
-				*result = Variant::retype(toMetaType, value);
-			}
-			return TristateBool::yes;
-		}
-	}
-
-	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
-	if(tristateResult != TristateBool::unknown) {
-		return tristateResult;
-	}
-
-	if(! fromMetaType->isReference() && toMetaType->isReference()
-		&& fromMetaType->canCast(value, toMetaType->getUpType())
-		) {
-		if(result != nullptr) {
-			*result = fromMetaType->cast(value, toMetaType->getUpType());
-		}
-		return TristateBool::yes;
-	}
-
-	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
-		if(result != nullptr) {
-			*result = Variant::retype(toMetaType, value);
-		}
-		return TristateBool::yes;
-	}
-
-	return TristateBool::unknown;
-}
-
-} // namespace internal_
 
 template <typename T>
 inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & value, const MetaType * toMetaType)
