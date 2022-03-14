@@ -30,8 +30,8 @@ public:
 			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
 		>::type * = nullptr);
 	static Variant retype(const MetaType * metaType, const Variant & var);
-	static Variant takeFrom(const MetaType * metaType, void * object);
-	static Variant takeFrom(const Variant & object);
+	static Variant takeFrom(const MetaType * metaType, void * instance);
+	static Variant takeFrom(const Variant & var);
 
 	Variant() noexcept;
 	~Variant() = default;

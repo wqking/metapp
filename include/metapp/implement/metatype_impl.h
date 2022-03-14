@@ -541,7 +541,7 @@ inline bool DeclareMetaTypeVoidBase::canCast(const Variant & /*value*/, const Me
 
 inline Variant DeclareMetaTypeVoidBase::cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
 {
-	errorBadCast();
+	errorBadCast("Can't cast between void type");
 	return Variant();
 }
 
@@ -552,7 +552,7 @@ inline bool DeclareMetaTypeVoidBase::canCastFrom(const Variant & /*value*/, cons
 
 inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
-	errorBadCast();
+	errorBadCast("Can't cast between void type");
 	return Variant();
 }
 
