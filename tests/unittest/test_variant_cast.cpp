@@ -69,6 +69,23 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arit
 	}
 }
 
+TEST_CASE("Variant, cast int ** to int ** and int ** &")
+{
+	int n = 5;
+	int * pn = &n;
+	metapp::Variant v(&pn);
+	REQUIRE(! v.canCast<int>());
+	REQUIRE(! v.canCast<int *>());
+	REQUIRE(v.canCast<int **>());
+	REQUIRE(v.canCast<int ** &>());
+	REQUIRE(v.canCast<int volatile * const *>());
+	REQUIRE(v.canCast<int volatile * const * &>());
+	REQUIRE(v.cast<int **>().get<int **>() == &pn);
+	REQUIRE(v.cast<int ** &>().get<int ** &>() == &pn);
+	REQUIRE(v.cast<int volatile * const *>().get<int **>() == &pn);
+	REQUIRE(v.cast<int volatile * const * &>().get<int **>() == &pn);
+}
+
 TEST_CASE("Variant, can't cast int * to int or int &")
 {
 	int n = 5;
@@ -99,7 +116,9 @@ TEST_CASE("Variant, cast int * to int * &")
 	int n = 5;
 	metapp::Variant v(&n);
 	REQUIRE(v.canCast<int * &>());
+	REQUIRE(v.canCast<int const * &>());
 	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
+	REQUIRE(v.cast<int const * &>().get<int * &>() == &n);
 }
 
 TEST_CASE("Variant, cast int * & to int *")

@@ -220,7 +220,23 @@ inline TristateBool doCastPointerReference(
 {
 	if((fromMetaType->isReference() && toMetaType->isReference())
 		|| (fromMetaType->isPointer() && toMetaType->isPointer())) {
-		if(fromMetaType->getUpType() == toMetaType->getUpType()) {
+		const MetaType * fromUpType = fromMetaType->getUpType();
+		const MetaType * toUpType = toMetaType->getUpType();
+		bool matched = false;
+		while(fromUpType != nullptr && toUpType != nullptr) {
+			if(fromUpType->getUnifiedType() == toUpType->getUnifiedType()) {
+				matched = true;
+				break;
+			}
+			if(fromUpType->isPointer() && toUpType->isPointer()) {
+				fromUpType = fromUpType->getUpType();
+				toUpType = toUpType->getUpType();
+				continue;
+			}
+			break;
+		}
+		//if(fromMetaType->getUpType()->getUnifiedType() == toMetaType->getUpType()->getUnifiedType()) {
+		if(matched) {
 			if(result != nullptr) {
 				*result = Variant::retype(toMetaType, value);
 			}

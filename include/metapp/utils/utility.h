@@ -79,7 +79,8 @@ template <typename ToType, typename FromType>
 inline void assignValue(ToType & to, const FromType & from,
 	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
 {
-	to = (ToType)from;
+	using U = typename std::remove_cv<ToType>::type;
+	to = (U)from;
 }
 
 template <typename ToType, typename FromType>

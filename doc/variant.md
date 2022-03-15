@@ -291,6 +291,38 @@ If `this` Variant is a pointer, return the value that `this` points to.
 If `this` Variant is a value, return `*this`.  
 Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant, which may be expensive.  
 
+#### canCast
+```c++
+bool canCast(const MetaType * toMetaType) const;
+
+// This template form is same as
+// canCast(metapp::getMetaType<T>());
+template <typename T>
+bool canCast() const;
+```
+
+Return true if `myVariant.cast(toMetaType)` can be called to cast the underlying value to `toMetaType`.  
+Below table shows the rules to determine `canCast`, assume the underlying value has meta type `from`, and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are value type, they are not reference, not pointer.  
+
+| from | to  | canCast returns                  |
+|------|-----|----------------------------------|
+| F &  | T & | the result of canCast on F and T |
+| F    | T & | the result of canCast on F and T |
+| F &  | T   | the result of canCast on F and T |
+| F *  | T * | the result of canCast on F and T |
+| F *  | T   | false                            |
+| F    | T * | false                            |
+| F    | T   | determined by canCast            |
+
+#### cast
+```c++
+Variant cast(const MetaType * toMetaType) const;
+
+// This template form is same as
+// cast(metapp::getMetaType<T>());
+template <typename T>
+Variant cast() const;
+```
 
 
 ## Memory management in Variant
