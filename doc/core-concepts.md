@@ -47,7 +47,7 @@ Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaTy
 getMetaType<int>()->getUnifiedType() == getMetaType<const int>()->getUnifiedType();
 getMetaType<std::string>()->getUnifiedType() == getMetaType<volatile std::string>()->getUnifiedType();
 ```
-`UnifiedType` is an opaque type, that's why it's a `const void *`. It's function is to identify a type.  
+`UnifiedType` is an opaque type, that's why it's a `const void *`. It's only function is to identify a type.  
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
 

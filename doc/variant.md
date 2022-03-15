@@ -137,20 +137,21 @@ Variant & operator = (T value) noexcept;
 ```
 
 Assign to the Variant with `value`.  
+The previous value held by the variant is destroyed after assigned with the new value.  
 
 #### Copy and move assignment
 ```c++
 Variant & operator = (const Variant & other) noexcept;
 Variant & operator = (Variant && other) noexcept;
 ```
-Copy and move assignment.
+Copy and move assignment.  
+The previous value held by the variant is destroyed after assigned with the new variant.  
 
-#### clone
+#### getMetaType
 ```c++
-Variant clone() const;
+const MetaType * getMetaType() const noexcept;
 ```
-Clone the underlying object and return a Variant that holds the cloned object.  
-To understand how `clone` works, please see the section "Memory management in Variant".  
+Return the meta type held by the variant. The result is always valid pointer. Any variant, including the default constructed, always contains a meta type.
 
 #### canGet
 ```c++
@@ -304,15 +305,15 @@ bool canCast() const;
 Return true if `myVariant.cast(toMetaType)` can be called to cast the underlying value to `toMetaType`.  
 Below table shows the rules to determine `canCast`, assume the underlying value has meta type `from`, and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are value type, they are not reference, not pointer.  
 
-| from | to  | canCast returns                  |
-|------|-----|----------------------------------|
-| F &  | T & | the result of canCast on F and T |
-| F    | T & | the result of canCast on F and T |
-| F &  | T   | the result of canCast on F and T |
-| F *  | T * | the result of canCast on F and T |
-| F *  | T   | false                            |
-| F    | T * | false                            |
-| F    | T   | determined by canCast            |
+| from | to  | canCast returns                                                                                            |
+|------|-----|------------------------------------------------------------------------------------------------------------|
+| F &  | T & | If both F and T are registered class, return the result of canCast on F and T.<br/>Otherwise, return F == T |
+| F    | T & | the result of canCast on F and T                                                                           |
+| F &  | T   | the result of canCast on F and T                                                                           |
+| F *  | T * | If both F and T are registered class, return the result of canCast on F and T.<br/>Otherwise, return F == T |
+| F *  | T   | false                                                                                                      |
+| F    | T * | false                                                                                                      |
+| F    | T   | determined by canCast                                                                                      |
 
 #### cast
 ```c++
@@ -324,6 +325,67 @@ template <typename T>
 Variant cast() const;
 ```
 
+If `canCast` returns true, `cast` returns the casted variant which type matches `toMetaType` or `T`.  
+If `canCast<T>()` returns false, it throws exception `metapp::BadCastException`.  
+To get the casted value, call `get` on the returned variant. For example, `int castedValue = v.cast<int>().get<int>()`.  
+
+#### isEmpty
+```c++
+bool isEmpty() const noexcept;
+```
+Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`. Such a variant can't be got value, and can't be casted.  
+
+#### clone
+```c++
+Variant clone() const;
+```
+
+Clone the underlying object and return a Variant that holds the cloned object.  
+To understand how `clone` works, please see the section "Memory management in Variant".  
+
+#### swap
+```c++
+void swap(Variant & other) noexcept;
+```
+
+Swap with another variant.
+
+## Free functions
+
+#### getTypeKind
+```c++
+TypeKind getTypeKind(const Variant & v);
+```
+
+Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
+
+#### Streaming operators
+```c++
+std::istream & operator >> (std::istream & stream, Variant & v);
+std::ostream & operator << (std::ostream & stream, const Variant & v);
+```
+
+Variant supports input and output stream if the underlying value supports the stream.  
+If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
+
+#### swap
+```c++
+void swap(Variant & a, Variant & b) noexcept;
+
+```
+Swap two variants.
+
 
 ## Memory management in Variant
 
+#### The data storage in Variant is similar to native C++
+
+If the underlying value is pointer or reference, Variant only stores the pointer or reference, it doesn't store the data pointed by the pointer or reference.  
+If the underlying value is C array or function, it's decayed to pointer.  
+If the underlying value is not a pointer or reference, Variant copies the value to the internal memory, and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
+
+#### Copying variants is different from native C++
+
+For value which is fundamental types such as int, long, or pointer, or any POD struct which size is smaller enough (the max size is 8 or 16 bytes, depending on the platform and the compiler), the value is stored in Variant directly. That means when the Variant is copied, the value is copied too.  
+For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr` that's managed by Variant. That's to say, when the Variant is copied, the value is not copied. If you want the value be copied, use `Variant::clone`.  
+Copying Variant is always trivial, there is not any memory allocation.  
