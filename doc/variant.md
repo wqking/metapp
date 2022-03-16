@@ -200,7 +200,8 @@ T get() const;
 ```
 If `canGet<T>()` returns true, `get` returns the underlying value as T.  
 If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
-If T is C array or function type, the return type is std::decay<T>::type.  
+If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
+If T is function type, the return type is std::decay<T>::type.  
 
 #### getAddress
 ```c++
@@ -381,7 +382,8 @@ Swap two variants.
 #### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference, it doesn't store the data pointed by the pointer or reference.  
-If the underlying value is C array or function, it's decayed to pointer.  
+If the underlying value is C array, the array is copied to the internal memory.  
+If the underlying value is function, it's decayed to function pointer.  
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory, and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
 #### Copying variants is different from native C++

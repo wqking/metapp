@@ -136,7 +136,7 @@ inline Variant Variant::clone() const
 template <typename T>
 inline bool Variant::canGet() const
 {
-	using U = T; //typename internal_::VariantReturnType<T>::Type;
+	using U = typename internal_::VariantReturnType<T>::Type;
 	const MetaType * toMetaType = metapp::getMetaType<U>();
 	const MetaType * fromMetaType = metaType;
 	if(fromMetaType->isReference() && toMetaType->isReference()) {

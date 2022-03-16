@@ -108,3 +108,36 @@ TEST_CASE("metatypes, tkArray, const std::string[3], can't set to const array")
 	REQUIRE_THROWS_AS(v.getMetaType()->getMetaIndexable()->set(v, 0, "abc"), metapp::UnwritableException);
 }
 
+TEST_CASE("metatypes, tkArray, int[2][3]")
+{
+	int array[2][3] = { { 3, 8, 9 }, { 5, 12, 21 } };
+	metapp::Variant v(metapp::Variant::create<int[2][3]>(array));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+	REQUIRE(v.get<int[][3]>()[0][0] == 3);
+	REQUIRE(v.get<int[][3]>()[0][1] == 8);
+	REQUIRE(v.get<int[][3]>()[0][2] == 9);
+	REQUIRE(v.get<int[][3]>()[1][0] == 5);
+	REQUIRE(v.get<int[][3]>()[1][1] == 12);
+	REQUIRE(v.get<int[][3]>()[1][2] == 21);
+
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	auto upMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(upMetaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSize(v) == 2);
+	REQUIRE(upMetaIndexable->getSize(v) == 3);
+	metapp::Variant v1 = metaIndexable->get(v, 1);
+	REQUIRE(metapp::getTypeKind(v1) == metapp::tkReference);
+	auto v1UpMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
+	REQUIRE(v1UpMetaIndexable->get(v1, 0).get<int>() == 5);
+	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 12);
+	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 21);
+
+	REQUIRE_THROWS(v1UpMetaIndexable->set(v, 1, "abc"));
+	v1UpMetaIndexable->set(v1, 0, 6);
+	v1UpMetaIndexable->set(v1, 1, 7);
+	v1UpMetaIndexable->set(v1, 2, 8);
+	REQUIRE(v1UpMetaIndexable->get(v1, 0).get<int>() == 6);
+	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 7);
+	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 8);
+}

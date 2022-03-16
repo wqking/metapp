@@ -10,9 +10,13 @@ const void * func1(int, const std::vector<int> &) { return nullptr; }
 
 TEST_CASE("metatypes, tkFunction, free function, types")
 {
+	REQUIRE(metapp::getMetaType<void ()>()->getTypeKind() == metapp::tkFunction);
+
 	metapp::Variant v(&func1);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
 	REQUIRE(v.get<void *>() == (void *)&func1);
+	REQUIRE(v.canGet<const void *(int, const std::vector<int> &)>());
+	REQUIRE(v.get<const void *(int, const std::vector<int> &)>() == &func1);
 
 	using namespace metapp;
 	auto metaType = v.getMetaType();
