@@ -52,10 +52,8 @@ constexpr TypeKind tkDefaultArgsFunction = 37;
 constexpr TypeKind tkVariadicFunction = 38;
 constexpr TypeKind tkArray = 39;
 constexpr TypeKind tkEnum = 40;
-constexpr TypeKind tkCharPtr = 41;
-constexpr TypeKind tkWideCharPtr = 42;
-constexpr TypeKind tkAccessor = 43;
-constexpr TypeKind tkVariant = 44; // metapp::Variant
+constexpr TypeKind tkAccessor = 41;
+constexpr TypeKind tkVariant = 42; // metapp::Variant
 
 constexpr TypeKind tkStdString = 70; // std::string
 constexpr TypeKind tkStdWideString = 71; // std::wstring
@@ -124,8 +122,6 @@ inline std::map<TypeKind, std::string> & getTypeKindNameMap()
 		{ tkConstructor, "constructor" },
 		{ tkArray, "array" },
 		{ tkEnum, "enum" },
-		{ tkCharPtr, "const char *" },
-		{ tkWideCharPtr, "const wchar_t *" },
 		{ tkDefaultArgsFunction, "default_args_function" },
 		{ tkVariadicFunction, "variadic_function" },
 

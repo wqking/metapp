@@ -175,16 +175,6 @@ TEST_CASE("Variant, cast object")
 	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
 }
 
-TEST_CASE("Variant, cast std::string to char *")
-{
-	std::string s("abcdef");
-	metapp::Variant v(s);
-	REQUIRE(v.canCast<const char *>());
-	REQUIRE(v.canCast<char *>());
-	REQUIRE(strcmp(v.cast<const char *>().get<const char *>(), s.c_str()) == 0);
-	REQUIRE(strcmp(v.cast<char *>().get<char *>(), s.c_str()) == 0);
-}
-
 TEST_CASE("Variant, cast std::string & to std::string")
 {
 	std::string s = "hello";
@@ -217,17 +207,6 @@ TEST_CASE("Variant, cast std::string to const std::string &")
 	REQUIRE(casted.get<const std::string &>() == "hello");
 	REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkStdString);
 	REQUIRE(casted.getMetaType()->isConst());
-}
-
-TEST_CASE("Variant, cast std::wstring to wchar_t *")
-{
-	std::wstring ws(L"abcdef");
-	metapp::Variant v(ws);
-	REQUIRE(! v.canCast<const char *>());
-	REQUIRE(v.canCast<const wchar_t *>());
-	REQUIRE(v.canCast<wchar_t *>());
-	REQUIRE(wcscmp(v.cast<const wchar_t *>().get<const wchar_t *>(), ws.c_str()) == 0);
-	REQUIRE(wcscmp(v.cast<wchar_t *>().get<wchar_t *>(), ws.c_str()) == 0);
 }
 
 TEST_CASE("Variant, cast Derived * to MyClass *")

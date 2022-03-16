@@ -29,6 +29,7 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 - Classes and nested inner classes.
 - Namespace simulation.
 - Class constructors.
+- Array, multi-dimensional array.
 
 ## License
 

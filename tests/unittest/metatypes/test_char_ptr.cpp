@@ -3,12 +3,12 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, tkCharPtr, const char *")
+TEST_CASE("metatypes, tkPointer, const char *")
 {
-	REQUIRE(metapp::getMetaType<const char *>()->getTypeKind() == metapp::tkCharPtr);
+	REQUIRE(metapp::getMetaType<const char *>()->getTypeKind() == metapp::tkPointer);
 	const char * s = "hello";
 	metapp::Variant v(s);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkCharPtr);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 
 	SECTION("get as char *") {
 		REQUIRE(v.get<const char *>() == std::string("hello"));
@@ -23,7 +23,7 @@ TEST_CASE("metatypes, tkCharPtr, const char *")
 	}
 }
 
-TEST_CASE("metatypes, tkCharPtr, char[6]")
+TEST_CASE("metatypes, tkPointer, char[6]")
 {
 	REQUIRE(metapp::getMetaType<const char[]>()->getTypeKind() == metapp::tkArray);
 	REQUIRE(metapp::getMetaType<const char[6]>()->getTypeKind() == metapp::tkArray);
@@ -43,6 +43,26 @@ TEST_CASE("metatypes, tkCharPtr, char[6]")
 	SECTION("cast to std::string") {
 		REQUIRE(v.canCast<std::string>());
 		REQUIRE(v.cast<std::string>().get<const std::string &>() == "hello");
+	}
+}
+
+TEST_CASE("metatypes, tkPointer, const wchar_t *")
+{
+	REQUIRE(metapp::getMetaType<const wchar_t *>()->getTypeKind() == metapp::tkPointer);
+	const wchar_t * s = L"hello";
+	metapp::Variant v(s);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+
+	SECTION("get as wchar_t *") {
+		REQUIRE(v.get<const wchar_t *>() == std::wstring(L"hello"));
+		REQUIRE(v.get<wchar_t *>() == std::wstring(L"hello"));
+		REQUIRE((const wchar_t *)v.get<const volatile wchar_t *>() == std::wstring(L"hello"));
+	}
+
+	SECTION("cast to std::wstring") {
+		REQUIRE(v.cast<std::wstring>().get<const std::wstring &>() == L"hello");
+		REQUIRE(v.cast<const std::wstring &>().get<const std::wstring &>() == L"hello");
+		REQUIRE(v.cast<std::wstring &>().get<const std::wstring &>() == L"hello");
 	}
 }
 
