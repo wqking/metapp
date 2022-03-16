@@ -58,7 +58,11 @@ struct VariantReturnType
 	using Type = typename std::conditional<
 		std::is_reference<T>::value,
 		T,
-		typename std::decay<T>::type
+		typename std::conditional<
+			std::is_array<T>::value,
+			T &,
+			typename std::decay<T>::type
+		>::type
 	>::type;
 };
 

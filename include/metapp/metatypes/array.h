@@ -7,15 +7,15 @@
 
 namespace metapp {
 
-template <typename T, typename U, size_t length>
+template <typename T, size_t length>
 struct DeclareMetaTypeArrayBase
 {
-	using UpType = typename std::remove_pointer<U>::type;
+	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
 
 	static constexpr TypeKind typeKind = tkArray;
 	static constexpr TypeFlags typeFlags = 0
-		| (std::is_const<U>::value ? tfConst : 0)
-		| (std::is_volatile<U>::value ? tfVolatile : 0)
+		| (std::is_const<T>::value ? tfConst : 0)
+		| (std::is_volatile<T>::value ? tfVolatile : 0)
 	;
 
 	static const MetaIndexable * getMetaIndexable() {
@@ -27,9 +27,36 @@ struct DeclareMetaTypeArrayBase
 		return &metaIndexable;
 	}
 
+	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+		return doConstructData<length != MetaIndexable::unknowSize>(data, copyFrom);
+	}
+
 private:
-	using ElementType = typename std::remove_pointer<
-			typename std::remove_cv<U>::type
+	using Common = CommonDeclareMetaType<T &>;
+	struct ArrayWrapper
+	{
+		T data;
+	};
+
+	template <bool hasLength>
+	static void * doConstructData(MetaTypeData * data, const void * copyFrom, typename std::enable_if<hasLength>::type * = nullptr) {
+		if(data != nullptr && copyFrom != nullptr) {
+			data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+		}
+		else {
+			return Common::constructData(data, copyFrom);
+		}
+		return nullptr;
+	}
+
+	template <bool hasLength>
+	static void * doConstructData(MetaTypeData * /*data*/, const void * /*copyFrom*/, typename std::enable_if<! hasLength>::type * = nullptr) {
+		errorNotConstructible();
+		return nullptr;
+	}
+
+	using ElementType = typename std::remove_extent<
+			typename std::remove_cv<T>::type
 		>::type;
 
 	static size_t metaIndexableGetSize(const Variant & /*var*/)
@@ -39,7 +66,7 @@ private:
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		return Variant::create<ElementType &>(var.get<U>()[index]);
+		return Variant::create<ElementType &>(var.get<T &>()[index]);
 	}
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
@@ -50,7 +77,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(var.get<U>()[index], value.cast<ElementType>().template get<ElementType &>());
+			assignValue(var.get<T &>()[index], value.cast<ElementType>().template get<ElementType &>());
 		}
 	}
 
@@ -58,49 +85,49 @@ private:
 
 template <typename T>
 struct DeclareMetaTypeBase <T[]>
-	: public DeclareMetaTypeArrayBase <T[], T *, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <T[N]>
-	: public DeclareMetaTypeArrayBase <T[N], T *, N>
+	: public DeclareMetaTypeArrayBase <T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <const T[]>
-	: public DeclareMetaTypeArrayBase <const T[], const T * const, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <const T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const T[N]>
-	: public DeclareMetaTypeArrayBase <const T[N], const T * const, N>
+	: public DeclareMetaTypeArrayBase <const T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <volatile T[]>
-	: public DeclareMetaTypeArrayBase <volatile T[], volatile T * volatile, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <volatile T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <volatile T[N]>
-	: public DeclareMetaTypeArrayBase <volatile T[N], volatile T * volatile, N>
+	: public DeclareMetaTypeArrayBase <volatile T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <const volatile T[]>
-	: public DeclareMetaTypeArrayBase <const volatile T[], const volatile  T * const volatile, MetaIndexable::unknowSize>
+	: public DeclareMetaTypeArrayBase <const volatile T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const volatile T[N]>
-	: public DeclareMetaTypeArrayBase <const volatile T[N], const volatile T * const volatile, N>
+	: public DeclareMetaTypeArrayBase <const volatile T[N], N>
 {
 };
 

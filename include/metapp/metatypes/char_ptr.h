@@ -48,12 +48,22 @@ struct DeclareMetaType <char *> : public DeclareCharPtrBase <char *>
 };
 
 template <>
-struct DeclareMetaType <char[]> : public DeclareCharPtrBase <char[]>
+struct DeclareMetaType <char[]> : public DeclareMetaTypeBase <char[]>
+{
+};
+
+template <>
+struct DeclareMetaType <const char[]> : public DeclareMetaTypeBase <const char[]>
 {
 };
 
 template <size_t length>
-struct DeclareMetaType <char[length]> : public DeclareCharPtrBase <char[length]>
+struct DeclareMetaType <char[length]> : public DeclareMetaTypeBase <char[length]>
+{
+};
+
+template <size_t length>
+struct DeclareMetaType <const char[length]> : public DeclareMetaTypeBase <const char[length]>
 {
 };
 
@@ -99,12 +109,22 @@ struct DeclareMetaType <wchar_t *> : public DeclareWideCharPtrBase <wchar_t *>
 };
 
 template <>
-struct DeclareMetaType <wchar_t[]> : public DeclareWideCharPtrBase <wchar_t[]>
+struct DeclareMetaType <wchar_t[]> : public DeclareMetaTypeBase <wchar_t[]>
+{
+};
+
+template <>
+struct DeclareMetaType <const wchar_t[]> : public DeclareMetaTypeBase <const wchar_t[]>
 {
 };
 
 template <size_t length>
-struct DeclareMetaType <wchar_t[length]> : public DeclareWideCharPtrBase <wchar_t[length]>
+struct DeclareMetaType <wchar_t[length]> : public DeclareMetaTypeBase <wchar_t[length]>
+{
+};
+
+template <size_t length>
+struct DeclareMetaType <const wchar_t[length]> : public DeclareMetaTypeBase <const wchar_t[length]>
 {
 };
 

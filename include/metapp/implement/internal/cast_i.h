@@ -46,8 +46,6 @@ public:
 	}
 
 private:
-	using Decayed = MyType;
-
 	template <typename FromType>
 	struct HelperCastFrom
 	{
@@ -59,7 +57,7 @@ private:
 		}
 
 	private:
-		using ToType = Decayed;
+		using ToType = typename std::remove_reference<MyType>::type;
 
 		static Variant castFrom(const Variant & value) {
 			return doCastFrom<FromType>(value);
@@ -106,7 +104,7 @@ private:
 	{
 		using TL = typename FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<CanCastSafely<Types, Decayed>::value...>
+			BoolConstantList<CanCastSafely<Types, MyType>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -145,8 +143,6 @@ public:
 	}
 
 private:
-	using Decayed = MyType;
-
 	template <typename ToType>
 	struct HelperCastTo
 	{
@@ -158,7 +154,7 @@ private:
 		}
 
 	private:
-		using FromType = Decayed;
+		using FromType = typename std::remove_reference<MyType>::type;
 
 		static Variant castTo(const Variant & value) {
 			return doCastTo<ToType>(value);
@@ -198,7 +194,7 @@ private:
 	{
 		using TL = typename FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<CanStaticCast<Decayed, Types>::value...>
+			BoolConstantList<CanStaticCast<MyType, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}

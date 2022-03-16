@@ -338,6 +338,11 @@ inline constexpr bool MetaType::isClass() const noexcept
 	return typeFlags & tfClass;
 }
 
+inline constexpr bool MetaType::isArray() const noexcept
+{
+	return typeFlags & tfArray;
+}
+
 inline const MetaClass * MetaType::getMetaClass() const
 {
 	return doGetUnifiedType()->getMetaClass();
@@ -491,9 +496,11 @@ inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & v
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+	//if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
+	if(internal_::CastTo<Type>::canCastTo(value, toMetaType)) {
 		if(result != nullptr) {
-			*result = internal_::CastTo<Underlying>::castTo(value, toMetaType);
+			//*result = internal_::CastTo<Underlying>::castTo(value, toMetaType);
+			*result = internal_::CastTo<Type>::castTo(value, toMetaType);
 		}
 		return true;
 	}

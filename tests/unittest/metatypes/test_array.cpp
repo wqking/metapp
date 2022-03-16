@@ -3,27 +3,58 @@
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 
-TEST_CASE("metatypes, tkArray, int[]")
+TEST_CASE("metatypes, tkArray, int[3]")
 {
 	int array[] = { 3, 8, 9 };
-	metapp::Variant v(metapp::Variant::create<int[]>(array));
+	metapp::Variant v(metapp::Variant::create<int[3]>(array));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.canGet<int[]>());
 	REQUIRE(v.canGet<int[3]>());
-	REQUIRE(v.get<int[]>()[0] == 3);
-	REQUIRE(v.get<int[]>()[1] == 8);
-	REQUIRE(v.get<int[3]>()[2] == 9);
+	REQUIRE(v.get<int [3]>()[2] == 9);
+	REQUIRE(v.get<int []>()[0] == 3);
+	REQUIRE(v.get<int(&)[]>()[1] == 8);
+	REQUIRE(v.get<int(&)[3]>()[2] == 9);
 
-	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == metapp::MetaIndexable::unknowSize);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 8);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 9);
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->get(v, 0).get<int>() == 3);
+	REQUIRE(metaIndexable->get(v, 1).get<int>() == 8);
+	REQUIRE(metaIndexable->get(v, 2).get<int>() == 9);
 
-	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 1, "abc"));
-	v.getMetaType()->getMetaIndexable()->set(v, 0, 5);
-	v.getMetaType()->getMetaIndexable()->set(v, 1, 6);
-	v.getMetaType()->getMetaIndexable()->set(v, 2, 7);
+	REQUIRE_THROWS(metaIndexable->set(v, 1, "abc"));
+	metaIndexable->set(v, 0, 5);
+	metaIndexable->set(v, 1, 6);
+	metaIndexable->set(v, 2, 7);
+	REQUIRE(array[0] == 3);
+	REQUIRE(array[1] == 8);
+	REQUIRE(array[2] == 9);
+}
+
+TEST_CASE("metatypes, tkArray, int (&)[3]")
+{
+	int array[] = { 3, 8, 9 };
+	metapp::Variant v(metapp::Variant::create<int (&)[3]>(array));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkArray);
+	REQUIRE(v.canGet<int[]>());
+	REQUIRE(v.canGet<int[3]>());
+	REQUIRE(v.get<int [3]>()[2] == 9);
+	REQUIRE(v.get<int []>()[0] == 3);
+	REQUIRE(v.get<int(&)[]>()[1] == 8);
+	REQUIRE(v.get<int(&)[3]>()[2] == 9);
+
+	auto metaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->get(v, 0).get<int>() == 3);
+	REQUIRE(metaIndexable->get(v, 1).get<int>() == 8);
+	REQUIRE(metaIndexable->get(v, 2).get<int>() == 9);
+
+	REQUIRE_THROWS(metaIndexable->set(v, 1, "abc"));
+	metaIndexable->set(v, 0, 5);
+	metaIndexable->set(v, 1, 6);
+	metaIndexable->set(v, 2, 7);
 	REQUIRE(array[0] == 5);
 	REQUIRE(array[1] == 6);
 	REQUIRE(array[2] == 7);
@@ -38,16 +69,18 @@ TEST_CASE("metatypes, tkArray, std::string[3]")
 	REQUIRE(v.get<std::string[]>()[1] == "great");
 	REQUIRE(v.get<std::string[3]>()[2] == "perfect");
 
-	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "good");
+	REQUIRE(metaIndexable->get(v, 1).get<const std::string &>() == "great");
+	REQUIRE(metaIndexable->get(v, 2).get<const std::string &>() == "perfect");
 
-	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 1, 5));
-	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 18, "abc"));
-	v.getMetaType()->getMetaIndexable()->set(v, 0, "def");
-	REQUIRE(array[0] == "def");
+	REQUIRE_THROWS(metaIndexable->set(v, 1, 5));
+	REQUIRE_THROWS(metaIndexable->set(v, 18, "abc"));
+	metaIndexable->set(v, 0, "def");
+	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "def");
+	REQUIRE(array[0] == "good");
 }
 
 TEST_CASE("metatypes, tkArray, int[], constness")

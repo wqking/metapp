@@ -136,7 +136,7 @@ inline Variant Variant::clone() const
 template <typename T>
 inline bool Variant::canGet() const
 {
-	using U = typename internal_::VariantReturnType<T>::Type;
+	using U = T; //typename internal_::VariantReturnType<T>::Type;
 	const MetaType * toMetaType = metapp::getMetaType<U>();
 	const MetaType * fromMetaType = metaType;
 	if(fromMetaType->isReference() && toMetaType->isReference()) {
@@ -145,6 +145,9 @@ inline bool Variant::canGet() const
 	fromMetaType = getNonReferenceMetaType(fromMetaType);
 	toMetaType = getNonReferenceMetaType(toMetaType);
 	if(fromMetaType->isPointer() && toMetaType->isPointer()) {
+		return true;
+	}
+	if(fromMetaType->isArray() && toMetaType->isArray()) {
 		return true;
 	}
 	return fromMetaType->getUnifiedType() == toMetaType->getUnifiedType();

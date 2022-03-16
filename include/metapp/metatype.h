@@ -84,6 +84,7 @@ public:
 	constexpr bool isPointer() const noexcept;
 	constexpr bool isReference() const noexcept;
 	constexpr bool isClass() const noexcept;
+	constexpr bool isArray() const noexcept;
 	
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
@@ -201,6 +202,7 @@ struct CommonDeclareMetaType
 		public SelectMetaStreamingBase<T>
 {
 private:
+	using Type = T;
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
 	using NoCV = typename std::remove_cv<T>::type;
 	using Decayed = typename std::decay<NoCV>::type;
@@ -212,9 +214,10 @@ public:
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
-		| ((std::is_pointer<Decayed>::value && ! std::is_reference<T>::value) ? tfPointer : 0)
+		| ((std::is_pointer<T>::value && ! std::is_reference<T>::value) ? tfPointer : 0)
 		| (std::is_reference<T>::value ? tfReference : 0)
 		| (std::is_class<T>::value ? tfClass : 0)
+		| (std::is_array<T>::value ? tfArray : 0)
 	;
 	static_assert((typeFlags & (tfPointer | tfReference)) != (tfPointer | tfReference), "typeFlags can't be both pointer and reference.");
 
