@@ -88,9 +88,6 @@ void swap(Variant & a, Variant & b) noexcept;
 
 TypeKind getTypeKind(const Variant & v);
 
-template <typename T, typename U>
-Variant variantCast(const Variant & value);
-
 
 } // namespace metapp
 

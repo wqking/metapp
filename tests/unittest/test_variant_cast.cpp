@@ -133,6 +133,14 @@ TEST_CASE("Variant, cast int * & to int *")
 	REQUIRE(v.cast<int *>().get<int * &>() == &n);
 }
 
+TEST_CASE("Variant, can't cast int * to long *")
+{
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(! v.canCast<long *>());
+	REQUIRE_THROWS(v.cast<long *>());
+}
+
 struct MyClass
 {
 	int value;

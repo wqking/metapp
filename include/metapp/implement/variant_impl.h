@@ -261,12 +261,6 @@ inline TypeKind getTypeKind(const Variant & v)
 	return v.getMetaType()->getTypeKind();
 }
 
-template <typename T, typename U>
-inline Variant variantCast(const Variant & value)
-{
-	return (U)(value.get<T>());
-}
-
 
 } // namespace metapp
 
