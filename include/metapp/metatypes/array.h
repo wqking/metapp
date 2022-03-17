@@ -29,10 +29,6 @@ struct DeclareMetaTypeArrayBase
 	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
 
 	static constexpr TypeKind typeKind = tkArray;
-	static constexpr TypeFlags typeFlags = 0
-		| (std::is_const<T>::value ? tfConst : 0)
-		| (std::is_volatile<T>::value ? tfVolatile : 0)
-	;
 
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(

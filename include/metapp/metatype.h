@@ -232,6 +232,8 @@ public:
 	static constexpr TypeFlags typeFlags = 0
 		| ((std::is_pointer<T>::value && ! std::is_reference<T>::value) ? tfPointer : 0)
 		| (std::is_reference<T>::value ? tfReference : 0)
+		| (std::is_const<T>::value ? tfConst : 0)
+		| (std::is_volatile<T>::value ? tfVolatile : 0)
 		| (std::is_class<T>::value ? tfClass : 0)
 		| (std::is_array<T>::value ? tfArray : 0)
 	;
