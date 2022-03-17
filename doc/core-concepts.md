@@ -1,5 +1,7 @@
 # Core concepts and mechanism
 
+This document gives an overview on the core concepts and core design in metapp. It's to give you a rough idea on how metapp works. There are separate document for each topics.  
+
 ## TypeKind - type kind type
 
 `metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind. For example, `metapp::tkInt` is the meta type for `int`.  
@@ -103,3 +105,18 @@ See [TypeKind document](typekinds.md) for the UpTypes for each TypeKind.
 
 ## Meta interface 
 
+The core class MetaType only has very few public functions, and provides very few functions. metapp obey the principle "You don't pay (or pay very little) for what you don't use". We usually don't need many function from most meta types, so the core MetaType is quite small. The powerful features are extensions in MetaType, which called meta interface. For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods, fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass, we can not and don't need to get class information from it.  
+
+Here is a list of MetaType member functions to retrieve meta interfaces,  
+```c++
+const MetaClass * getMetaClass() const;
+const MetaCallable * getMetaCallable() const;
+const MetaAccessible * getMetaAccessible() const;
+const MetaEnum * getMetaEnum() const;
+const MetaIndexable * getMetaIndexable() const;
+const MetaIterable * getMetaIterable() const;
+const MetaStreaming * getMetaStreaming() const;
+const MetaMap * getMetaMap() const;
+const MetaMember * getMetaMember() const;
+const void * getMetaUser() const;
+```

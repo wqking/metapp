@@ -23,7 +23,7 @@ In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 
 
 ## Construct a Variant
 
-#### Default constructor
+### Default constructor
 
 ```c++
 Variant() noexcept;
@@ -31,7 +31,7 @@ Variant() noexcept;
 
 Construct an empty Variant of type `tkVoid`.
 
-#### Construct from a value
+### Construct from a value
 
 ```c++
 template <typename T>
@@ -41,7 +41,7 @@ Variant(T value);
 Construct a Variant of type T and copy value into Variant.  
 Since there is no way to specify the template parameter T explicitly when calling a constructor, we can't construct reference (tkReference) or C array (tkArray) using this constructor, because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
 
-#### Construct from a type
+### Construct from a type
 
 ```c++
 explicit Variant(const MetaType * metaType);
@@ -49,7 +49,7 @@ explicit Variant(const MetaType * metaType);
 
 Construct a Variant of type `metaType`, and initialize the default value using `metaType`.
 
-#### Construct from a type and a value
+### Construct from a type and a value
 
 ```c++
 Variant(const MetaType * metaType, const void * copyFrom);
@@ -57,7 +57,7 @@ Variant(const MetaType * metaType, const void * copyFrom);
 
 Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.
 
-#### Copy and move constructors
+### Copy and move constructors
 
 ```c++
 Variant(const Variant & other) noexcept;
@@ -66,16 +66,16 @@ Variant(Variant && other) noexcept;
 
 Copy and move constructors.
 
-#### create
+### create
 ```c++
 template <typename T>
 static Variant create(T value);
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
-This is similar with the construct `template <typename T> Variant(T value);`, but the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
+This is similar with the constructor `template <typename T> Variant(T value);`, but the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
-Example code,
+**Example**
 
 ```c++
 int n = 5;
@@ -83,7 +83,7 @@ int n = 5;
 metapp::Variant v = metapp::Variant::create<int &>(n);
 ```
 
-#### retype
+### retype
 ```c++
 static Variant retype(const MetaType * metaType, const Variant & var);
 ```
@@ -91,22 +91,22 @@ static Variant retype(const MetaType * metaType, const Variant & var);
 Return a Variant which data is the data in `var`, type is `metaType`.  
 This is only useful if you are 100% sure the data in `var` can be in type `metaType`, otherwise, you should cast the Variant instead of retyping it.  
 
-#### takeFrom
+### takeFrom
 ```c++
 static Variant takeFrom(const MetaType * metaType, void * instance);
 ```
 
 Return a Variant which data is the `instance`, type is `metaType`.  
 `instance` is a pointer that points to an object allocated on the heap, the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
-Example code,  
 
+**Example**  
 ```c++
 MyClass * instance = new MyClass();
 metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<MyClass>(), instance);
 // Now v will free instance when v is destoryed
 ```
 
-#### takeFrom another Variant
+### takeFrom another Variant
 ```c++
 static Variant takeFrom(const Variant & var);
 ```
@@ -115,7 +115,7 @@ Return a Variant which data is the pointer in `var`, type is the type in `var`.
 `var` must hold a pointer. It must not hold the object direct.  
 This function is not useful in most case. The only useful case is to use it on the return value when invoking a meta constructor.
 
-Example code,  
+**Example**  
 
 ```c++
 // This is wrong. In this case, var hold the ownership of MyClass
@@ -130,7 +130,7 @@ metapp::Variant v(metapp::Variant::takeFrom(var));
 
 ## Member functions
 
-#### Assign from value
+### Assign from value
 ```c++
 template <typename T>
 Variant & operator = (T value) noexcept;
@@ -139,7 +139,7 @@ Variant & operator = (T value) noexcept;
 Assign to the Variant with `value`.  
 The previous value held by the variant is destroyed after assigned with the new value.  
 
-#### Copy and move assignment
+### Copy and move assignment
 ```c++
 Variant & operator = (const Variant & other) noexcept;
 Variant & operator = (Variant && other) noexcept;
@@ -147,13 +147,13 @@ Variant & operator = (Variant && other) noexcept;
 Copy and move assignment.  
 The previous value held by the variant is destroyed after assigned with the new variant.  
 
-#### getMetaType
+### getMetaType
 ```c++
 const MetaType * getMetaType() const noexcept;
 ```
 Return the meta type held by the variant. The result is always valid pointer. Any variant, including the default constructed, always contains a meta type.
 
-#### canGet
+### canGet
 ```c++
 template <typename T>
 bool canGet() const;
@@ -168,7 +168,7 @@ The rules to determine `canGet`, assume the underlying value has type V,
 `canGet` and `get` expect either T is same as underlying type V, or T and V are reference are pointer.  
 If You need to get the underlying value as different type, use `canCast` and `cast`.  
 
-Example code,
+**Example**  
 ```c++
 int n = 5;
 metapp::Variant v1(metapp::Variant::create<int &>(n)); // reference
@@ -193,7 +193,7 @@ assert(v3.canGet<const int *>()); // rule 2
 assert(! v3.canGet<int>()); // rule 2
 ```
 
-#### get
+### get
 ```c++
 template <typename T>
 T get() const;
@@ -203,7 +203,7 @@ If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
 If T is function type, the return type is std::decay<T>::type.  
 
-#### getAddress
+### getAddress
 ```c++
 void * getAddress() const;
 ```
@@ -211,7 +211,7 @@ Return the address of underlying value. This is the same semantic as the address
 If the Variant holds a reference, returns the address of the value it refers to.  
 Otherwise, return the address of the underlying value.  
 
-Example code,  
+**Example**  
 ```c++
 metapp::Variant v1(5);
 assert(v1.get<int>() == 5);
@@ -237,7 +237,7 @@ assert(m == 10);
 assert(m == 15);
 ```
 
-#### toReference
+### toReference
 ```c++
 Variant toReference() const;
 ```
@@ -247,7 +247,9 @@ If `this` Variant is a pointer, the returned reference refers to the value that 
 If `this` Variant is a value, the returned reference refers to the value.  
 `toReference` only makes reference, it doesn't copy any underlying value.  
 
-Example code,  
+`toReference` is useful to write generic code. Assume a function accepts an argument of Variant. Without `toReference`, the function either requires the Variant to be a value, or a reference, but not both, or the function uses extra code to detect whether the argument is a value or reference. With `toReference`, the argument can be value, reference, or even pointer, then the function calls `toReference` to normalize the argument to reference, and use a single logic for all three kinds of Variants (value, reference pointer).
+
+**Example**  
 ```c++
 metapp::Variant v1(5); // value
 assert(v1.get<int>() == 5);
@@ -283,7 +285,7 @@ assert(v3.get<int &>() == 15);
 assert(r3.get<int &>() == 15);
 ```
 
-#### dereference
+### dereference
 ```c++
 Variant dereference() const;
 ```
@@ -293,7 +295,7 @@ If `this` Variant is a pointer, return the value that `this` points to.
 If `this` Variant is a value, return `*this`.  
 Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant, which may be expensive.  
 
-#### canCast
+### canCast
 ```c++
 bool canCast(const MetaType * toMetaType) const;
 
@@ -316,7 +318,7 @@ Below table shows the rules to determine `canCast`, assume the underlying value 
 | F    | T * | false                                                                                                      |
 | F    | T   | determined by canCast                                                                                      |
 
-#### cast
+### cast
 ```c++
 Variant cast(const MetaType * toMetaType) const;
 
@@ -330,13 +332,13 @@ If `canCast` returns true, `cast` returns the casted variant which type matches 
 If `canCast<T>()` returns false, it throws exception `metapp::BadCastException`.  
 To get the casted value, call `get` on the returned variant. For example, `int castedValue = v.cast<int>().get<int>()`.  
 
-#### isEmpty
+### isEmpty
 ```c++
 bool isEmpty() const noexcept;
 ```
 Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`. Such a variant can't be got value, and can't be casted.  
 
-#### clone
+### clone
 ```c++
 Variant clone() const;
 ```
@@ -344,7 +346,7 @@ Variant clone() const;
 Clone the underlying object and return a Variant that holds the cloned object.  
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
-#### swap
+### swap
 ```c++
 void swap(Variant & other) noexcept;
 ```
@@ -353,14 +355,14 @@ Swap with another variant.
 
 ## Free functions
 
-#### getTypeKind
+### getTypeKind
 ```c++
 TypeKind getTypeKind(const Variant & v);
 ```
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-#### Streaming operators
+### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
 std::ostream & operator << (std::ostream & stream, const Variant & v);
@@ -369,7 +371,7 @@ std::ostream & operator << (std::ostream & stream, const Variant & v);
 Variant supports input and output stream if the underlying value supports the stream.  
 If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
-#### swap
+### swap
 ```c++
 void swap(Variant & a, Variant & b) noexcept;
 
@@ -379,14 +381,14 @@ Swap two variants.
 
 ## Memory management in Variant
 
-#### The data storage in Variant is similar to native C++
+### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference, it doesn't store the data pointed by the pointer or reference.  
 If the underlying value is C array, the array is copied to the internal memory.  
 If the underlying value is function, it's decayed to function pointer.  
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory, and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
-#### Copying variants is different from native C++
+### Copying variants is different from native C++
 
 For value which is fundamental types such as int, long, or pointer, or any POD struct which size is smaller enough (the max size is 8 or 16 bytes, depending on the platform and the compiler), the value is stored in Variant directly. That means when the Variant is copied, the value is copied too.  
 For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr` that's managed by Variant. That's to say, when the Variant is copied, the value is not copied. If you want the value be copied, use `Variant::clone`.  
