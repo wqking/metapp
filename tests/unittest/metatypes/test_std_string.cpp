@@ -33,6 +33,17 @@ TEST_CASE("metatypes, std::string, cast to char *")
 	REQUIRE(strcmp(v.cast<char *>().get<char *>(), s.c_str()) == 0);
 }
 
+TEST_CASE("metatypes, std::string, cast to char * &")
+{
+	std::string s("abcdef");
+	metapp::Variant v(s);
+	REQUIRE(v.canCast<const char * &>());
+	REQUIRE(v.canCast<char * &>());
+	REQUIRE(strcmp(v.cast<const char * &>().get<const char * &>(), s.c_str()) == 0);
+	// intended get char *, not get char * &
+	REQUIRE(strcmp(v.cast<char * &>().get<char *>(), s.c_str()) == 0);
+}
+
 TEST_CASE("metatypes, std::wstring, cast to wchar_t *")
 {
 	std::wstring ws(L"abcdef");
