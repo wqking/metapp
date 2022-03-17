@@ -157,40 +157,6 @@ TEST_CASE("Variant, can't cast int * to long *")
 	REQUIRE_THROWS(v.cast<long *>());
 }
 
-struct MyClass
-{
-	int value;
-
-	MyClass() : value(0) {}
-	explicit MyClass(const int n) : value(n) {}
-
-	virtual std::string getName() const {
-		return "MyClass";
-	}
-};
-
-struct Derived : public MyClass
-{
-	using MyClass::MyClass;
-
-	virtual std::string getName() const override {
-		return "Derived";
-	}
-};
-
-TEST_CASE("Variant, cast object")
-{
-	MyClass obj{ 38 };
-	
-	metapp::Variant v(obj);
-	REQUIRE(v.canCast<MyClass>());
-	REQUIRE(v.canCast<MyClass &>());
-	REQUIRE(v.canCast<const MyClass &>());
-	REQUIRE(v.canCast<const volatile MyClass &>());
-	v.cast<MyClass>().get<MyClass>();
-	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
-}
-
 TEST_CASE("Variant, cast std::string & to std::string")
 {
 	std::string s = "hello";
@@ -223,6 +189,84 @@ TEST_CASE("Variant, cast std::string to const std::string &")
 	REQUIRE(casted.get<const std::string &>() == "hello");
 	REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkStdString);
 	REQUIRE(casted.getMetaType()->isConst());
+}
+
+TEST_CASE("Variant, cast char * to std::string")
+{
+	const char * s = "hello";
+	metapp::Variant v(s);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+
+	REQUIRE(v.get<const char *>() == std::string("hello"));
+	REQUIRE(v.get<char *>() == std::string("hello"));
+	REQUIRE((const char *)v.get<const volatile char *>() == std::string("hello"));
+
+	REQUIRE(v.cast<std::string>().get<const std::string &>() == "hello");
+	REQUIRE(v.cast<const std::string &>().get<const std::string &>() == "hello");
+	REQUIRE(v.cast<std::string &>().get<const std::string &>() == "hello");
+}
+
+TEST_CASE("Variant, cast char[6] to std::string")
+{
+	char s[6] = "hello";
+	metapp::Variant v(metapp::Variant::create<char[6]>(s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+
+	REQUIRE(v.get<char []>() == std::string("hello"));
+	REQUIRE(v.get<char [6]>() == std::string("hello"));
+	REQUIRE(v.get<const char []>() == std::string("hello"));
+
+	REQUIRE(v.canCast<std::string>());
+	REQUIRE(v.cast<std::string>().get<const std::string &>() == "hello");
+}
+
+TEST_CASE("Variant, cast wchar_t * to std::wstring")
+{
+	const wchar_t * s = L"hello";
+	metapp::Variant v(s);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+
+	REQUIRE(v.get<const wchar_t *>() == std::wstring(L"hello"));
+	REQUIRE(v.get<wchar_t *>() == std::wstring(L"hello"));
+	REQUIRE((const wchar_t *)v.get<const volatile wchar_t *>() == std::wstring(L"hello"));
+
+	REQUIRE(v.cast<std::wstring>().get<const std::wstring &>() == L"hello");
+	REQUIRE(v.cast<const std::wstring &>().get<const std::wstring &>() == L"hello");
+	REQUIRE(v.cast<std::wstring &>().get<const std::wstring &>() == L"hello");
+}
+
+struct MyClass
+{
+	int value;
+
+	MyClass() : value(0) {}
+	explicit MyClass(const int n) : value(n) {}
+
+	virtual std::string getName() const {
+		return "MyClass";
+	}
+};
+
+struct Derived : public MyClass
+{
+	using MyClass::MyClass;
+
+	virtual std::string getName() const override {
+		return "Derived";
+	}
+};
+
+TEST_CASE("Variant, cast object")
+{
+	MyClass obj{ 38 };
+	
+	metapp::Variant v(obj);
+	REQUIRE(v.canCast<MyClass>());
+	REQUIRE(v.canCast<MyClass &>());
+	REQUIRE(v.canCast<const MyClass &>());
+	REQUIRE(v.canCast<const volatile MyClass &>());
+	v.cast<MyClass>().get<MyClass>();
+	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
 }
 
 TEST_CASE("Variant, cast Derived * to MyClass *")
