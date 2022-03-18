@@ -68,6 +68,51 @@ In brief, MSVC, GCC, Clang that has well support for C++11, or released after 20
 
 ### Use metapp in your project
 
+## Example code
+
+### Variant
+
+```c++
+// v contains int
+metapp::Variant v(5);
+assert(v.get<int>() == 5);
+
+// now v contains std::string
+v = std::string("hello");
+assert(v.get<std::string>() == "hello");
+// get as reference to avoid copy
+assert(v.get<const std::string &>() == "hello");
+v.get<std::string &>() = "world";
+assert(v.get<const std::string &>() == "world");
+
+// cast to const char *
+const char * s = v.cast<const char *>().get<const char *>();
+assert(strcmp(s, "world") == 0);
+
+// now v contains char *
+v = "great";
+assert(strcmp(v.get<const char *>(), "great") == 0);
+
+int array[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
+// now v contains reference to int[2][3]
+v = metapp::Variant::create<int (&)[2][3]>(array);
+assert(v.get<int (&)[2][3]>()[1][2] == 6);
+array[1][2] = 10;
+// since v is a reference to array, modify array will also modify v
+assert(v.get<int (&)[2][3]>()[1][2] == 10);
+
+// restore the array value to 6
+array[1][2] = 6;
+// if we copy array to v...
+v = metapp::Variant::create<int [2][3]>(array);
+assert(v.get<int (&)[2][3]>()[1][2] == 6);
+array[1][2] = 10;
+// since v is a copy of array, modify array will not affect v
+assert(v.get<int (&)[2][3]>()[1][2] == 6);
+```
+
+### Invoke function
+
 ## Documentations
 
 Meta type system

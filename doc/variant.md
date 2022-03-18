@@ -1,4 +1,4 @@
-# Variant
+# Variant reference
 
 ## Overview
 
@@ -202,6 +202,8 @@ If `canGet<T>()` returns true, `get` returns the underlying value as T.
 If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
 If T is function type, the return type is std::decay<T>::type.  
+
+T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string, we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference instead of copy the value. That helps to improve the performance.  
 
 ### getAddress
 ```c++

@@ -21,16 +21,16 @@ template <typename T>
 const MetaType * getMetaType();
 ```
 
-The pointer returned by `getMetaType()` is always the same for the same T. So,  
+The pointer returned by `getMetaType()` is always the same for the same T. For example,  
 ```c++
-getMetaType<int>() == getMetaType<int>();
-getMetaType<std::string>() == getMetaType<std::string>();
+metapp::getMetaType<int>() == metapp::getMetaType<int>();
+metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>();
 ```
 
-**Note**: MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. So,  
+**Note**: MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
 ```c++
-getMetaType<int>() != getMetaType<const int>();
-getMetaType<std::string>() != getMetaType<volatile std::string>();
+metapp::getMetaType<int>() != metapp::getMetaType<const int>();
+metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>();
 ```
 
 **Note**: `getMetaType()` can be used on any C++ type, the tye doesn't need to be registered to metapp.  
