@@ -67,8 +67,8 @@ struct DeclareMetaType <BaseFirst> : public DeclareMetaTypeBase <BaseFirst>
 	static constexpr TypeKind typeKind = tkBaseFirst;
 
 	static const MetaClass * getMetaClass() {
-		static const DeclareMetaClass<BaseFirst> metaClass(
-			[](DeclareMetaClass<BaseFirst> & mc) {
+		static const MetaClass metaClass(
+			[](MetaClass & mc) {
 				mc.addConstructor(metapp::Constructor<BaseFirst()>());
 				mc.addConstructor(metapp::Constructor<BaseFirst(int)>());
 				mc.addField("first", &BaseFirst::first);
@@ -85,9 +85,8 @@ struct DeclareMetaType <SonFirst> : public DeclareMetaTypeBase <SonFirst>
 	static constexpr TypeKind typeKind = tkSonFirst;
 
 	static const MetaClass * getMetaClass() {
-		static const DeclareMetaClass<SonFirst> metaClass(
-			[](DeclareMetaClass<SonFirst> & mc) {
-				mc.addBase<BaseFirst>();
+		static MetaClass metaClass(
+			[](MetaClass & mc) {
 			}
 		);
 		return &metaClass;
@@ -101,9 +100,8 @@ struct DeclareMetaType <SonFirstSecond> : public DeclareMetaTypeBase <SonFirstSe
 	static constexpr TypeKind typeKind = tkSonFirstSecond;
 
 	static const MetaClass * getMetaClass() {
-		static const DeclareMetaClass<SonFirstSecond> metaClass(
-			[](DeclareMetaClass<SonFirstSecond> & mc) {
-				mc.addBase<BaseFirst, BaseSecond>();
+		static const MetaClass metaClass(
+			[](MetaClass & mc) {
 			}
 		);
 		return &metaClass;
@@ -116,12 +114,5 @@ struct DeclareMetaType <SonFirstSecond> : public DeclareMetaTypeBase <SonFirstSe
 
 TEST_CASE("MetaClass, cast")
 {
-	SonFirstSecond obj;
-	BaseFirst * first = &obj;
-	BaseSecond * second = &obj;
-	void * castedFirst = metapp::getMetaType<SonFirstSecond>()->getMetaClass()->castToBase(&obj, 0);
-	void * castedSecond = metapp::getMetaType<SonFirstSecond>()->getMetaClass()->castToBase(&obj, 1);
-	REQUIRE(first == castedFirst);
-	REQUIRE(second == castedSecond);
 }
 
