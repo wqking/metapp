@@ -40,19 +40,19 @@ TEST_CASE("InheritanceRepo, basic")
 	repo->addBase<SonOfFirst, BaseFirst>();
 	repo->addBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
-	REQUIRE(repo->getBaseCount(metapp::getMetaType<SonOfFirst>()) == 1);
-	REQUIRE(repo->getBaseCount(metapp::getMetaType<const SonOfFirst>()) == 1);
-	REQUIRE(repo->getBaseMetaType(metapp::getMetaType<SonOfFirst>(), 0) == metapp::getMetaType<BaseFirst>());
-	REQUIRE(repo->getBaseMetaType(metapp::getMetaType<const volatile SonOfFirst>(), 0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<const SonOfFirst>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).get(0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<const volatile SonOfFirst>()).get(0) == metapp::getMetaType<BaseFirst>());
 
-	REQUIRE(repo->getBaseCount(metapp::getMetaType<SonOfFirstSecond>()) == 2);
-	REQUIRE(repo->getBaseMetaType(metapp::getMetaType<SonOfFirstSecond>(), 0) == metapp::getMetaType<BaseFirst>());
-	REQUIRE(repo->getBaseMetaType(metapp::getMetaType<SonOfFirstSecond>(), 1) == metapp::getMetaType<BaseSecond>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).getCount() == 2);
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).get(0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).get(1) == metapp::getMetaType<BaseSecond>());
 
-	REQUIRE(repo->getDerivedCount(metapp::getMetaType<SonOfFirst>()) == 0);
-	REQUIRE(repo->getDerivedCount(metapp::getMetaType<BaseFirst>()) == 2);
-	REQUIRE(repo->getDerivedMetaType(metapp::getMetaType<BaseFirst>(), 0) == metapp::getMetaType<SonOfFirst>());
-	REQUIRE(repo->getDerivedMetaType(metapp::getMetaType<BaseFirst>(), 1) == metapp::getMetaType<SonOfFirstSecond>());
+	REQUIRE(repo->getDerives(metapp::getMetaType<SonOfFirst>()).getCount() == 0);
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).getCount() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(0) == metapp::getMetaType<SonOfFirst>());
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(1) == metapp::getMetaType<SonOfFirstSecond>());
 }
 
 TEST_CASE("InheritanceRepo, castToBase and castToDerived")

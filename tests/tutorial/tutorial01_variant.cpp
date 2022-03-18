@@ -22,6 +22,7 @@
 #include "metapp/metatypes/metatypes.h"
 
 #include <iostream>
+#include <cstring>
 
 void tutorialVariant()
 {

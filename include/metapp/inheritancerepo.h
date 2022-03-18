@@ -52,6 +52,30 @@ private:
 	static constexpr size_t maxInheritanceLevels = 256;
 
 public:
+	class TypesView
+	{
+	public:
+		size_t getCount() const {
+			return baseDerivedList.size();
+		}
+
+		const MetaType * get(const size_t index) const {
+			return baseDerivedList[index].targetMetaType;
+		}
+
+	private:
+		explicit TypesView(const std::vector<BaseDerived> & baseDerivedList)
+			: baseDerivedList(baseDerivedList)
+		{
+		}
+
+		friend class InheritanceRepo;
+
+	private:
+		const std::vector<BaseDerived> & baseDerivedList;
+	};
+
+public:
 	template <typename Class, typename ...Bases>
 	void addBase()
 	{
@@ -61,47 +85,25 @@ public:
 	}
 
 	template <typename Class>
-	size_t getBaseCount() const
+	TypesView getBases()
 	{
-		return getBaseCount(doGetNormalizedMetaType<Class>());
+		return getBases(doGetNormalizedMetaType<Class>());
 	}
 
-	size_t getBaseCount(const MetaType * classMetaType) const
+	TypesView getBases(const MetaType * classMetaType)
 	{
-		return doGetClassInfo(classMetaType->getUnifiedType())->baseList.size();
-	}
-
-	template <typename Class>
-	const MetaType * getBaseMetaType(const size_t index) const
-	{
-		return getBaseMetaType(doGetNormalizedMetaType<Class>(), index);
-	}
-
-	const MetaType * getBaseMetaType(const MetaType * classMetaType, const size_t index) const
-	{
-		return doGetClassInfo(classMetaType->getUnifiedType())->baseList[index].targetMetaType;
+		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->baseList);
 	}
 
 	template <typename Class>
-	size_t getDerivedCount() const
+	TypesView getDerives()
 	{
-		return getDerivedCount(doGetNormalizedMetaType<Class>());
+		return getDerives(doGetNormalizedMetaType<Class>());
 	}
 
-	size_t getDerivedCount(const MetaType * classMetaType) const
+	TypesView getDerives(const MetaType * classMetaType)
 	{
-		return doGetClassInfo(classMetaType->getUnifiedType())->derivedList.size();
-	}
-
-	template <typename Class>
-	const MetaType * getDerivedMetaType(const size_t index) const
-	{
-		return getDerivedMetaType(doGetNormalizedMetaType<Class>(), index);
-	}
-
-	const MetaType * getDerivedMetaType(const MetaType * classMetaType, const size_t index) const
-	{
-		return doGetClassInfo(classMetaType->getUnifiedType())->derivedList[index].targetMetaType;
+		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
 	}
 
 	template <typename Class>
