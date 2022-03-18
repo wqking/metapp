@@ -89,7 +89,7 @@ public:
 
 	const void * getUnifiedType() const noexcept;
 
-	const MetaType * getUpType() const noexcept;
+	const MetaType * getUpType() const;
 	const MetaType * getUpType(const size_t i) const;
 	size_t getUpTypeCount() const noexcept;
 
@@ -230,7 +230,11 @@ public:
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
-		| ((std::is_pointer<T>::value && ! std::is_reference<T>::value) ? tfPointer : 0)
+		| ((
+			(std::is_pointer<T>::value || std::is_same<std::nullptr_t, typename std::remove_cv<T>::type>::value)
+			&& ! std::is_reference<T>::value)
+			? tfPointer : 0
+			)
 		| (std::is_reference<T>::value ? tfReference : 0)
 		| (std::is_const<T>::value ? tfConst : 0)
 		| (std::is_volatile<T>::value ? tfVolatile : 0)

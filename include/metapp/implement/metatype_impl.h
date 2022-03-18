@@ -309,7 +309,7 @@ inline const void * MetaType::getUnifiedType() const noexcept
 	return doGetUnifiedType();
 }
 
-inline const MetaType * MetaType::getUpType() const noexcept
+inline const MetaType * MetaType::getUpType() const
 {
 	return upTypeData.upTypeList[0];
 }
