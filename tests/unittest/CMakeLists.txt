@@ -21,4 +21,8 @@ if(coverage)
 endif()
 endif()
 
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "/bigobj /EHsc")
+endif()
+
 add_test(NAME ${TARGET_TEST} COMMAND ${TARGET_TEST})

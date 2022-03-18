@@ -59,5 +59,16 @@ inline bool matchUpTypeKinds(const metapp::MetaType * metaType, const U & typeKi
 	return matchUpTypeKinds(metaType, std::begin(typeKindList), std::end(typeKindList));
 }
 
+template <typename Container>
+size_t getContainerSize(const Container & container)
+{
+	// some container such as std::forward_list doesn't support size() function
+	size_t size = 0;
+	for(auto it = std::begin(container); it != std::end(container); ++it) {
+		++size;
+	}
+	return size;
+}
+
 
 #endif
