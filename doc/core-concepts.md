@@ -1,5 +1,7 @@
 # Core concepts and mechanism
 
+## Overview
+
 This document gives an overview on the core concepts and core design in metapp. It's to give you a rough idea on how metapp works. There are separate document for each topics.  
 
 ## TypeKind - type kind type
@@ -46,10 +48,10 @@ const void * getUnifiedType() const noexcept;
 
 Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaType, except that UnifiedType is CV-unaware. That's to say, for the same T, no matter it's qualified with const or volatile, the UnifiedType is always the same. So,  
 ```c++
-getMetaType<int>()->getUnifiedType() == getMetaType<const int>()->getUnifiedType();
-getMetaType<std::string>()->getUnifiedType() == getMetaType<volatile std::string>()->getUnifiedType();
+metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType();
+metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType();
 ```
-`UnifiedType` is an opaque type, that's why it's a `const void *`. It's only function is to identify a type.  
+`UnifiedType` is an opaque type, so it's a `const void *`. It's only function is to identify or compare types.  
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
 
@@ -102,6 +104,29 @@ metapp::getMetaType<int>()->getUpType() == nullptr;
 UpType represents complicated C++ type recursively. With UpType, metapp can represent any C++ type.
 
 See [TypeKind document](typekinds.md) for the UpTypes for each TypeKind.
+
+## DeclareMetaType
+
+Even though metapp works on any C++ type which are not known to metapp, it's useful to provide metapp more information a certain type. The template `DeclareMetaType` is to provide such information. For example,  
+```c++
+class MyClass {};
+
+constexpr metapp::TypeKind tkMyClass = metapp::tkUser;
+
+// DeclareMetaType must be in namespace metapp
+namespace metapp {
+
+template <>
+struct DeclareMetaType <MyClass> : public DeclareMetaTypeBase <MyClass>
+{
+	static constexpr TypeKind typeKind = tkMyClass;
+};
+
+assert(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
+
+} // namespace metapp
+
+```
 
 ## Meta interface 
 

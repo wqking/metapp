@@ -55,3 +55,12 @@ TEST_CASE("metatypes, tkPointer, void ***")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
 }
 
+TEST_CASE("metatypes, tkPointer, nullptr")
+{
+	metapp::Variant v(nullptr);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(v.getMetaType()->isPointer());
+	using namespace metapp;
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
+}
+

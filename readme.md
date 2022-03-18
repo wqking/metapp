@@ -101,13 +101,12 @@ array[1][2] = 10;
 // since v is a reference to array, modify array will also modify v
 assert(v.get<int (&)[2][3]>()[1][2] == 10);
 
-// restore the array value to 6
-array[1][2] = 6;
-// if we copy array to v...
-v = metapp::Variant::create<int [2][3]>(array);
+int anotherArray[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
+// Now we copy array into v
+v = metapp::Variant::create<int [2][3]>(anotherArray);
 assert(v.get<int (&)[2][3]>()[1][2] == 6);
-array[1][2] = 10;
-// since v is a copy of array, modify array will not affect v
+anotherArray[1][2] = 10;
+// since v is a copy of anotherArray, modify anotherArray will not affect v
 assert(v.get<int (&)[2][3]>()[1][2] == 6);
 ```
 
@@ -115,4 +114,11 @@ assert(v.get<int (&)[2][3]>()[1][2] == 6);
 
 ## Documentations
 
-Meta type system
+- Core components, classes, concepts
+    - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
+    - [Class Variant reference](doc/variant.md)
+    - [Class MetaType reference](doc/metatype.md)
+    - [List of all built-in type kinds](doc/typekinds.md)
+    - [Reflect meta type, DeclareMetaType](doc/reflect-metatype.md)
+
+- Meta interfaces

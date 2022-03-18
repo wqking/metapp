@@ -159,11 +159,4 @@ void tutorialJson()
 	JsonDumper(std::cout).dump(value);
 }
 
-TEST_CASE("tutorialJson")
-{
-	std::cout << std::endl << "tutorialJson" << std::endl;
-
-	tutorialJson();
-
-	std::cout << std::endl;
-}
+RUN_TUTORIAL(tutorialJson)

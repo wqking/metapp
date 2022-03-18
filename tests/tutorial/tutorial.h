@@ -19,5 +19,18 @@
 
 #include "../catch.hpp"
 
+#include <iostream>
+
+#define RUN_TUTORIAL(func) \
+TEST_CASE(# func) { \
+	std::cout << # func << std::endl; \
+	func(); \
+	std::cout << std::endl; \
+}
+
+// Alias REQUIRE to ASSERT for easy understanding
+// for users who are not familar with Catch2
+#define ASSERT REQUIRE
+
 
 #endif
