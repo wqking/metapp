@@ -55,6 +55,32 @@ TEST_CASE("InheritanceRepo, basic")
 	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(1) == metapp::getMetaType<SonOfFirstSecond>());
 }
 
+TEST_CASE("InheritanceRepo, add duplicated bases")
+{
+	struct A1 { int a1; };
+	struct A2 { int a2; };
+	struct B1 : A1 {};
+	struct B2 : A1, A2 {};
+
+	metapp::InheritanceRepo inheritanceRepo;
+	auto * repo = &inheritanceRepo;
+
+	repo->addBase<B1, A1>();
+	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 1);
+	repo->addBase<B1, A1>();
+	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
+
+	repo->addBase<B2, A1, A2>();
+	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
+	repo->addBase<B2, A1, A2>();
+	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
+}
+
 TEST_CASE("InheritanceRepo, castToBase and castToDerived")
 {
 	struct BaseFirst { int first; };

@@ -196,6 +196,8 @@ private:
 	template <typename Class, typename Base>
 	void doAddBase()
 	{
+		static_assert(std::is_base_of<Base, Class>::value, "Class must derive from Base");
+
 		using C = typename std::remove_cv<typename std::remove_reference<Class>::type>::type;
 		using B = typename std::remove_cv<typename std::remove_reference<Base>::type>::type;
 		const MetaType * classMetaType = getMetaType<C>();
@@ -204,10 +206,24 @@ private:
 		const void * baseUnifiedType = baseMetaType->getUnifiedType();
 
 		auto & thisClassInfo = classInfoMap[classUnifiedType];
-		thisClassInfo.baseList.push_back({ baseMetaType, &castObject<C, B> });
+		if(std::find_if(
+			thisClassInfo.baseList.begin(),
+			thisClassInfo.baseList.end(),
+			[baseMetaType](const BaseDerived & item) {
+				return item.targetMetaType == baseMetaType;
+			}) == thisClassInfo.baseList.end()) {
+			thisClassInfo.baseList.push_back({ baseMetaType, &castObject<C, B> });
+		}
 		
 		auto & baseClassInfo = classInfoMap[baseUnifiedType];
-		baseClassInfo.derivedList.push_back({ classMetaType, &castObject<B, C> });
+		if(std::find_if(
+			baseClassInfo.derivedList.begin(),
+			baseClassInfo.derivedList.end(),
+			[classMetaType](const BaseDerived & item) {
+				return item.targetMetaType == classMetaType;
+			}) == baseClassInfo.derivedList.end()) {
+			baseClassInfo.derivedList.push_back({ classMetaType, &castObject<B, C> });
+		}
 	}
 
 	template <typename T>
