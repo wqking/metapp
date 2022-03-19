@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <type_traits>
 #include <cmath>
+#include <algorithm>
 
 namespace metapp {
 

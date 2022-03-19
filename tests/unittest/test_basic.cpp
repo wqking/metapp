@@ -18,7 +18,6 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
-#include "metapp/metarepository.h"
 #include "metapp/utils/metatypedumper.h"
 
 #include <string>

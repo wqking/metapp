@@ -18,7 +18,7 @@
 #define METAPP_METATYPEDUMPER_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/metarepository.h"
+#include "metapp/metarepo.h"
 
 #include <ostream>
 
@@ -27,10 +27,10 @@ namespace metapp {
 class MetaTypeDumper
 {
 public:
-	explicit MetaTypeDumper(const MetaRepository * metaRepository_ = nullptr)
-		: metaRepository(metaRepository_) {
-		if(metaRepository == nullptr) {
-			metaRepository = getMetaRepository();
+	explicit MetaTypeDumper(const MetaRepo * metaRepository_ = nullptr)
+		: metaRepo(metaRepository_) {
+		if(metaRepo == nullptr) {
+			metaRepo = getMetaRepo();
 		}
 	}
 
@@ -46,7 +46,7 @@ private:
 		doDumpIndent(stream, level);
 		stream << "Type: " << metaType->getTypeKind();
 		std::string name;
-		name = metaRepository->getNameByKind(metaType->getTypeKind());
+		name = metaRepo->getNameByKind(metaType->getTypeKind());
 		if(name.empty()) {
 			name = metapp::getNameByTypeKind(metaType->getTypeKind());
 		}
@@ -81,7 +81,7 @@ private:
 	};
 
 private:
-	const MetaRepository * metaRepository;
+	const MetaRepo * metaRepo;
 };
 
 

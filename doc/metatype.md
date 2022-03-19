@@ -48,9 +48,9 @@ struct MyClass { int whatEver; };
 const metapp::MetaType * metaTypeStdString = metapp::getMetaType<MyClass>();
 ```
 
-### Use MetaRepository at runtime
+### Use MetaRepo at runtime
 
-The class `metapp::MetaRepository` holds all registered meta types.
+The class `metapp::MetaRepo` holds all registered meta types.
 
 ## Member functions
 

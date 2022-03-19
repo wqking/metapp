@@ -14,38 +14,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METAREPOSITORY_H_969872685611
-#define METAPP_METAREPOSITORY_H_969872685611
+#ifndef METAPP_METAREPO_H_969872685611
+#define METAPP_METAREPO_H_969872685611
 
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 
 namespace metapp {
 
-class MetaRepository : public internal_::MetaRepoBase
+class MetaRepo : public internal_::MetaRepoBase
 {
 public:
-	MetaRepository();
-	~MetaRepository() = default;
+	MetaRepo();
+	~MetaRepo() = default;
 
-	MetaRepository(const MetaRepository &) = delete;
-	MetaRepository(MetaRepository &&) = delete;
+	MetaRepo(const MetaRepo &) = delete;
+	MetaRepo(MetaRepo &&) = delete;
 
-	MetaRepository * addRepository(const std::string & name);
+	MetaRepo * addRepo(const std::string & name);
 
-	std::vector<std::string> getRepositionNameList() const;
+	std::vector<std::string> getRepoNameList() const;
 
 private:
 	void registerBuiltinTypes();
 
 private:
-	std::map<std::string, std::unique_ptr<MetaRepository> > repositoryMap;
+	std::map<std::string, std::unique_ptr<MetaRepo> > repoMap;
 };
 
-MetaRepository * getMetaRepository();
+MetaRepo * getMetaRepo();
 
 } // namespace metapp
 
-#include "metapp/implement/metarepository_impl.h"
+#include "metapp/implement/metarepo_impl.h"
 
 #endif

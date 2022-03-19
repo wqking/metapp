@@ -16,17 +16,17 @@
 
 #include "test.h"
 
-#include "metapp/metarepository.h"
+#include "metapp/metarepo.h"
 #include "metapp/metatypes/metatypes.h"
 
 #include <string>
 #include <iostream>
 #include <climits>
 
-TEST_CASE("MetaRepository")
+TEST_CASE("MetaRepo")
 {
-	REQUIRE(metapp::getMetaRepository()->getTypeByKind(metapp::tkInt) != nullptr);
-	REQUIRE(metapp::getMetaRepository()->getTypeByName("int") != nullptr);
+	REQUIRE(metapp::getMetaRepo()->getTypeByKind(metapp::tkInt) != nullptr);
+	REQUIRE(metapp::getMetaRepo()->getTypeByName("int") != nullptr);
 }
 
 

@@ -16,31 +16,31 @@
 
 namespace metapp {
 
-inline MetaRepository * getMetaRepository()
+inline MetaRepo * getMetaRepo()
 {
-	static MetaRepository repo;
+	static MetaRepo repo;
 	return &repo;
 }
 
-inline MetaRepository::MetaRepository()
+inline MetaRepo::MetaRepo()
 {
 	registerBuiltinTypes();
 }
 
-inline MetaRepository * MetaRepository::addRepository(const std::string & name)
+inline MetaRepo * MetaRepo::addRepo(const std::string & name)
 {
-	std::unique_ptr<MetaRepository> repo(new MetaRepository());
-	MetaRepository * result = repo.get();
-	repositoryMap[name] = std::move(repo);
+	std::unique_ptr<MetaRepo> repo(new MetaRepo());
+	MetaRepo * result = repo.get();
+	repoMap[name] = std::move(repo);
 	return result;
 }
 
-inline std::vector<std::string> MetaRepository::getRepositionNameList() const
+inline std::vector<std::string> MetaRepo::getRepoNameList() const
 {
-	return internal_::getMapKeys(repositoryMap);
+	return internal_::getMapKeys(repoMap);
 }
 
-inline void MetaRepository::registerBuiltinTypes()
+inline void MetaRepo::registerBuiltinTypes()
 {
 	addType<void>();
 	addType<bool>();

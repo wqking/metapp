@@ -15,7 +15,7 @@ See [TypeKind document](typekinds.md) for list of built-in type kinds.
 
 `metapp::MetaType` is the core class to represent the meta type. Unlike some other reflection libraries which are meta class based, everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions, constructors, containers, etc.  
 With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, streaming in/out the object, etc.  
-A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at run time via class `MetaRepository`.  
+A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at run time via class `MetaRepo`.  
 
 Prototype of `getMetaType()`  
 ```c++
@@ -107,7 +107,7 @@ See [TypeKind document](typekinds.md) for the UpTypes for each TypeKind.
 
 ## DeclareMetaType
 
-Even though metapp works on any C++ type which are not known to metapp, it's useful to provide metapp more information a certain type. The template `DeclareMetaType` is to provide such information. For example,  
+Even though metapp works on any C++ type which are not known to metapp, it's useful to provide metapp more information on a certain type. The template `DeclareMetaType` is to provide such information. For example,  
 ```c++
 class MyClass {};
 
