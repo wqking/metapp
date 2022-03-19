@@ -334,6 +334,20 @@ If `canCast` returns true, `cast` returns the casted variant which type matches 
 If `canCast<T>()` returns false, it throws exception `metapp::BadCastException`.  
 To get the casted value, call `get` on the returned variant. For example, `int castedValue = v.cast<int>().get<int>()`.  
 
+### castSilently
+```c++
+Variant castSilently(const MetaType * toMetaType) const;
+template <typename T>
+Variant castSilently() const;
+```
+
+Similar to `cast`, the only difference is that if `canCast<T>()` returns false, `castSilently` doesn't throw exception, and returns an empty Variant (which isEmpty() is true).  
+
+**Hint**: when to use `canCast`, `cast`, and `castSilently`   
+If you only want to check if it's cast-able, but don't need to perform the cast, use `canCast`.  
+If you want a variant must be casted, and throw exception if it can't be casted, use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
+If you want a variant be casted, and allow the cast fail, use `castSilently`, then check if the result is empty.  
+
 ### isEmpty
 ```c++
 bool isEmpty() const noexcept;

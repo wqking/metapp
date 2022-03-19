@@ -86,6 +86,10 @@ public:
 	template <typename T>
 	Variant cast() const;
 
+	Variant castSilently(const MetaType * toMetaType) const;
+	template <typename T>
+	Variant castSilently() const;
+
 	bool isEmpty() const noexcept;
 
 	const MetaType * getMetaType() const noexcept;

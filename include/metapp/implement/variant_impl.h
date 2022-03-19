@@ -221,13 +221,28 @@ inline bool Variant::canCast() const
 
 inline Variant Variant::cast(const MetaType * toMetaType) const
 {
-	return metaType->cast(*this, toMetaType);
+	Variant result = metaType->cast(*this, toMetaType);
+	if(result.isEmpty()) {
+		errorBadCast();
+	}
+	return result;
 }
 
 template <typename T>
 inline Variant Variant::cast() const
 {
 	return cast(metapp::getMetaType<T>());
+}
+
+inline Variant Variant::castSilently(const MetaType * toMetaType) const
+{
+	return metaType->cast(*this, toMetaType);
+}
+
+template <typename T>
+inline Variant Variant::castSilently() const
+{
+	return castSilently(metapp::getMetaType<T>());
 }
 
 inline bool Variant::isEmpty() const noexcept

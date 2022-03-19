@@ -110,6 +110,9 @@ TEST_CASE("Variant, can't cast int * to int or int &")
 	REQUIRE(! v.canCast<int &>());
 	REQUIRE_THROWS(v.cast<int>());
 	REQUIRE_THROWS(v.cast<int &>());
+	
+	REQUIRE(v.castSilently<int>().isEmpty());
+	REQUIRE(v.castSilently<int &>().isEmpty());
 }
 
 TEST_CASE("Variant, can't cast int & to int *")
@@ -118,6 +121,7 @@ TEST_CASE("Variant, can't cast int & to int *")
 	metapp::Variant v(metapp::Variant::create<int &>(n));
 	REQUIRE(! v.canCast<int *>());
 	REQUIRE_THROWS(v.cast<int *>());
+	REQUIRE(v.castSilently<int *>().isEmpty());
 }
 
 TEST_CASE("Variant, can't cast int to int *")
@@ -135,6 +139,7 @@ TEST_CASE("Variant, cast int * to int * &")
 	REQUIRE(v.canCast<int const * &>());
 	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
 	REQUIRE(v.cast<int const * &>().get<int * &>() == &n);
+	REQUIRE(v.castSilently<int const * &>().get<int * &>() == &n);
 }
 
 TEST_CASE("Variant, cast int * & to int *")
@@ -147,6 +152,7 @@ TEST_CASE("Variant, cast int * & to int *")
 	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
 	REQUIRE(v.cast<int * &>().get<int *>() == &n);
 	REQUIRE(v.cast<int *>().get<int * &>() == &n);
+	REQUIRE(v.castSilently<int *>().get<int * &>() == &n);
 }
 
 TEST_CASE("Variant, can't cast int * to long *")

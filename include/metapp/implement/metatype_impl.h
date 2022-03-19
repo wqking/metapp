@@ -539,11 +539,8 @@ template <typename T>
 inline Variant CommonDeclareMetaType<T>::cast(const Variant & value, const MetaType * toMetaType)
 {
 	Variant result;
-	if(doCast(&result, value, toMetaType)) {
-		return result;
-	}
-	errorBadCast();
-	return Variant();
+	doCast(&result, value, toMetaType);
+	return result;
 }
 
 template <typename T>
@@ -580,7 +577,6 @@ inline bool DeclareMetaTypeVoidBase::canCast(const Variant & /*value*/, const Me
 
 inline Variant DeclareMetaTypeVoidBase::cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
 {
-	errorBadCast("Can't cast between void type");
 	return Variant();
 }
 
@@ -591,7 +587,6 @@ inline bool DeclareMetaTypeVoidBase::canCastFrom(const Variant & /*value*/, cons
 
 inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
-	errorBadCast("Can't cast between void type");
 	return Variant();
 }
 
