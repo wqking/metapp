@@ -36,13 +36,13 @@ TEST_CASE("MethodList")
 	}));
 	const metapp::Variant * callable;
 	metapp::Variant arguments[] = { 5 };
-	REQUIRE(methodList.findCallable(arguments, 1) == &methodList.get(0));
-	callable = methodList.findCallable(arguments, 1);
+	REQUIRE(&methodList.findCallable(arguments, 1) == &methodList.get(0));
+	callable = &methodList.findCallable(arguments, 1);
 	REQUIRE(callable->getMetaType()->getMetaCallable()->invoke(*callable, nullptr, arguments, 1).get<int>() == 10);
 
 	arguments[0] = 5L;
-	REQUIRE(methodList.findCallable(arguments, 1) == &methodList.get(1));
-	callable = methodList.findCallable(arguments, 1);
+	REQUIRE(&methodList.findCallable(arguments, 1) == &methodList.get(1));
+	callable = &methodList.findCallable(arguments, 1);
 	REQUIRE(callable->getMetaType()->getMetaCallable()->invoke(*callable, nullptr, arguments, 1).get<int>() == 15);
 }
 

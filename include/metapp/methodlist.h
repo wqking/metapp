@@ -26,34 +26,49 @@ namespace metapp {
 
 class MethodList
 {
+private:
+	using VectorType = std::vector<Variant>;
+
 public:
+	MethodList() = default;
+	MethodList(const MethodList &) = default;
+	MethodList(MethodList &&) = default;
+
 	void addMethod(const Variant & method) {
-		methodList.push_back(method);
+		if(! methodList) {
+			methodList.reset(new VectorType());
+		}
+		methodList->push_back(method);
 	}
 
 	size_t getCount() const {
-		return methodList.size();
+		if(! methodList) {
+			return 0;
+		}
+		return methodList->size();
 	}
 
 	const Variant & get(const size_t index) const {
-		return methodList[index];
+		return (*methodList)[index];
 	}
 
-	const Variant * findCallable(const Variant * arguments, const size_t argumentCount) const {
-		int maxRank = 0;
+	const Variant & findCallable(const Variant * arguments, const size_t argumentCount) const {
 		const Variant * callable = nullptr;
-		for(const Variant & method : methodList) {
-			const int rank = method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
-			if(rank > maxRank) {
-				maxRank = rank;
-				callable = &method;
+		if(methodList) {
+			int maxRank = 0;
+			for(const Variant & method : *methodList) {
+				const int rank = method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+				if(rank > maxRank) {
+					maxRank = rank;
+					callable = &method;
+				}
 			}
 		}
-		return callable;
+		return callable != nullptr ? *callable : getEmptyVariant();
 	}
 
 private:
-	std::vector<Variant> methodList;
+	std::shared_ptr<VectorType> methodList;
 };
 
 

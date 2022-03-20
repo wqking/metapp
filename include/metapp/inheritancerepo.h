@@ -21,6 +21,7 @@
 #include "metapp/metatype.h"
 
 #include <vector>
+#include <set>
 #include <unordered_map>
 #include <type_traits>
 #include <cmath>
@@ -86,23 +87,23 @@ public:
 	}
 
 	template <typename Class>
-	TypesView getBases()
+	TypesView getBases() const
 	{
 		return getBases(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getBases(const MetaType * classMetaType)
+	TypesView getBases(const MetaType * classMetaType) const
 	{
 		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->baseList);
 	}
 
 	template <typename Class>
-	TypesView getDerives()
+	TypesView getDerives() const
 	{
 		return getDerives(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getDerives(const MetaType * classMetaType)
+	TypesView getDerives(const MetaType * classMetaType) const
 	{
 		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
 	}
@@ -185,6 +186,15 @@ public:
 	bool doesClassExist(const MetaType * classMetaType) const
 	{
 		return doFindClassInfo(classMetaType->getUnifiedType()) != nullptr;
+	}
+
+	template <typename FT>
+	bool traverse(
+		const MetaType * metaType,
+		FT && callback) const
+	{
+		std::set<const MetaType *> metaTypeSet;
+		return doTraverse(metaType, std::forward<FT>(callback), metaTypeSet);
 	}
 
 	// for test purpose, don't call it in production code
@@ -364,6 +374,28 @@ private:
 	{
 		errorBadCast();
 		return nullptr;
+	}
+
+	template <typename FT>
+	bool doTraverse(
+		const MetaType * metaType,
+		FT && callback,
+		std::set<const MetaType *> & metaTypeSet) const
+	{
+		if(! metaTypeSet.insert(metaType).second) {
+			return true;
+		}
+		if(! callback(metaType)) {
+			return false;
+		}
+		auto baseView = getBases(metaType);
+		const size_t count = baseView.getCount();
+		for(size_t i = 0; i < count; ++i) {
+			if(! doTraverse(baseView.get(i), callback, metaTypeSet)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 private:

@@ -68,6 +68,7 @@ struct DeclareMetaType <BaseFirst> : public DeclareMetaTypeBase <BaseFirst>
 
 	static const MetaClass * getMetaClass() {
 		static const MetaClass metaClass(
+			getMetaType<BaseFirst>(),
 			[](MetaClass & mc) {
 				mc.addConstructor(metapp::Constructor<BaseFirst()>());
 				mc.addConstructor(metapp::Constructor<BaseFirst(int)>());
@@ -86,6 +87,7 @@ struct DeclareMetaType <SonFirst> : public DeclareMetaTypeBase <SonFirst>
 
 	static const MetaClass * getMetaClass() {
 		static MetaClass metaClass(
+			getMetaType<SonFirst>(),
 			[](MetaClass & mc) {
 			}
 		);
@@ -101,6 +103,7 @@ struct DeclareMetaType <SonFirstSecond> : public DeclareMetaTypeBase <SonFirstSe
 
 	static const MetaClass * getMetaClass() {
 		static const MetaClass metaClass(
+			getMetaType<SonFirstSecond>(),
 			[](MetaClass & mc) {
 			}
 		);

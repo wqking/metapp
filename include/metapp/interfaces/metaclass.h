@@ -19,6 +19,7 @@
 
 #include "metapp/implement/internal/metaclass_i.h"
 #include "metapp/implement/internal/metarepobase_i.h"
+#include "metapp/inheritancerepo.h"
 
 #include <vector>
 #include <memory>
@@ -31,12 +32,19 @@ private:
 	using super = internal_::MetaRepoBase;
 
 public:
+	using Flags = int;
+	static constexpr Flags flagIncludeBase = (1 << 0);
+
+public:
 	template <typename FT>
-	explicit MetaClass(FT callback)
+	MetaClass(const MetaType * classMetaType, FT callback)
 		:
 			super(),
+			classMetaType(classMetaType),
 			constructorList()
 	{
+		assert(classMetaType->getMetaClass() == this);
+
 		callback(*this);
 	}
 
@@ -55,7 +63,50 @@ public:
 		return constructorList.get();
 	}
 
+	std::vector<FieldInfo> getFields(const Flags flags = flagIncludeBase) const {
+		std::vector<FieldInfo> result;
+		if(hasFlag(flags, flagIncludeBase)) {
+			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					metaClass->doGetFields(result);
+				}
+				return true;
+			});
+		}
+		else {
+			doGetFields(result);
+		}
+		return result;
+	}
+
+	FieldInfo getField(const std::string & name, const Flags flags = flagIncludeBase) const {
+		if(hasFlag(flags, flagIncludeBase)) {
+			FieldInfo result;
+			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					result = metaClass->doGetField(name);
+					if(result.isValid()) {
+						return false;
+					}
+				}
+				return true;
+			});
+			return result;
+		}
+		else {
+			return doGetField(name);
+		}
+	}
+
 private:
+	bool hasFlag(const Flags flags, const Flags flag) const {
+		return (flags & flag) != 0;
+	}
+
+private:
+	const MetaType * classMetaType;
 	std::shared_ptr<MethodList> constructorList;
 };
 

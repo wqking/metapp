@@ -24,8 +24,64 @@
 
 #include <map>
 #include <memory>
+#include <functional>
 
 namespace metapp {
+
+class MemberInfo
+{
+public:
+	MemberInfo()
+		: name(), member()
+	{
+	}
+
+	MemberInfo(const std::string * name, const Variant * member)
+		: name(name), member(member)
+	{
+	}
+
+	bool isValid() const {
+		return member != nullptr;
+	}
+
+	const std::string & getName() const {
+		assert(isValid());
+		return *name;
+	}
+
+protected:
+	const Variant & doGet() const {
+		assert(isValid());
+		return *member;
+	}
+
+private:
+	const std::string * name;
+	const Variant * member;
+};
+
+class FieldInfo : public MemberInfo
+{
+public:
+	using MemberInfo::MemberInfo;
+
+	const Variant & getField() const {
+		return doGet();
+	}
+
+};
+
+class MethodInfo : public MemberInfo
+{
+public:
+	using MemberInfo::MemberInfo;
+
+	const Variant & getMethod() const {
+		return doGet();
+	}
+
+};
 
 namespace internal_ {
 
@@ -89,28 +145,19 @@ public:
 			errorWrongMetaType();
 			return;
 		}
-		std::shared_ptr<MethodList> methodList;
 		auto it = methodListMap.find(name);
 		if(it == methodListMap.end()) {
-			methodList = std::make_shared<MethodList>();
-			methodListMap.insert(std::make_pair(name, methodList));
+			it = methodListMap.insert(std::make_pair(name, MethodList())).first;
 		}
-		else {
-			methodList = it->second;
-		}
-		methodList->addMethod(method);
+		it->second.addMethod(method);
 	}
 
-	const MethodList * getMethodList(const std::string & name) const {
+	MethodList getMethodList(const std::string & name) const {
 		auto it = methodListMap.find(name);
 		if(it == methodListMap.end()) {
-			return nullptr;
+			return MethodList();
 		}
-		return it->second.get();
-	}
-
-	std::vector<std::string> getMethodNameList() const {
-		return internal_::getMapKeys(methodListMap);
+		return it->second;
 	}
 
 	void addField(const std::string & name, const Variant & field) {
@@ -121,18 +168,41 @@ public:
 		fieldMap[name]= field;
 	}
 
-	const Variant * getField(const std::string & name) const {
-		return internal_::getPointerFromMap(fieldMap, name);
+	const Variant & getField(const std::string & name) const {
+		auto field = internal_::getPointerFromMap(fieldMap, name);
+		return field != nullptr ? *field : getEmptyVariant();
 	}
 
-	std::vector<std::string> getFieldNameList() const {
-		return internal_::getMapKeys(fieldMap);
+protected:
+	void doGetFields(std::vector<FieldInfo> & result) const {
+		for(auto it = std::begin(fieldMap); it != std::end(fieldMap); ++it) {
+			result.emplace_back(&it->first, &it->second);
+		}
+	}
+
+	void doGetMethods(std::vector<MethodInfo> & result) const {
+		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
+			const std::string & name = it->first;
+			const MethodList & methodList = it->second;
+			const size_t count = methodList.getCount();
+			for(size_t i = 0; i < count; ++i) {
+				result.emplace_back(&name, &methodList.get(i));
+			}
+		}
+	}
+
+	FieldInfo doGetField(const std::string & name) const {
+		auto it = fieldMap.find(name);
+		if(it != fieldMap.end()) {
+			return FieldInfo(&it->first, &it->second);
+		}
+		return FieldInfo();
 	}
 
 private:
 	std::map<std::string, const MetaType *> nameTypeMap;
 	std::map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
-	std::map<std::string, std::shared_ptr<MethodList> > methodListMap;
+	std::map<std::string, MethodList> methodListMap;
 	std::map<std::string, Variant> fieldMap;
 };
 

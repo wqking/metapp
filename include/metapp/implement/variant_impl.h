@@ -295,6 +295,12 @@ inline TypeKind getTypeKind(const Variant & v)
 	return v.getMetaType()->getTypeKind();
 }
 
+inline const Variant & getEmptyVariant()
+{
+	static Variant emptyVariant {};
+	return emptyVariant;
+}
+
 
 } // namespace metapp
 
