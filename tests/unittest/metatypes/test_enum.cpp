@@ -55,23 +55,19 @@ enum class EnumHuman : char {
 	female = 10
 };
 
-namespace metapp {
-
 template <>
-struct DeclareMetaType <EnumHuman> : public DeclareMetaTypeBase <EnumHuman>
+struct metapp::DeclareMetaType <EnumHuman> : public metapp::DeclareMetaTypeBase <EnumHuman>
 {
-	static constexpr TypeKind typeKind = 2000;
+	static constexpr metapp::TypeKind typeKind = 2000;
 
-	static const MetaEnum * getMetaEnum() {
-		static const MetaEnum metaEnum([](MetaEnum & me) {
+	static const metapp::MetaEnum * getMetaEnum() {
+		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
 			me.addValue("male", EnumHuman::male);
 			me.addValue("female", EnumHuman::female);
 		});
 		return &metaEnum;
 	}
 };
-
-} // metapp
 
 TEST_CASE("metatypes, enum class")
 {

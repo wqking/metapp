@@ -71,11 +71,8 @@ const MetaType * getMetaType();
 namespace internal_ {
 
 template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type;
-template <typename T>
-auto doGetMetaType()
-	-> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type;
+const MetaType * doGetMetaTypeStorage();
+
 } // namespace internal_
 
 class MetaType
@@ -139,8 +136,7 @@ private:
 	) noexcept;
 
 	template <typename T>
-	friend auto internal_::doGetMetaType()
-		-> typename std::enable_if<! std::is_same<T, internal_::NoneUpType>::value, const MetaType *>::type;
+	friend const MetaType * internal_::doGetMetaTypeStorage();
 
 private:
 	const internal_::UnifiedType * (*doGetUnifiedType)();

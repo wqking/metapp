@@ -33,13 +33,11 @@ struct Class1
 
 } // namespace
 
-namespace metapp {
 template <>
-struct DeclareMetaType <Class1> : public DeclareMetaTypeBase<Class1>
+struct metapp::DeclareMetaType <Class1> : public metapp::DeclareMetaTypeBase<Class1>
 {
-	static constexpr TypeKind typeKind = 2000;
+	static constexpr metapp::TypeKind typeKind = 2000;
 };
-} // namespace metapp
 
 namespace {
 

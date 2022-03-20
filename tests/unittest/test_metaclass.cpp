@@ -54,22 +54,21 @@ struct SonFirstSecond : BaseFirst, BaseSecond
 {
 };
 
-namespace metapp {
 
-constexpr TypeKind tkBaseFirst = tkUser;
-constexpr TypeKind tkBaseSecond = tkUser + 1;
-constexpr TypeKind tkSonFirst = tkUser + 10;
-constexpr TypeKind tkSonFirstSecond = tkUser + 11;
+constexpr metapp::TypeKind tkBaseFirst = metapp::tkUser;
+constexpr metapp::TypeKind tkBaseSecond = metapp::tkUser + 1;
+constexpr metapp::TypeKind tkSonFirst = metapp::tkUser + 10;
+constexpr metapp::TypeKind tkSonFirstSecond = metapp::tkUser + 11;
 
 template <>
-struct DeclareMetaType <BaseFirst> : public DeclareMetaTypeBase <BaseFirst>
+struct metapp::DeclareMetaType <BaseFirst> : public metapp::DeclareMetaTypeBase <BaseFirst>
 {
-	static constexpr TypeKind typeKind = tkBaseFirst;
+	static constexpr metapp::TypeKind typeKind = tkBaseFirst;
 
-	static const MetaClass * getMetaClass() {
-		static const MetaClass metaClass(
-			getMetaType<BaseFirst>(),
-			[](MetaClass & mc) {
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<BaseFirst>(),
+			[](metapp::MetaClass & mc) {
 				mc.addConstructor(metapp::Constructor<BaseFirst()>());
 				mc.addConstructor(metapp::Constructor<BaseFirst(int)>());
 				mc.addField("first", &BaseFirst::first);
@@ -81,14 +80,14 @@ struct DeclareMetaType <BaseFirst> : public DeclareMetaTypeBase <BaseFirst>
 };
 
 template <>
-struct DeclareMetaType <SonFirst> : public DeclareMetaTypeBase <SonFirst>
+struct metapp::DeclareMetaType <SonFirst> : public metapp::DeclareMetaTypeBase <SonFirst>
 {
-	static constexpr TypeKind typeKind = tkSonFirst;
+	static constexpr metapp::TypeKind typeKind = tkSonFirst;
 
-	static const MetaClass * getMetaClass() {
-		static MetaClass metaClass(
-			getMetaType<SonFirst>(),
-			[](MetaClass & mc) {
+	static const metapp::MetaClass * getMetaClass() {
+		static metapp::MetaClass metaClass(
+			metapp::getMetaType<SonFirst>(),
+			[](metapp::MetaClass & mc) {
 			}
 		);
 		return &metaClass;
@@ -97,14 +96,14 @@ struct DeclareMetaType <SonFirst> : public DeclareMetaTypeBase <SonFirst>
 };
 
 template <>
-struct DeclareMetaType <SonFirstSecond> : public DeclareMetaTypeBase <SonFirstSecond>
+struct metapp::DeclareMetaType <SonFirstSecond> : public metapp::DeclareMetaTypeBase <SonFirstSecond>
 {
-	static constexpr TypeKind typeKind = tkSonFirstSecond;
+	static constexpr metapp::TypeKind typeKind = tkSonFirstSecond;
 
-	static const MetaClass * getMetaClass() {
-		static const MetaClass metaClass(
-			getMetaType<SonFirstSecond>(),
-			[](MetaClass & mc) {
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<SonFirstSecond>(),
+			[](metapp::MetaClass & mc) {
 			}
 		);
 		return &metaClass;
@@ -112,8 +111,6 @@ struct DeclareMetaType <SonFirstSecond> : public DeclareMetaTypeBase <SonFirstSe
 
 };
 
-
-} // namespace metapp
 
 TEST_CASE("MetaClass, cast")
 {

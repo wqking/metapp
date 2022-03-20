@@ -17,6 +17,8 @@
 #ifndef METAPP_METATYPE_IMPL_H_969872685611
 #define METAPP_METATYPE_IMPL_H_969872685611
 
+#include <atomic>
+
 namespace metapp {
 
 namespace internal_ {
@@ -71,15 +73,7 @@ using SelectDeclareClass = typename std::conditional<
 >::type;
 
 template <typename T>
-auto doGetMetaType()
--> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
-{
-	return nullptr;
-}
-
-template <typename T>
-auto doGetMetaType()
--> typename std::enable_if<! std::is_same<T, NoneUpType>::value, const MetaType *>::type
+const MetaType * doGetMetaTypeStorage()
 {
 	using M = DeclareMetaType<T>;
 
@@ -89,11 +83,41 @@ auto doGetMetaType()
 			&SelectDeclareClass<T, HasMember_toReference<M>::value>::toReference,
 		},
 		UpTypeGetter<
-			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
+		typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
 		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags	| CommonDeclareMetaType<T>::typeFlags
 	);
 	return &metaType;
+}
+
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
+{
+	return nullptr;
+}
+
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<
+		! std::is_same<T, NoneUpType>::value && ! HasMember_setup<DeclareMetaType<T> >::value,
+		const MetaType *>::type
+{
+	return doGetMetaTypeStorage<T>();
+}
+
+template <typename T>
+auto doGetMetaType()
+	-> typename std::enable_if<
+		! std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
+		const MetaType *>::type
+{
+	static std::atomic_flag hasCalledSetup;
+	const MetaType * metaType = doGetMetaTypeStorage<T>();
+	if(! hasCalledSetup.test_and_set()) {
+		DeclareMetaType<T>::setup();
+	}
+	return metaType;
 }
 
 template <typename U>

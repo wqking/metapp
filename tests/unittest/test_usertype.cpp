@@ -28,22 +28,18 @@ struct UseTypeMyClass
 	int value;
 };
 
-namespace metapp {
-
 template <>
-struct DeclareMetaType <UseTypeMyClass> : public DeclareMetaTypeBase <UseTypeMyClass>
+struct metapp::DeclareMetaType <UseTypeMyClass> : public metapp::DeclareMetaTypeBase <UseTypeMyClass>
 {
-	static constexpr TypeKind typeKind = 2000;
+	static constexpr metapp::TypeKind typeKind = 2000;
 
 };
 
 template <>
-struct DeclareMetaType <UseTypeMyClass *> : public DeclareMetaTypeBase <UseTypeMyClass *>
+struct metapp::DeclareMetaType <UseTypeMyClass *> : public metapp::DeclareMetaTypeBase <UseTypeMyClass *>
 {
-	static constexpr TypeKind typeKind = 2001;
+	static constexpr metapp::TypeKind typeKind = 2001;
 };
-
-} // metapp
 
 TEST_CASE("user type")
 {
