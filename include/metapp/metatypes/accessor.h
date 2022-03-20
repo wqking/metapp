@@ -58,10 +58,15 @@ public:
 
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(
+			&accessibleGetValueType,
 			&accessibleGet,
 			&accessibleSet
 		);
 		return &metaAccessible;
+	}
+
+	static const MetaType * accessibleGetValueType() {
+		return getMetaType<T>();
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const void * instance) {

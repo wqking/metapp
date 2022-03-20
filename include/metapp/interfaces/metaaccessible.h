@@ -25,14 +25,17 @@ class MetaAccessible
 {
 public:
 	MetaAccessible(
+		const MetaType * (*getValueType)(),
 		Variant (*get)(const Variant & accessible, const void * instance),
 		void (*set)(const Variant & accessible, void * instance, const Variant & value)
 	)
 		:
+			getValueType(getValueType),
 			get(get),
 			set(set)
 	{}
 
+	const MetaType * (*getValueType)();
 	Variant (*get)(const Variant & accessible, const void * instance);
 	void (*set)(const Variant & accessible, void * instance, const Variant & value);
 };
