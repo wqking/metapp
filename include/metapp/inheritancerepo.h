@@ -79,7 +79,7 @@ public:
 
 public:
 	template <typename Class, typename ...Bases>
-	void addBase()
+	void registerBase()
 	{
 		// Simulate C++17 fold expression in C++11
 		using U = int[];

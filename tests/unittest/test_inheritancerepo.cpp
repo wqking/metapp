@@ -36,8 +36,8 @@ TEST_CASE("InheritanceRepo, basic")
 
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
-	repo->addBase<SonOfFirst, BaseFirst>();
-	repo->addBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
+	repo->registerBase<SonOfFirst, BaseFirst>();
+	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
 	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).getCount() == 1);
 	REQUIRE(repo->getBases(metapp::getMetaType<const SonOfFirst>()).getCount() == 1);
@@ -64,17 +64,17 @@ TEST_CASE("InheritanceRepo, add duplicated bases")
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
 
-	repo->addBase<B1, A1>();
+	repo->registerBase<B1, A1>();
 	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
 	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 1);
-	repo->addBase<B1, A1>();
+	repo->registerBase<B1, A1>();
 	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
 
-	repo->addBase<B2, A1, A2>();
+	repo->registerBase<B2, A1, A2>();
 	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
 	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
 	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
-	repo->addBase<B2, A1, A2>();
+	repo->registerBase<B2, A1, A2>();
 	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
 	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
 	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
@@ -89,8 +89,8 @@ TEST_CASE("InheritanceRepo, castToBase and castToDerived")
 
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
-	repo->addBase<SonOfFirst, BaseFirst>();
-	repo->addBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
+	repo->registerBase<SonOfFirst, BaseFirst>();
+	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
 	SECTION("nullptr") {
 		REQUIRE(repo->castToBase(nullptr, metapp::getMetaType<SonOfFirst>(), 0) == nullptr);
@@ -128,7 +128,7 @@ TEST_CASE("InheritanceRepo, virtual inheritance castToBase and castToDerived")
 
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
-	repo->addBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
+	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
 	SECTION("multiple inheritance") {
 		SonOfFirstSecond obj;
@@ -158,10 +158,10 @@ TEST_CASE("InheritanceRepo, cast between ancestors")
 
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
-	repo->addBase<B1, A1>();
-	repo->addBase<B2, A1, A2>();
-	repo->addBase<C1, B1>();
-	repo->addBase<C2, B1, B2>();
+	repo->registerBase<B1, A1>();
+	repo->registerBase<B2, A1, A2>();
+	repo->registerBase<C1, B1>();
+	repo->registerBase<C2, B1, B2>();
 
 	SECTION("single inheritance, cast to base") {
 		C1 c1;
@@ -229,10 +229,10 @@ TEST_CASE("InheritanceRepo, relationship")
 
 	metapp::InheritanceRepo inheritanceRepo;
 	auto * repo = &inheritanceRepo;
-	repo->addBase<B1, A1>();
-	repo->addBase<B2, A1, A2>();
-	repo->addBase<C1, B1>();
-	repo->addBase<C2, B1, B2>();
+	repo->registerBase<B1, A1>();
+	repo->registerBase<B2, A1, A2>();
+	repo->registerBase<C1, B1>();
+	repo->registerBase<C2, B1, B2>();
 
 	REQUIRE(repo->getRelationship(metapp::getMetaType<A2>(), metapp::getMetaType<B1>()) == metapp::InheritanceRelationship::none);
 	REQUIRE(repo->getRelationship(metapp::getMetaType<A1>(), metapp::getMetaType<B1>()) == metapp::InheritanceRelationship::derived);

@@ -43,8 +43,6 @@ public:
 			classMetaType(classMetaType),
 			constructorList()
 	{
-		assert(classMetaType->getMetaClass() == this);
-
 		callback(*this);
 	}
 

@@ -278,7 +278,7 @@ TEST_CASE("Variant, cast object")
 TEST_CASE("Variant, cast Derived * to MyClass *")
 {
 	metapp::getInheritanceRepo()->clear();
-	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+	metapp::getInheritanceRepo()->registerBase<Derived, MyClass>();
 
 	Derived derived;
 	metapp::Variant v(&derived);
@@ -295,7 +295,7 @@ TEST_CASE("Variant, cast Derived * to MyClass *")
 TEST_CASE("Variant, cast MyClass * to Derived *")
 {
 	metapp::getInheritanceRepo()->clear();
-	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+	metapp::getInheritanceRepo()->registerBase<Derived, MyClass>();
 
 	Derived derived;
 	MyClass * myClass = &derived;
@@ -314,7 +314,7 @@ TEST_CASE("Variant, cast MyClass * to Derived *")
 TEST_CASE("Variant, cast Derived & to MyClass &")
 {
 	metapp::getInheritanceRepo()->clear();
-	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+	metapp::getInheritanceRepo()->registerBase<Derived, MyClass>();
 
 	Derived derived {};
 	metapp::Variant v(metapp::Variant::create<Derived &>(derived));
@@ -331,7 +331,7 @@ TEST_CASE("Variant, cast Derived & to MyClass &")
 TEST_CASE("Variant, cast Derived to MyClass &")
 {
 	metapp::getInheritanceRepo()->clear();
-	metapp::getInheritanceRepo()->addBase<Derived, MyClass>();
+	metapp::getInheritanceRepo()->registerBase<Derived, MyClass>();
 
 	metapp::Variant v(metapp::Variant::create<Derived>(Derived {}));
 	REQUIRE(! v.canCast<MyClass *>());
