@@ -61,23 +61,6 @@ public:
 		return constructorList.get();
 	}
 
-	std::vector<FieldInfo> getFields(const Flags flags = flagIncludeBase) const {
-		std::vector<FieldInfo> result;
-		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
-				const MetaClass * metaClass = metaType->getMetaClass();
-				if(metaClass != nullptr) {
-					metaClass->doGetFields(result);
-				}
-				return true;
-			});
-		}
-		else {
-			doGetFields(result);
-		}
-		return result;
-	}
-
 	FieldInfo getField(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
 			FieldInfo result;
@@ -90,12 +73,83 @@ public:
 					}
 				}
 				return true;
-			});
+				});
 			return result;
 		}
 		else {
 			return doGetField(name);
 		}
+	}
+
+	std::vector<FieldInfo> getFieldList(const Flags flags = flagIncludeBase) const {
+		std::vector<FieldInfo> result;
+		if(hasFlag(flags, flagIncludeBase)) {
+			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					metaClass->doGetFieldList(result);
+				}
+				return true;
+			});
+		}
+		else {
+			doGetFieldList(result);
+		}
+		return result;
+	}
+
+	MethodInfo getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
+		if(hasFlag(flags, flagIncludeBase)) {
+			MethodInfo result;
+			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					result = metaClass->doGetMethod(name);
+					if(result.isValid()) {
+						return false;
+					}
+				}
+				return true;
+			});
+			return result;
+		}
+		else {
+			return doGetMethod(name);
+		}
+	}
+
+	std::vector<MethodInfo> getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
+		std::vector<MethodInfo> result;
+		if(hasFlag(flags, flagIncludeBase)) {
+			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					metaClass->doGetMethodList(name, result);
+				}
+				return true;
+			});
+		}
+		else {
+			doGetMethodList(name, result);
+		}
+		return result;
+	}
+
+	std::vector<MethodInfo> getMethodList(const Flags flags = flagIncludeBase) const {
+		std::vector<MethodInfo> result;
+		if(hasFlag(flags, flagIncludeBase)) {
+			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+				const MetaClass * metaClass = metaType->getMetaClass();
+				if(metaClass != nullptr) {
+					metaClass->doGetMethodList(result);
+				}
+				return true;
+			});
+		}
+		else {
+			doGetMethodList(result);
+		}
+		return result;
 	}
 
 private:

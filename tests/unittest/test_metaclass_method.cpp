@@ -20,6 +20,7 @@
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/inheritancerepo.h"
+#include "metapp/utils/utility.h"
 
 #include <string>
 #include <iostream>
@@ -29,29 +30,48 @@ namespace {
 
 struct A
 {
-	int a;
+	std::string methodA() const noexcept {
+		return "hello";
+	}
+
+	virtual int virtualMethod() const {
+		return value;
+	}
+
 	int value;
 };
 
 struct B : A
 {
-	int b;
-	std::string value;
+	std::string methodB(const std::string & s) const {
+		return "good" + s;
+	}
+
+	int virtualMethod() const override {
+		return value + 9;
+	}
 };
 
 struct B2
 {
-	int b2;
+	int methodB2() {
+		return 8;
+	}
 };
 
 struct C : B, B2
 {
-	int c;
-	int value;
-	int notReflected;
-	static bool staticValue;
+	int methodC() {
+		return 38;
+	}
+	
+	int virtualMethod() const override {
+		return value + 1;
+	}
+	
+	void notReflected() {
+	}
 };
-bool C::staticValue = true;
 
 } // namespace
 
@@ -62,8 +82,8 @@ struct metapp::DeclareMetaType <A> : public metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("a", &A::a);
-				mc.addField("value", &A::value);
+				mc.addMethod("methodA", &A::methodA);
+				mc.addMethod("virtualMethod", &A::virtualMethod);
 			}
 		);
 		return &metaClass;
@@ -83,8 +103,7 @@ struct metapp::DeclareMetaType <B> : public metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("b", &B::b);
-				mc.addField("value", &B::value);
+				mc.addMethod("methodB", &B::methodB);
 			}
 		);
 		return &metaClass;
@@ -99,7 +118,7 @@ struct metapp::DeclareMetaType <B2> : public metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("b2", &B2::b2);
+				mc.addMethod("methodB2", &B2::methodB2);
 			}
 		);
 		return &metaClass;
@@ -119,9 +138,7 @@ struct metapp::DeclareMetaType <C> : public metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("c", &C::c);
-				mc.addField("value", &C::value);
-				mc.addField("staticValue", &C::staticValue);
+				mc.addMethod("methodC", &C::methodC);
 			}
 		);
 		return &metaClass;
@@ -130,58 +147,19 @@ struct metapp::DeclareMetaType <C> : public metapp::DeclareMetaTypeBase <C>
 };
 
 
-TEST_CASE("MetaClass, field, struct B")
+TEST_CASE("MetaClass, method, struct B")
 {
 	auto metaTypeB = metapp::getMetaType<B>();
 	auto metaClassB = metaTypeB->getMetaClass();
 	B b;
-	b.a = 3;
-	b.value = "hello";
+	b.value = 2;
+
+	REQUIRE(! metaClassB->getMethod("notExist").isValid());
 	
-	REQUIRE(! metaClassB->getField("notExist").isValid());
-	
-	const auto & value = metaClassB->getField("value").getField();
-	REQUIRE(value.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkStdString);
-	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &b).template get<const std::string &>() == "hello");
+	const auto & methodB = metaClassB->getMethod("methodB").getMethod();
+	REQUIRE(metapp::invokeCallable(methodB, &b, "great").get<const std::string &>() == "goodgreat");
 
-	const auto & a = metaClassB->getField("a").getField();
-	REQUIRE(a.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkInt);
-	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &b).template get<int>() == 3);
-}
-
-TEST_CASE("MetaClass, field, struct C")
-{
-	auto metaTypeC = metapp::getMetaType<C>();
-	auto metaClassC = metaTypeC->getMetaClass();
-	C c;
-	c.a = 3;
-	c.c = 8;
-	c.value = 5;
-
-	REQUIRE(! metaClassC->getField("notExist").isValid());
-
-	const auto & value = metaClassC->getField("value").getField();
-	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &c).template get<int>() == 5);
-
-	const auto & a = metaClassC->getField("a").getField();
-	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &c).template get<int>() == 3);
-
-	const auto & staticValue = metaClassC->getField("staticValue").getField();
-	REQUIRE(staticValue.getMetaType()->getMetaAccessible()->get(staticValue, nullptr).template get<bool>() == true);
-
-	std::map<std::string, int> fieldNameMap;
-	auto fieldList = metaClassC->getFieldList();
-	for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
-		++fieldNameMap[it->getName()];
-	}
-	REQUIRE(fieldNameMap["value"] == 3);
-	REQUIRE(fieldNameMap["c"] == 1);
-	REQUIRE(fieldNameMap["b"] == 1);
-	REQUIRE(fieldNameMap["a"] == 1);
-	REQUIRE(fieldNameMap["b2"] == 1);
-	REQUIRE(fieldNameMap["staticValue"] == 1);
-	REQUIRE(fieldNameMap.size() == 6);
-	REQUIRE(fieldNameMap.find("notReflected") == fieldNameMap.end());
-	REQUIRE(fieldNameMap.find("notExist") == fieldNameMap.end());
+	const auto & virtualMethod = metaClassB->getMethod("virtualMethod").getMethod();
+	REQUIRE(metapp::invokeCallable(virtualMethod, &b).get<int>() == 11);
 }
 

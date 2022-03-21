@@ -152,14 +152,6 @@ public:
 		it->second.addMethod(method);
 	}
 
-	MethodList getMethodList(const std::string & name) const {
-		auto it = methodListMap.find(name);
-		if(it == methodListMap.end()) {
-			return MethodList();
-		}
-		return it->second;
-	}
-
 	void addField(const std::string & name, const Variant & field) {
 		if(field.getMetaType()->getMetaAccessible() == nullptr) {
 			errorWrongMetaType();
@@ -168,26 +160,10 @@ public:
 		fieldMap[name]= field;
 	}
 
-	const Variant & getField(const std::string & name) const {
-		auto field = internal_::getPointerFromMap(fieldMap, name);
-		return field != nullptr ? *field : getEmptyVariant();
-	}
-
 protected:
-	void doGetFields(std::vector<FieldInfo> & result) const {
+	void doGetFieldList(std::vector<FieldInfo> & result) const {
 		for(auto it = std::begin(fieldMap); it != std::end(fieldMap); ++it) {
 			result.emplace_back(&it->first, &it->second);
-		}
-	}
-
-	void doGetMethods(std::vector<MethodInfo> & result) const {
-		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
-			const std::string & name = it->first;
-			const MethodList & methodList = it->second;
-			const size_t count = methodList.getCount();
-			for(size_t i = 0; i < count; ++i) {
-				result.emplace_back(&name, &methodList.get(i));
-			}
 		}
 	}
 
@@ -197,6 +173,37 @@ protected:
 			return FieldInfo(&it->first, &it->second);
 		}
 		return FieldInfo();
+	}
+
+	MethodInfo doGetMethod(const std::string & name) const {
+		auto it = methodListMap.find(name);
+		if(it != methodListMap.end() && it->second.getCount() > 0) {
+			return MethodInfo(&it->first, &it->second.get(0));
+		}
+		return MethodInfo();
+	}
+
+	void doGetMethodList(const std::string & methodName, std::vector<MethodInfo> & result) const {
+		auto it = methodListMap.find(methodName);
+		if(it != methodListMap.end()) {
+			const std::string & name = it->first;
+			const MethodList & methodList = it->second;
+			const size_t count = methodList.getCount();
+			for(size_t i = 0; i < count; ++i) {
+				result.emplace_back(&name, &methodList.get(i));
+			}
+		}
+	}
+
+	void doGetMethodList(std::vector<MethodInfo> & result) const {
+		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
+			const std::string & name = it->first;
+			const MethodList & methodList = it->second;
+			const size_t count = methodList.getCount();
+			for(size_t i = 0; i < count; ++i) {
+				result.emplace_back(&name, &methodList.get(i));
+			}
+		}
 	}
 
 private:
