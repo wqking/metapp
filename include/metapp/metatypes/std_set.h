@@ -26,7 +26,7 @@ namespace metapp {
 
 template <typename Key, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::set<Key, Compare, Allocator> >
-	: public MetaIterableBase<std::set<Key, Compare, Allocator> >
+	: MetaIterableBase<std::set<Key, Compare, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdSet;
@@ -35,7 +35,7 @@ struct DeclareMetaTypeBase <std::set<Key, Compare, Allocator> >
 
 template <typename Key, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::multiset<Key, Compare, Allocator> >
-	: public MetaIterableBase<std::multiset<Key, Compare, Allocator> >
+	: MetaIterableBase<std::multiset<Key, Compare, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdMultiset;

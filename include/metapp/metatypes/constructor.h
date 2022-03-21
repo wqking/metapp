@@ -45,8 +45,8 @@ struct Constructor<C (Args...)>
 
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
-	: public MetaCallableBase<Constructor<Class (Args...)>, void, typename Constructor<Class (Args...)>::Class *, Args...>,
-		public MetaMemberBase<Class>
+	: MetaCallableBase<Constructor<Class (Args...)>, void, typename Constructor<Class (Args...)>::Class *, Args...>,
+		MetaMemberBase<Class>
 {
 private:
 	using ConstructorType = Constructor<Class (Args...)>;

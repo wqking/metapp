@@ -97,49 +97,49 @@ private:
 
 template <typename T>
 struct DeclareMetaTypeBase <T[]>
-	: public DeclareMetaTypeArrayBase <T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <T[N]>
-	: public DeclareMetaTypeArrayBase <T[N], N>
+	: DeclareMetaTypeArrayBase <T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <const T[]>
-	: public DeclareMetaTypeArrayBase <const T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <const T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const T[N]>
-	: public DeclareMetaTypeArrayBase <const T[N], N>
+	: DeclareMetaTypeArrayBase <const T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <volatile T[]>
-	: public DeclareMetaTypeArrayBase <volatile T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <volatile T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <volatile T[N]>
-	: public DeclareMetaTypeArrayBase <volatile T[N], N>
+	: DeclareMetaTypeArrayBase <volatile T[N], N>
 {
 };
 
 template <typename T>
 struct DeclareMetaTypeBase <const volatile T[]>
-	: public DeclareMetaTypeArrayBase <const volatile T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <const volatile T[], MetaIndexable::unknowSize>
 {
 };
 
 template <typename T, int N>
 struct DeclareMetaTypeBase <const volatile T[N]>
-	: public DeclareMetaTypeArrayBase <const volatile T[N], N>
+	: DeclareMetaTypeArrayBase <const volatile T[N], N>
 {
 };
 

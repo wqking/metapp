@@ -25,7 +25,7 @@ namespace metapp {
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <std::function<RT (Args...)> >
-	: public MetaCallableBase <std::function<RT (Args...)>, void, RT, Args...>
+	: MetaCallableBase <std::function<RT (Args...)>, void, RT, Args...>
 {
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkStdFunction;

@@ -27,8 +27,8 @@ namespace metapp {
 
 template <typename T, typename Allocator>
 struct DeclareMetaTypeBase <std::vector<T, Allocator> >
-	: public MetaIndexableBase<std::vector<T, Allocator> >,
-		public MetaIterableBase<std::vector<T, Allocator> >
+	: MetaIndexableBase<std::vector<T, Allocator> >,
+		MetaIterableBase<std::vector<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdVector;

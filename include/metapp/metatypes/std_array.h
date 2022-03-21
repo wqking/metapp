@@ -28,8 +28,8 @@ namespace metapp {
 
 template <typename T, size_t length>
 struct DeclareMetaTypeBase <std::array<T, length> >
-	: public MetaIndexableBase<std::array<T, length> >,
-		public MetaIterableBase<std::array<T, length> >
+	: MetaIndexableBase<std::array<T, length> >,
+		MetaIterableBase<std::array<T, length> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdArray;

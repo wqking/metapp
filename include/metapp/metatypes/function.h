@@ -24,7 +24,7 @@ namespace metapp {
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (*)(Args...)>
-	: public MetaCallableBase<RT (*)(Args...), void, RT, Args...>
+	: MetaCallableBase<RT (*)(Args...), void, RT, Args...>
 {
 public:
 	using UpType = TypeList<RT, Args...>;
@@ -34,7 +34,7 @@ public:
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Args...)>
-	: public DeclareMetaTypeBase <RT (*)(Args...)>
+	: DeclareMetaTypeBase <RT (*)(Args...)>
 {
 };
 
@@ -42,13 +42,13 @@ struct DeclareMetaTypeBase <RT (Args...)>
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (*)(Args...) noexcept>
-	: public DeclareMetaTypeBase <RT (*)(Args...)>
+	: DeclareMetaTypeBase <RT (*)(Args...)>
 {
 };
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Args...) noexcept>
-	: public DeclareMetaTypeBase <RT (Args...)>
+	: DeclareMetaTypeBase <RT (Args...)>
 {
 };
 

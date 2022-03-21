@@ -32,7 +32,7 @@ volatile size_t setupCalledCount = 0;
 } // namespace
 
 template <>
-struct metapp::DeclareMetaType <SetupClass> : public metapp::DeclareMetaTypeBase <SetupClass>
+struct metapp::DeclareMetaType <SetupClass> : metapp::DeclareMetaTypeBase <SetupClass>
 {
 	static void setup() {
 		++setupCalledCount;

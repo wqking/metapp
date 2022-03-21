@@ -253,7 +253,7 @@ struct MyClass
 	}
 };
 
-struct Derived : public MyClass
+struct Derived : MyClass
 {
 	using MyClass::MyClass;
 

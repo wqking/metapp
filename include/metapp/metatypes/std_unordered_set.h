@@ -26,7 +26,7 @@ namespace metapp {
 
 template <typename Key, typename Hash, typename KeyEqual, typename Allocator>
 struct DeclareMetaTypeBase <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
-	: public MetaIterableBase <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
+	: MetaIterableBase <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdUnorderedSet;
@@ -35,7 +35,7 @@ struct DeclareMetaTypeBase <std::unordered_set<Key, Hash, KeyEqual, Allocator> >
 
 template <typename Key, typename Hash, typename KeyEqual, typename Allocator>
 struct DeclareMetaTypeBase <std::unordered_multiset<Key, Hash, KeyEqual, Allocator> >
-	: public MetaIterableBase <std::unordered_multiset<Key, Hash, KeyEqual, Allocator> >
+	: MetaIterableBase <std::unordered_multiset<Key, Hash, KeyEqual, Allocator> >
 {
 	using UpType = Key;
 	static constexpr TypeKind typeKind = tkStdUnorderedMultiset;

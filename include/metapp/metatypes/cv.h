@@ -22,19 +22,19 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeRoot <const T> : public DeclareMetaType<T>
+struct DeclareMetaTypeRoot <const T> : DeclareMetaType<T>
 {
 	static constexpr TypeFlags typeFlags = tfConst;
 };
 
 template <typename T>
-struct DeclareMetaTypeRoot <volatile T> : public DeclareMetaType<T>
+struct DeclareMetaTypeRoot <volatile T> : DeclareMetaType<T>
 {
 	static constexpr TypeFlags typeFlags = tfVolatile;
 };
 
 template <typename T>
-struct DeclareMetaTypeRoot <const volatile T> : public DeclareMetaType<T>
+struct DeclareMetaTypeRoot <const volatile T> : DeclareMetaType<T>
 {
 	static constexpr TypeFlags typeFlags = tfConst | tfVolatile;
 };

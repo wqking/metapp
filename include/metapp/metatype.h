@@ -210,8 +210,8 @@ protected:
 
 template <typename T>
 struct CommonDeclareMetaType
-	: public internal_::CommonDeclareMetaTypeBase,
-		public SelectMetaStreamingBase<T>
+	: internal_::CommonDeclareMetaTypeBase,
+		SelectMetaStreamingBase<T>
 {
 private:
 	using Type = T;
@@ -260,12 +260,12 @@ struct DeclareMetaTypeRoot
 };
 
 template <typename T, typename Enabled = void>
-struct DeclareMetaTypeBase : public DeclareMetaTypeRoot<T>
+struct DeclareMetaTypeBase : DeclareMetaTypeRoot<T>
 {
 };
 
 template <typename T, typename Enabled>
-struct DeclareMetaType : public DeclareMetaTypeBase<T>
+struct DeclareMetaType : DeclareMetaTypeBase<T>
 {
 };
 

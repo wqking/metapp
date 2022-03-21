@@ -56,7 +56,7 @@ enum class EnumHuman : char {
 };
 
 template <>
-struct metapp::DeclareMetaType <EnumHuman> : public metapp::DeclareMetaTypeBase <EnumHuman>
+struct metapp::DeclareMetaType <EnumHuman> : metapp::DeclareMetaTypeBase <EnumHuman>
 {
 	static constexpr metapp::TypeKind typeKind = 2000;
 

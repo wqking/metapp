@@ -40,7 +40,7 @@ struct A
 } // namespace
 
 template <>
-struct metapp::DeclareMetaType <A> : public metapp::DeclareMetaTypeBase <A>
+struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 {
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(

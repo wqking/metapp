@@ -56,7 +56,7 @@ bool C::staticValue = true;
 } // namespace
 
 template <>
-struct metapp::DeclareMetaType <A> : public metapp::DeclareMetaTypeBase <A>
+struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 {
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
@@ -72,7 +72,7 @@ struct metapp::DeclareMetaType <A> : public metapp::DeclareMetaTypeBase <A>
 };
 
 template <>
-struct metapp::DeclareMetaType <B> : public metapp::DeclareMetaTypeBase <B>
+struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
@@ -93,7 +93,7 @@ struct metapp::DeclareMetaType <B> : public metapp::DeclareMetaTypeBase <B>
 };
 
 template <>
-struct metapp::DeclareMetaType <B2> : public metapp::DeclareMetaTypeBase <B2>
+struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 {
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
@@ -108,7 +108,7 @@ struct metapp::DeclareMetaType <B2> : public metapp::DeclareMetaTypeBase <B2>
 };
 
 template <>
-struct metapp::DeclareMetaType <C> : public metapp::DeclareMetaTypeBase <C>
+struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{

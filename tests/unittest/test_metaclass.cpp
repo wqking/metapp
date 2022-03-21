@@ -61,7 +61,7 @@ constexpr metapp::TypeKind tkSonFirst = metapp::tkUser + 10;
 constexpr metapp::TypeKind tkSonFirstSecond = metapp::tkUser + 11;
 
 template <>
-struct metapp::DeclareMetaType <BaseFirst> : public metapp::DeclareMetaTypeBase <BaseFirst>
+struct metapp::DeclareMetaType <BaseFirst> : metapp::DeclareMetaTypeBase <BaseFirst>
 {
 	static constexpr metapp::TypeKind typeKind = tkBaseFirst;
 
@@ -80,7 +80,7 @@ struct metapp::DeclareMetaType <BaseFirst> : public metapp::DeclareMetaTypeBase 
 };
 
 template <>
-struct metapp::DeclareMetaType <SonFirst> : public metapp::DeclareMetaTypeBase <SonFirst>
+struct metapp::DeclareMetaType <SonFirst> : metapp::DeclareMetaTypeBase <SonFirst>
 {
 	static constexpr metapp::TypeKind typeKind = tkSonFirst;
 
@@ -96,7 +96,7 @@ struct metapp::DeclareMetaType <SonFirst> : public metapp::DeclareMetaTypeBase <
 };
 
 template <>
-struct metapp::DeclareMetaType <SonFirstSecond> : public metapp::DeclareMetaTypeBase <SonFirstSecond>
+struct metapp::DeclareMetaType <SonFirstSecond> : metapp::DeclareMetaTypeBase <SonFirstSecond>
 {
 	static constexpr metapp::TypeKind typeKind = tkSonFirstSecond;
 

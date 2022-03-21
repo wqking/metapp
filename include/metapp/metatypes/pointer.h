@@ -34,7 +34,7 @@ struct DeclareMetaTypePointerBase
 };
 
 template <typename T>
-struct DeclareMetaTypeBase <T *> : public DeclareMetaTypePointerBase<T *>
+struct DeclareMetaTypeBase <T *> : DeclareMetaTypePointerBase<T *>
 {
 private:
 	static_assert(! std::is_void<T>::value, "T should not be void in T * specialization.");
@@ -64,33 +64,33 @@ public:
 };
 
 template <typename T>
-struct DeclareMetaTypeVoidPtrBase : public DeclareMetaTypePointerBase<T>
+struct DeclareMetaTypeVoidPtrBase : DeclareMetaTypePointerBase<T>
 {
 public:
 };
 
 template <>
-struct DeclareMetaTypeBase <void *> : public DeclareMetaTypeVoidPtrBase<void *>
+struct DeclareMetaTypeBase <void *> : DeclareMetaTypeVoidPtrBase<void *>
 {
 };
 
 template <>
-struct DeclareMetaTypeBase <const void *> : public DeclareMetaTypeVoidPtrBase<const void *>
+struct DeclareMetaTypeBase <const void *> : DeclareMetaTypeVoidPtrBase<const void *>
 {
 };
 
 template <>
-struct DeclareMetaTypeBase <volatile void *> : public DeclareMetaTypeVoidPtrBase<volatile void *>
+struct DeclareMetaTypeBase <volatile void *> : DeclareMetaTypeVoidPtrBase<volatile void *>
 {
 };
 
 template <>
-struct DeclareMetaTypeBase <const volatile void *> : public DeclareMetaTypeVoidPtrBase<const volatile void *>
+struct DeclareMetaTypeBase <const volatile void *> : DeclareMetaTypeVoidPtrBase<const volatile void *>
 {
 };
 
 template <>
-struct DeclareMetaTypeBase <std::nullptr_t> : public DeclareMetaTypeBase<void *>
+struct DeclareMetaTypeBase <std::nullptr_t> : DeclareMetaTypeBase<void *>
 {
 };
 

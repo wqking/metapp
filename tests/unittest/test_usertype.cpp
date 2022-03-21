@@ -29,14 +29,14 @@ struct UseTypeMyClass
 };
 
 template <>
-struct metapp::DeclareMetaType <UseTypeMyClass> : public metapp::DeclareMetaTypeBase <UseTypeMyClass>
+struct metapp::DeclareMetaType <UseTypeMyClass> : metapp::DeclareMetaTypeBase <UseTypeMyClass>
 {
 	static constexpr metapp::TypeKind typeKind = 2000;
 
 };
 
 template <>
-struct metapp::DeclareMetaType <UseTypeMyClass *> : public metapp::DeclareMetaTypeBase <UseTypeMyClass *>
+struct metapp::DeclareMetaType <UseTypeMyClass *> : metapp::DeclareMetaTypeBase <UseTypeMyClass *>
 {
 	static constexpr metapp::TypeKind typeKind = 2001;
 };
