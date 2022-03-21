@@ -18,7 +18,6 @@
 #define METAPP_METAREPOBASE_I_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/methodlist.h"
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
 
@@ -48,6 +47,10 @@ public:
 	const std::string & getName() const {
 		assert(isValid());
 		return *name;
+	}
+
+	operator const Variant & () const {
+		return *member;
 	}
 
 protected:
@@ -87,6 +90,9 @@ namespace internal_ {
 
 class MetaRepoBase
 {
+protected:
+	using MethodList = std::vector<Variant>;
+
 public:
 	MetaRepoBase()
 		:
@@ -149,7 +155,7 @@ public:
 		if(it == methodListMap.end()) {
 			it = methodListMap.insert(std::make_pair(name, MethodList())).first;
 		}
-		it->second.addMethod(method);
+		it->second.push_back(method);
 	}
 
 	void addField(const std::string & name, const Variant & field) {
@@ -177,8 +183,8 @@ protected:
 
 	MethodInfo doGetMethod(const std::string & name) const {
 		auto it = methodListMap.find(name);
-		if(it != methodListMap.end() && it->second.getCount() > 0) {
-			return MethodInfo(&it->first, &it->second.get(0));
+		if(it != methodListMap.end() && ! it->second.empty()) {
+			return MethodInfo(&it->first, &*it->second.begin());
 		}
 		return MethodInfo();
 	}
@@ -188,9 +194,8 @@ protected:
 		if(it != methodListMap.end()) {
 			const std::string & name = it->first;
 			const MethodList & methodList = it->second;
-			const size_t count = methodList.getCount();
-			for(size_t i = 0; i < count; ++i) {
-				result.emplace_back(&name, &methodList.get(i));
+			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
+				result.emplace_back(&name, &*i);
 			}
 		}
 	}
@@ -199,9 +204,8 @@ protected:
 		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
 			const std::string & name = it->first;
 			const MethodList & methodList = it->second;
-			const size_t count = methodList.getCount();
-			for(size_t i = 0; i < count; ++i) {
-				result.emplace_back(&name, &methodList.get(i));
+			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
+				result.emplace_back(&name, &*i);
 			}
 		}
 	}

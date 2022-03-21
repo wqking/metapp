@@ -17,32 +17,29 @@
 #include "test.h"
 
 #include "metapp/variant.h"
-#include "metapp/methodlist.h"
 #include "metapp/metatypes/metatypes.h"
+#include "metapp/utils/utility.h"
 
 #include <string>
-#include <iostream>
-#include <climits>
 
 
-TEST_CASE("MethodList")
+TEST_CASE("Overloaded methods")
 {
-	metapp::MethodList methodList;
-	methodList.addMethod(std::function<int (int)>([](const int n) {
+	std::vector<metapp::Variant> methodList;
+	methodList.push_back(std::function<int (int)>([](const int n) {
 		return n * 2;
 	}));
-	methodList.addMethod(std::function<int (long)>([](const long n) {
+	methodList.push_back(std::function<int (long)>([](const long n) {
 		return (int)n * 3;
 	}));
-	const metapp::Variant * callable;
 	metapp::Variant arguments[] = { 5 };
-	REQUIRE(&methodList.findCallable(arguments, 1) == &methodList.get(0));
-	callable = &methodList.findCallable(arguments, 1);
-	REQUIRE(callable->getMetaType()->getMetaCallable()->invoke(*callable, nullptr, arguments, 1).get<int>() == 10);
+	auto it = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 1);
+	REQUIRE(it == methodList.begin());
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<int>() == 10);
 
 	arguments[0] = 5L;
-	REQUIRE(&methodList.findCallable(arguments, 1) == &methodList.get(1));
-	callable = &methodList.findCallable(arguments, 1);
-	REQUIRE(callable->getMetaType()->getMetaCallable()->invoke(*callable, nullptr, arguments, 1).get<int>() == 15);
+	it = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 1);
+	REQUIRE(it == methodList.begin() + 1);
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<int>() == 15);
 }
 

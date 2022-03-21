@@ -54,7 +54,7 @@ public:
 		if(! constructorList) {
 			constructorList = std::make_shared<MethodList>();
 		}
-		constructorList->addMethod(constructor);
+		constructorList->push_back(constructor);
 	}
 	
 	const MethodList * getConstructorList() const {

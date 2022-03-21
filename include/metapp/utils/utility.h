@@ -58,6 +58,28 @@ inline Variant invokeCallable(const Variant & func, void * instance, Args ...arg
 	return CallableInvoker<Args...>::invoke(func, instance, args...);
 }
 
+template <typename Iterator>
+Iterator findCallable(
+	Iterator first,
+	Iterator last,
+	const Variant * arguments,
+	const size_t argumentCount
+)
+{
+	Iterator result = last;
+
+	int maxRank = 0;
+	for(; first != last; ++first) {
+		const Variant & callable = (const Variant &)*first;
+		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+		if(rank > maxRank) {
+			maxRank = rank;
+			result = first;
+		}
+	}
+	return result;
+}
+
 inline const MetaType * getReferredMetaType(const MetaType * metaType)
 {
 	if(metaType->isPointer() || metaType->isReference()) {
