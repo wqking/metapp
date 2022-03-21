@@ -90,7 +90,7 @@ namespace internal_ {
 
 class MetaRepoBase
 {
-protected:
+private:
 	using MethodList = std::vector<Variant>;
 
 public:

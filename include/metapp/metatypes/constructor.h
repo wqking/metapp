@@ -28,9 +28,16 @@ namespace metapp {
 template <typename T>
 struct Constructor;
 
-template <typename Class, typename ...Args>
-struct Constructor<Class (Args...)>
+template <typename C, typename ...Args>
+struct Constructor<C (Args...)>
 {
+	using Class = typename std::remove_cv<
+		typename std::remove_pointer<
+			typename std::remove_reference<
+				C
+			>::type
+		>::type
+	>::type;
 	Class * operator() (Args ... args) {
 		return new Class(args...);
 	}
@@ -38,11 +45,14 @@ struct Constructor<Class (Args...)>
 
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
-	: public MetaCallableBase<Constructor<Class (Args...)>, void, Class *, Args...>,
+	: public MetaCallableBase<Constructor<Class (Args...)>, void, typename Constructor<Class (Args...)>::Class *, Args...>,
 		public MetaMemberBase<Class>
 {
+private:
+	using ConstructorType = Constructor<Class (Args...)>;
+
 public:
-	using UpType = TypeList<Class, Args...>;
+	using UpType = TypeList<typename ConstructorType::Class, Args...>;
 	static constexpr TypeKind typeKind = tkConstructor;
 
 };

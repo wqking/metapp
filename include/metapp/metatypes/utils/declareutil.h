@@ -98,14 +98,17 @@ struct MetaCallableInvokeChecker
 
 	template <size_t ...Indexes, typename Args>
 	static int doRankInvoke(const Args & arguments, const size_t argumentCount, internal_::SizeConstantList<Indexes...>) {
-		std::array<int, argCount> canCastList {
+		if(argCount == argumentCount && argumentCount == 0) {
+			return 1000;
+		}
+		std::array<int, argCount> rankList {
 			internal_::rankArgumentMatching<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
 		// avoid unused warning if there is no arguments
 		(void)arguments;
 		(void)argumentCount;
-		(void)canCastList;
-		return std::accumulate(std::begin(canCastList), std::end(canCastList), 0);
+		(void)rankList;
+		return std::accumulate(std::begin(rankList), std::end(rankList), 0);
 	}
 };
 

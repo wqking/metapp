@@ -51,14 +51,11 @@ public:
 			errorWrongMetaType();
 			return;
 		}
-		if(! constructorList) {
-			constructorList = std::make_shared<MethodList>();
-		}
-		constructorList->push_back(constructor);
+		constructorList.push_back(constructor);
 	}
 	
-	const MethodList * getConstructorList() const {
-		return constructorList.get();
+	const std::vector<Variant> & getConstructorList() const {
+		return constructorList;
 	}
 
 	FieldInfo getField(const std::string & name, const Flags flags = flagIncludeBase) const {
@@ -159,7 +156,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	std::shared_ptr<MethodList> constructorList;
+	std::vector<Variant> constructorList;
 };
 
 
