@@ -40,6 +40,20 @@ public:
 	void (*set)(const Variant & accessible, void * instance, const Variant & value);
 };
 
+inline const MetaType * accessibleGetValueType(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->getValueType();
+}
+
+inline Variant accessibleGet(const Variant & var, const void * instance)
+{
+	return var.getMetaType()->getMetaAccessible()->get(var, instance);
+}
+
+inline void accessibleSet(const Variant & var, void * instance, const Variant & value)
+{
+	var.getMetaType()->getMetaAccessible()->set(var, instance, value);
+}
 
 } // namespace metapp
 
