@@ -28,7 +28,6 @@ namespace {
 
 TEST_CASE("play camp")
 {
-	//metapp::MetaTypeDumper().dump(std::cout, metapp::getMetaType<std::vector<const char * volatile * (*)(int)> >());
 }
 
 // This test case is used for writting the sample code in the documentation

@@ -154,12 +154,12 @@ TEST_CASE("MetaClass, method, struct B")
 	B b;
 	b.value = 2;
 
-	REQUIRE(! metaClassB->getMethod("notExist").isValid());
+	REQUIRE(metaClassB->getMethod("notExist").isEmpty());
 	
-	const auto & methodB = metaClassB->getMethod("methodB").getMethod();
+	const auto & methodB = metaClassB->getMethod("methodB");
 	REQUIRE(metapp::invokeCallable(methodB, &b, "great").get<const std::string &>() == "goodgreat");
 
-	const auto & virtualMethod = metaClassB->getMethod("virtualMethod").getMethod();
+	const auto & virtualMethod = metaClassB->getMethod("virtualMethod");
 	REQUIRE(metapp::invokeCallable(virtualMethod, &b).get<int>() == 11);
 }
 

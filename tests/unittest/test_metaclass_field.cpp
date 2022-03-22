@@ -138,13 +138,13 @@ TEST_CASE("MetaClass, field, struct B")
 	b.a = 3;
 	b.value = "hello";
 	
-	REQUIRE(! metaClassB->getField("notExist").isValid());
+	REQUIRE(metaClassB->getField("notExist").isEmpty());
 	
-	const auto & value = metaClassB->getField("value").getField();
+	const auto & value = metaClassB->getField("value");
 	REQUIRE(value.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkStdString);
 	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &b).template get<const std::string &>() == "hello");
 
-	const auto & a = metaClassB->getField("a").getField();
+	const auto & a = metaClassB->getField("a");
 	REQUIRE(a.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkInt);
 	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &b).template get<int>() == 3);
 }
@@ -158,21 +158,22 @@ TEST_CASE("MetaClass, field, struct C")
 	c.c = 8;
 	c.value = 5;
 
-	REQUIRE(! metaClassC->getField("notExist").isValid());
+	REQUIRE(metaClassC->getField("notExist").isEmpty());
 
-	const auto & value = metaClassC->getField("value").getField();
+	const auto & value = metaClassC->getField("value");
 	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &c).template get<int>() == 5);
 
-	const auto & a = metaClassC->getField("a").getField();
+	const auto & a = metaClassC->getField("a");
 	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &c).template get<int>() == 3);
 
-	const auto & staticValue = metaClassC->getField("staticValue").getField();
+	const auto & staticValue = metaClassC->getField("staticValue");
 	REQUIRE(staticValue.getMetaType()->getMetaAccessible()->get(staticValue, nullptr).template get<bool>() == true);
 
 	std::map<std::string, int> fieldNameMap;
-	auto fieldList = metaClassC->getFieldList();
-	for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
-		++fieldNameMap[it->getName()];
+	metapp::MetaClass::NameList nameList;
+	auto fieldList = metaClassC->getFieldList(&nameList);
+	for(auto it = nameList.begin(); it != nameList.end(); ++it) {
+		++fieldNameMap[*it];
 	}
 	REQUIRE(fieldNameMap["value"] == 3);
 	REQUIRE(fieldNameMap["c"] == 1);

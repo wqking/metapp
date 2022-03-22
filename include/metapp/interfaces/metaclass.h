@@ -54,97 +54,97 @@ public:
 		constructorList.push_back(constructor);
 	}
 	
-	const std::vector<Variant> & getConstructorList() const {
-		return constructorList;
+	VariantList getConstructorList() const {
+		return VariantList(constructorList.begin(), constructorList.end());
 	}
 
-	FieldInfo getField(const std::string & name, const Flags flags = flagIncludeBase) const {
+	const Variant & getField(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
-			FieldInfo result;
+			const Variant * result = &getEmptyVariant();
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					result = metaClass->doGetField(name);
-					if(result.isValid()) {
+					result = &metaClass->doGetField(name);
+					if(! result->isEmpty()) {
 						return false;
 					}
 				}
 				return true;
 				});
-			return result;
+			return *result;
 		}
 		else {
 			return doGetField(name);
 		}
 	}
 
-	std::vector<FieldInfo> getFieldList(const Flags flags = flagIncludeBase) const {
-		std::vector<FieldInfo> result;
+	VariantList getFieldList(NameList * resultNameList = nullptr, const Flags flags = flagIncludeBase) const {
+		VariantList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+			getInheritanceRepo()->traverse(classMetaType, [&result, resultNameList](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					metaClass->doGetFieldList(result);
+					metaClass->doGetFieldList(&result, resultNameList);
 				}
 				return true;
 			});
 		}
 		else {
-			doGetFieldList(result);
+			doGetFieldList(&result, resultNameList);
 		}
 		return result;
 	}
 
-	MethodInfo getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
+	const Variant & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
-			MethodInfo result;
+			const Variant * result = &getEmptyVariant();
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					result = metaClass->doGetMethod(name);
-					if(result.isValid()) {
+					result = &metaClass->doGetMethod(name);
+					if(! result->isEmpty()) {
 						return false;
 					}
 				}
 				return true;
 			});
-			return result;
+			return *result;
 		}
 		else {
 			return doGetMethod(name);
 		}
 	}
 
-	std::vector<MethodInfo> getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
-		std::vector<MethodInfo> result;
+	VariantList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
+		VariantList result;
 		if(hasFlag(flags, flagIncludeBase)) {
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					metaClass->doGetMethodList(name, result);
+					metaClass->doGetMethodList(name, &result);
 				}
 				return true;
 			});
 		}
 		else {
-			doGetMethodList(name, result);
+			doGetMethodList(name, &result);
 		}
 		return result;
 	}
 
-	std::vector<MethodInfo> getMethodList(const Flags flags = flagIncludeBase) const {
-		std::vector<MethodInfo> result;
+	VariantList getMethodList(NameList * resultNameList = nullptr, const Flags flags = flagIncludeBase) const {
+		VariantList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+			getInheritanceRepo()->traverse(classMetaType, [&result, resultNameList](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					metaClass->doGetMethodList(result);
+					metaClass->doGetMethodList(&result, resultNameList);
 				}
 				return true;
 			});
 		}
 		else {
-			doGetMethodList(result);
+			doGetMethodList(&result, resultNameList);
 		}
 		return result;
 	}

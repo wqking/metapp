@@ -27,71 +27,16 @@
 
 namespace metapp {
 
-class MemberInfo
-{
-public:
-	MemberInfo()
-		: name(), member()
-	{
-	}
-
-	MemberInfo(const std::string * name, const Variant * member)
-		: name(name), member(member)
-	{
-	}
-
-	bool isValid() const {
-		return member != nullptr;
-	}
-
-	const std::string & getName() const {
-		assert(isValid());
-		return *name;
-	}
-
-	operator const Variant & () const {
-		return *member;
-	}
-
-protected:
-	const Variant & doGet() const {
-		assert(isValid());
-		return *member;
-	}
-
-private:
-	const std::string * name;
-	const Variant * member;
-};
-
-class FieldInfo : public MemberInfo
-{
-public:
-	using MemberInfo::MemberInfo;
-
-	const Variant & getField() const {
-		return doGet();
-	}
-
-};
-
-class MethodInfo : public MemberInfo
-{
-public:
-	using MemberInfo::MemberInfo;
-
-	const Variant & getMethod() const {
-		return doGet();
-	}
-
-};
-
 namespace internal_ {
 
 class MetaRepoBase
 {
 private:
 	using MethodList = std::vector<Variant>;
+
+public:
+	using VariantList = std::vector<std::reference_wrapper<const Variant> >;
+	using NameList = std::vector<std::reference_wrapper<const std::string> >;
 
 public:
 	MetaRepoBase()
@@ -167,45 +112,50 @@ public:
 	}
 
 protected:
-	void doGetFieldList(std::vector<FieldInfo> & result) const {
+	void doGetFieldList(VariantList * result, NameList * nameList) const {
 		for(auto it = std::begin(fieldMap); it != std::end(fieldMap); ++it) {
-			result.emplace_back(&it->first, &it->second);
-		}
-	}
-
-	FieldInfo doGetField(const std::string & name) const {
-		auto it = fieldMap.find(name);
-		if(it != fieldMap.end()) {
-			return FieldInfo(&it->first, &it->second);
-		}
-		return FieldInfo();
-	}
-
-	MethodInfo doGetMethod(const std::string & name) const {
-		auto it = methodListMap.find(name);
-		if(it != methodListMap.end() && ! it->second.empty()) {
-			return MethodInfo(&it->first, &*it->second.begin());
-		}
-		return MethodInfo();
-	}
-
-	void doGetMethodList(const std::string & methodName, std::vector<MethodInfo> & result) const {
-		auto it = methodListMap.find(methodName);
-		if(it != methodListMap.end()) {
-			const std::string & name = it->first;
-			const MethodList & methodList = it->second;
-			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
-				result.emplace_back(&name, &*i);
+			result->emplace_back(it->second);
+			if(nameList != nullptr) {
+				nameList->emplace_back(it->first);
 			}
 		}
 	}
 
-	void doGetMethodList(std::vector<MethodInfo> & result) const {
+	const Variant & doGetField(const std::string & name) const {
+		auto it = fieldMap.find(name);
+		if(it != fieldMap.end()) {
+			return it->second;
+		}
+		return getEmptyVariant();
+	}
+
+	const Variant & doGetMethod(const std::string & name) const {
+		auto it = methodListMap.find(name);
+		if(it != methodListMap.end() && ! it->second.empty()) {
+			return *it->second.begin();
+		}
+		return getEmptyVariant();
+	}
+
+	void doGetMethodList(const std::string & methodName, VariantList * result) const {
+		auto it = methodListMap.find(methodName);
+		if(it != methodListMap.end()) {
+			const MethodList & methodList = it->second;
+			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
+				result->emplace_back(*i);
+			}
+		}
+	}
+
+	void doGetMethodList(VariantList * result, NameList * nameList) const {
 		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
 			const std::string & name = it->first;
 			const MethodList & methodList = it->second;
 			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
-				result.emplace_back(&name, &*i);
+				result->emplace_back(*i);
+				if(nameList != nullptr) {
+					nameList->emplace_back(name);
+				}
 			}
 		}
 	}
