@@ -13,6 +13,7 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 - **Flexible and easy to use**
     - Building meta data doesn't require preprocessor or any external tool. Only use native C++ code, no need macros.
     - Non-intrusive. You don't need to change your code for reflection.
+    - Easy to reflect templates. Indeed there are built-in reflections for STL containers such std::vector.
     - Loose coupled design. For example, constructors and member functions can be used without the class information.
     - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead. If you don't use the meta data, no any performance overhead. If you build and use the meta data, you get trivial memory and performance overhead beside very powerful reflection system.
     - Doesn't require C++ RTTI.

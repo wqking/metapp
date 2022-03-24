@@ -87,6 +87,30 @@ struct metapp::DeclareMetaType <MyClass>
 }
 ```
 
+#### Function setup
+```c++
+static void setup();
+```
+
+Function `setup` is invoked on the first time when the MetaType is initialized. It will be called only once for one MetaType.  
+`setup` is useful when the `DeclareMetaType` needs to do initialize work. One use case is to register inheritance relationship.  
+
+**Example** 
+struct A {};
+struct B {};
+struct C : A, B {};
+
+template <>
+struct metapp::DeclareMetaType <C>
+	: metapp::DeclareMetaTypeBase <C>
+{
+	static void setup() {
+		metapp::getInheritanceRepo()->registerBase<C, A, B>();
+	}
+}
+```
+
+
 ## Members in DeclareMetaType, usually don't need to be re-implemented
 
 #### Type UpType
