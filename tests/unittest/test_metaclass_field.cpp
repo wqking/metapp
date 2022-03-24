@@ -140,13 +140,13 @@ TEST_CASE("MetaClass, field, struct B")
 	
 	REQUIRE(metaClassB->getField("notExist").isEmpty());
 	
-	const auto & value = metaClassB->getField("value");
-	REQUIRE(value.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkStdString);
-	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &b).template get<const std::string &>() == "hello");
+	const auto & field = metaClassB->getField("value");
+	REQUIRE(field.getValueType()->getTypeKind() == metapp::tkStdString);
+	REQUIRE(field.get(&b).template get<const std::string &>() == "hello");
 
 	const auto & a = metaClassB->getField("a");
-	REQUIRE(a.getMetaType()->getMetaAccessible()->getValueType()->getTypeKind() == metapp::tkInt);
-	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &b).template get<int>() == 3);
+	REQUIRE(a.getValueType()->getTypeKind() == metapp::tkInt);
+	REQUIRE(a.get(&b).template get<int>() == 3);
 }
 
 TEST_CASE("MetaClass, field, struct C")
@@ -160,20 +160,19 @@ TEST_CASE("MetaClass, field, struct C")
 
 	REQUIRE(metaClassC->getField("notExist").isEmpty());
 
-	const auto & value = metaClassC->getField("value");
-	REQUIRE(value.getMetaType()->getMetaAccessible()->get(value, &c).template get<int>() == 5);
+	const auto & field = metaClassC->getField("value");
+	REQUIRE(field.get(&c).template get<int>() == 5);
 
 	const auto & a = metaClassC->getField("a");
-	REQUIRE(a.getMetaType()->getMetaAccessible()->get(a, &c).template get<int>() == 3);
+	REQUIRE(a.get(&c).template get<int>() == 3);
 
 	const auto & staticValue = metaClassC->getField("staticValue");
-	REQUIRE(staticValue.getMetaType()->getMetaAccessible()->get(staticValue, nullptr).template get<bool>() == true);
+	REQUIRE(staticValue.get(nullptr).template get<bool>() == true);
 
 	std::map<std::string, int> fieldNameMap;
-	metapp::MetaClass::NameList nameList;
-	auto fieldList = metaClassC->getFieldList(&nameList);
-	for(auto it = nameList.begin(); it != nameList.end(); ++it) {
-		++fieldNameMap[*it];
+	auto fieldList = metaClassC->getFieldList();
+	for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
+		++fieldNameMap[it->get().getName()];
 	}
 	REQUIRE(fieldNameMap["value"] == 3);
 	REQUIRE(fieldNameMap["c"] == 1);

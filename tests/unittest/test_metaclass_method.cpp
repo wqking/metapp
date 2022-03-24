@@ -157,9 +157,9 @@ TEST_CASE("MetaClass, method, struct B")
 	REQUIRE(metaClassB->getMethod("notExist").isEmpty());
 	
 	const auto & methodB = metaClassB->getMethod("methodB");
-	REQUIRE(metapp::invokeCallable(methodB, &b, "great").get<const std::string &>() == "goodgreat");
+	REQUIRE(metapp::invokeCallable(methodB.getMethod(), &b, "great").get<const std::string &>() == "goodgreat");
 
 	const auto & virtualMethod = metaClassB->getMethod("virtualMethod");
-	REQUIRE(metapp::invokeCallable(virtualMethod, &b).get<int>() == 11);
+	REQUIRE(metapp::invokeCallable(virtualMethod.getMethod(), &b).get<int>() == 11);
 }
 

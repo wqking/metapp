@@ -20,8 +20,11 @@
 #include "metapp/metatype.h"
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
+#include "metapp/registration/registeredfield.h"
+#include "metapp/registration/registeredmethod.h"
 
 #include <map>
+#include <deque>
 #include <memory>
 #include <functional>
 
@@ -32,7 +35,12 @@ namespace internal_ {
 class MetaRepoBase
 {
 private:
-	using MethodList = std::vector<Variant>;
+	using XXXMethodList = std::vector<Variant>;
+	struct NamedMethodList
+	{
+		std::string name;
+		std::vector<RegisteredMethod> methods;
+	};
 
 public:
 	using VariantList = std::vector<std::reference_wrapper<const Variant> >;
@@ -43,8 +51,10 @@ public:
 		:
 			nameTypeMap(),
 			kindTypeMap(),
-			methodListMap(),
-			fieldMap()
+			methodMap(),
+			namedMethodListList(),
+			fieldMap(),
+			fieldList()
 	{
 	}
 
@@ -96,66 +106,71 @@ public:
 			errorWrongMetaType();
 			return;
 		}
-		auto it = methodListMap.find(name);
-		if(it == methodListMap.end()) {
-			it = methodListMap.insert(std::make_pair(name, MethodList())).first;
+
+		auto it = methodMap.find(name);
+		NamedMethodList * methodList = nullptr;
+		if(it == methodMap.end()) {
+			namedMethodListList.push_back({ name, std::vector<RegisteredMethod>() });
+			methodList = &namedMethodListList.back();
+			methodMap.insert(typename decltype(methodMap)::value_type(methodList->name, *methodList));
 		}
-		it->second.push_back(method);
+		else {
+			methodList = &it->second.get();
+		}
+		methodList->methods.push_back(RegisteredMethod(name, method));
 	}
 
-	void addField(const std::string & name, const Variant & field) {
+	RegisteredField & addField(const std::string & name, const Variant & field) {
 		if(field.getMetaType()->getMetaAccessible() == nullptr) {
 			errorWrongMetaType();
-			return;
 		}
-		fieldMap[name]= field;
-	}
 
-protected:
-	void doGetFieldList(VariantList * result, NameList * nameList) const {
-		for(auto it = std::begin(fieldMap); it != std::end(fieldMap); ++it) {
-			result->emplace_back(it->second);
-			if(nameList != nullptr) {
-				nameList->emplace_back(it->first);
-			}
-		}
-	}
-
-	const Variant & doGetField(const std::string & name) const {
 		auto it = fieldMap.find(name);
 		if(it != fieldMap.end()) {
 			return it->second;
 		}
-		return getEmptyVariant();
+		fieldList.push_back(RegisteredField(name, field));
+		RegisteredField & registeredField = fieldList.back();
+		fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), registeredField));
+		return registeredField;
 	}
 
-	const Variant & doGetMethod(const std::string & name) const {
-		auto it = methodListMap.find(name);
-		if(it != methodListMap.end() && ! it->second.empty()) {
-			return *it->second.begin();
+protected:
+	void doGetFieldList(RegisteredFieldList * result) const {
+		for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
+			result->push_back(std::ref(*it));
 		}
-		return getEmptyVariant();
 	}
 
-	void doGetMethodList(const std::string & methodName, VariantList * result) const {
-		auto it = methodListMap.find(methodName);
-		if(it != methodListMap.end()) {
-			const MethodList & methodList = it->second;
-			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
-				result->emplace_back(*i);
+	const RegisteredField & doGetField(const std::string & name) const {
+		auto it = fieldMap.find(name);
+		if(it != fieldMap.end()) {
+			return it->second;
+		}
+		return RegisteredField::getEmpty();
+	}
+
+	const RegisteredMethod & doGetMethod(const std::string & name) const {
+		auto it = methodMap.find(name);
+		if(it != methodMap.end()) {
+			return it->second.get().methods[0];
+		}
+		return RegisteredMethod::getEmpty();
+	}
+
+	void doGetMethodList(const std::string & name, RegisteredMethodList * result) const {
+		auto it = methodMap.find(name);
+		if(it != methodMap.end()) {
+			for(auto i = it->second.get().methods.begin(); i != it->second.get().methods.end(); ++i) {
+				result->push_back(std::ref(*i));
 			}
 		}
 	}
 
-	void doGetMethodList(VariantList * result, NameList * nameList) const {
-		for(auto it = std::begin(methodListMap); it != std::end(methodListMap); ++it) {
-			const std::string & name = it->first;
-			const MethodList & methodList = it->second;
-			for(auto i = methodList.begin(); i != methodList.end(); ++i) {
-				result->emplace_back(*i);
-				if(nameList != nullptr) {
-					nameList->emplace_back(name);
-				}
+	void doGetMethodList(RegisteredMethodList * result) const {
+		for(auto it = namedMethodListList.begin(); it != namedMethodListList.end(); ++it) {
+			for(auto i = it->methods.begin(); i != it->methods.end(); ++i) {
+				result->push_back(std::ref(*i));
 			}
 		}
 	}
@@ -163,8 +178,20 @@ protected:
 private:
 	std::map<std::string, const MetaType *> nameTypeMap;
 	std::map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
-	std::map<std::string, MethodList> methodListMap;
-	std::map<std::string, Variant> fieldMap;
+
+	std::map<
+		std::reference_wrapper<const std::string>,
+		std::reference_wrapper<NamedMethodList>,
+		std::less<const std::string>
+	> methodMap;
+	std::deque<NamedMethodList> namedMethodListList;
+
+	std::map<
+		std::reference_wrapper<const std::string>,
+		std::reference_wrapper<RegisteredField>,
+		std::less<const std::string>
+	> fieldMap;
+	std::deque<RegisteredField> fieldList;
 };
 
 

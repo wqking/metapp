@@ -20,6 +20,7 @@
 #include "metapp/implement/internal/metaclass_i.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/inheritancerepo.h"
+#include "metapp/registration/registeredconstructor.h"
 
 #include <vector>
 #include <memory>
@@ -46,21 +47,25 @@ public:
 		callback(*this);
 	}
 
-	void addConstructor(const Variant & constructor) {
+	RegisteredConstructor & addConstructor(const Variant & constructor) {
 		if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 			errorWrongMetaType();
-			return;
 		}
-		constructorList.push_back(constructor);
+		constructorList.push_back(RegisteredConstructor(constructor));
+		return constructorList.back();
 	}
 	
-	VariantList getConstructorList() const {
-		return VariantList(constructorList.begin(), constructorList.end());
+	RegisteredConstructorList getConstructorList() const {
+		RegisteredConstructorList result;
+		for(auto it = constructorList.begin(); it != constructorList.end(); ++it) {
+			result.push_back(std::ref(*it));
+		}
+		return result;
 	}
 
-	const Variant & getField(const std::string & name, const Flags flags = flagIncludeBase) const {
+	const RegisteredField & getField(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
-			const Variant * result = &getEmptyVariant();
+			const RegisteredField * result = &RegisteredField::getEmpty();
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
@@ -78,26 +83,26 @@ public:
 		}
 	}
 
-	VariantList getFieldList(NameList * resultNameList = nullptr, const Flags flags = flagIncludeBase) const {
-		VariantList result;
+	RegisteredFieldList getFieldList(const Flags flags = flagIncludeBase) const {
+		RegisteredFieldList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result, resultNameList](const MetaType * metaType) -> bool {
+			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					metaClass->doGetFieldList(&result, resultNameList);
+					metaClass->doGetFieldList(&result);
 				}
 				return true;
 			});
 		}
 		else {
-			doGetFieldList(&result, resultNameList);
+			doGetFieldList(&result);
 		}
 		return result;
 	}
 
-	const Variant & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
+	const RegisteredMethod & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
-			const Variant * result = &getEmptyVariant();
+			const RegisteredMethod * result = &RegisteredMethod::getEmpty();
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
@@ -115,8 +120,8 @@ public:
 		}
 	}
 
-	VariantList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
-		VariantList result;
+	RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
+		RegisteredMethodList result;
 		if(hasFlag(flags, flagIncludeBase)) {
 			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
@@ -132,19 +137,19 @@ public:
 		return result;
 	}
 
-	VariantList getMethodList(NameList * resultNameList = nullptr, const Flags flags = flagIncludeBase) const {
-		VariantList result;
+	RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const {
+		RegisteredMethodList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result, resultNameList](const MetaType * metaType) -> bool {
+			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
-					metaClass->doGetMethodList(&result, resultNameList);
+					metaClass->doGetMethodList(&result);
 				}
 				return true;
 			});
 		}
 		else {
-			doGetMethodList(&result, resultNameList);
+			doGetMethodList(&result);
 		}
 		return result;
 	}
@@ -156,7 +161,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	std::vector<Variant> constructorList;
+	std::vector<RegisteredConstructor> constructorList;
 };
 
 

@@ -1,0 +1,63 @@
+# Meta interface overview 
+
+## Overview
+
+Meta interface is an optional way to extend `MetaType` functional. If a template specialization of `DeclareMetaType` implements a meta interface, for example, `MetaClass`, then the user can retrieve the interface `MetaClass` and use all functions provided in `MetaClass`. If the specialization doesn't implement such interface, the user can not use the interface, and thus there is no (almost) any overhead for the interface.  
+Note: the term "interface" here is an extended concept. It's not the "interface" concept in the traditional Object Oriented Programming.  
+
+## Get meta interface from MetaType
+
+There are methods in `MetaType` to get the meta interface. A meta interface is a pointer to the interface.  
+If the meta interface is not implemented, `nullptr` is returned.  
+
+Here is a list of MetaType member functions to retrieve meta interfaces,  
+```c++
+const MetaClass * getMetaClass() const;
+const MetaCallable * getMetaCallable() const;
+const MetaAccessible * getMetaAccessible() const;
+const MetaEnum * getMetaEnum() const;
+const MetaIndexable * getMetaIndexable() const;
+const MetaIterable * getMetaIterable() const;
+const MetaStreaming * getMetaStreaming() const;
+const MetaMap * getMetaMap() const;
+const MetaMember * getMetaMember() const;
+const void * getMetaUser() const;
+```
+
+For example, assume meta type of `MyClass` implements the `MetaClass` interface, then we get the meta interface as,  
+```c++
+const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+const MetaClass * metaClass = metaType->getMetaClass();
+```
+
+## Implement meta interface
+
+We can implement meta interface in the specialization of DeclareMetaType for the type we want to declare.  
+An "implemented" meta interface is just a static function with exactly same prototype as the member functions in MetaType.  
+A meta type can implement more than one meta interfaces.  
+
+For example, to implement meta interface `MetaClass` for `MyClass`,  
+```c++
+class MyClass
+{
+public:
+	explicit MyClass(const std::string & message);
+	void sayHello() const;
+};
+
+template <>
+struct metapp::DeclareMetaType <MyClass>
+	: metapp::DeclareMetaTypeBase <MyClass>
+{
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<MyClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.addConstructor(metapp::Constructor<MyClass (const std::string &)>());
+				mc.addMethod("sayHello", &MyClass::sayHello);
+			}
+		);
+		return &metaClass;
+	}
+}
+```
