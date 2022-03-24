@@ -17,28 +17,75 @@
 #ifndef METAPP_REGISTEREDCONSTRUCTOR_H_969872685611
 #define METAPP_REGISTEREDCONSTRUCTOR_H_969872685611
 
-#include "metapp/registration/registeredmethod.h"
+#include "metapp/registration/annotation.h"
 
 namespace metapp {
 
-class RegisteredConstructor : public internal_::RegisteredMethodBase, public Annotation
+class RegisteredConstructor : public Annotation
 {
 private:
-	using super = internal_::RegisteredMethodBase;
+	struct Data
+	{
+		explicit Data(const Variant & method)
+			: method(method)
+		{
+		}
+
+		Variant method;
+	};
 
 public:
-	explicit RegisteredConstructor(const Variant & method)
-		: super(method)
+	RegisteredConstructor()
+		: data()
+	{
+	}
+
+	explicit RegisteredConstructor(const Variant & constructor)
+		: data(std::make_shared<Data>(constructor))
 	{
 	}
 
 	const Variant & getConstructor() const {
-		return super::doGetMethod();
+		return data->method;
 	}
 
+	bool isEmpty() const {
+		return ! data;
+	}
+
+	size_t getParamCount() const {
+		return data->method.getMetaType()->getMetaCallable()->getParamCount();
+	}
+
+	const MetaType * getReturnType() const {
+		return data->method.getMetaType()->getMetaCallable()->getReturnType();
+	}
+
+	const MetaType * getParamType(const size_t index) const {
+		return data->method.getMetaType()->getMetaCallable()->getParamType(index);
+	}
+
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+	}
+
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+	}
+
+	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
+	}
+
+	operator const Variant & () {
+		return data->method;
+	}
+
+private:
+	std::shared_ptr<Data> data;
 };
 
-using RegisteredConstructorList = std::vector<std::reference_wrapper<const RegisteredConstructor> >;
+using RegisteredConstructorList = std::vector<RegisteredConstructor>;
 
 } // namespace metapp
 

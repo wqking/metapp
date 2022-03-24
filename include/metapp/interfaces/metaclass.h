@@ -55,12 +55,8 @@ public:
 		return constructorList.back();
 	}
 	
-	RegisteredConstructorList getConstructorList() const {
-		RegisteredConstructorList result;
-		for(auto it = constructorList.begin(); it != constructorList.end(); ++it) {
-			result.push_back(std::ref(*it));
-		}
-		return result;
+	const RegisteredConstructorList & getConstructorList() const {
+		return constructorList;
 	}
 
 	const RegisteredField & getField(const std::string & name, const Flags flags = flagIncludeBase) const {

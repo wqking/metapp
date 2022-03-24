@@ -25,86 +25,83 @@
 
 namespace metapp {
 
-namespace internal_ {
-
-class RegisteredMethodBase
+class RegisteredMethod : public Annotation
 {
-public:
-	explicit RegisteredMethodBase(const Variant & method)
-		: method(method)
+private:
+	struct Data
 	{
-	}
+		Data(const std::string & name, const Variant & method)
+			: name(name), method(method)
+		{
+		}
 
-	bool isEmpty() const {
-		return method.isEmpty();
-	}
-
-	size_t getParamCount() const {
-		return method.getMetaType()->getMetaCallable()->getParamCount();
-	}
-
-	const MetaType * getReturnType() const {
-		return method.getMetaType()->getMetaCallable()->getReturnType();
-	}
-
-	const MetaType * getParamType(const size_t index) const {
-		return method.getMetaType()->getMetaCallable()->getParamType(index);
-	}
-
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
-	}
-
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
-	}
-
-	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
-		return method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
-	}
-
-protected:
-	const Variant & doGetMethod() const {
-		return method;
-	}
-
-private:
-	Variant method;
-};
-
-} // namespace internal_
-
-class RegisteredMethod : public internal_::RegisteredMethodBase, public Annotation
-{
-private:
-	using super = internal_::RegisteredMethodBase;
+		std::string name;
+		Variant method;
+	};
 
 public:
 	static const RegisteredMethod & getEmpty()
 	{
-		static RegisteredMethod emptyRegisteredMethod = RegisteredMethod(std::string(), Variant());
+		static RegisteredMethod emptyRegisteredMethod = RegisteredMethod();
 		return emptyRegisteredMethod;
 	}
 
 public:
+	RegisteredMethod()
+		: data()
+	{
+	}
+
 	RegisteredMethod(const std::string & name, const Variant & method)
-		: name(name), super(method)
+		: data(std::make_shared<Data>(name, method))
 	{
 	}
 
 	const std::string & getName() const {
-		return name;
+		return data->name;
 	}
 
 	const Variant & getMethod() const {
-		return super::doGetMethod();
+		return data->method;
+	}
+
+	bool isEmpty() const {
+		return ! data;
+	}
+
+	size_t getParamCount() const {
+		return data->method.getMetaType()->getMetaCallable()->getParamCount();
+	}
+
+	const MetaType * getReturnType() const {
+		return data->method.getMetaType()->getMetaCallable()->getReturnType();
+	}
+
+	const MetaType * getParamType(const size_t index) const {
+		return data->method.getMetaType()->getMetaCallable()->getParamType(index);
+	}
+
+	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+	}
+
+	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+	}
+
+	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
+	}
+
+	operator const Variant & () {
+		return data->method;
 	}
 
 private:
-	std::string name;
+	std::shared_ptr<Data> data;
 };
 
-using RegisteredMethodList = std::vector<std::reference_wrapper<const RegisteredMethod> >;
+using RegisteredMethodList = std::vector<RegisteredMethod>;
 
 } // namespace metapp
 

@@ -172,7 +172,7 @@ TEST_CASE("MetaClass, field, struct C")
 	std::map<std::string, int> fieldNameMap;
 	auto fieldList = metaClassC->getFieldList();
 	for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
-		++fieldNameMap[it->get().getName()];
+		++fieldNameMap[it->getName()];
 	}
 	REQUIRE(fieldNameMap["value"] == 3);
 	REQUIRE(fieldNameMap["c"] == 1);

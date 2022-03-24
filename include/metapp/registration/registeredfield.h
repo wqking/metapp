@@ -22,54 +22,71 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace metapp {
 
 class RegisteredField : public Annotation
 {
+private:
+	struct Data
+	{
+		Data(const std::string & name, const Variant & field)
+			: name(name), field(field)
+		{
+		}
+
+		std::string name;
+		Variant field;
+	};
+
 public:
 	static const RegisteredField & getEmpty()
 	{
-		static RegisteredField emptyRegisteredField = RegisteredField(std::string(), Variant());
+		static RegisteredField emptyRegisteredField = RegisteredField();
 		return emptyRegisteredField;
 	}
 
 public:
+	RegisteredField()
+		: data()
+	{
+	}
+
 	RegisteredField(const std::string & name, const Variant & field)
-		: name(name), field(field)
+		: data(std::make_shared<Data>(name, field))
 	{
 	}
 
 	const std::string & getName() const {
-		return name;
+		return data->name;
 	}
 
 	const Variant & getField() const {
-		return field;
+		return data->field;
 	}
 
 	bool isEmpty() const {
-		return field.isEmpty();
+		return ! data;
 	}
 
 	const MetaType * getValueType() const {
-		return field.getMetaType()->getMetaAccessible()->getValueType();
+		return data->field.getMetaType()->getMetaAccessible()->getValueType();
 	}
 
 	Variant get(const void * instance) const {
-		return field.getMetaType()->getMetaAccessible()->get(field, instance);
+		return data->field.getMetaType()->getMetaAccessible()->get(data->field, instance);
 	} 
 
 	void set(void * instance, const Variant & value) const {
-		field.getMetaType()->getMetaAccessible()->set(field, instance, value);
+		data->field.getMetaType()->getMetaAccessible()->set(data->field, instance, value);
 	} 
 
 private:
-	std::string name;
-	Variant field;
+	std::shared_ptr<Data> data;
 };
 
-using RegisteredFieldList = std::vector<std::reference_wrapper<const RegisteredField> >;
+using RegisteredFieldList = std::vector<RegisteredField>;
 
 
 } // namespace metapp
