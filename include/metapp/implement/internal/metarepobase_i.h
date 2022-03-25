@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	void addType(const MetaType * metaType, std::string name = "") {
+	void registerType(const MetaType * metaType, std::string name = "") {
 		if(name.empty()) {
 			name = getNameByTypeKind(metaType->getTypeKind());
 		}
@@ -62,8 +62,8 @@ public:
 	}
 
 	template <typename T>
-	void addType(const std::string & name = "") {
-		addType(getMetaType<T>(), name);
+	void registerType(const std::string & name = "") {
+		registerType(getMetaType<T>(), name);
 	}
 
 	const MetaType * getTypeByName(const std::string & name) const {
@@ -94,7 +94,7 @@ public:
 		return internal_::getMapKeys(nameTypeMap);
 	}
 
-	RegisteredMethod & addMethod(const std::string & name, const Variant & method) {
+	RegisteredMethod & registerMethod(const std::string & name, const Variant & method) {
 		if(method.getMetaType()->getMetaCallable() == nullptr) {
 			errorWrongMetaType();
 		}
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	RegisteredField & addField(const std::string & name, const Variant & field) {
+	RegisteredField & registerField(const std::string & name, const Variant & field) {
 		if(field.getMetaType()->getMetaAccessible() == nullptr) {
 			errorWrongMetaType();
 		}

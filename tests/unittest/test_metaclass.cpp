@@ -69,9 +69,9 @@ struct metapp::DeclareMetaType <BaseFirst> : metapp::DeclareMetaTypeBase <BaseFi
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<BaseFirst>(),
 			[](metapp::MetaClass & mc) {
-				mc.addConstructor(metapp::Constructor<BaseFirst()>());
-				mc.addConstructor(metapp::Constructor<BaseFirst(int)>());
-				mc.addField("first", &BaseFirst::first);
+				mc.registerConstructor(metapp::Constructor<BaseFirst()>());
+				mc.registerConstructor(metapp::Constructor<BaseFirst(int)>());
+				mc.registerField("first", &BaseFirst::first);
 			}
 		);
 		return &metaClass;

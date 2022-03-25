@@ -83,7 +83,7 @@ const MetaType * doGetMetaTypeStorage()
 			&SelectDeclareClass<T, HasMember_toReference<M>::value>::toReference,
 		},
 		UpTypeGetter<
-		typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
+			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
 		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags	| CommonDeclareMetaType<T>::typeFlags
 	);

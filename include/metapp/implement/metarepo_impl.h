@@ -42,25 +42,25 @@ inline std::vector<std::string> MetaRepo::getRepoNameList() const
 
 inline void MetaRepo::registerBuiltinTypes()
 {
-	addType<void>();
-	addType<bool>();
-	addType<char>();
-	addType<wchar_t>();
-	addType<signed char>();
-	addType<unsigned char>();
-	addType<short>();
-	addType<unsigned short>();
-	addType<int>();
-	addType<unsigned int>();
-	addType<long>();
-	addType<unsigned long>();
-	addType<long long>();
-	addType<unsigned long long>();
-	addType<float>();
-	addType<double>();
-	addType<long double>();
-	addType<std::string>();
-	addType<std::wstring>();
+	registerType<void>();
+	registerType<bool>();
+	registerType<char>();
+	registerType<wchar_t>();
+	registerType<signed char>();
+	registerType<unsigned char>();
+	registerType<short>();
+	registerType<unsigned short>();
+	registerType<int>();
+	registerType<unsigned int>();
+	registerType<long>();
+	registerType<unsigned long>();
+	registerType<long long>();
+	registerType<unsigned long long>();
+	registerType<float>();
+	registerType<double>();
+	registerType<long double>();
+	registerType<std::string>();
+	registerType<std::wstring>();
 }
 
 

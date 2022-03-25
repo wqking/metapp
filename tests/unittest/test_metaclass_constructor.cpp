@@ -46,11 +46,11 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.addConstructor(metapp::Constructor<A ()>());
+				mc.registerConstructor(metapp::Constructor<A ()>());
 				// the return type can be pointer
-				mc.addConstructor(metapp::Constructor<const A * (const std::string &)>());
+				mc.registerConstructor(metapp::Constructor<const A * (const std::string &)>());
 				// the return type can be reference, and argument types don't need to exactly match
-				mc.addConstructor(metapp::Constructor<const A & (std::string, int)>());
+				mc.registerConstructor(metapp::Constructor<const A & (std::string, int)>());
 			}
 		);
 		return &metaClass;

@@ -47,7 +47,7 @@ public:
 		callback(*this);
 	}
 
-	RegisteredConstructor & addConstructor(const Variant & constructor) {
+	RegisteredConstructor & registerConstructor(const Variant & constructor) {
 		if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 			errorWrongMetaType();
 		}

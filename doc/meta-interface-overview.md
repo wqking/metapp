@@ -53,8 +53,8 @@ struct metapp::DeclareMetaType <MyClass>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyClass>(),
 			[](metapp::MetaClass & mc) {
-				mc.addConstructor(metapp::Constructor<MyClass (const std::string &)>());
-				mc.addMethod("sayHello", &MyClass::sayHello);
+				mc.registerConstructor(metapp::Constructor<MyClass (const std::string &)>());
+				mc.registerMethod("sayHello", &MyClass::sayHello);
 			}
 		);
 		return &metaClass;

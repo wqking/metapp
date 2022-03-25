@@ -62,8 +62,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("a", &A::a);
-				mc.addField("value", &A::value);
+				mc.registerField("a", &A::a);
+				mc.registerField("value", &A::value);
 			}
 		);
 		return &metaClass;
@@ -83,8 +83,8 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("b", &B::b);
-				mc.addField("value", &B::value);
+				mc.registerField("b", &B::b);
+				mc.registerField("value", &B::value);
 			}
 		);
 		return &metaClass;
@@ -99,7 +99,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("b2", &B2::b2);
+				mc.registerField("b2", &B2::b2);
 			}
 		);
 		return &metaClass;
@@ -119,9 +119,9 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.addField("c", &C::c);
-				mc.addField("value", &C::value);
-				mc.addField("staticValue", &C::staticValue);
+				mc.registerField("c", &C::c);
+				mc.registerField("value", &C::value);
+				mc.registerField("staticValue", &C::staticValue);
 			}
 		);
 		return &metaClass;

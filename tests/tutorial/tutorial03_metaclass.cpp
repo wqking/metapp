@@ -74,10 +74,10 @@ struct metapp::DeclareMetaType <MyBaseClass> : metapp::DeclareMetaTypeBase <MyBa
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyBaseClass>(),
 			[](metapp::MetaClass & mc) {
-				mc.addConstructor(metapp::Constructor<MyBaseClass ()>());
-				mc.addConstructor(metapp::Constructor<MyBaseClass (const int)>());
-				mc.addField("value", metapp::Accessor<int>(&MyBaseClass::getValue, &MyBaseClass::setValue));
-				mc.addMethod("greeting", &MyBaseClass::greeting);
+				mc.registerConstructor(metapp::Constructor<MyBaseClass ()>());
+				mc.registerConstructor(metapp::Constructor<MyBaseClass (const int)>());
+				mc.registerField("value", metapp::Accessor<int>(&MyBaseClass::getValue, &MyBaseClass::setValue));
+				mc.registerMethod("greeting", &MyBaseClass::greeting);
 			}
 		);
 		return &metaClass;
@@ -92,7 +92,7 @@ struct metapp::DeclareMetaType <MyAnotherBase> : metapp::DeclareMetaTypeBase <My
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyAnotherBase>(),
 			[](metapp::MetaClass & mc) {
-				mc.addMethod("getText", &MyAnotherBase::getText);
+				mc.registerMethod("getText", &MyAnotherBase::getText);
 			}
 		);
 		return &metaClass;

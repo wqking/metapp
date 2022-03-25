@@ -82,8 +82,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.addMethod("methodA", &A::methodA);
-				mc.addMethod("virtualMethod", &A::virtualMethod);
+				mc.registerMethod("methodA", &A::methodA);
+				mc.registerMethod("virtualMethod", &A::virtualMethod);
 			}
 		);
 		return &metaClass;
@@ -103,7 +103,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				auto & item = mc.addMethod("methodB", &B::methodB);
+				auto & item = mc.registerMethod("methodB", &B::methodB);
 				item.addAnnotation("hello", 5);
 			}
 		);
@@ -119,7 +119,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.addMethod("methodB2", &B2::methodB2);
+				mc.registerMethod("methodB2", &B2::methodB2);
 			}
 		);
 		return &metaClass;
@@ -139,7 +139,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.addMethod("methodC", &C::methodC);
+				mc.registerMethod("methodC", &C::methodC);
 			}
 		);
 		return &metaClass;
