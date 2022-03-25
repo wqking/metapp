@@ -497,12 +497,19 @@ inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const
 template <typename T>
 inline void CommonDeclareMetaType<T>::destroy(void * instance)
 {
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#if defined(METAPP_COMPILER_GCC)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
 #endif
+#if defined(METAPP_COMPILER_CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-abstract-non-virtual-dtor"
+#endif
 	delete static_cast<Underlying *>(instance);
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#if defined(METAPP_COMPILER_CLANG)
+#pragma clang diagnostic pop
+#endif
+#if defined(METAPP_COMPILER_GCC)
 #pragma GCC diagnostic pop
 #endif
 }

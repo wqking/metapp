@@ -19,12 +19,14 @@
 
 #include "metapp/variant.h"
 
+#include <limits>
+
 namespace metapp {
 
 class MetaIndexable
 {
 public:
-	enum { unknowSize = (size_t)-1 };
+	static constexpr size_t unknowSize = std::numeric_limits<size_t>::max();
 
 	MetaIndexable() = delete;
 

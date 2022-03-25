@@ -51,7 +51,7 @@ private:
 		std::vector<BaseDerived> derivedList;
 	};
 
-	static constexpr size_t maxInheritanceLevels = 256;
+	static constexpr int maxInheritanceLevels = 256;
 
 public:
 	class TypesView
@@ -83,7 +83,8 @@ public:
 	{
 		// Simulate C++17 fold expression in C++11
 		using U = int[];
-		U { (doAddBase<Class, Bases>(), 0)... };
+		U x { (doAddBase<Class, Bases>(), 0)... };
+		(void)x; // avoid warning : expression result unused
 	}
 
 	template <typename Class>

@@ -164,13 +164,20 @@ struct CanDynamicCast
 	enum { value = ! std::is_void<From>::value && ! std::is_void<To>::value && !! decltype(test<From, To>(0))() };
 };
 
-template <typename From, typename To>
+template <typename From, typename To, typename Enabled = void>
 struct IsNarrowingCast
+{
+	enum { value = false };
+};
+
+template <typename From, typename To>
+struct IsNarrowingCast <From, To,
+	typename std::enable_if<std::is_arithmetic<From>::value && std::is_arithmetic<To>::value>::type>
 {
 	template <typename F, typename T> static std::true_type test(decltype(T {std::declval<F>()}) *);
 	template <typename F, typename T> static std::false_type test(...);
 
-	enum { value = ! std::is_void<From>::value && ! std::is_void<To>::value && ! decltype(test<From, To>(0))() };
+	enum { value = ! decltype(test<From, To>(0))() };
 };
 
 template <typename Result, typename TL, typename BoolList>

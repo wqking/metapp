@@ -247,6 +247,7 @@ struct MyClass
 
 	MyClass() : value(0) {}
 	explicit MyClass(const int n) : value(n) {}
+	virtual ~MyClass() {}
 
 	virtual std::string getName() const {
 		return "MyClass";

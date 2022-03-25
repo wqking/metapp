@@ -19,7 +19,9 @@
 
 #if defined(_MSC_VER)
 #define METAPP_COMPILER_VC
-#elif defined(__clang__)
+#endif
+// When using clang in Visual Studio, both _MSC_VER and __clang__ can be defined
+#if defined(__clang__)
 #define METAPP_COMPILER_CLANG
 #elif defined(__GNUC__)
 #define METAPP_COMPILER_GCC

@@ -122,7 +122,7 @@ TEST_CASE("InheritanceRepo, castToBase and castToDerived")
 
 TEST_CASE("InheritanceRepo, virtual inheritance castToBase and castToDerived")
 {
-	struct BaseFirst { int first;  virtual void x(){} };
+	struct BaseFirst { int first; virtual ~BaseFirst() {}  virtual void x(){} };
 	struct BaseSecond { int second; };
 	struct SonOfFirstSecond : virtual BaseFirst, virtual BaseSecond { };
 
@@ -149,8 +149,8 @@ TEST_CASE("InheritanceRepo, virtual inheritance castToBase and castToDerived")
 
 TEST_CASE("InheritanceRepo, cast between ancestors")
 {
-	struct A1 { int a1; virtual void x() {} };
-	struct A2 { int a2; virtual void y() {} };
+	struct A1 { int a1; virtual ~A1() {} virtual void x() {} };
+	struct A2 { int a2; virtual ~A2() {} virtual void y() {} };
 	struct B1 : virtual A1 {};
 	struct B2 : virtual A1, A2 {};
 	struct C1 : B1 {};
@@ -220,8 +220,8 @@ TEST_CASE("InheritanceRepo, cast between ancestors")
 
 TEST_CASE("InheritanceRepo, relationship")
 {
-	struct A1 { int a1; virtual void x() {} };
-	struct A2 { int a2; virtual void y() {} };
+	struct A1 { int a1; virtual ~A1() {} virtual void x() {} };
+	struct A2 { int a2; virtual ~A2() {} virtual void y() {} };
 	struct B1 : virtual A1 {};
 	struct B2 : virtual A1, A2 {};
 	struct C1 : B1 {};
