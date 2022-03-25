@@ -22,14 +22,58 @@
 #include "metapp/implement/internal/typeutil_i.h"
 #include "metapp/exception.h"
 
+namespace metapp_top_internal_ {
+
+// These functions calling streaming << or >> operators can't be in global,
+// or metapp, or any nested namespace in metapp
+// Before if they are inside metapp namespace, for type that can cast to other
+// type implicitly, such as std::reference_wrapper, due to ADL, the compiler
+// will choose both the operators, one is Variant, the other is the casted type.
+// That will cause "use of overloaded operator '<<' is ambiguous" error.
+// Putting these functions in metapp_top_internal_ will prevent ADL.
+
+template <typename U>
+inline void doStreamIn(std::istream & stream, metapp::Variant & value,
+	typename std::enable_if<metapp::internal_::HasInputStreamOperator<U>::value >::type * = nullptr)
+{
+	using M = typename std::remove_reference<U>::type;
+	stream >> *static_cast<M *>(value.getAddress());
+}
+
+template <typename U>
+inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/,
+	typename std::enable_if<! metapp::internal_::HasInputStreamOperator<U>::value >::type * = nullptr)
+{
+	errorUnsupported("No << input streaming operator.");
+	return;
+}
+
+template <typename U>
+inline void doStreamOut(std::ostream & stream, const metapp::Variant & value,
+	typename std::enable_if<metapp::internal_::HasOutputStreamOperator<U>::value >::type * = nullptr)
+{
+	using M = typename std::remove_reference<U>::type;
+	stream << *static_cast<const M *>(value.getAddress());
+}
+
+template <typename U>
+inline void doStreamOut(std::ostream & /*stream*/, metapp::Variant & /*value*/,
+	typename std::enable_if<! metapp::internal_::HasOutputStreamOperator<U>::value >::type * = nullptr)
+{
+	errorUnsupported("No >> output streaming operator.");
+	return;
+}
+
+} // namespace metapp_top_internal_
+
 namespace metapp {
 
 template <typename T>
 struct MetaStreamingBase
 {
 public:
-	static const MetaStreaming * getMetaStreaming() {
-		static MetaStreaming metaStreaming(
+	static const metapp::MetaStreaming * getMetaStreaming() {
+		static metapp::MetaStreaming metaStreaming(
 			&streamIn,
 			&streamOut
 		);
@@ -37,46 +81,20 @@ public:
 	}
 
 private:
-	static void streamIn(std::istream & stream, Variant & value) {
-		doStreamIn<T>(stream, value);
+	static void streamIn(std::istream & stream, metapp::Variant & value) {
+		metapp_top_internal_::doStreamIn<T>(stream, value);
 	}
 
-	static void streamOut(std::ostream & stream, const Variant & value) {
-		doStreamOut<T>(stream, value);
-	}
-
-	template <typename U>
-	static void doStreamIn(std::istream & stream, Variant & value,
-		typename std::enable_if<internal_::HasInputStreamOperator<U>::value >::type * = nullptr) {
-		using M = typename std::remove_reference<U>::type;
-		stream >> *static_cast<M *>(value.getAddress());
-	}
-
-	template <typename U>
-	static void doStreamIn(std::istream & /*stream*/, Variant & /*value*/,
-		typename std::enable_if<! internal_::HasInputStreamOperator<U>::value >::type * = nullptr) {
-		errorUnsupported("No << input streaming operator.");
-		return;
-	}
-
-	template <typename U>
-	static void doStreamOut(std::ostream & stream, const Variant & value,
-		typename std::enable_if<internal_::HasOutputStreamOperator<U>::value >::type * = nullptr) {
-		using M = typename std::remove_reference<U>::type;
-		stream << *static_cast<const M *>(value.getAddress());
-	}
-
-	template <typename U>
-	static void doStreamOut(std::ostream & /*stream*/, Variant & /*value*/,
-		typename std::enable_if<! internal_::HasOutputStreamOperator<U>::value >::type * = nullptr) {
-		errorUnsupported("No >> output streaming operator.");
-		return;
+	static void streamOut(std::ostream & stream, const metapp::Variant & value) {
+		metapp_top_internal_::doStreamOut<T>(stream, value);
 	}
 
 };
 
 namespace internal_ {
-	struct DummyMetaStreamingBase{};
+
+struct DummyMetaStreamingBase{};
+
 } // namespace internal_
 
 template <typename T>
