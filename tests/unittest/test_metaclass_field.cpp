@@ -19,7 +19,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metatypes/metatypes.h"
-#include "metapp/inheritancerepo.h"
+#include "metapp/metarepo.h"
 
 #include <string>
 #include <iostream>
@@ -76,7 +76,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
-		metapp::getInheritanceRepo()->registerBase<B, A>();
+		metapp::getMetaRepo()->registerBase<B, A>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
@@ -112,7 +112,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{
-		metapp::getInheritanceRepo()->registerBase<C, B, B2>();
+		metapp::getMetaRepo()->registerBase<C, B, B2>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {

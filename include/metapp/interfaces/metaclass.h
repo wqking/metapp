@@ -19,7 +19,7 @@
 
 #include "metapp/implement/internal/metaclass_i.h"
 #include "metapp/implement/internal/metarepobase_i.h"
-#include "metapp/inheritancerepo.h"
+#include "metapp/metarepo.h"
 #include "metapp/registration/registeredconstructor.h"
 
 #include <vector>
@@ -62,7 +62,7 @@ public:
 	const RegisteredField & getField(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
 			const RegisteredField * result = &RegisteredField::getEmpty();
-			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+			getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
 					result = &metaClass->doGetField(name);
@@ -82,7 +82,7 @@ public:
 	RegisteredFieldList getFieldList(const Flags flags = flagIncludeBase) const {
 		RegisteredFieldList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+			getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
 					metaClass->doGetFieldList(&result);
@@ -99,7 +99,7 @@ public:
 	const RegisteredMethod & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const {
 		if(hasFlag(flags, flagIncludeBase)) {
 			const RegisteredMethod * result = &RegisteredMethod::getEmpty();
-			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+			getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
 					result = &metaClass->doGetMethod(name);
@@ -119,7 +119,7 @@ public:
 	RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const {
 		RegisteredMethodList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+			getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
 					metaClass->doGetMethodList(name, &result);
@@ -136,7 +136,7 @@ public:
 	RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const {
 		RegisteredMethodList result;
 		if(hasFlag(flags, flagIncludeBase)) {
-			getInheritanceRepo()->traverse(classMetaType, [&result](const MetaType * metaType) -> bool {
+			getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 				const MetaClass * metaClass = metaType->getMetaClass();
 				if(metaClass != nullptr) {
 					metaClass->doGetMethodList(&result);

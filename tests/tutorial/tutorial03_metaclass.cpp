@@ -18,7 +18,7 @@
 
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/interfaces/metaclass.h"
-#include "metapp/inheritancerepo.h"
+#include "metapp/metarepo.h"
 
 #include <iostream>
 
@@ -104,7 +104,7 @@ template <>
 struct metapp::DeclareMetaType <MyDerivedClass> : metapp::DeclareMetaTypeBase <MyDerivedClass>
 {
 	static void setup() {
-		metapp::getInheritanceRepo()->registerBase<MyDerivedClass, MyBaseClass, MyAnotherBase>();
+		metapp::getMetaRepo()->registerBase<MyDerivedClass, MyBaseClass, MyAnotherBase>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {

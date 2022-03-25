@@ -222,8 +222,8 @@ inline TristateBool doCastObject(
 		return TristateBool::unknown;
 	}
 	if(fromUpType->isClass() && toUpType->isClass()) {
-		const InheritanceRepo * inheritanceRepo = getInheritanceRepo();
-		if(inheritanceRepo->doesClassExist(fromUpType) && inheritanceRepo->doesClassExist(toUpType)) {
+		const MetaRepo * inheritanceRepo = getMetaRepo();
+		if(inheritanceRepo->isClassInHierarchy(fromUpType) && inheritanceRepo->isClassInHierarchy(toUpType)) {
 			if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
 				if(result != nullptr) {
 					void * instance = nullptr;

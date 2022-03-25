@@ -36,6 +36,8 @@ enum class InheritanceRelationship
 	derived
 };
 
+namespace internal_ {
+
 class InheritanceRepo
 {
 private:
@@ -179,23 +181,23 @@ public:
 	}
 
 	template <typename Class>
-	bool doesClassExist() const
+	bool isClassInHierarchy() const
 	{
-		return doesClassExist(doGetNormalizedMetaType<Class>());
+		return isClassInHierarchy(doGetNormalizedMetaType<Class>());
 	}
 
-	bool doesClassExist(const MetaType * classMetaType) const
+	bool isClassInHierarchy(const MetaType * classMetaType) const
 	{
 		return doFindClassInfo(classMetaType->getUnifiedType()) != nullptr;
 	}
 
 	template <typename FT>
-	bool traverse(
+	bool traverseBases(
 		const MetaType * metaType,
 		FT && callback) const
 	{
 		std::set<const MetaType *> metaTypeSet;
-		return doTraverse(metaType, std::forward<FT>(callback), metaTypeSet);
+		return doTraverseBases(metaType, std::forward<FT>(callback), metaTypeSet);
 	}
 
 	// for test purpose, don't call it in production code
@@ -378,7 +380,7 @@ private:
 	}
 
 	template <typename FT>
-	bool doTraverse(
+	bool doTraverseBases(
 		const MetaType * metaType,
 		FT && callback,
 		std::set<const MetaType *> & metaTypeSet) const
@@ -392,7 +394,7 @@ private:
 		auto baseView = getBases(metaType);
 		const size_t count = baseView.getCount();
 		for(size_t i = 0; i < count; ++i) {
-			if(! doTraverse(baseView.get(i), callback, metaTypeSet)) {
+			if(! doTraverseBases(baseView.get(i), callback, metaTypeSet)) {
 				return false;
 			}
 		}
@@ -403,12 +405,7 @@ private:
 	std::unordered_map<const void *, ClassInfo> classInfoMap;
 };
 
-inline InheritanceRepo * getInheritanceRepo()
-{
-	static InheritanceRepo repo;
-	return &repo;
-}
-
+} // namespace internal_
 
 } // namespace metapp
 

@@ -19,10 +19,11 @@
 
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/implement/internal/metarepobase_i.h"
+#include "metapp/implement/internal/inheritancerepo_i.h"
 
 namespace metapp {
 
-class MetaRepo : public internal_::MetaRepoBase
+class MetaRepo : public internal_::MetaRepoBase, public internal_::InheritanceRepo
 {
 public:
 	MetaRepo();

@@ -22,6 +22,7 @@
 
 #include <type_traits>
 #include <numeric>
+#include <algorithm>
 
 namespace metapp {
 

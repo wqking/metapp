@@ -16,7 +16,7 @@
 
 #include "test.h"
 
-#include "metapp/inheritancerepo.h"
+#include "metapp/metarepo.h"
 #include "metapp/variant.h"
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/utils/metatypedumper.h"
@@ -27,15 +27,15 @@
 
 namespace {
 
-TEST_CASE("InheritanceRepo, basic")
+TEST_CASE("MetaRepo, hierarchy, basic")
 {
 	struct BaseFirst { int first; };
 	struct BaseSecond { int second; };
 	struct SonOfFirst : BaseFirst {};
 	struct SonOfFirstSecond : BaseFirst, BaseSecond {};
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 	repo->registerBase<SonOfFirst, BaseFirst>();
 	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
@@ -54,15 +54,15 @@ TEST_CASE("InheritanceRepo, basic")
 	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(1) == metapp::getMetaType<SonOfFirstSecond>());
 }
 
-TEST_CASE("InheritanceRepo, add duplicated bases")
+TEST_CASE("MetaRepo, hierarchy, add duplicated bases")
 {
 	struct A1 { int a1; };
 	struct A2 { int a2; };
 	struct B1 : A1 {};
 	struct B2 : A1, A2 {};
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 
 	repo->registerBase<B1, A1>();
 	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
@@ -80,15 +80,15 @@ TEST_CASE("InheritanceRepo, add duplicated bases")
 	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
 }
 
-TEST_CASE("InheritanceRepo, castToBase and castToDerived")
+TEST_CASE("MetaRepo, hierarchy, castToBase and castToDerived")
 {
 	struct BaseFirst { int first; };
 	struct BaseSecond { int second; };
 	struct SonOfFirst : BaseFirst {};
 	struct SonOfFirstSecond : BaseFirst, BaseSecond {};
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 	repo->registerBase<SonOfFirst, BaseFirst>();
 	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
@@ -120,14 +120,14 @@ TEST_CASE("InheritanceRepo, castToBase and castToDerived")
 	}
 }
 
-TEST_CASE("InheritanceRepo, virtual inheritance castToBase and castToDerived")
+TEST_CASE("MetaRepo, hierarchy, virtual inheritance castToBase and castToDerived")
 {
 	struct BaseFirst { int first; virtual ~BaseFirst() {}  virtual void x(){} };
 	struct BaseSecond { int second; };
 	struct SonOfFirstSecond : virtual BaseFirst, virtual BaseSecond { };
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
 	SECTION("multiple inheritance") {
@@ -147,7 +147,7 @@ TEST_CASE("InheritanceRepo, virtual inheritance castToBase and castToDerived")
 	}
 }
 
-TEST_CASE("InheritanceRepo, cast between ancestors")
+TEST_CASE("MetaRepo, hierarchy, cast between ancestors")
 {
 	struct A1 { int a1; virtual ~A1() {} virtual void x() {} };
 	struct A2 { int a2; virtual ~A2() {} virtual void y() {} };
@@ -156,8 +156,8 @@ TEST_CASE("InheritanceRepo, cast between ancestors")
 	struct C1 : B1 {};
 	struct C2 : B1, B2 {};
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 	repo->registerBase<B1, A1>();
 	repo->registerBase<B2, A1, A2>();
 	repo->registerBase<C1, B1>();
@@ -218,7 +218,7 @@ TEST_CASE("InheritanceRepo, cast between ancestors")
 
 }
 
-TEST_CASE("InheritanceRepo, relationship")
+TEST_CASE("MetaRepo, hierarchy, relationship")
 {
 	struct A1 { int a1; virtual ~A1() {} virtual void x() {} };
 	struct A2 { int a2; virtual ~A2() {} virtual void y() {} };
@@ -227,8 +227,8 @@ TEST_CASE("InheritanceRepo, relationship")
 	struct C1 : B1 {};
 	struct C2 : B1, B2 {};
 
-	metapp::InheritanceRepo inheritanceRepo;
-	auto * repo = &inheritanceRepo;
+	metapp::MetaRepo metaRepo;
+	auto * repo = &metaRepo;
 	repo->registerBase<B1, A1>();
 	repo->registerBase<B2, A1, A2>();
 	repo->registerBase<C1, B1>();

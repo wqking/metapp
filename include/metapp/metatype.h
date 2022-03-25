@@ -297,7 +297,7 @@ template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVo
 
 } // namespace metapp
 
-#include "metapp/inheritancerepo.h"
+#include "metapp/metarepo.h"
 
 #include "metapp/implement/metatype_impl.h"
 

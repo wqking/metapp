@@ -105,7 +105,7 @@ struct metapp::DeclareMetaType <C>
 	: metapp::DeclareMetaTypeBase <C>
 {
 	static void setup() {
-		metapp::getInheritanceRepo()->registerBase<C, A, B>();
+		metapp::getMetaRepo()->registerBase<C, A, B>();
 	}
 }
 ```
