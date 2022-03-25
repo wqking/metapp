@@ -103,7 +103,8 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				mc.addMethod("methodB", &B::methodB);
+				auto & item = mc.addMethod("methodB", &B::methodB);
+				item.addAnnotation("hello", 5);
 			}
 		);
 		return &metaClass;
@@ -158,6 +159,7 @@ TEST_CASE("MetaClass, method, struct B")
 	
 	const auto & methodB = metaClassB->getMethod("methodB");
 	REQUIRE(metapp::invokeCallable(methodB.getMethod(), &b, "great").get<const std::string &>() == "goodgreat");
+	REQUIRE(methodB.getAnnotation("hello").get<int>() == 5);
 
 	const auto & virtualMethod = metaClassB->getMethod("virtualMethod");
 	REQUIRE(metapp::invokeCallable(virtualMethod.getMethod(), &b).get<int>() == 11);

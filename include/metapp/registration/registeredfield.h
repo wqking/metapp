@@ -43,7 +43,7 @@ private:
 public:
 	static const RegisteredField & getEmpty()
 	{
-		static RegisteredField emptyRegisteredField = RegisteredField();
+		static RegisteredField emptyRegisteredField{};
 		return emptyRegisteredField;
 	}
 

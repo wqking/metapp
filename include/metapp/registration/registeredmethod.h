@@ -42,7 +42,7 @@ private:
 public:
 	static const RegisteredMethod & getEmpty()
 	{
-		static RegisteredMethod emptyRegisteredMethod = RegisteredMethod();
+		static RegisteredMethod emptyRegisteredMethod{};
 		return emptyRegisteredMethod;
 	}
 

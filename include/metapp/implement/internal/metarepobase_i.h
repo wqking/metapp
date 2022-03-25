@@ -94,10 +94,9 @@ public:
 		return internal_::getMapKeys(nameTypeMap);
 	}
 
-	void addMethod(const std::string & name, const Variant & method) {
+	RegisteredMethod & addMethod(const std::string & name, const Variant & method) {
 		if(method.getMetaType()->getMetaCallable() == nullptr) {
 			errorWrongMetaType();
-			return;
 		}
 
 		RegisteredMethod registeredMethod{ name, method };
@@ -105,9 +104,11 @@ public:
 		if(it == methodMap.end()) {
 			auto i = methodMap.insert(typename decltype(methodMap)::value_type(registeredMethod.getName(), NamedMethodList()));
 			i.first->second.push_back(registeredMethod);
+			return i.first->second.back();
 		}
 		else {
 			it->second.push_back(registeredMethod);
+			return it->second.back();
 		}
 	}
 

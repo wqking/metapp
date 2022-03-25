@@ -27,6 +27,11 @@ namespace metapp {
 class RegisteredAnnotation
 {
 public:
+	RegisteredAnnotation()
+		: nameValueMap()
+	{
+	}
+
 	void addAnnotation(const std::string & name, const Variant & value) {
 		nameValueMap.insert(std::make_pair(name, value));
 	}
