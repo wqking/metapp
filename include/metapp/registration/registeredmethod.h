@@ -17,7 +17,7 @@
 #ifndef METAPP_REGISTEREDMETHOD_H_969872685611
 #define METAPP_REGISTEREDMETHOD_H_969872685611
 
-#include "metapp/registration/annotation.h"
+#include "metapp/registration/registeredannotation.h"
 #include "metapp/interfaces/metacallable.h"
 
 #include <string>
@@ -25,7 +25,7 @@
 
 namespace metapp {
 
-class RegisteredMethod : public Annotation
+class RegisteredMethod : public RegisteredAnnotation
 {
 private:
 	struct Data

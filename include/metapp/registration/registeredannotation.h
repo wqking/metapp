@@ -14,15 +14,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_ANNOTATION_H_969872685611
-#define METAPP_ANNOTATION_H_969872685611
+#ifndef METAPP_REGISTEREDANNOTATION_H_969872685611
+#define METAPP_REGISTEREDANNOTATION_H_969872685611
 
 #include "metapp/variant.h"
 
+#include <map>
+#include <string>
+
 namespace metapp {
 
-class Annotation
+class RegisteredAnnotation
 {
+public:
+	void addAnnotation(const std::string & name, const Variant & value) {
+		nameValueMap.insert(std::make_pair(name, value));
+	}
+
+	const Variant & getAnnotation(const std::string & name) const {
+		auto it = nameValueMap.find(name);
+		if(it != nameValueMap.end()) {
+			return it->second;
+		}
+		return getEmptyVariant();
+	}
+
+	const std::map<std::string, Variant> & getAllAnnotations() const {
+		return nameValueMap;
+	}
+
+private:
+	std::map<std::string, Variant> nameValueMap;
 };
 
 

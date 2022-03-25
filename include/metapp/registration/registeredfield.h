@@ -17,7 +17,7 @@
 #ifndef METAPP_REGISTEREDFIELD_H_969872685611
 #define METAPP_REGISTEREDFIELD_H_969872685611
 
-#include "metapp/registration/annotation.h"
+#include "metapp/registration/registeredannotation.h"
 #include "metapp/interfaces/metaaccessible.h"
 
 #include <string>
@@ -26,7 +26,7 @@
 
 namespace metapp {
 
-class RegisteredField : public Annotation
+class RegisteredField : public RegisteredAnnotation
 {
 private:
 	struct Data

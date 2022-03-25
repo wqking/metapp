@@ -17,11 +17,11 @@
 #ifndef METAPP_REGISTEREDCONSTRUCTOR_H_969872685611
 #define METAPP_REGISTEREDCONSTRUCTOR_H_969872685611
 
-#include "metapp/registration/annotation.h"
+#include "metapp/registration/registeredannotation.h"
 
 namespace metapp {
 
-class RegisteredConstructor : public Annotation
+class RegisteredConstructor : public RegisteredAnnotation
 {
 private:
 	struct Data
