@@ -59,12 +59,7 @@ public:
 
 	template <typename T>
 	void construct(const void * copyFrom) {
-		if(FitBuffer<T>::value) {
-			doConstructOnBuffer<T>(copyFrom);
-		}
-		else {
-			doConstructOnObject<T>(copyFrom);
-		}
+		doConstructOnObjectOrBuffer<T>(FitBuffer<T>::value, copyFrom);
 	}
 
 	void constructObject(const std::shared_ptr<void> & obj) {
@@ -112,96 +107,82 @@ public:
 
 private:
 	template <typename T>
-	void doConstructOnBuffer(const void * copyFrom) {
-		if(copyFrom == nullptr) {
-			doConstructOnBufferDefault<T>();
-		}
-		else {
-			doConstructOnBufferCopy<T>(copyFrom);
-		}
-		setStorageType(storageBuffer);
-	}
-
-	template <typename T>
-	void doConstructOnBufferDefault(
-		typename std::enable_if<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>::type * = nullptr
-		) {
-		podAs<T>() = T();
-	}
-
-	template <typename T>
-	void doConstructOnBufferDefault(
-		typename std::enable_if<! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)>::type * = nullptr
-		) {
-	}
-
-	template <typename T>
-	void doConstructOnBufferCopy(
-		const void * copyFrom,
-		typename std::enable_if<std::is_copy_assignable<T>::value>::type * = nullptr
-	) {
-		podAs<T>() = *(T *)copyFrom;
-	}
-
-	template <typename T>
-	void doConstructOnBufferCopy(
-		const void * /*copyFrom*/,
-		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
-	) {
-	}
-
-	template <typename T>
-	void doConstructOnObject(const void * copyFrom) {
-		setStorageType(storageObject);
+	void doConstructOnObjectOrBuffer(const bool onBuffer, const void * copyFrom) {
+		setStorageType(onBuffer ? storageBuffer : storageObject);
 
 		if(copyFrom == nullptr) {
-			doConstructOnObjectDefault<T>();
+			doConstructOnObjectOrBufferDefault<T>(onBuffer);
 		}
 		else {
-			doConstructOnObjectCopy<T>(copyFrom);
+			doConstructOnObjectOrBufferCopy<T>(onBuffer, copyFrom);
 		}
 	}
 
 	template <typename T>
-	void doConstructOnObjectDefault(
-		typename std::enable_if<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>::type * = nullptr
+	void doConstructOnObjectOrBufferDefault(
+		const bool onBuffer,
+		typename std::enable_if<
+		std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value
+		>::type * = nullptr
 	) {
-		object = std::make_shared<T>();
+		if(onBuffer) {
+			podAs<T>() = T();
+		}
+		else {
+			object = std::make_shared<T>();
+		}
 	}
 
 	template <typename T>
-	void doConstructOnObjectDefault(
-		typename std::enable_if<! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)>::type * = nullptr
+	void doConstructOnObjectOrBufferDefault(
+		const bool /*onBuffer*/,
+		typename std::enable_if<
+		! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)
+		>::type * = nullptr
 	) {
 		errorNotConstructible();
 	}
 
 	template <typename T>
-	void doConstructOnObjectCopy(
+	void doConstructOnObjectOrBufferCopy(
+		const bool onBuffer,
 		const void * copyFrom,
 		typename std::enable_if<std::is_copy_assignable<T>::value>::type * = nullptr
 	) {
-		object = std::make_shared<T>(*(T *)copyFrom);
+		if(onBuffer) {
+			podAs<T>() = *(T *)copyFrom;
+		}
+		else {
+			object = std::make_shared<T>(*(T *)copyFrom);
+		}
 	}
 
 	template <typename T>
-	void doConstructOnObjectCopy(
+	void doConstructOnObjectOrBufferCopy(
+		const bool onBuffer,
 		const void * copyFrom,
 		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
 	) {
-		doConstructOnObjectMove<T>(copyFrom);
+		doConstructOnObjectOrBufferMove<T>(onBuffer, copyFrom);
 	}
 
 	template <typename T>
-	void doConstructOnObjectMove(
+	void doConstructOnObjectOrBufferMove(
+		const bool onBuffer,
 		const void * copyFrom,
 		typename std::enable_if<std::is_move_assignable<T>::value>::type * = nullptr
 	) {
-		object = std::make_shared<T>(std::move(*(T *)copyFrom));
+		if(onBuffer) {
+			podAs<T>() = std::move(*(T *)copyFrom);
+		}
+		else {
+			object = std::make_shared<T>(std::move(*(T *)copyFrom));
+		}
 	}
 
 	template <typename T>
-	void doConstructOnObjectMove(
+	void doConstructOnObjectOrBufferMove(
+		const bool /*onBuffer*/,
 		const void * /*copyFrom*/,
 		typename std::enable_if<! std::is_move_assignable<T>::value>::type * = nullptr
 	) {

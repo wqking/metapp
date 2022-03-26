@@ -167,10 +167,6 @@ struct CommonDeclareMetaType
 private:
 	using Type = T;
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
-	using NoCV = typename std::remove_cv<T>::type;
-	using Decayed = typename std::decay<NoCV>::type;
-
-	static_assert(! std::is_void<T>::value, "CommonDeclareMetaType can't be initialized with void.");
 
 public:
 	using UpType = internal_::NoneUpType;
