@@ -120,57 +120,6 @@ auto doGetMetaType()
 	return metaType;
 }
 
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructDefault(
-	typename std::enable_if<std::is_default_constructible<U>::value>::type *
-)
-{
-	return new U();
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructDefault(
-	typename std::enable_if<! (std::is_default_constructible<U>::value)>::type *
-)
-{
-	return nullptr;
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructCopy(
-	const void * copyFrom,
-	typename std::enable_if<std::is_copy_assignable<U>::value>::type *
-)
-{
-	return new U(*(U *)copyFrom);
-}
-
-template <typename U>
-inline void * CommonDeclareMetaTypeBase::doConstructCopy(
-	const void * /*copyFrom*/,
-	typename std::enable_if<! std::is_copy_assignable<U>::value>::type *
-)
-{
-	return nullptr;
-}
-
-template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
-	typename std::enable_if<! std::is_void<P>::value>::type *)
-{
-	return Variant::create<P &>(**(P **)value.getAddress());
-
-	// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
-	//return Variant::create<P &>(*value.get<P *>());
-}
-
-template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
-	typename std::enable_if<std::is_void<P>::value>::type *)
-{
-	return value;
-}
-
 template <typename T>
 const UnifiedType * unifiedTypeGetter()
 {
@@ -307,9 +256,7 @@ inline TristateBool doCastPointerReference(
 	return TristateBool::unknown;
 }
 
-
 } // namespace internal_
-
 
 inline constexpr MetaType::MetaType(
 		const internal_::UnifiedType * (*doGetUnifiedType)(),
@@ -618,6 +565,14 @@ inline bool DeclareMetaTypeVoidBase::canCastFrom(const Variant & /*value*/, cons
 inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
 	return Variant();
+}
+
+inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
+{
+	if(metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
 }
 
 template <typename T>

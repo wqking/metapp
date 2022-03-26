@@ -43,9 +43,15 @@
 #endif
 
 #ifndef NDEBUG
-
 #define METAPP_DEBUG_ENABLED
+#endif
 
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+#define METAPP_NO_INLINE __attribute__((noinline))
+#elif defined(METAPP_COMPILER_VC)
+#define METAPP_NO_INLINE __declspec(noinline)
+#else
+#define METAPP_NO_INLINE
 #endif
 
 

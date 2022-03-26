@@ -151,13 +151,7 @@ private:
 	TypeFlags typeFlags;
 };
 
-inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
-{
-	if(metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
+const MetaType * getNonReferenceMetaType(const MetaType * metaType);
 
 } // namespace metapp
 
@@ -166,47 +160,6 @@ inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
 #include "metapp/implement/internal/cast_i.h"
 
 namespace metapp {
-
-namespace internal_ {
-
-// Non-template base class to reduce binary size
-struct CommonDeclareMetaTypeBase
-{
-protected:
-	template <typename U>
-	static void * doConstructDefault(
-		typename std::enable_if<std::is_default_constructible<U>::value>::type * = nullptr
-	);
-
-	template <typename U>
-	static void * doConstructDefault(
-		typename std::enable_if<! (std::is_default_constructible<U>::value)>::type * = nullptr
-	);
-
-	template <typename U>
-	static void * doConstructCopy(
-		const void * copyFrom,
-		typename std::enable_if<std::is_copy_assignable<U>::value>::type * = nullptr
-	);
-
-	template <typename U>
-	static void * doConstructCopy(
-		const void * /*copyFrom*/,
-		typename std::enable_if<! std::is_copy_assignable<U>::value>::type * = nullptr
-	);
-
-	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = nullptr);
-
-	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = nullptr);
-
-	static void checkCanToReference(const MetaType * fromMetaType, const MetaType * myMetaType);
-
-};
-
-
-} // namespace internal_
 
 template <typename T>
 struct CommonDeclareMetaType
