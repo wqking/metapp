@@ -301,11 +301,9 @@ struct UnifiedMetaTable
 
 	void (*destroy)(void * instance);
 
-	bool (*canCast)(const Variant & value, const MetaType * toMetaType);
-	Variant (*cast)(const Variant & value, const MetaType * toMetaType);
+	bool (*cast)(Variant * result, const Variant & value, const MetaType * toMetaType);
 
-	bool (*canCastFrom)(const Variant & value, const MetaType * fromMetaType);
-	Variant (*castFrom)(const Variant & value, const MetaType * fromMetaType);
+	bool (*castFrom)(Variant * result, const Variant & value, const MetaType * fromMetaType);
 
 	MetaInterfaceData metaInterfaceData;
 };
@@ -347,11 +345,9 @@ private:
 
 	void destroy(void * instance) const;
 
-	bool canCast(const Variant & value, const MetaType * toMetaType) const;
-	Variant cast(const Variant & value, const MetaType * toMetaType) const;
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
-	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
-	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
+	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 
 private:
 	constexpr UnifiedType(
@@ -460,24 +456,14 @@ inline void UnifiedType::destroy(void * instance) const
 	metaMethodTable.destroy(instance);
 }
 
-inline bool UnifiedType::canCast(const Variant & value, const MetaType * toMetaType) const
+inline bool UnifiedType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
 {
-	return metaMethodTable.canCast(value, toMetaType);
+	return metaMethodTable.cast(result, value, toMetaType);
 }
 
-inline Variant UnifiedType::cast(const Variant & value, const MetaType * toMetaType) const
+inline bool UnifiedType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
-	return metaMethodTable.cast(value, toMetaType);
-}
-
-inline bool UnifiedType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return metaMethodTable.canCastFrom(value, fromMetaType);
-}
-
-inline Variant UnifiedType::castFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return metaMethodTable.castFrom(value, fromMetaType);
+	return metaMethodTable.castFrom(result, value, fromMetaType);
 }
 
 struct CommonDeclareMetaTypeBase
@@ -506,10 +492,10 @@ protected:
 	);
 
 	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = nullptr);
+	static Variant doPointerToReference(const Variant & value, typename std::enable_if<! std::is_void<P>::value>::type * = nullptr);
 
 	template <typename P>
-	static Variant doToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = nullptr);
+	static Variant doPointerToReference(const Variant & value, typename std::enable_if<std::is_void<P>::value>::type * = nullptr);
 
 };
 
@@ -548,17 +534,14 @@ inline void * CommonDeclareMetaTypeBase::doConstructCopy(
 }
 
 template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+inline Variant CommonDeclareMetaTypeBase::doPointerToReference(const Variant & value,
 	typename std::enable_if<! std::is_void<P>::value>::type *)
 {
 	return Variant::create<P &>(**(P **)value.getAddress());
-
-	// Can't call value.get here, otherwise the compiler will go crazy, either dead loop or other error
-	//return Variant::create<P &>(*value.get<P *>());
 }
 
 template <typename P>
-inline Variant CommonDeclareMetaTypeBase::doToReference(const Variant & value,
+inline Variant CommonDeclareMetaTypeBase::doPointerToReference(const Variant & value,
 	typename std::enable_if<std::is_void<P>::value>::type *)
 {
 	return value;

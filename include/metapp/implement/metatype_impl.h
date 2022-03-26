@@ -130,9 +130,7 @@ const UnifiedType * unifiedTypeGetter()
 		UnifiedMetaTable {
 			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
 			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
-			&SelectDeclareClass<T, HasMember_canCast<M>::value>::canCast,
 			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-			&SelectDeclareClass<T, HasMember_canCastFrom<M>::value>::canCastFrom,
 			&SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
 
 			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
@@ -238,12 +236,10 @@ inline TristateBool doCastPointerReference(
 	}
 
 	if(! fromMetaType->isReference() && toMetaType->isReference()
-		&& fromMetaType->canCast(value, toMetaType->getUpType())
 		) {
-		if(result != nullptr) {
-			*result = fromMetaType->cast(value, toMetaType->getUpType());
+		if(fromMetaType->cast(result, value, toMetaType->getUpType())) {
+			return TristateBool::yes;
 		}
-		return TristateBool::yes;
 	}
 
 	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
@@ -404,24 +400,14 @@ inline Variant MetaType::toReference(const Variant & value) const
 	return metaTable.toReference(value);
 }
 
-inline bool MetaType::canCast(const Variant & value, const MetaType * toMetaType) const
+inline bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
 {
-	return doGetUnifiedType()->canCast(value, toMetaType);
+	return doGetUnifiedType()->cast(result, value, toMetaType);
 }
 
-inline Variant MetaType::cast(const Variant & value, const MetaType * toMetaType) const
+inline bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
-	return doGetUnifiedType()->cast(value, toMetaType);
-}
-
-inline bool MetaType::canCastFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return doGetUnifiedType()->canCastFrom(value, fromMetaType);
-}
-
-inline Variant MetaType::castFrom(const Variant & value, const MetaType * fromMetaType) const
-{
-	return doGetUnifiedType()->castFrom(value, fromMetaType);
+	return doGetUnifiedType()->castFrom(result, value, fromMetaType);
 }
 
 template <typename T>
@@ -471,16 +457,16 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 	if(fromMetaType->isReference()) {
 		return value;
 	}
-	if(fromMetaType->isPointer()) {
-		using P = typename std::remove_pointer<typename std::remove_reference<T>::type>::type;
-		return doToReference<P>(value);
-	}
 	using U = typename std::remove_reference<T>::type;
+	if(fromMetaType->isPointer()) {
+		using P = typename std::remove_pointer<U>::type;
+		return doPointerToReference<P>(value);
+	}
 	return Variant::create<U &>(value.get<U &>());
 }
 
 template <typename T>
-inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & value, const MetaType * toMetaType)
+inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 {
 	const MetaType * fromMetaType = getMetaType<T>();
 
@@ -489,47 +475,21 @@ inline bool CommonDeclareMetaType<T>::doCast(Variant * result, const Variant & v
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	//if(internal_::CastTo<Underlying>::canCastTo(value, toMetaType)) {
-	if(internal_::CastTo<Type>::canCastTo(value, toMetaType)) {
-		if(result != nullptr) {
-			//*result = internal_::CastTo<Underlying>::castTo(value, toMetaType);
-			*result = internal_::CastTo<Type>::castTo(value, toMetaType);
-		}
+	if(internal_::CastTo<Type>::castTo(result, value, toMetaType)) {
 		return true;
 	}
-	if(toMetaType->canCastFrom(value, fromMetaType)) {
-		if(result != nullptr) {
-			*result = toMetaType->castFrom(value, fromMetaType);
-		}
+
+	if(toMetaType->castFrom(result, value, fromMetaType)) {
 		return true;
 	}
+
 	return false;
 }
 
 template <typename T>
-inline bool CommonDeclareMetaType<T>::canCast(const Variant & value, const MetaType * toMetaType)
+inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 {
-	return doCast(nullptr, value, toMetaType);
-}
-
-template <typename T>
-inline Variant CommonDeclareMetaType<T>::cast(const Variant & value, const MetaType * toMetaType)
-{
-	Variant result;
-	doCast(&result, value, toMetaType);
-	return result;
-}
-
-template <typename T>
-inline bool CommonDeclareMetaType<T>::canCastFrom(const Variant & value, const MetaType * fromMetaType)
-{
-	return internal_::CastFrom<Underlying>::canCastFrom(value, fromMetaType);
-}
-
-template <typename T>
-inline Variant CommonDeclareMetaType<T>::castFrom(const Variant & value, const MetaType * fromMetaType)
-{
-	return internal_::CastFrom<Underlying>::castFrom(value, fromMetaType);
+	return internal_::CastFrom<Underlying>::castFrom(result, value, fromMetaType);
 }
 
 
@@ -547,24 +507,14 @@ inline Variant DeclareMetaTypeVoidBase::toReference(const Variant & value)
 	return value;
 }
 
-inline bool DeclareMetaTypeVoidBase::canCast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
+inline bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*toMetaType*/)
 {
 	return false;
 }
 
-inline Variant DeclareMetaTypeVoidBase::cast(const Variant & /*value*/, const MetaType * /*toMetaType*/)
-{
-	return Variant();
-}
-
-inline bool DeclareMetaTypeVoidBase::canCastFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+inline bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
 	return false;
-}
-
-inline Variant DeclareMetaTypeVoidBase::castFrom(const Variant & /*value*/, const MetaType * /*fromMetaType*/)
-{
-	return Variant();
 }
 
 inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)

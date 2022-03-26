@@ -210,7 +210,7 @@ inline Variant Variant::dereference() const
 
 inline bool Variant::canCast(const MetaType * toMetaType) const
 {
-	return metaType->canCast(*this, toMetaType);
+	return metaType->cast(nullptr, *this, toMetaType);
 }
 
 template <typename T>
@@ -221,8 +221,8 @@ inline bool Variant::canCast() const
 
 inline Variant Variant::cast(const MetaType * toMetaType) const
 {
-	Variant result = metaType->cast(*this, toMetaType);
-	if(result.isEmpty()) {
+	Variant result;
+	if(! metaType->cast(&result, *this, toMetaType)) {
 		errorBadCast();
 	}
 	return result;
@@ -236,7 +236,9 @@ inline Variant Variant::cast() const
 
 inline Variant Variant::castSilently(const MetaType * toMetaType) const
 {
-	return metaType->cast(*this, toMetaType);
+	Variant result;
+	metaType->cast(&result, *this, toMetaType);
+	return result;
 }
 
 template <typename T>

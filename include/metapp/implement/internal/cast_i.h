@@ -46,19 +46,16 @@ private:
 	};
 
 public:
-	static bool canCastFrom(const Variant & /*value*/, const MetaType * fromMetaType)
-	{
-		auto castFromItem = findCastFromItem(fromMetaType);
-		return castFromItem.fromUnifiedType != nullptr;
-	}
-
-	static Variant castFrom(const Variant & value, const MetaType * fromMetaType)
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
 		auto castFromItem = findCastFromItem(fromMetaType);
 		if(castFromItem.fromUnifiedType != nullptr) {
-			return castFromItem.castFrom(value);
+			if(result != nullptr) {
+				*result = castFromItem.castFrom(value);
+			}
+			return true;
 		}
-		return Variant();
+		return false;
 	}
 
 private:
@@ -143,19 +140,16 @@ private:
 	};
 
 public:
-	static bool canCastTo(const Variant & /*value*/, const MetaType * toMetaType)
-	{
-		auto castToItem = findCastToItem(toMetaType);
-		return castToItem.toUnifiedType != nullptr;
-	}
-
-	static Variant castTo(const Variant & value, const MetaType * toMetaType)
+	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
 		auto castToItem = findCastToItem(toMetaType);
 		if(castToItem.toUnifiedType != nullptr) {
-			return castToItem.castTo(value);
+			if(result != nullptr) {
+				*result = castToItem.castTo(value);
+			}
+			return true;
 		}
-		return Variant();
+		return false;
 	}
 
 private:

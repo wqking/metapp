@@ -27,18 +27,13 @@ struct DeclareMetaTypeBase <Variant>
 	using Common = CommonDeclareMetaType <Variant>;
 	static constexpr TypeKind typeKind = tkVariant;
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Common::canCast(value, toMetaType)
-			|| value.get<Variant &>().canCast(toMetaType)
-		;
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
-		if(Common::canCast(value, toMetaType)) {
-			return Common::cast(value, toMetaType);
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+		if(Common::cast(result, value, toMetaType)) {
+			return true;
 		}
 		else {
-			return value.get<Variant &>().cast(toMetaType);
+			const Variant & ref = value.get<const Variant &>();
+			return ref.getMetaType()->cast(result, ref, toMetaType);
 		}
 	}
 

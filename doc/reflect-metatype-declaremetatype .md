@@ -38,51 +38,28 @@ The default value of `typeKind` is `metapp::tkObject`.
 
 Each `MetaType` always has one `TypeKind`. TypeKind is a 16 bit integer that represents the meta type. For any user defined TypeKind, the value must be equal or greater than `metapp::tkUser`.  
 
-#### Function canCast
-
-```c++
-static bool canCast(const Variant & value, const MetaType * toMetaType)
-```
-
-Function `canCast` return true if the `value` can be type casted to `toMetaType`, false if it can't be casted.  
-If the implementation can't cast the value, it should return the value of default implementation, `CommonDeclareMetaType<T>::canCast(value, toMetaType)`.  
-
-**Example**  
-```c++
-template <>
-struct metapp::DeclareMetaType <MyClass>
-	: metapp::DeclareMetaTypeBase <MyClass>
-{
-	static bool canCast(const Variant & value, const MetaType * toMetaType)
-	{
-		if(can cast MyClass to toMetaType) {
-			return true;
-		}
-		return CommonDeclareMetaType<MyClass>::canCast(value, toMetaType);
-	}
-}
-```
-
 #### Function cast
 
 ```c++
-static Variant cast(const Variant & value, const MetaType * toMetaType);
+static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 ```
 
-Function `cast` return the casted Variant if the `value` can be type casted to `toMetaType`, otherwise returns empty `metapp::Variant()`.  
-If the implementation can't cast the value, it should return the value of default implementation, `CommonDeclareMetaType<T>::cast(value, toMetaType)`.  
+Function `cast` return true if the `value` can be type casted to `toMetaType`, otherwise returns false.  
+If `result` is not nullptr and if the `value` can be casted, set `result` with the casted value.  
+If the implementation can't cast the value, it should return the value of default implementation, `CommonDeclareMetaType<T>::cast(result, value, toMetaType)`.  
 
 ```c++
 template <>
 struct metapp::DeclareMetaType <MyClass>
 	: metapp::DeclareMetaTypeBase <MyClass>
 {
-	static Variant cast(const Variant & value, const MetaType * toMetaType)
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
 		if(can cast MyClass to toMetaType) {
-			return the value casted to toMetaType;
+			*result = casted value;
+			return true;
 		}
-		return CommonDeclareMetaType<MyClass>::cast(value, toMetaType);
+		return CommonDeclareMetaType<MyClass>::cast(result, value, toMetaType);
 	}
 }
 ```

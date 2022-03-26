@@ -120,11 +120,9 @@ public:
 
 	Variant toReference(const Variant & value) const;
 	
-	bool canCast(const Variant & value, const MetaType * toMetaType) const;
-	Variant cast(const Variant & value, const MetaType * toMetaType) const;
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
-	bool canCastFrom(const Variant & value, const MetaType * fromMetaType) const;
-	Variant castFrom(const Variant & value, const MetaType * fromMetaType) const;
+	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 	// re-implementable meta methods, end
 
 private:
@@ -197,14 +195,9 @@ public:
 
 	static Variant toReference(const Variant & value);
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType);
-	static Variant cast(const Variant & value, const MetaType * toMetaType);
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
-	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType);
-	static Variant castFrom(const Variant & value, const MetaType * fromMetaType);
-
-private:
-	static bool doCast(Variant * result, const Variant & value, const MetaType * toMetaType);
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType);
 };
 
 template <typename T, typename Enabled = void>
@@ -234,11 +227,9 @@ struct DeclareMetaTypeVoidBase
 
 	static Variant toReference(const Variant & value);
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType);
-	static Variant cast(const Variant & value, const MetaType * toMetaType);
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
-	static bool canCastFrom(const Variant & value, const MetaType * fromMetaType);
-	static Variant castFrom(const Variant & value, const MetaType * fromMetaType);
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType);
 
 };
 

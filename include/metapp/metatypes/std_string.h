@@ -30,17 +30,15 @@ struct DeclareMetaTypeBase <std::string>
 
 	static constexpr TypeKind typeKind = tkStdString;
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Common::canCast(value, toMetaType)
-			|| canCastToCharPtr(toMetaType);
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
 		if(canCastToCharPtr(toMetaType)) {
-			return value.get<const std::string &>().c_str();
+			if(result != nullptr) {
+				*result = value.get<const std::string &>().c_str();
+			}
+			return true;
 		}
 		else {
-			return Common::cast(value, toMetaType);
+			return Common::cast(result, value, toMetaType);
 		}
 	}
 
@@ -57,17 +55,15 @@ struct DeclareMetaTypeBase <std::wstring>
 
 	static constexpr TypeKind typeKind = tkStdWideString;
 
-	static bool canCast(const Variant & value, const MetaType * toMetaType) {
-		return Common::canCast(value, toMetaType)
-			|| canCastToWideCharPtr(toMetaType);
-	}
-
-	static Variant cast(const Variant & value, const MetaType * toMetaType) {
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
 		if(canCastToWideCharPtr(toMetaType)) {
-			return value.get<const std::wstring &>().c_str();
+			if(result != nullptr) {
+				*result = value.get<const std::wstring &>().c_str();
+			}
+			return true;
 		}
 		else {
-			return Common::cast(value, toMetaType);
+			return Common::cast(result, value, toMetaType);
 		}
 	}
 
