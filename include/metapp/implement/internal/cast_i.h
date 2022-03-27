@@ -112,7 +112,12 @@ private:
 
 	static CastFromItem findCastFromItem(const MetaType * fromMetaType)
 	{
-		return doFindCastFromItem(fromMetaType, AllKnownTypeList());
+		using Types = typename std::conditional<
+			CanStaticCast<int, MyType>::value,
+			AllKnownTypeList,
+			OtherKnowTypeList
+		>::type;
+		return doFindCastFromItem(fromMetaType, Types());
 	}
 
 };
@@ -187,7 +192,12 @@ private:
 
 	static CastToItem findCastToItem(const MetaType * toMetaType)
 	{
-		return doFindCastToItem(toMetaType, AllKnownTypeList());
+		using Types = typename std::conditional<
+			CanStaticCast<MyType, int>::value,
+			AllKnownTypeList,
+			OtherKnowTypeList
+		>::type;
+		return doFindCastToItem(toMetaType, Types());
 	}
 
 };
