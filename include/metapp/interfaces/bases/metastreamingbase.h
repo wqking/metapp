@@ -33,32 +33,28 @@ namespace metapp_top_internal_ {
 // Putting these functions in metapp_top_internal_ will prevent ADL.
 
 template <typename U>
-inline void doStreamIn(std::istream & stream, metapp::Variant & value,
-	typename std::enable_if<metapp::internal_::HasInputStreamOperator<U>::value >::type * = nullptr)
+inline void doStreamIn(std::istream & stream, metapp::Variant & value, std::true_type)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream >> *static_cast<M *>(value.getAddress());
 }
 
 template <typename U>
-inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/,
-	typename std::enable_if<! metapp::internal_::HasInputStreamOperator<U>::value >::type * = nullptr)
+inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
 {
 	metapp::errorUnsupported("No << input streaming operator.");
 	return;
 }
 
 template <typename U>
-inline void doStreamOut(std::ostream & stream, const metapp::Variant & value,
-	typename std::enable_if<metapp::internal_::HasOutputStreamOperator<U>::value >::type * = nullptr)
+inline void doStreamOut(std::ostream & stream, const metapp::Variant & value, std::true_type)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream << *static_cast<const M *>(value.getAddress());
 }
 
 template <typename U>
-inline void doStreamOut(std::ostream & /*stream*/, metapp::Variant & /*value*/,
-	typename std::enable_if<! metapp::internal_::HasOutputStreamOperator<U>::value >::type * = nullptr)
+inline void doStreamOut(std::ostream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
 {
 	metapp::errorUnsupported("No >> output streaming operator.");
 	return;
@@ -82,11 +78,19 @@ public:
 
 private:
 	static void streamIn(std::istream & stream, metapp::Variant & value) {
-		metapp_top_internal_::doStreamIn<T>(stream, value);
+		metapp_top_internal_::doStreamIn<T>(
+			stream,
+			value,
+			internal_::TrueFalse<internal_::HasInputStreamOperator<T>::value>()
+		);
 	}
 
 	static void streamOut(std::ostream & stream, const metapp::Variant & value) {
-		metapp_top_internal_::doStreamOut<T>(stream, value);
+		metapp_top_internal_::doStreamOut<T>(
+			stream,
+			value,
+			internal_::TrueFalse<internal_::HasOutputStreamOperator<T>::value>()
+		);
 	}
 
 };
