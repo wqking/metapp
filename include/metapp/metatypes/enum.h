@@ -24,6 +24,7 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_enum<T>::value>::type>
+	: CastFromToTypes<T, ArithmeticTypeList>
 {
 	using UpType = typename std::underlying_type<T>::type;
 	static constexpr TypeKind typeKind = tkEnum;

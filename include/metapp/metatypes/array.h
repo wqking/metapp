@@ -24,7 +24,7 @@
 namespace metapp {
 
 template <typename T, size_t length>
-struct DeclareMetaTypeArrayBase
+struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::wstring> >
 {
 	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
 

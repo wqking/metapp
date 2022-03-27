@@ -237,9 +237,15 @@ inline TristateBool doCastPointerReference(
 		return tristateResult;
 	}
 
-	if(!fromMetaType->isReference() && toMetaType->isReference()
+	if(! fromMetaType->isReference() && toMetaType->isReference()
 		) {
 		if(fromMetaType->cast(result, value, toMetaType->getUpType())) {
+			return TristateBool::yes;
+		}
+	}
+	if(fromMetaType->isReference() && ! toMetaType->isReference()
+		) {
+		if(fromMetaType->getUpType()->cast(result, value, toMetaType)) {
 			return TristateBool::yes;
 		}
 	}
@@ -472,9 +478,9 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	if(internal_::CastTo<T, internal_::SelectCastToTypes<T> >::castTo(result, value, toMetaType)) {
-		return true;
-	}
+	//if(internal_::CastTo<T, internal_::SelectCastToTypes<T> >::castTo(result, value, toMetaType)) {
+	//	return true;
+	//}
 
 	if(toMetaType->castFrom(result, value, fromMetaType)) {
 		return true;
@@ -484,9 +490,11 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 }
 
 template <typename T>
-inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
+//inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
+inline bool CommonDeclareMetaType<T>::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
-	return internal_::CastFrom<T, internal_::SelectCastFromTypes<T> >::castFrom(result, value, fromMetaType);
+	return false;
+	//return internal_::CastFrom<T, internal_::SelectCastFromTypes<T> >::castFrom(result, value, fromMetaType);
 }
 
 

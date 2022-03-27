@@ -352,6 +352,17 @@ struct ImplictConstruct
 	std::string text;
 };
 
+}
+
+template <>
+struct metapp::DeclareMetaType <ImplictConstruct>
+	: metapp::DeclareMetaTypeBase <ImplictConstruct>,
+		metapp::CastFromTypes <ImplictConstruct, metapp::TypeList<std::string> >
+{
+};
+
+namespace {
+
 TEST_CASE("Variant, implicitly cast std::string to ImplictConstruct")
 {
 	metapp::Variant v(std::string("abc"));
@@ -367,6 +378,17 @@ struct ImplicitTypeCast
 		return value;
 	}
 };
+
+}
+
+template <>
+struct metapp::DeclareMetaType <ImplicitTypeCast>
+	: metapp::DeclareMetaTypeBase <ImplicitTypeCast>,
+	metapp::CastToTypes <ImplicitTypeCast, metapp::ArithmeticTypeList >
+{
+};
+
+namespace {
 
 TEST_CASE("Variant, implicitly cast ImplicitTypeCast to int")
 {

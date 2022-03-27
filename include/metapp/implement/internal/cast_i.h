@@ -158,8 +158,6 @@ struct CastToItem
 	Variant (*castTo)(const Variant & value);
 };
 
-//template <typename MyType, typename ToTypes>
-//struct CastTo <MyType, ToTypes, typename std::enable_if<CanCastToAnyType<MyType, ToTypes>::value>::type>
 template <typename MyType, typename ToTypes>
 struct CastTo
 {
@@ -223,11 +221,6 @@ private:
 
 	static CastToItem findCastToItem(const MetaType * toMetaType)
 	{
-		//using Types = typename std::conditional<
-		//	CanStaticCast<MyType, int>::value,
-		//	AllKnownTypeList,
-		//	OtherKnowTypeList
-		//>::type;
 		return doFindCastToItem(toMetaType, ToTypes());
 	}
 
