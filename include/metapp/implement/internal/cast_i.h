@@ -70,7 +70,7 @@ private:
 		}
 
 	private:
-		using ToType = typename std::remove_reference<MyType>::type;
+		using ToType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
 		static Variant castFrom(const Variant & value) {
 			// If ToType is a class which is constructible from F, but the argument in its constructor
@@ -152,7 +152,7 @@ private:
 		}
 
 	private:
-		using FromType = typename std::remove_reference<MyType>::type;
+		using FromType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
 		static Variant castTo(const Variant & value) {
 			return static_cast<ToType>(*(FromType *)(value.getAddress()));

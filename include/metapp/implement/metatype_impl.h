@@ -17,6 +17,8 @@
 #ifndef METAPP_METATYPE_IMPL_H_969872685611
 #define METAPP_METATYPE_IMPL_H_969872685611
 
+#include "metapp/implement/internal/construct_i.h"
+
 #include <atomic>
 
 namespace metapp {
@@ -418,12 +420,7 @@ inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const
 		return nullptr;
 	}
 	else {
-		if(copyFrom == nullptr) {
-			return doConstructDefault<Underlying>();
-		}
-		else {
-			return doConstructCopy<Underlying>(copyFrom);
-		}
+		return internal_::constructOnHeap<Underlying>(copyFrom);
 	}
 }
 
@@ -460,7 +457,7 @@ inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
 	using U = typename std::remove_reference<T>::type;
 	if(fromMetaType->isPointer()) {
 		using P = typename std::remove_pointer<U>::type;
-		return doPointerToReference<P>(value);
+		return internal_::doPointerToReference<P>(value, std::is_void<P>());
 	}
 	return Variant::create<U &>(value.get<U &>());
 }
@@ -489,7 +486,7 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 template <typename T>
 inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 {
-	return internal_::CastFrom<Underlying>::castFrom(result, value, fromMetaType);
+	return internal_::CastFrom<T>::castFrom(result, value, fromMetaType);
 }
 
 

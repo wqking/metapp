@@ -161,8 +161,7 @@ namespace metapp {
 
 template <typename T>
 struct CommonDeclareMetaType
-	: internal_::CommonDeclareMetaTypeBase,
-		SelectMetaStreamingBase<T>
+	: SelectMetaStreamingBase<T>
 {
 private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;

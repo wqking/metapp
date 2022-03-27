@@ -19,6 +19,7 @@
 
 #include "metapp/exception.h"
 #include "metapp/implement/internal/typeutil_i.h"
+#include "metapp/implement/internal/construct_i.h"
 
 #include <memory>
 #include <array>
@@ -36,14 +37,11 @@ private:
 	>::value;
 
 	template <typename T>
-	struct FitBuffer
-	{
-		static constexpr bool value = 
-			std::is_trivial<T>::value
-			&& std::is_standard_layout<T>::value
-			&& sizeof(T) <= bufferSize
-		;
-	};
+	using FitBuffer = std::integral_constant<bool,
+		std::is_trivial<T>::value
+		&& std::is_standard_layout<T>::value
+		&& sizeof(T) <= bufferSize
+	>;
 
 	static constexpr uint8_t storageNone = 0;
 	static constexpr uint8_t storageObject = 1;
@@ -59,7 +57,7 @@ public:
 
 	template <typename T>
 	void construct(const void * copyFrom) {
-		doConstructOnObjectOrBuffer<T>(FitBuffer<T>::value, copyFrom);
+		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>());
 	}
 
 	void constructObject(const std::shared_ptr<void> & obj) {
@@ -107,85 +105,42 @@ public:
 
 private:
 	template <typename T>
-	void doConstructOnObjectOrBuffer(const bool onBuffer, const void * copyFrom) {
-		setStorageType(onBuffer ? storageBuffer : storageObject);
+	void doConstructOnObjectOrBuffer(const void * copyFrom, std::true_type) {
+		setStorageType(storageBuffer);
 
 		if(copyFrom == nullptr) {
-			doConstructOnObjectOrBufferDefault<T>(onBuffer);
+			doConstructOnBufferDefault<T>(
+				internal_::TrueFalse<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>()
+			);
 		}
 		else {
-			doConstructOnObjectOrBufferCopy<T>(onBuffer, copyFrom);
+			doConstructOnBufferCopy<T>(copyFrom, std::is_copy_assignable<T>());
 		}
 	}
 
 	template <typename T>
-	void doConstructOnObjectOrBufferDefault(
-		const bool onBuffer,
-		typename std::enable_if<
-		std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value
-		>::type * = nullptr
-	) {
-		if(onBuffer) {
-			podAs<T>() = T();
-		}
-		else {
-			object = std::make_shared<T>();
-		}
+	void doConstructOnObjectOrBuffer(const void * copyFrom, std::false_type) {
+		setStorageType(storageObject);
+		object = std::shared_ptr<T>(internal_::constructOnHeap<T>(copyFrom));
 	}
 
 	template <typename T>
-	void doConstructOnObjectOrBufferDefault(
-		const bool /*onBuffer*/,
-		typename std::enable_if<
-		! (std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value)
-		>::type * = nullptr
-	) {
+	void doConstructOnBufferDefault(std::true_type) {
+		podAs<T>() = T();
+	}
+
+	template <typename T>
+	void doConstructOnBufferDefault(std::false_type) {
 		errorNotConstructible();
 	}
 
 	template <typename T>
-	void doConstructOnObjectOrBufferCopy(
-		const bool onBuffer,
-		const void * copyFrom,
-		typename std::enable_if<std::is_copy_assignable<T>::value>::type * = nullptr
-	) {
-		if(onBuffer) {
-			podAs<T>() = *(T *)copyFrom;
-		}
-		else {
-			object = std::make_shared<T>(*(T *)copyFrom);
-		}
+	void doConstructOnBufferCopy(const void * copyFrom, std::true_type) {
+		podAs<T>() = *(T *)copyFrom;
 	}
 
 	template <typename T>
-	void doConstructOnObjectOrBufferCopy(
-		const bool onBuffer,
-		const void * copyFrom,
-		typename std::enable_if<! std::is_copy_assignable<T>::value>::type * = nullptr
-	) {
-		doConstructOnObjectOrBufferMove<T>(onBuffer, copyFrom);
-	}
-
-	template <typename T>
-	void doConstructOnObjectOrBufferMove(
-		const bool onBuffer,
-		const void * copyFrom,
-		typename std::enable_if<std::is_move_assignable<T>::value>::type * = nullptr
-	) {
-		if(onBuffer) {
-			podAs<T>() = std::move(*(T *)copyFrom);
-		}
-		else {
-			object = std::make_shared<T>(std::move(*(T *)copyFrom));
-		}
-	}
-
-	template <typename T>
-	void doConstructOnObjectOrBufferMove(
-		const bool /*onBuffer*/,
-		const void * /*copyFrom*/,
-		typename std::enable_if<! std::is_move_assignable<T>::value>::type * = nullptr
-	) {
+	void doConstructOnBufferCopy(const void * /*copyFrom*/, std::false_type) {
 		errorNotConstructible();
 	}
 

@@ -213,6 +213,15 @@ struct FilterTypes
 	using Type = typename HelperFilterTypes<TypeList<>, TL, BoolList>::Type;
 };
 
+template <bool b>
+struct TrueFalse : std::false_type
+{
+};
+
+template <>
+struct TrueFalse <true> : std::true_type
+{
+};
 
 } // namespace internal_
 
