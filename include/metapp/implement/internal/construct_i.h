@@ -51,7 +51,7 @@ T * constructOnHeapCopy(const void * copyFrom, std::false_type, std::true_type)
 }
 
 template <typename T>
-T * constructOnHeapCopy(const void * copyFrom, std::false_type, std::false_type)
+T * constructOnHeapCopy(const void * /*copyFrom*/, std::false_type, std::false_type)
 {
 	errorNotConstructible();
 	return nullptr;
