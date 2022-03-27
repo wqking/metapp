@@ -35,16 +35,15 @@ struct CanCastSafely
 		;
 };
 
-template <typename MyType>
+struct CastFromItem
+{
+	const void * fromUnifiedType;
+	Variant (*castFrom)(const Variant & value);
+};
+
+template <typename MyType, typename FromTypes>
 struct CastFrom
 {
-private:
-	struct CastFromItem
-	{
-		const void * fromUnifiedType;
-		Variant (*castFrom)(const Variant & value);
-	};
-
 public:
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
@@ -112,26 +111,58 @@ private:
 
 	static CastFromItem findCastFromItem(const MetaType * fromMetaType)
 	{
-		using Types = typename std::conditional<
-			CanStaticCast<int, MyType>::value,
-			AllKnownTypeList,
-			OtherKnowTypeList
-		>::type;
-		return doFindCastFromItem(fromMetaType, Types());
+		return doFindCastFromItem(fromMetaType, FromTypes());
 	}
 
 };
 
 template <typename MyType>
+using SelectCastFromTypes = typename std::conditional<
+	CanStaticCast<int, MyType>::value,
+	AllKnownTypeList,
+	OtherKnowTypeList
+>::type;
+
+#if 0
+template <typename MyType, typename TL>
+struct CanCastToAnyType;
+
+template <typename MyType>
+struct CanCastToAnyType <MyType, TypeList<> >
+{
+	static constexpr bool value = false;
+};
+
+template <typename MyType, typename Type0, typename ...Types>
+struct CanCastToAnyType <MyType, TypeList<Type0, Types...> >
+{
+	static constexpr bool value = CanCastSafely<MyType, Type0>::value || CanCastToAnyType<MyType, TypeList<Types...> >::value;
+};
+
+template <typename MyType, typename ToTypes, typename Enabled = void>
+struct CastTo;
+
+template <typename MyType, typename ToTypes>
+struct CastTo <MyType, ToTypes, typename std::enable_if<! CanCastToAnyType<MyType, ToTypes>::value>::type>
+{
+	static bool castTo(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*toMetaType*/)
+	{
+		return false;
+	}
+};
+#endif
+
+struct CastToItem
+{
+	const void * toUnifiedType;
+	Variant (*castTo)(const Variant & value);
+};
+
+//template <typename MyType, typename ToTypes>
+//struct CastTo <MyType, ToTypes, typename std::enable_if<CanCastToAnyType<MyType, ToTypes>::value>::type>
+template <typename MyType, typename ToTypes>
 struct CastTo
 {
-private:
-	struct CastToItem
-	{
-		const void * toUnifiedType;
-		Variant (*castTo)(const Variant & value);
-	};
-
 public:
 	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
@@ -192,15 +223,22 @@ private:
 
 	static CastToItem findCastToItem(const MetaType * toMetaType)
 	{
-		using Types = typename std::conditional<
-			CanStaticCast<MyType, int>::value,
-			AllKnownTypeList,
-			OtherKnowTypeList
-		>::type;
-		return doFindCastToItem(toMetaType, Types());
+		//using Types = typename std::conditional<
+		//	CanStaticCast<MyType, int>::value,
+		//	AllKnownTypeList,
+		//	OtherKnowTypeList
+		//>::type;
+		return doFindCastToItem(toMetaType, ToTypes());
 	}
 
 };
+
+template <typename MyType>
+using SelectCastToTypes = typename std::conditional<
+	CanStaticCast<MyType, int>::value,
+	AllKnownTypeList,
+	OtherKnowTypeList
+>::type;
 
 
 } // namespace internal_

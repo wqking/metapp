@@ -33,7 +33,7 @@ struct UpTypeGetter <TypeList<Type0, Types...> >
 {
 	static const MetaType ** makeUpTypeList()
 	{
-		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList {
+		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList{
 			getMetaType<Type0>(),
 			getMetaType<Types>()...,
 		};
@@ -79,44 +79,44 @@ const MetaType * doGetMetaTypeStorage()
 {
 	using M = DeclareMetaType<T>;
 
-	static const MetaType metaType (
+	static const MetaType metaType(
 		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
-		MetaTable {
+		MetaTable{
 			&SelectDeclareClass<T, HasMember_toReference<M>::value>::toReference,
 		},
 		UpTypeGetter<
-			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
+		typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
-		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags	| CommonDeclareMetaType<T>::typeFlags
+		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags | CommonDeclareMetaType<T>::typeFlags
 	);
 	return &metaType;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
+-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<
-		! std::is_same<T, NoneUpType>::value && ! HasMember_setup<DeclareMetaType<T> >::value,
-		const MetaType *>::type
+-> typename std::enable_if<
+	!std::is_same<T, NoneUpType>::value && !HasMember_setup<DeclareMetaType<T> >::value,
+	const MetaType *>::type
 {
 	return doGetMetaTypeStorage<T>();
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<
-		! std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
-		const MetaType *>::type
+-> typename std::enable_if<
+	!std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
+	const MetaType *>::type
 {
 	static std::atomic_flag hasCalledSetup;
 	const MetaType * metaType = doGetMetaTypeStorage<T>();
-	if(! hasCalledSetup.test_and_set()) {
+	if(!hasCalledSetup.test_and_set()) {
 		DeclareMetaType<T>::setup();
 	}
 	return metaType;
@@ -127,9 +127,9 @@ const UnifiedType * unifiedTypeGetter()
 {
 	using M = DeclareMetaType<T>;
 
-	static const UnifiedType unifiedType (
+	static const UnifiedType unifiedType(
 		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
-		UnifiedMetaTable {
+		UnifiedMetaTable{
 			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
 			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
 			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
@@ -237,7 +237,7 @@ inline TristateBool doCastPointerReference(
 		return tristateResult;
 	}
 
-	if(! fromMetaType->isReference() && toMetaType->isReference()
+	if(!fromMetaType->isReference() && toMetaType->isReference()
 		) {
 		if(fromMetaType->cast(result, value, toMetaType->getUpType())) {
 			return TristateBool::yes;
@@ -257,11 +257,11 @@ inline TristateBool doCastPointerReference(
 } // namespace internal_
 
 inline constexpr MetaType::MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(),
-		const internal_::MetaTable & metaTable,
-		const internal_::UpTypeData & upTypeData,
-		const TypeFlags typeFlags
-	) noexcept :
+	const internal_::UnifiedType * (*doGetUnifiedType)(),
+	const internal_::MetaTable & metaTable,
+	const internal_::UpTypeData & upTypeData,
+	const TypeFlags typeFlags
+) noexcept :
 	doGetUnifiedType(doGetUnifiedType),
 #ifdef METAPP_DEBUG_ENABLED
 	debugUnifiedType(doGetUnifiedType()),
@@ -472,7 +472,7 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	if(internal_::CastTo<T>::castTo(result, value, toMetaType)) {
+	if(internal_::CastTo<T, internal_::SelectCastToTypes<T> >::castTo(result, value, toMetaType)) {
 		return true;
 	}
 
@@ -486,7 +486,7 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 template <typename T>
 inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 {
-	return internal_::CastFrom<T>::castFrom(result, value, fromMetaType);
+	return internal_::CastFrom<T, internal_::SelectCastFromTypes<T> >::castFrom(result, value, fromMetaType);
 }
 
 
