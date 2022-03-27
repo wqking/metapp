@@ -165,7 +165,6 @@ struct CommonDeclareMetaType
 		SelectMetaStreamingBase<T>
 {
 private:
-	using Type = T;
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
 
 public:

@@ -475,7 +475,7 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	if(internal_::CastTo<Type>::castTo(result, value, toMetaType)) {
+	if(internal_::CastTo<T>::castTo(result, value, toMetaType)) {
 		return true;
 	}
 

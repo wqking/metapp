@@ -73,12 +73,6 @@ private:
 		using ToType = typename std::remove_reference<MyType>::type;
 
 		static Variant castFrom(const Variant & value) {
-			return doCastFrom<FromType>(value);
-		}
-
-		template <typename F>
-		static Variant doCastFrom(const Variant & value,
-			typename std::enable_if<CanCastSafely<F, ToType>::value>::type * = nullptr) {
 			// If ToType is a class which is constructible from F, but the argument in its constructor
 			// is narrower than F, warning C4244 will be issued on MSVC.
 			// std::unordered_map is such an example, because it can be constructed from size_type,
@@ -86,13 +80,7 @@ private:
 			// Current to avoid the warning, we don't allow narrowing casting to class, see CanCastSafely
 			// But that can't suppress warning when ToType is container with element of metapp::Variant,
 			// such as std::vector<metapp::Variant>
-			return static_cast<ToType>(*(F *)(value.getAddress()));
-		}
-
-		template <typename F>
-		static Variant doCastFrom(const Variant & /*value*/,
-			typename std::enable_if<! CanCastSafely<F, ToType>::value>::type * = nullptr) {
-			return Variant();
+			return static_cast<ToType>(*(FromType *)(value.getAddress()));
 		}
 	};
 
@@ -167,19 +155,7 @@ private:
 		using FromType = typename std::remove_reference<MyType>::type;
 
 		static Variant castTo(const Variant & value) {
-			return doCastTo<ToType>(value);
-		}
-
-		template <typename T>
-		static Variant doCastTo(const Variant & value,
-			typename std::enable_if<CanStaticCast<FromType, T>::value>::type * = nullptr) {
-			return static_cast<T>(*(FromType *)(value.getAddress()));
-		}
-
-		template <typename T>
-		static Variant doCastTo(const Variant & /*value*/,
-			typename std::enable_if<! CanStaticCast<FromType, T>::value>::type * = nullptr) {
-			return Variant();
+			return static_cast<ToType>(*(FromType *)(value.getAddress()));
 		}
 	};
 

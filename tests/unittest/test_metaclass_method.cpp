@@ -30,6 +30,8 @@ namespace {
 
 struct A
 {
+	virtual ~A() {}
+
 	std::string methodA() const noexcept {
 		return "hello";
 	}
