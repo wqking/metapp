@@ -24,7 +24,8 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypePointerBase : CastFromToTypes<T, TypeList<std::string, std::wstring> >
+struct DeclareMetaTypePointerBase
+	: CastFromToTypes<T, TypeList<std::string, std::wstring> >, MetaStreamingBase<T>
 {
 	using Common = CommonDeclareMetaType<T>;
 	using UpType = typename std::remove_pointer<T>::type;

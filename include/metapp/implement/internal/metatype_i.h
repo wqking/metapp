@@ -254,7 +254,7 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaEnum<M>::value,
 		HasMember_getMetaIndexable<M>::value,
 		HasMember_getMetaIterable<M>::value,
-		HasMember_getMetaStreaming<M>::value || HasMember_getMetaStreaming<CommonDeclareMetaType<T> >::value,
+		HasMember_getMetaStreaming<M>::value,
 		HasMember_getMetaMap<M>::value,
 		HasMember_getMetaMember<M>::value,
 		HasMember_getMetaUser<M>::value

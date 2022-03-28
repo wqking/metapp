@@ -26,7 +26,7 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T,
 	typename std::enable_if<TypeListIn<ArithmeticTypeList, T>::value>::type>
-	: CastFromToTypes<T, ArithmeticTypeList>
+	: CastFromToTypes<T, ArithmeticTypeList>, MetaStreamingBase<T>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<ArithmeticTypeList, T>::value);
 

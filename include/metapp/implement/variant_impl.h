@@ -267,7 +267,7 @@ inline void Variant::swap(Variant & other) noexcept
 
 inline std::istream & operator >> (std::istream & stream, Variant & value)
 {
-	auto metaStreaming = value.metaType->getMetaStreaming();
+	auto metaStreaming = getNonReferenceMetaType(value.metaType)->getMetaStreaming();
 	if(metaStreaming == nullptr) {
 		errorUnsupported("No << input streaming operator.");
 		return stream;
@@ -278,7 +278,7 @@ inline std::istream & operator >> (std::istream & stream, Variant & value)
 
 inline std::ostream & operator << (std::ostream & stream, const Variant & value)
 {
-	auto metaStreaming = value.metaType->getMetaStreaming();
+	auto metaStreaming = getNonReferenceMetaType(value.metaType)->getMetaStreaming();
 	if(metaStreaming == nullptr) {
 		errorUnsupported("No >> output streaming operator.");
 		return stream;

@@ -24,7 +24,7 @@
 namespace metapp {
 
 template <>
-struct DeclareMetaTypeBase <std::string>
+struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 {
 	using Common = CommonDeclareMetaType<std::string>;
 

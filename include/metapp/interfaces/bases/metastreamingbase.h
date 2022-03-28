@@ -33,39 +33,34 @@ namespace metapp_top_internal_ {
 // Putting these functions in metapp_top_internal_ will prevent ADL.
 
 template <typename U>
-inline void doStreamIn(std::istream & stream, metapp::Variant & value, std::true_type)
+inline void doStreamIn(std::istream & stream, metapp::Variant & value)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream >> *static_cast<M *>(value.getAddress());
 }
 
 template <typename U>
-inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
-{
-	metapp::errorUnsupported("No << input streaming operator.");
-	return;
-}
-
-template <typename U>
-inline void doStreamOut(std::ostream & stream, const metapp::Variant & value, std::true_type)
+inline void doStreamOut(std::ostream & stream, const metapp::Variant & value)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream << *static_cast<const M *>(value.getAddress());
-}
-
-template <typename U>
-inline void doStreamOut(std::ostream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
-{
-	metapp::errorUnsupported("No >> output streaming operator.");
-	return;
 }
 
 } // namespace metapp_top_internal_
 
 namespace metapp {
 
-template <typename T>
+template <typename T, typename Enabled = void>
 struct MetaStreamingBase
+{
+};
+
+template <typename T>
+struct MetaStreamingBase <T, typename std::enable_if<
+		! std::is_reference<T>::value
+		&& internal_::HasInputStreamOperator<T>::value
+		&& internal_::HasOutputStreamOperator<T>::value
+	>::type>
 {
 public:
 	static const metapp::MetaStreaming * getMetaStreaming() {
@@ -80,36 +75,18 @@ private:
 	static void streamIn(std::istream & stream, metapp::Variant & value) {
 		metapp_top_internal_::doStreamIn<T>(
 			stream,
-			value,
-			internal_::TrueFalse<internal_::HasInputStreamOperator<T>::value>()
+			value
 		);
 	}
 
 	static void streamOut(std::ostream & stream, const metapp::Variant & value) {
 		metapp_top_internal_::doStreamOut<T>(
 			stream,
-			value,
-			internal_::TrueFalse<internal_::HasOutputStreamOperator<T>::value>()
+			value
 		);
 	}
 
 };
-
-namespace internal_ {
-
-struct DummyMetaStreamingBase{};
-
-} // namespace internal_
-
-template <typename T>
-using SelectMetaStreamingBase = typename std::conditional<
-	internal_::HasInputStreamOperator<T>::value
-		&& internal_::HasOutputStreamOperator<T>::value
-	,
-	MetaStreamingBase<T>,
-	internal_::DummyMetaStreamingBase
->::type;
-
 
 } // namespace metapp
 
