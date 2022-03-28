@@ -348,6 +348,7 @@ TEST_CASE("Variant, cast Derived to MyClass &")
 struct ImplictConstruct
 {
 	ImplictConstruct(const std::string & text) : text(text) {}
+	ImplictConstruct(const MyClass & obj) : text(std::to_string(obj.value)) {}
 
 	std::string text;
 };
@@ -357,7 +358,7 @@ struct ImplictConstruct
 template <>
 struct metapp::DeclareMetaType <ImplictConstruct>
 	: metapp::DeclareMetaTypeBase <ImplictConstruct>,
-		metapp::CastFromTypes <ImplictConstruct, metapp::TypeList<std::string> >
+		metapp::CastFromTypes <ImplictConstruct, metapp::TypeList<std::string, MyClass> >
 {
 };
 
@@ -368,14 +369,39 @@ TEST_CASE("Variant, implicitly cast std::string to ImplictConstruct")
 	metapp::Variant v(std::string("abc"));
 	REQUIRE(v.canCast<ImplictConstruct>());
 	REQUIRE(v.cast<ImplictConstruct>().get<ImplictConstruct &>().text == "abc");
+	REQUIRE(v.canCast<const ImplictConstruct &>());
+	REQUIRE(v.cast<const ImplictConstruct &>().get<const ImplictConstruct &>().text == "abc");
+}
+
+TEST_CASE("Variant, implicitly cast MyClass to ImplictConstruct")
+{
+	metapp::Variant v(MyClass{6});
+	REQUIRE(v.canCast<ImplictConstruct>());
+	REQUIRE(v.cast<ImplictConstruct>().get<ImplictConstruct &>().text == "6");
+	REQUIRE(v.canCast<const ImplictConstruct &>());
+	REQUIRE(v.cast<const ImplictConstruct &>().get<const ImplictConstruct &>().text == "6");
+}
+
+TEST_CASE("Variant, implicitly cast const MyClass & to ImplictConstruct")
+{
+	MyClass obj{6};
+	metapp::Variant v = metapp::Variant::create<const MyClass &>(obj);
+	REQUIRE(v.canCast<ImplictConstruct>());
+	REQUIRE(v.cast<ImplictConstruct>().get<ImplictConstruct &>().text == "6");
+	REQUIRE(v.canCast<const ImplictConstruct &>());
+	REQUIRE(v.cast<const ImplictConstruct &>().get<const ImplictConstruct &>().text == "6");
 }
 
 struct ImplicitTypeCast
 {
 	int value;
 
-	operator int () const {
-		return value;
+	operator std::string () const {
+		return std::to_string(value);
+	}
+	
+	operator MyClass () const {
+		return MyClass{value};
 	}
 };
 
@@ -384,21 +410,44 @@ struct ImplicitTypeCast
 template <>
 struct metapp::DeclareMetaType <ImplicitTypeCast>
 	: metapp::DeclareMetaTypeBase <ImplicitTypeCast>,
-	metapp::CastToTypes <ImplicitTypeCast, metapp::ArithmeticTypeList >
+		metapp::CastToTypes <ImplicitTypeCast, metapp::TypeList<std::string, MyClass> >
 {
 };
 
 namespace {
 
-TEST_CASE("Variant, implicitly cast ImplicitTypeCast to int")
+TEST_CASE("Variant, implicitly cast ImplicitTypeCast to std::string")
 {
 	ImplicitTypeCast xxx {5};
-	int n = xxx;
-	REQUIRE(n == 5);
+	MyClass a = static_cast<MyClass>(xxx);
+	std::string n = xxx;
+	REQUIRE(n == "5");
 	metapp::Variant v(ImplicitTypeCast {38});
-	v.canCast<int>();
-	REQUIRE(v.canCast<int>());
-	REQUIRE(v.cast<int>().get<int>() == 38);
+	v.canCast<std::string>();
+	REQUIRE(v.canCast<std::string>());
+	REQUIRE(v.cast<std::string>().get<std::string>() == "38");
+}
+
+TEST_CASE("Variant, implicitly cast ImplicitTypeCast to MyClass")
+{
+	ImplicitTypeCast xxx {5};
+	MyClass n = xxx;
+	REQUIRE(n.value == 5);
+	metapp::Variant v(ImplicitTypeCast {38});
+	REQUIRE(v.canCast<MyClass>());
+	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
+	REQUIRE(v.canCast<const MyClass &>());
+	REQUIRE(v.cast<const MyClass &>().get<const MyClass &>().value == 38);
+}
+
+TEST_CASE("Variant, implicitly cast const ImplicitTypeCast & to MyClass")
+{
+	ImplicitTypeCast obj{38};
+	metapp::Variant v = metapp::Variant::create<const ImplicitTypeCast &>(obj);
+	REQUIRE(v.canCast<MyClass>());
+	REQUIRE(v.cast<MyClass>().get<MyClass>().value == 38);
+	REQUIRE(v.canCast<const MyClass &>());
+	REQUIRE(v.cast<const MyClass &>().get<const MyClass &>().value == 38);
 }
 
 

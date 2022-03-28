@@ -28,16 +28,24 @@
 
 namespace metapp {
 
-using ArithmeticTypeList = TypeList<
+using IntegralTypeList = TypeList<
 	bool,
 	char, wchar_t,
 	signed char, unsigned char,
 	short, unsigned short,
 	int, unsigned int,
 	long, unsigned long,
-	long long, unsigned long long,
+	long long, unsigned long long
+>;
+
+using FloatTypeList = TypeList<
 	float, double, long double
 >;
+
+using ArithmeticTypeList = typename TypeListConcat<
+	IntegralTypeList,
+	FloatTypeList
+>::Type;
 
 using OtherKnowTypeList = TypeList<
 #ifdef METAPP_SUPPORT_STANDARD_17

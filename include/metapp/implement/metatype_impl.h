@@ -223,11 +223,18 @@ inline TristateBool doCastPointerReference(
 			}
 			break;
 		}
-		//if(fromMetaType->getUpType()->getUnifiedType() == toMetaType->getUpType()->getUnifiedType()) {
 		if(matched) {
 			if(result != nullptr) {
 				*result = Variant::retype(toMetaType, value);
 			}
+			return TristateBool::yes;
+		}
+	}
+
+	// This must be after the previous reference/pointer checking,
+	// because retype is prefered to cast when the up type is the same
+	if(fromMetaType->isReference() && toMetaType->isReference()) {
+		if(fromMetaType->getUpType()->cast(result, value, toMetaType->getUpType())) {
 			return TristateBool::yes;
 		}
 	}
@@ -478,10 +485,6 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	//if(internal_::CastTo<T, internal_::SelectCastToTypes<T> >::castTo(result, value, toMetaType)) {
-	//	return true;
-	//}
-
 	if(toMetaType->castFrom(result, value, fromMetaType)) {
 		return true;
 	}
@@ -490,11 +493,9 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 }
 
 template <typename T>
-//inline bool CommonDeclareMetaType<T>::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 inline bool CommonDeclareMetaType<T>::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
 	return false;
-	//return internal_::CastFrom<T, internal_::SelectCastFromTypes<T> >::castFrom(result, value, fromMetaType);
 }
 
 

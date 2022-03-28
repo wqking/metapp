@@ -312,7 +312,7 @@ Below table shows the rules to determine `canCast`, assume the underlying value 
 
 | from | to  | canCast returns                                                                                            |
 |------|-----|------------------------------------------------------------------------------------------------------------|
-| F &  | T & | If both F and T are registered class, return the result of canCast on F and T.<br/>Otherwise, return F == T |
+| F &  | T & | If both F and T are registered class, return the result of canCast on F and T.<br/>If F == T, return referent to T. Otherwise, return cast F to T, which is not a reference any more. |
 | F    | T & | the result of canCast on F and T                                                                           |
 | F &  | T   | the result of canCast on F and T                                                                           |
 | F *  | T * | If both F and T are registered class, return the result of canCast on F and T.<br/>Otherwise, return F == T |
