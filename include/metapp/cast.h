@@ -14,21 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_CAST_I_H_969872685611
-#define METAPP_CAST_I_H_969872685611
+#ifndef METAPP_CAST_H_969872685611
+#define METAPP_CAST_H_969872685611
 
 namespace metapp {
-
-namespace internal_ {
 
 template <typename From, typename To>
 struct CanCastSafely
 {
 	static constexpr bool value =
-		CanStaticCast<From, To>::value
+		internal_::CanStaticCast<From, To>::value
 			&& (
 				! std::is_class<typename std::remove_reference<To>::type>::value
-				|| ! IsNarrowingCast<From, To>::value
+				|| ! internal_::IsNarrowingCast<From, To>::value
 			)
 		;
 };
@@ -40,7 +38,7 @@ struct CastFromItem
 };
 
 template <typename MyType, typename FromTypes>
-struct CastFrom
+struct CastFromChecker
 {
 public:
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
@@ -100,9 +98,9 @@ private:
 	template <typename ...Types>
 	static CastFromItem doFindCastFromItem(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		using TL = typename FilterTypes<
+		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<CanCastSafely<Types, MyType>::value...>
+			internal_::BoolConstantList<CanCastSafely<Types, MyType>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -121,7 +119,7 @@ struct CastToItem
 };
 
 template <typename MyType, typename ToTypes>
-struct CastTo
+struct CastToChecker
 {
 public:
 	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
@@ -174,9 +172,9 @@ private:
 	template <typename ...Types>
 	static CastToItem doFindCastToItem(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		using TL = typename FilterTypes<
+		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			BoolConstantList<CanStaticCast<MyType, Types>::value...>
+			internal_::BoolConstantList<CanCastSafely<MyType, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}
@@ -188,8 +186,33 @@ private:
 
 };
 
+template <typename T, typename ToTypes>
+struct CastToTypes
+{
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
+	{
+		return CastToChecker<T, ToTypes>::castTo(result, value, toMetaType)
+			|| CommonDeclareMetaType<T>::cast(result, value, toMetaType)
+			;
+	}
+};
 
-} // namespace internal_
+template <typename T, typename FromTypes>
+struct CastFromTypes
+{
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
+	{
+		return CastFromChecker<T, FromTypes>::castFrom(result, value, fromMetaType)
+			|| CommonDeclareMetaType<T>::castFrom(result, value, fromMetaType)
+			;
+	}
+};
+
+template <typename T, typename FromToTypes>
+struct CastFromToTypes : CastToTypes<T, FromToTypes>, CastFromTypes<T, FromToTypes>
+{
+};
+
 
 } // namespace metapp
 

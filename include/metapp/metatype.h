@@ -155,7 +155,7 @@ const MetaType * getNonReferenceMetaType(const MetaType * metaType);
 
 #include "metapp/variant.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
-#include "metapp/implement/internal/cast_i.h"
+#include "metapp/cast.h"
 
 namespace metapp {
 
@@ -231,33 +231,6 @@ template<> struct CommonDeclareMetaType<void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<volatile void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVoidBase {};
-
-template <typename T, typename ToTypes>
-struct CastToTypes
-{
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
-	{
-		return internal_::CastTo<T, ToTypes>::castTo(result, value, toMetaType)
-			|| CommonDeclareMetaType<T>::cast(result, value, toMetaType)
-		;
-	}
-};
-
-template <typename T, typename FromTypes>
-struct CastFromTypes
-{
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
-	{
-		return internal_::CastFrom<T, FromTypes>::castFrom(result, value, fromMetaType)
-			|| CommonDeclareMetaType<T>::castFrom(result, value, fromMetaType)
-		;
-	}
-};
-
-template <typename T, typename FromToTypes>
-struct CastFromToTypes : CastToTypes<T, FromToTypes>, CastFromTypes<T, FromToTypes>
-{
-};
 
 } // namespace metapp
 
