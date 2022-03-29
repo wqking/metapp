@@ -34,6 +34,7 @@ struct DeclareMetaTypeBase <std::pair<T1, T2> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			nullptr,
 			&metaIndexableGet,
 			&metaIndexableSet
 		);

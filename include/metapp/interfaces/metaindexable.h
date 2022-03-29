@@ -32,18 +32,50 @@ public:
 
 	MetaIndexable(
 		size_t (*getSize)(const Variant & var),
+		void (*resize)(const Variant & var, const size_t size),
 		Variant (*get)(const Variant & var, const size_t index),
 		void (*set)(const Variant & var, const size_t index, const Variant & value)
 	)
-		: getSize(getSize), get(get), set(set)
+		:
+			getSize(getSize),
+			get(get),
+			set(set),
+			resize_(resize)
 	{
 	}
 
 	size_t (*getSize)(const Variant & var);
+	void resize(const Variant & var, const size_t size) const {
+		if(resize_ != nullptr) {
+			resize_(var, size);
+		}
+	}
 	Variant (*get)(const Variant & var, const size_t index);
 	void (*set)(const Variant & var, const size_t index, const Variant & value);
 
+private:
+	void (*resize_)(const Variant & var, const size_t size);
 };
+
+inline size_t indexableGetSize(const Variant & var)
+{
+	return var.getMetaType()->getMetaIndexable()->getSize(var);
+}
+
+inline void indexableResize(const Variant & var, const size_t size)
+{
+	var.getMetaType()->getMetaIndexable()->resize(var, size);
+}
+
+inline Variant indexableGet(const Variant & var, const size_t index)
+{
+	return var.getMetaType()->getMetaIndexable()->get(var, index);
+}
+
+inline void indexableSet(const Variant & var, const size_t index, const Variant & value)
+{
+	var.getMetaType()->getMetaIndexable()->set(var, index, value);
+}
 
 
 } // namespace metapp

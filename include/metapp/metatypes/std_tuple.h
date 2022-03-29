@@ -36,6 +36,7 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			nullptr,
 			&metaIndexableGet,
 			&metaIndexableSet
 		);

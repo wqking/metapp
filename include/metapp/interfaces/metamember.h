@@ -17,6 +17,8 @@
 #ifndef METAPP_METAMEMBER_H_969872685611
 #define METAPP_METAMEMBER_H_969872685611
 
+#include "metapp/variant.h"
+
 namespace metapp {
 
 class MetaType;
@@ -33,6 +35,11 @@ public:
 
 	const MetaType * (*getClassType)();
 };
+
+inline const MetaType * memberGetClassType(const Variant & var)
+{
+	return var.getMetaType()->getMetaMember()->getClassType();
+}
 
 
 } // namespace metapp

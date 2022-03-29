@@ -27,14 +27,20 @@ class MetaIterable
 {
 public:
 	using Callback = std::function<bool (const Variant &)>;
+
 	explicit MetaIterable(
-			void (*forEach)(const Variant & value, Callback callback)
+			void (*forEach)(const Variant & var, Callback callback)
 		) : forEach(forEach)
 	{
 	}
 
-	void (*forEach)(const Variant & value, Callback callback);
+	void (*forEach)(const Variant & var, Callback callback);
 };
+
+inline void iterableForEach(const Variant & var, MetaIterable::Callback callback)
+{
+	var.getMetaType()->getMetaIterable()->forEach(var, callback);
+}
 
 
 } // namespace metapp

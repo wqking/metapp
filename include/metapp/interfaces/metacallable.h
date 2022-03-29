@@ -53,6 +53,36 @@ public:
 	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
 };
 
+inline size_t callableGetParamCount(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getParamCount();
+}
+
+inline const MetaType * calllableGetReturnType(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getReturnType();
+}
+
+inline const MetaType * calllableGetParamType(const Variant & var, const size_t index)
+{
+	return var.getMetaType()->getMetaCallable()->getParamType(index);
+}
+
+inline int callableRankInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount)
+{
+	return var.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+}
+
+inline bool callableCanInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount)
+{
+	return var.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+}
+
+inline Variant callableInvoke(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
+{
+	return var.getMetaType()->getMetaCallable()->invoke(var, instance, arguments, argumentCount);
+}
+
 
 } // namespace metapp
 

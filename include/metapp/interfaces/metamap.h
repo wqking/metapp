@@ -28,13 +28,25 @@ public:
 		Variant (*get)(const Variant & var, const Variant & key),
 		void (*set)(const Variant & var, const Variant & key, const Variant & value)
 	)
-		: get(get), set(set)
+		:
+			get(get),
+			set(set)
 	{
 	}
 
 	Variant (*get)(const Variant & var, const Variant & key);
 	void (*set)(const Variant & var, const Variant & key, const Variant & value);
 };
+
+inline Variant mapGet(const Variant & var, const Variant & key)
+{
+	return var.getMetaType()->getMetaMap()->get(var, key);
+}
+
+inline void mapSet(const Variant & var, const Variant & key, const Variant & value)
+{
+	var.getMetaType()->getMetaMap()->set(var, key, value);
+}
 
 
 } // namespace metapp

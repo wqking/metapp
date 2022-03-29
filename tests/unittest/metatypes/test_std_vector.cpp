@@ -39,11 +39,19 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIndexable")
 	});
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdVector);
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).getMetaType()->getTypeKind() == metapp::tkReference);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
+	REQUIRE(metapp::indexableGetSize(v) == 3);
+	REQUIRE(metapp::indexableGet(v, 0).getMetaType()->getTypeKind() == metapp::tkReference);
+	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "good");
+	REQUIRE(metapp::indexableGet(v, 1).get<const std::string &>() == "great");
+	REQUIRE(metapp::indexableGet(v, 2).get<const std::string &>() == "perfect");
+
+	metapp::indexableResize(v, 38);
+	REQUIRE(metapp::indexableGetSize(v) == 38);
+	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "good");
+	REQUIRE(metapp::indexableGet(v, 1).get<const std::string &>() == "great");
+	REQUIRE(metapp::indexableGet(v, 2).get<const std::string &>() == "perfect");
+	REQUIRE(metapp::indexableGet(v, 3).get<const std::string &>().empty());
+	REQUIRE(metapp::indexableGet(v, 37).get<const std::string &>().empty());
 }
 
 TEST_CASE("metatypes, std::vector<std::string>, MetaIterable")
@@ -55,7 +63,7 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIterable")
 	REQUIRE(v.getMetaType()->getMetaIterable() != nullptr);
 
 	std::vector<std::string> newVector;
-	v.getMetaType()->getMetaIterable()->forEach(v, [&newVector](const metapp::Variant & value) {
+	metapp::iterableForEach(v, [&newVector](const metapp::Variant & value) {
 		REQUIRE(metapp::getTypeKind(value) == metapp::tkReference);
 		newVector.push_back(value.get<std::string>());
 		return true;

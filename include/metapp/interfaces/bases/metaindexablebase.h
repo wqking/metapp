@@ -22,7 +22,32 @@
 #include "metapp/exception.h"
 #include "metapp/utils/utility.h"
 
+#include <deque>
+#include <vector>
+#include <array>
+
 namespace metapp {
+
+namespace internal_ {
+
+template <typename T, typename Allocator>
+void doResize(std::deque<T, Allocator> & container, const size_t size)
+{
+	container.resize(size);
+}
+
+template <typename T, typename Allocator>
+void doResize(std::vector<T, Allocator> & container, const size_t size)
+{
+	container.resize(size);
+}
+
+template <typename T, size_t length>
+void doResize(std::array<T, length> & /*container*/, const size_t /*size*/)
+{
+}
+
+} // namespace internal_
 
 template <typename ContainerType>
 struct MetaIndexableBase
@@ -30,6 +55,7 @@ struct MetaIndexableBase
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			&metaIndexableResize,
 			&metaIndexableGet,
 			&metaIndexableSet
 		);
@@ -42,6 +68,11 @@ private:
 	static size_t metaIndexableGetSize(const Variant & var)
 	{
 		return var.toReference().get<ContainerType &>().size();
+	}
+
+	static void metaIndexableResize(const Variant & var, const size_t size)
+	{
+		internal_::doResize(var.toReference().get<ContainerType &>(), size);
 	}
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)

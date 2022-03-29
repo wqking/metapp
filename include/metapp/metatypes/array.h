@@ -33,6 +33,7 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			nullptr,
 			&metaIndexableGet,
 			&metaIndexableSet
 		);
