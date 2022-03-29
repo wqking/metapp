@@ -34,19 +34,10 @@ TEST_CASE("metatypes, Accessor")
 	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, nullptr).get<int>() == 98);
 }
 
-namespace {
-
-struct Class1
-{
-	const void * func(int, const std::vector<int> &) { return nullptr; }
-	const std::array<int, 5> * data;
-	int value;
-};
-
-} // namespace
-
 TEST_CASE("metatypes, Accessor, member data, int Class1::*")
 {
+	struct Class1 { int value; };
+
 	metapp::Variant v(metapp::createAccessor<int>(&Class1::value, &Class1::value));
 	Class1 obj;
 	obj.value = 5;
