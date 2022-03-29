@@ -19,18 +19,6 @@
 
 namespace metapp {
 
-template <typename From, typename To>
-struct CanCastSafely
-{
-	static constexpr bool value =
-		internal_::CanStaticCast<From, To>::value
-			&& (
-				! std::is_class<typename std::remove_reference<To>::type>::value
-				|| ! internal_::IsNarrowingCast<From, To>::value
-			)
-		;
-};
-
 struct CastFromItem
 {
 	const void * fromUnifiedType;
@@ -72,7 +60,7 @@ private:
 			// is narrower than F, warning C4244 will be issued on MSVC.
 			// std::unordered_map is such an example, because it can be constructed from size_type,
 			// and cause warning when F is long double.
-			// Current to avoid the warning, we don't allow narrowing casting to class, see CanCastSafely
+			// Current to avoid the warning, we may choose not to allow narrowing casting to class,
 			// But that can't suppress warning when ToType is container with element of metapp::Variant,
 			// such as std::vector<metapp::Variant>
 			return static_cast<ToType>(*(FromType *)(value.getAddress()));
@@ -100,7 +88,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			internal_::BoolConstantList<CanCastSafely<Types, MyType>::value...>
+			internal_::BoolConstantList<internal_::CanStaticCast<Types, MyType>::value...>
 		>::Type;
 		return doFindCastFromItemHelper(fromMetaType, TL());
 	}
@@ -174,7 +162,7 @@ private:
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
-			internal_::BoolConstantList<CanCastSafely<MyType, Types>::value...>
+			internal_::BoolConstantList<internal_::CanStaticCast<MyType, Types>::value...>
 		>::Type;
 		return doFindCastToItemHelper(toMetaType, TL());
 	}
