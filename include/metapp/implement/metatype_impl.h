@@ -460,24 +460,6 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance)
 }
 
 template <typename T>
-inline Variant CommonDeclareMetaType<T>::toReference(const Variant & value)
-{
-	const MetaType * fromMetaType = value.getMetaType();
-
-	assert(fromMetaType == getMetaType<T>());
-
-	if(fromMetaType->isReference()) {
-		return value;
-	}
-	using U = typename std::remove_reference<T>::type;
-	if(fromMetaType->isPointer()) {
-		using P = typename std::remove_pointer<U>::type;
-		return internal_::doPointerToReference<P>(value, std::is_void<P>());
-	}
-	return Variant::create<U &>(value.get<U &>());
-}
-
-template <typename T>
 inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 {
 	const MetaType * fromMetaType = getMetaType<T>();

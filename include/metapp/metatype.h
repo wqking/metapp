@@ -159,8 +159,45 @@ const MetaType * getNonReferenceMetaType(const MetaType * metaType);
 
 namespace metapp {
 
+template <typename T, typename Enabled = void>
+struct ToReferenceBase;
+
 template <typename T>
-struct CommonDeclareMetaType
+struct ToReferenceBase <T,
+	typename std::enable_if<std::is_reference<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		return value;
+	}
+};
+
+template <typename T>
+struct ToReferenceBase <T,
+	typename std::enable_if<std::is_pointer<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		using P = typename std::remove_pointer<T>::type;
+		return internal_::doPointerToReference<P>(value, std::is_void<P>());
+	}
+};
+
+template <typename T>
+struct ToReferenceBase <T,
+	typename std::enable_if<! std::is_reference<T>::value && ! std::is_pointer<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		return Variant::create<T &>(value.get<T &>());
+	}
+};
+
+template <typename T>
+struct CommonDeclareMetaType : ToReferenceBase<T>
 {
 private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
@@ -185,8 +222,6 @@ public:
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
-
-	static Variant toReference(const Variant & value);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
