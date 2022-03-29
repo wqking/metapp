@@ -33,7 +33,8 @@ struct UpTypeGetter <TypeList<Type0, Types...> >
 {
 	static const MetaType ** makeUpTypeList()
 	{
-		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList{
+		static std::array<const MetaType *, 1 + sizeof...(Types) + 1> upTypeList {
+			(const MetaType *)(sizeof...(Types) + 1),
 			getMetaType<Type0>(),
 			getMetaType<Types>()...,
 		};
@@ -42,8 +43,7 @@ struct UpTypeGetter <TypeList<Type0, Types...> >
 
 	static UpTypeData getUpType() {
 		return {
-			makeUpTypeList(),
-			(uint16_t)(sizeof...(Types) + 1)
+			makeUpTypeList()
 		};
 	}
 };
@@ -53,8 +53,7 @@ struct UpTypeGetter <TypeList<> >
 {
 	static UpTypeData getUpType() {
 		return {
-			nullptr,
-			(uint16_t)0
+			nullptr
 		};
 	}
 };
@@ -292,17 +291,20 @@ inline const void * MetaType::getUnifiedType() const noexcept
 
 inline const MetaType * MetaType::getUpType() const
 {
-	return upTypeData.upTypeList[0];
+	return upTypeData.upTypeList[1];
 }
 
 inline const MetaType * MetaType::getUpType(const size_t i) const
 {
-	return upTypeData.upTypeList[i];
+	return upTypeData.upTypeList[i + 1];
 }
 
 inline size_t MetaType::getUpTypeCount() const noexcept
 {
-	return upTypeData.count;
+	if(upTypeData.upTypeList == nullptr) {
+		return 0;
+	}
+	return (size_t)upTypeData.upTypeList[0];
 }
 
 inline TypeKind MetaType::getTypeKind() const noexcept
