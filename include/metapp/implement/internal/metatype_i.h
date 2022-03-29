@@ -33,19 +33,22 @@ const UnifiedType * unifiedTypeGetter();
 
 struct NoneUpType {};
 
-using MetaInterfaceKind = uint16_t;
+using MetaInterfaceKind = uint32_t;
 using MetaInterfaceGetter = const void * (*)();
 
-static constexpr MetaInterfaceKind mikMetaClass = (1 << 0);
-static constexpr MetaInterfaceKind mikMetaCallable = (1 << 1);
-static constexpr MetaInterfaceKind mikMetaAccessible = (1 << 2);
-static constexpr MetaInterfaceKind mikMetaEnum = (1 << 3);
-static constexpr MetaInterfaceKind mikMetaIndexable = (1 << 4);
-static constexpr MetaInterfaceKind mikMetaIterable = (1 << 5);
-static constexpr MetaInterfaceKind mikMetaStreaming = (1 << 6);
-static constexpr MetaInterfaceKind mikMetaMap = (1 << 7);
-static constexpr MetaInterfaceKind mikMetaMember = (1 << 8);
-static constexpr MetaInterfaceKind mikMetaUser = (1 << 9);
+static constexpr MetaInterfaceKind mikStart = (1 << 8);
+static constexpr MetaInterfaceKind mikMetaClass = (mikStart << 0);
+static constexpr MetaInterfaceKind mikMetaCallable = (mikStart << 1);
+static constexpr MetaInterfaceKind mikMetaAccessible = (mikStart << 2);
+static constexpr MetaInterfaceKind mikMetaEnum = (mikStart << 3);
+static constexpr MetaInterfaceKind mikMetaIndexable = (mikStart << 4);
+static constexpr MetaInterfaceKind mikMetaIterable = (mikStart << 5);
+static constexpr MetaInterfaceKind mikMetaStreaming = (mikStart << 6);
+static constexpr MetaInterfaceKind mikMetaMap = (mikStart << 7);
+static constexpr MetaInterfaceKind mikMetaMember = (mikStart << 8);
+static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 9);
+
+static constexpr uint32_t metaInterfaceCountMask = 0xff;
 
 struct MetaInterfaceItem
 {
@@ -55,7 +58,6 @@ struct MetaInterfaceItem
 
 struct MetaInterfaceData
 {
-	uint16_t count;
 	MetaInterfaceKind kinds;
 	const MetaInterfaceItem * items;
 };
@@ -287,8 +289,7 @@ struct MakeMetaInterfaceData
 
 	static MetaInterfaceData getMetaInterfaceData() {
 		return {
-			TypeListCount<ItemMakerList>::value,
-			ItemListMaker<ItemMakerList>::kinds,
+			ItemListMaker<ItemMakerList>::kinds | TypeListCount<ItemMakerList>::value,
 			ItemListMaker<ItemMakerList>::make()
 		};
 	}
@@ -435,8 +436,9 @@ inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfa
 		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
 			return metaMethodTable.metaInterfaceData.items[0].getter();
 		}
-		if(metaMethodTable.metaInterfaceData.count > 1) {
-			for(uint16_t i = 1; i < metaMethodTable.metaInterfaceData.count; ++i) {
+		const uint32_t count = (metaMethodTable.metaInterfaceData.kinds & metaInterfaceCountMask);
+		if(count > 1) {
+			for(uint16_t i = 1; i < count; ++i) {
 				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
 					return metaMethodTable.metaInterfaceData.items[i].getter();
 				}
