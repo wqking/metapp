@@ -59,6 +59,7 @@ public:
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(
 			&accessibleGetValueType,
+			&accessibleIsReadOnly,
 			&accessibleGet,
 			&accessibleSet
 		);
@@ -69,6 +70,11 @@ public:
 		return getMetaType<T>();
 	}
 
+	static bool accessibleIsReadOnly(const Variant & accessible) {
+		AccessorType & accessor = accessible.get<AccessorType &>();
+		return accessor.isReadOnly();
+	}
+
 	static Variant accessibleGet(const Variant & accessible, const void * instance) {
 		const AccessorType & accessor = accessible.get<const AccessorType &>();
 		return accessor.get(instance);
@@ -77,6 +83,7 @@ public:
 	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
 		AccessorType & accessor = accessible.get<AccessorType &>();
 		if(accessor.isReadOnly()) {
+			errorUnwritable();
 			return;
 		}
 		accessor.set(value.cast<T>().template get<T>(), instance);

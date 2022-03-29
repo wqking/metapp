@@ -26,16 +26,19 @@ class MetaAccessible
 public:
 	MetaAccessible(
 		const MetaType * (*getValueType)(),
+		bool (*isReadOnly)(const Variant & accessible),
 		Variant (*get)(const Variant & accessible, const void * instance),
 		void (*set)(const Variant & accessible, void * instance, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
+			isReadOnly(isReadOnly),
 			get(get),
 			set(set)
 	{}
 
 	const MetaType * (*getValueType)();
+	bool (*isReadOnly)(const Variant & accessible);
 	Variant (*get)(const Variant & accessible, const void * instance);
 	void (*set)(const Variant & accessible, void * instance, const Variant & value);
 };
@@ -43,6 +46,11 @@ public:
 inline const MetaType * accessibleGetValueType(const Variant & var)
 {
 	return var.getMetaType()->getMetaAccessible()->getValueType();
+}
+
+inline bool accessibleIsReadOnly(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->isReadOnly(var);
 }
 
 inline Variant accessibleGet(const Variant & var, const void * instance)
