@@ -36,15 +36,6 @@
 
 namespace metapp {
 
-template <typename T, typename Enabled = void>
-struct DeclareMetaType;
-template <typename T>
-struct CommonDeclareMetaType;
-
-} // namespace metapp
- 
-namespace metapp {
-
 class MetaType;
 
 class MetaClass;
@@ -57,6 +48,11 @@ class MetaIterable;
 class MetaStreaming;
 class MetaMap;
 class MetaMember;
+
+template <typename T, typename Enabled = void>
+struct DeclareMetaType;
+template <typename T>
+struct CommonDeclareMetaType;
 
 } // namespace metapp
 
@@ -159,45 +155,8 @@ const MetaType * getNonReferenceMetaType(const MetaType * metaType);
 
 namespace metapp {
 
-template <typename T, typename Enabled = void>
-struct ToReferenceBase;
-
 template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<std::is_reference<T>::value>::type
->
-{
-	static Variant toReference(const Variant & value)
-	{
-		return value;
-	}
-};
-
-template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<std::is_pointer<T>::value>::type
->
-{
-	static Variant toReference(const Variant & value)
-	{
-		using P = typename std::remove_pointer<T>::type;
-		return internal_::doPointerToReference<P>(value, std::is_void<P>());
-	}
-};
-
-template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<! std::is_reference<T>::value && ! std::is_pointer<T>::value>::type
->
-{
-	static Variant toReference(const Variant & value)
-	{
-		return Variant::create<T &>(value.get<T &>());
-	}
-};
-
-template <typename T>
-struct CommonDeclareMetaType : ToReferenceBase<T>
+struct CommonDeclareMetaType : internal_::ToReferenceBase<T>
 {
 private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
@@ -218,14 +177,13 @@ public:
 		| (std::is_class<T>::value ? tfClass : 0)
 		| (std::is_array<T>::value ? tfArray : 0)
 	;
-	static_assert((typeFlags & (tfPointer | tfReference)) != (tfPointer | tfReference), "typeFlags can't be both pointer and reference.");
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType);
+	static constexpr bool (*castFrom)(Variant * result, const Variant & value, const MetaType * fromMetaType) = nullptr;
 };
 
 template <typename T, typename Enabled = void>

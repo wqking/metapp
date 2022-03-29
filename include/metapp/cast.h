@@ -203,8 +203,8 @@ struct CastFromTypes
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
 		return CastFromChecker<T, FromTypes>::castFrom(result, value, fromMetaType)
-			|| CommonDeclareMetaType<T>::castFrom(result, value, fromMetaType)
-			;
+			|| (CommonDeclareMetaType<T>::castFrom != nullptr && CommonDeclareMetaType<T>::castFrom(result, value, fromMetaType))
+		;
 	}
 };
 

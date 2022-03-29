@@ -464,6 +464,9 @@ inline bool UnifiedType::cast(Variant * result, const Variant & value, const Met
 
 inline bool UnifiedType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
+	if(metaMethodTable.castFrom == nullptr) {
+		return false;
+	}
 	return metaMethodTable.castFrom(result, value, fromMetaType);
 }
 
@@ -478,6 +481,43 @@ inline Variant doPointerToReference(const Variant & value, std::false_type)
 {
 	return Variant::create<P &>(**(P **)value.getAddress());
 }
+
+template <typename T, typename Enabled = void>
+struct ToReferenceBase;
+
+template <typename T>
+struct ToReferenceBase <T,
+	typename std::enable_if<std::is_reference<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		return value;
+	}
+};
+
+template <typename T>
+struct ToReferenceBase <T,
+	typename std::enable_if<std::is_pointer<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		using P = typename std::remove_pointer<T>::type;
+		return internal_::doPointerToReference<P>(value, std::is_void<P>());
+	}
+};
+
+template <typename T>
+struct ToReferenceBase <T,
+	typename std::enable_if<! std::is_reference<T>::value && ! std::is_pointer<T>::value>::type
+>
+{
+	static Variant toReference(const Variant & value)
+	{
+		return Variant::create<T &>(value.get<T &>());
+	}
+};
 
 
 } // namespace internal_

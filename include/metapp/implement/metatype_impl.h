@@ -132,7 +132,7 @@ const UnifiedType * unifiedTypeGetter()
 			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
 			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
 			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-			&SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+			SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
 
 			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
 		}
@@ -427,6 +427,7 @@ inline bool MetaType::castFrom(Variant * result, const Variant & value, const Me
 	return doGetUnifiedType()->castFrom(result, value, fromMetaType);
 }
 
+
 template <typename T>
 inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const void * copyFrom)
 {
@@ -473,12 +474,6 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 		return true;
 	}
 
-	return false;
-}
-
-template <typename T>
-inline bool CommonDeclareMetaType<T>::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
-{
 	return false;
 }
 
