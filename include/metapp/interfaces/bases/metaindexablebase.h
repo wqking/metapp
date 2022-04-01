@@ -83,7 +83,12 @@ private:
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		return Variant::create<ValueType>(var.toReference().get<ContainerType &>()[index]);
+		const Variant ref = var.toReference();
+
+		if(index >= metaIndexableGetSize(ref)) {
+			errorInvalidIndex();
+		}
+		return Variant::create<ValueType>(ref.get<ContainerType &>()[index]);
 	}
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)

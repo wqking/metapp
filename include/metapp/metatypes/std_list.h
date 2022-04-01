@@ -19,6 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/bases/metaiterablebase.h"
+#include "metapp/interfaces/metaindexable.h"
 
 #include <list>
 
@@ -30,6 +31,66 @@ struct DeclareMetaTypeBase <std::list<T, Allocator> >
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdList;
+
+	static const MetaIndexable * getMetaIndexable() {
+		static MetaIndexable metaIndexable(
+			&metaIndexableGetSize,
+			&metaIndexableGetValueType,
+			&metaIndexableResize,
+			&metaIndexableGet,
+			&metaIndexableSet
+		);
+		return &metaIndexable;
+	}
+
+private:
+	using ValueType = T;
+	using ContainerType = std::list<T, Allocator>;
+
+	static size_t metaIndexableGetSize(const Variant & var)
+	{
+		return var.toReference().get<ContainerType &>().size();
+	}
+
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	{
+		return getMetaType<ValueType>();
+	}
+
+	static void metaIndexableResize(const Variant & var, const size_t size)
+	{
+		var.toReference().get<ContainerType &>().resize(size);
+	}
+
+	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	{
+		const Variant ref = var.toReference();
+
+		if(index >= metaIndexableGetSize(ref)) {
+			errorInvalidIndex();
+		}
+		auto & list = ref.get<ContainerType &>();
+		auto it = list.begin();
+		std::advance(it, index);
+		return Variant::create<ValueType>(*it);
+	}
+
+	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	{
+		const Variant ref = var.toReference();
+
+		verifyVariantWritable(ref);
+
+		if(index >= metaIndexableGetSize(ref)) {
+			errorInvalidIndex();
+		}
+		else {
+			auto & list = ref.get<ContainerType &>();
+			auto it = list.begin();
+			std::advance(it, index);
+			assignValue(*it, value.cast<ValueType &>().template get<ValueType &>());
+		}
+	}
 
 };
 
