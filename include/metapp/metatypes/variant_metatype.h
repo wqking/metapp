@@ -37,6 +37,14 @@ struct DeclareMetaTypeBase <Variant>
 		}
 	}
 
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * /*fromMetaType*/)
+	{
+		if(result != nullptr) {
+			*result = value;
+		}
+		return true;
+	}
+
 };
 
 

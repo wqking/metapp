@@ -90,7 +90,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(ref.toReference().get<ContainerType &>()[index], value.get<ValueType &>());
+			assignValue(ref.toReference().get<ContainerType &>()[index], value.cast<ValueType &>().get<ValueType &>());
 		}
 	}
 

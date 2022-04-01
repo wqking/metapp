@@ -30,3 +30,10 @@ TEST_CASE("metatypes, Variant")
 	REQUIRE(v.cast<std::string>().get<std::string>() == "abc");
 }
 
+TEST_CASE("metatypes, Variant, cast to Variant")
+{
+	metapp::Variant v(5);
+	REQUIRE(v.canCast<metapp::Variant>());
+	REQUIRE(v.cast<metapp::Variant>().get<metapp::Variant>().get<int>() == 5);
+}
+

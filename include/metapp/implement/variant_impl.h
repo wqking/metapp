@@ -170,7 +170,10 @@ inline bool Variant::canGet() const
 }
 
 template <typename T>
-inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Type
+inline auto Variant::get(
+		typename std::enable_if<! std::is_same<
+		typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type *
+	) const -> typename internal_::VariantReturnType<T>::Type
 {
 	if(! canGet<T>()) {
 		errorBadCast("Can't get from Variant");
@@ -178,6 +181,20 @@ inline auto Variant::get() const -> typename internal_::VariantReturnType<T>::Ty
 
 	using U = typename internal_::VariantReturnType<T>::Type;
 	return (U)(*(typename std::remove_reference<U>::type *)(getAddress()));
+}
+
+template <typename T>
+inline auto Variant::get(
+		typename std::enable_if<std::is_same<
+		typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type *
+	) const -> typename internal_::VariantReturnType<T>::Type
+{
+	if(canGet<T>()) {
+		using U = typename internal_::VariantReturnType<T>::Type;
+		return (U)(*(typename std::remove_reference<U>::type *)(getAddress()));
+	}
+
+	return (Variant &)*this;
 }
 
 inline void * Variant::getAddress() const
