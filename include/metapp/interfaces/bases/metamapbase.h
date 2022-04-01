@@ -27,6 +27,7 @@ struct MetaMapBase
 {
 	static const MetaMap * getMetaMap() {
 		static MetaMap metaMap(
+			&metaMapGetValueType,
 			&metaMapGet,
 			&metaMapSet
 		);
@@ -36,6 +37,11 @@ struct MetaMapBase
 private:
 	using KeyType = typename ContainerType::key_type;
 	using MappedType = typename ContainerType::mapped_type;
+
+	static std::pair<const MetaType *, const MetaType *> metaMapGetValueType(const Variant & /*var*/)
+	{
+		return std::make_pair(getMetaType<KeyType>(), getMetaType<MappedType>());
+	}
 
 	static Variant metaMapGet(const Variant & var, const Variant & key)
 	{

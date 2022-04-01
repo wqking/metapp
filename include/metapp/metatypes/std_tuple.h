@@ -36,6 +36,7 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			&metaIndexableGetValueType,
 			nullptr,
 			&metaIndexableGet,
 			&metaIndexableSet
@@ -56,6 +57,12 @@ private:
 		return sizeof...(Types);
 	}
 
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t index)
+	{
+		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
+		return doGetValueType(index, Sequence());
+	}
+
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
@@ -71,6 +78,15 @@ private:
 			using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
 			doSetAt(var, index, value, Sequence());
 		}
+	}
+
+	template <size_t ...Indexes>
+	static const MetaType * doGetValueType(const size_t index, internal_::SizeConstantList<Indexes...>)
+	{
+		std::array<const MetaType *, sizeof...(Types)> valutTypeList {
+			getMetaType<typename std::tuple_element<Indexes, std::tuple<Types...> >::type>()...
+		};
+		return valutTypeList[index];
 	}
 
 	template <size_t ...Indexes>

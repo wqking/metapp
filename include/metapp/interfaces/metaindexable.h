@@ -32,12 +32,14 @@ public:
 
 	MetaIndexable(
 		size_t (*getSize)(const Variant & var),
+		const MetaType * (*getValueType)(const Variant & var, const size_t index),
 		void (*resize)(const Variant & var, const size_t size),
 		Variant (*get)(const Variant & var, const size_t index),
 		void (*set)(const Variant & var, const size_t index, const Variant & value)
 	)
 		:
 			getSize(getSize),
+			getValueType(getValueType),
 			get(get),
 			set(set),
 			resize_(resize)
@@ -45,6 +47,7 @@ public:
 	}
 
 	size_t (*getSize)(const Variant & var);
+	const MetaType * (*getValueType)(const Variant & var, const size_t index);
 	void resize(const Variant & var, const size_t size) const {
 		if(resize_ != nullptr) {
 			resize_(var, size);

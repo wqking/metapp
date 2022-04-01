@@ -55,6 +55,7 @@ struct MetaIndexableBase
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			&metaIndexableGetValueType,
 			&metaIndexableResize,
 			&metaIndexableGet,
 			&metaIndexableSet
@@ -68,6 +69,11 @@ private:
 	static size_t metaIndexableGetSize(const Variant & var)
 	{
 		return var.toReference().get<ContainerType &>().size();
+	}
+
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	{
+		return getMetaType<ValueType>();
 	}
 
 	static void metaIndexableResize(const Variant & var, const size_t size)
@@ -90,7 +96,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(ref.toReference().get<ContainerType &>()[index], value.cast<ValueType &>().get<ValueType &>());
+			assignValue(ref.toReference().get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
 		}
 	}
 

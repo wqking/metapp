@@ -33,6 +33,7 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
 			&metaIndexableGetSize,
+			&metaIndexableGetValueType,
 			nullptr,
 			&metaIndexableGet,
 			&metaIndexableSet
@@ -75,6 +76,11 @@ private:
 	static size_t metaIndexableGetSize(const Variant & /*var*/)
 	{
 		return length;
+	}
+
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	{
+		return getMetaType<T>();
 	}
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)

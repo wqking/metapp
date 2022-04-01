@@ -25,15 +25,18 @@ class MetaMap
 {
 public:
 	MetaMap(
+		std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & var),
 		Variant (*get)(const Variant & var, const Variant & key),
 		void (*set)(const Variant & var, const Variant & key, const Variant & value)
 	)
 		:
+			getValueType(getValueType),
 			get(get),
 			set(set)
 	{
 	}
 
+	std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & var);
 	Variant (*get)(const Variant & var, const Variant & key);
 	void (*set)(const Variant & var, const Variant & key, const Variant & value);
 };
