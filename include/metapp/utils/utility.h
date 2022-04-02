@@ -80,19 +80,6 @@ Iterator findCallable(
 	return result;
 }
 
-inline const MetaType * getReferredMetaType(const MetaType * metaType)
-{
-	if(metaType->isPointer() || metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getReferredMetaType(const Variant & value)
-{
-	return getReferredMetaType(value.getMetaType());
-}
-
 template <typename ...Types>
 inline const MetaType * getMetaTypeAt(const size_t index)
 {
