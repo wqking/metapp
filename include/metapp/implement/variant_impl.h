@@ -18,6 +18,7 @@
 #define METAPP_VARIANT_IMPL_H_969872685611
 
 #include "metapp/interfaces/metastreaming.h"
+#include "metapp/utils/utility.h"
 
 namespace metapp {
 

@@ -145,11 +145,6 @@ private:
 	TypeFlags typeFlags;
 };
 
-const MetaType * getNonReferenceMetaType(const MetaType * metaType);
-const MetaType * getNonReferenceMetaType(const Variant & value);
-const MetaType * getReferredMetaType(const MetaType * metaType);
-const MetaType * getReferredMetaType(const Variant & value);
-
 } // namespace metapp
 
 #include "metapp/variant.h"

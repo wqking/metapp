@@ -115,6 +115,32 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 	errorUnwritable();
 }
 
+inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
+{
+	if(metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
+}
+
+inline const MetaType * getNonReferenceMetaType(const Variant & value)
+{
+	return getNonReferenceMetaType(value.getMetaType());
+}
+
+inline const MetaType * getReferredMetaType(const MetaType * metaType)
+{
+	if(metaType->isPointer() || metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
+}
+
+inline const MetaType * getReferredMetaType(const Variant & value)
+{
+	return getReferredMetaType(value.getMetaType());
+}
+
 inline void verifyVariantWritable(const Variant & var)
 {
 	auto metaType = getReferredMetaType(var);
@@ -122,6 +148,7 @@ inline void verifyVariantWritable(const Variant & var)
 		errorUnwritable();
 	}
 }
+
 
 } // namespace metapp
 

@@ -198,6 +198,14 @@ inline TristateBool doCastObject(
 	return TristateBool::unknown;
 }
 
+inline const MetaType * getNonReferenceMetaType_(const MetaType * metaType)
+{
+	if(metaType->isReference()) {
+		metaType = metaType->getUpType();
+	}
+	return metaType;
+}
+
 inline TristateBool doCastPointerReference(
 	Variant * result,
 	const Variant & value,
@@ -256,7 +264,7 @@ inline TristateBool doCastPointerReference(
 		}
 	}
 
-	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
+	if(getNonReferenceMetaType_(fromMetaType)->getUnifiedType() == getNonReferenceMetaType_(toMetaType)->getUnifiedType()) {
 		if(result != nullptr) {
 			*result = Variant::retype(toMetaType, value);
 		}
@@ -500,32 +508,6 @@ inline bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant & 
 inline bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
 {
 	return false;
-}
-
-inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
-{
-	if(metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getNonReferenceMetaType(const Variant & value)
-{
-	return getNonReferenceMetaType(value.getMetaType());
-}
-
-inline const MetaType * getReferredMetaType(const MetaType * metaType)
-{
-	if(metaType->isPointer() || metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getReferredMetaType(const Variant & value)
-{
-	return getReferredMetaType(value.getMetaType());
 }
 
 template <typename T>
