@@ -18,6 +18,7 @@
 #define METAPP_UTIL_I_H_969872685611
 
 #include <vector>
+#include <string>
 
 namespace metapp {
 

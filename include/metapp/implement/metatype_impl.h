@@ -170,9 +170,9 @@ inline TristateBool doCastObject(
 		return TristateBool::unknown;
 	}
 	if(fromUpType->isClass() && toUpType->isClass()) {
-		const MetaRepo * inheritanceRepo = getMetaRepo();
-		if(inheritanceRepo->isClassInHierarchy(fromUpType) && inheritanceRepo->isClassInHierarchy(toUpType)) {
-			if(inheritanceRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
+		const MetaRepo * metaRepo = getMetaRepo();
+		if(metaRepo->isClassInHierarchy(fromUpType) && metaRepo->isClassInHierarchy(toUpType)) {
+			if(metaRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
 				if(result != nullptr) {
 					void * instance = nullptr;
 					if(fromMetaType->isPointer()) {
@@ -181,7 +181,7 @@ inline TristateBool doCastObject(
 					else {
 						instance = value.getAddress();
 					}
-					instance = inheritanceRepo->cast(instance, fromUpType, toUpType);
+					instance = metaRepo->cast(instance, fromUpType, toUpType);
 					if(toMetaType->isReference()) {
 						Variant temp = Variant::create<int &>(*(int *)instance);
 						*result = Variant::retype(toMetaType, temp);
