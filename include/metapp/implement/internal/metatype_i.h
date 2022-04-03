@@ -78,13 +78,7 @@ struct MetaInterfaceData
 	const MetaInterfaceItem * items;
 };
 
-template <MetaInterfaceKind kind_>
-struct MakeMetaInterfaceItem
-{
-};
-
-template <>
-struct MakeMetaInterfaceItem <mikMetaClass>
+struct MakeMetaInterfaceItem_MetaClass
 {
 	static constexpr MetaInterfaceKind kind = mikMetaClass;
 
@@ -99,8 +93,7 @@ struct MakeMetaInterfaceItem <mikMetaClass>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaCallable>
+struct MakeMetaInterfaceItem_MetaCallable
 {
 	static constexpr MetaInterfaceKind kind = mikMetaCallable;
 
@@ -115,8 +108,7 @@ struct MakeMetaInterfaceItem <mikMetaCallable>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaAccessible>
+struct MakeMetaInterfaceItem_MetaAccessible
 {
 	static constexpr MetaInterfaceKind kind = mikMetaAccessible;
 
@@ -131,8 +123,7 @@ struct MakeMetaInterfaceItem <mikMetaAccessible>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaEnum>
+struct MakeMetaInterfaceItem_MetaEnum
 {
 	static constexpr MetaInterfaceKind kind = mikMetaEnum;
 
@@ -147,8 +138,7 @@ struct MakeMetaInterfaceItem <mikMetaEnum>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaIndexable>
+struct MakeMetaInterfaceItem_MetaIndexable
 {
 	static constexpr MetaInterfaceKind kind = mikMetaIndexable;
 
@@ -163,8 +153,7 @@ struct MakeMetaInterfaceItem <mikMetaIndexable>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaIterable>
+struct MakeMetaInterfaceItem_MetaIterable
 {
 	static constexpr MetaInterfaceKind kind = mikMetaIterable;
 
@@ -179,18 +168,13 @@ struct MakeMetaInterfaceItem <mikMetaIterable>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaStreaming>
+struct MakeMetaInterfaceItem_MetaStreaming
 {
 	static constexpr MetaInterfaceKind kind = mikMetaStreaming;
 
 	template <typename T>
 	static constexpr MetaInterfaceItem make() {
-		using M = typename std::conditional<
-			HasMember_getMetaStreaming<DeclareMetaType<T> >::value,
-			DeclareMetaType<T>,
-			CommonDeclareMetaType<T>
-		>::type;
+		using M = DeclareMetaType<T>;
 
 		return {
 			kind,
@@ -199,8 +183,7 @@ struct MakeMetaInterfaceItem <mikMetaStreaming>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaMap>
+struct MakeMetaInterfaceItem_MetaMap
 {
 	static constexpr MetaInterfaceKind kind = mikMetaMap;
 
@@ -215,8 +198,7 @@ struct MakeMetaInterfaceItem <mikMetaMap>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaMember>
+struct MakeMetaInterfaceItem_MetaMember
 {
 	static constexpr MetaInterfaceKind kind = mikMetaMember;
 
@@ -231,8 +213,7 @@ struct MakeMetaInterfaceItem <mikMetaMember>
 	}
 };
 
-template <>
-struct MakeMetaInterfaceItem <mikMetaUser>
+struct MakeMetaInterfaceItem_MetaUser
 {
 	static constexpr MetaInterfaceKind kind = mikMetaUser;
 
@@ -254,16 +235,16 @@ struct MakeMetaInterfaceData
 
 	using ItemMakerList = typename FilterTypes<
 		TypeList<
-		MakeMetaInterfaceItem <mikMetaClass>,
-		MakeMetaInterfaceItem <mikMetaCallable>,
-		MakeMetaInterfaceItem <mikMetaAccessible>,
-		MakeMetaInterfaceItem <mikMetaEnum>,
-		MakeMetaInterfaceItem <mikMetaIndexable>,
-		MakeMetaInterfaceItem <mikMetaIterable>,
-		MakeMetaInterfaceItem <mikMetaStreaming>,
-		MakeMetaInterfaceItem <mikMetaMap>,
-		MakeMetaInterfaceItem <mikMetaMember>,
-		MakeMetaInterfaceItem <mikMetaUser>
+		MakeMetaInterfaceItem_MetaClass,
+		MakeMetaInterfaceItem_MetaCallable,
+		MakeMetaInterfaceItem_MetaAccessible,
+		MakeMetaInterfaceItem_MetaEnum,
+		MakeMetaInterfaceItem_MetaIndexable,
+		MakeMetaInterfaceItem_MetaIterable,
+		MakeMetaInterfaceItem_MetaStreaming,
+		MakeMetaInterfaceItem_MetaMap,
+		MakeMetaInterfaceItem_MetaMember,
+		MakeMetaInterfaceItem_MetaUser
 		>,
 		BoolConstantList<
 		HasMember_getMetaClass<M>::value,
