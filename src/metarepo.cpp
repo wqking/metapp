@@ -15,6 +15,8 @@
 // limitations under the License.
 
 #include "metapp/metatype.h"
+#include "metapp/metarepo.h"
+#include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
 
 namespace metapp {
@@ -180,8 +182,185 @@ int InheritanceRepo::doFindDerivedClass(
 }
 
 
+MetaRepoBase::MetaRepoBase()
+	:
+		nameTypeMap(),
+		kindTypeMap(),
+		methodMap(),
+		fieldMap()
+{
+}
+
+void MetaRepoBase::registerType(const MetaType * metaType, std::string name)
+{
+	if(name.empty()) {
+		name = getNameByTypeKind(metaType->getTypeKind());
+	}
+	if(! name.empty()) {
+		nameTypeMap[name] = metaType;
+	}
+	kindTypeMap[metaType->getTypeKind()] = std::make_pair(name, metaType);
+}
+
+const MetaType * MetaRepoBase::getTypeByName(const std::string & name) const
+{
+	auto it = nameTypeMap.find(name);
+	if(it != nameTypeMap.end()) {
+		return it->second;
+	}
+	return nullptr;
+}
+
+const MetaType * MetaRepoBase::getTypeByKind(const TypeKind kind) const
+{
+	auto it = kindTypeMap.find(kind);
+	if(it != kindTypeMap.end()) {
+		return it->second.second;
+	}
+	return nullptr;
+}
+
+std::string MetaRepoBase::getNameByKind(const TypeKind kind) const
+{
+	auto it = kindTypeMap.find(kind);
+	if(it != kindTypeMap.end()) {
+		return it->second.first;
+	}
+	return std::string();
+}
+
+std::vector<std::string> MetaRepoBase::getTypeNameList() const
+{
+	return internal_::getMapKeys(nameTypeMap);
+}
+
+RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const Variant & method)
+{
+	if(method.getMetaType()->getMetaCallable() == nullptr) {
+		errorWrongMetaType();
+	}
+
+	RegisteredMethod registeredMethod{ name, method };
+	auto it = methodMap.find(name);
+	if(it == methodMap.end()) {
+		auto i = methodMap.insert(typename decltype(methodMap)::value_type(registeredMethod.getName(), NamedMethodList()));
+		i.first->second.push_back(registeredMethod);
+		return i.first->second.back();
+	}
+	else {
+		it->second.push_back(registeredMethod);
+		return it->second.back();
+	}
+}
+
+RegisteredField & MetaRepoBase::registerField(const std::string & name, const Variant & field)
+{
+	if(field.getMetaType()->getMetaAccessible() == nullptr) {
+		errorWrongMetaType();
+	}
+
+	auto it = fieldMap.find(name);
+	if(it != fieldMap.end()) {
+		return it->second;
+	}
+	RegisteredField registeredField(name, field);
+	auto result = fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), registeredField));
+	return result.first->second;
+}
+
+void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
+{
+	for(auto it = fieldMap.begin(); it != fieldMap.end(); ++it) {
+		result->push_back(it->second);
+	}
+}
+
+const RegisteredField & MetaRepoBase::doGetField(const std::string & name) const
+{
+	auto it = fieldMap.find(name);
+	if(it != fieldMap.end()) {
+		return it->second;
+	}
+	return RegisteredField::getEmpty();
+}
+
+const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) const
+{
+	auto it = methodMap.find(name);
+	if(it != methodMap.end()) {
+		return it->second.at(0);
+	}
+	return RegisteredMethod::getEmpty();
+}
+
+void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodList * result) const
+{
+	auto it = methodMap.find(name);
+	if(it != methodMap.end()) {
+		for(auto i = it->second.begin(); i != it->second.end(); ++i) {
+			result->push_back(*i);
+		}
+	}
+}
+
+void MetaRepoBase::doGetMethodList(RegisteredMethodList * result) const
+{
+	for(auto it = methodMap.begin(); it != methodMap.end(); ++it) {
+		for(auto i = it->second.begin(); i != it->second.end(); ++i) {
+			result->push_back(*i);
+		}
+	}
+}
 
 } // namespace internal_
+
+
+MetaRepo * getMetaRepo()
+{
+	static MetaRepo repo;
+	return &repo;
+}
+
+MetaRepo::MetaRepo()
+{
+	registerBuiltinTypes();
+}
+
+MetaRepo * MetaRepo::addRepo(const std::string & name)
+{
+	std::unique_ptr<MetaRepo> repo(new MetaRepo());
+	MetaRepo * result = repo.get();
+	repoMap[name] = std::move(repo);
+	return result;
+}
+
+std::vector<std::string> MetaRepo::getRepoNameList() const
+{
+	return internal_::getMapKeys(repoMap);
+}
+
+void MetaRepo::registerBuiltinTypes()
+{
+	registerType<void>();
+	registerType<bool>();
+	registerType<char>();
+	registerType<wchar_t>();
+	registerType<signed char>();
+	registerType<unsigned char>();
+	registerType<short>();
+	registerType<unsigned short>();
+	registerType<int>();
+	registerType<unsigned int>();
+	registerType<long>();
+	registerType<unsigned long>();
+	registerType<long long>();
+	registerType<unsigned long long>();
+	registerType<float>();
+	registerType<double>();
+	registerType<long double>();
+	registerType<std::string>();
+	registerType<std::wstring>();
+}
 
 
 } // namespace metapp

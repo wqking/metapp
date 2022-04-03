@@ -47,6 +47,5 @@ MetaRepo * getMetaRepo();
 
 } // namespace metapp
 
-#include "metapp/implement/metarepo_impl.h"
 
 #endif
