@@ -17,6 +17,8 @@
 #ifndef METAPP_CAST_H_969872685611
 #define METAPP_CAST_H_969872685611
 
+#include "metapp/variant.h"
+
 namespace metapp {
 
 struct CastFromItem

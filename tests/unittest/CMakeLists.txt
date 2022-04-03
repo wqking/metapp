@@ -2,11 +2,13 @@ set(TARGET_TEST unittest)
 
 file(GLOB_RECURSE SRC_TEST "./*.cpp")
 file(GLOB_RECURSE HEADERS "../../include/metapp/*.h")
+file(GLOB_RECURSE SRC_LIB "../../src/*.cpp")
 
 add_executable(
 	${TARGET_TEST}
 	${SRC_TEST}
 	${HEADERS}
+	${SRC_LIB}
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

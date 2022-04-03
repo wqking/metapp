@@ -21,22 +21,17 @@
 #include "metapp/typekind.h"
 #include "metapp/metatypedata.h"
 #include "metapp/exception.h"
-#include "metapp/utils/typelist.h"
-#include "metapp/utils/knowntypes.h"
 
-// The ugly macro trick is to bypass cyclic include variant.h and metatype.h
-#define METAPP_VARIANT_IMPL_H_969872685611
-#include "metapp/variant.h"
-#undef METAPP_VARIANT_IMPL_H_969872685611
+#include "metapp/implement/variant_intf.h"
+
+#include "metapp/implement/internal/metatype_i.h"
 
 #include <type_traits>
-#include <initializer_list>
-#include <istream>
-#include <ostream>
 
 namespace metapp {
 
 class MetaType;
+class Variant;
 
 class MetaClass;
 class MetaCallable;
@@ -48,18 +43,6 @@ class MetaIterable;
 class MetaStreaming;
 class MetaMap;
 class MetaMember;
-
-template <typename T, typename Enabled = void>
-struct DeclareMetaType;
-template <typename T>
-struct CommonDeclareMetaType;
-
-} // namespace metapp
-
-// Must be included after previous macro hack
-#include "metapp/implement/internal/metatype_i.h"
-
-namespace metapp {
 
 template <typename T>
 const MetaType * getMetaType();
@@ -88,13 +71,30 @@ public:
 
 	TypeKind getTypeKind() const noexcept;
 
-	constexpr bool isConst() const noexcept;
-	constexpr bool isVolatile() const noexcept;
-	constexpr bool isPointer() const noexcept;
-	constexpr bool isReference() const noexcept;
-	constexpr bool isClass() const noexcept;
-	constexpr bool isArray() const noexcept;
-	
+	constexpr bool isConst() const noexcept {
+		return typeFlags & tfConst;
+	}
+
+	constexpr bool isVolatile() const noexcept {
+		return typeFlags & tfVolatile;
+	}
+
+	constexpr bool isPointer() const noexcept {
+		return typeFlags & tfPointer;
+	}
+
+	constexpr bool isReference() const noexcept {
+		return typeFlags & tfReference;
+	}
+
+	constexpr bool isClass() const noexcept {
+		return typeFlags & tfClass;
+	}
+
+	constexpr bool isArray() const noexcept {
+		return typeFlags & tfArray;
+	}
+
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
@@ -114,7 +114,7 @@ public:
 
 	void destroy(void * instance) const;
 
-	Variant toReference(const Variant & value) const;
+	void toReference(Variant * result, const Variant & value) const;
 	
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
@@ -122,7 +122,7 @@ public:
 	// re-implementable meta methods, end
 
 private:
-	constexpr MetaType(
+	MetaType(
 		const internal_::UnifiedType * (*doGetUnifiedType)(),
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
@@ -144,14 +144,6 @@ private:
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
-
-} // namespace metapp
-
-#include "metapp/variant.h"
-#include "metapp/interfaces/bases/metastreamingbase.h"
-#include "metapp/cast.h"
-
-namespace metapp {
 
 template <typename T>
 struct CommonDeclareMetaType : internal_::ToReferenceBase<T>
@@ -209,7 +201,7 @@ struct DeclareMetaTypeVoidBase
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
-	static Variant toReference(const Variant & value);
+	static void toReference(Variant * result, const Variant & value);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
@@ -224,9 +216,8 @@ template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVo
 
 } // namespace metapp
 
-#include "metapp/metarepo.h"
-
 #include "metapp/implement/metatype_impl.h"
 
+#include "metapp/implement/variant_impl.h"
 
 #endif

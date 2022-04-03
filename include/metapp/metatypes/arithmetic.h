@@ -20,6 +20,8 @@
 #include "metapp/metatype.h"
 #include "metapp/utils/typelist.h"
 #include "metapp/utils/knowntypes.h"
+#include "metapp/interfaces/bases/metastreamingbase.h"
+#include "metapp/cast.h"
 
 namespace metapp {
 

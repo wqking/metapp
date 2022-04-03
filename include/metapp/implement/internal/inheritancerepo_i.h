@@ -95,10 +95,7 @@ public:
 		return getBases(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getBases(const MetaType * classMetaType) const
-	{
-		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->baseList);
-	}
+	TypesView getBases(const MetaType * classMetaType) const;
 
 	template <typename Class>
 	TypesView getDerives() const
@@ -106,10 +103,7 @@ public:
 		return getDerives(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getDerives(const MetaType * classMetaType) const
-	{
-		return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
-	}
+	TypesView getDerives(const MetaType * classMetaType) const;
 
 	template <typename Class>
 	void * castToBase(void * instance, const size_t baseIndex) const
@@ -117,13 +111,7 @@ public:
 		return castToBase(instance, doGetNormalizedMetaType<Class>(), baseIndex);
 	}
 
-	void * castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const
-	{
-		if(instance == nullptr) {
-			return nullptr;
-		}
-		return doGetClassInfo(classMetaType->getUnifiedType())->baseList[baseIndex].cast(instance);
-	}
+	void * castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const;
 
 	template <typename Class>
 	void * castToDerived(void * instance, const size_t derivedIndex) const
@@ -131,13 +119,7 @@ public:
 		return castToDerived(instance, doGetNormalizedMetaType<Class>(), derivedIndex);
 	}
 
-	void * castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const
-	{
-		if(instance == nullptr) {
-			return nullptr;
-		}
-		return doGetClassInfo(classMetaType->getUnifiedType())->derivedList[derivedIndex].cast(instance);
-	}
+	void * castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const;
 
 	template <typename Class, typename ToClass>
 	void * cast(void * instance) const
@@ -145,21 +127,7 @@ public:
 		return cast(instance, doGetNormalizedMetaType<Class>(), doGetNormalizedMetaType<ToClass>());
 	}
 
-	void * cast(void * instance, const MetaType * classMetaType, const MetaType * toMetaType) const
-	{
-		if(instance == nullptr) {
-			return nullptr;
-		}
-		std::array<BaseDerived, maxInheritanceLevels> entryList;
-		const int levels = std::abs(doFindRelationship(entryList.data(), classMetaType, toMetaType));
-		if(levels > 0) {
-			for(int i = 0; i < levels; ++i) {
-				instance = entryList[i].cast(instance);
-			}
-			return instance;
-		}
-		return nullptr;
-	}
+	void * cast(void * instance, const MetaType * classMetaType, const MetaType * toMetaType) const;
 
 	template <typename Class, typename ToClass>
 	InheritanceRelationship getRelationship() const
@@ -167,18 +135,7 @@ public:
 		return getRelationship(doGetNormalizedMetaType<Class>(), doGetNormalizedMetaType<ToClass>());
 	}
 
-	InheritanceRelationship getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const
-	{
-		std::array<BaseDerived, maxInheritanceLevels> entryList;
-		const int levels = doFindRelationship(entryList.data(), classMetaType, toMetaType);
-		if(levels > 0) {
-			return InheritanceRelationship::base;
-		}
-		if(levels < 0) {
-			return InheritanceRelationship::derived;
-		}
-		return InheritanceRelationship::none;
-	}
+	InheritanceRelationship getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const;
 
 	template <typename Class>
 	bool isClassInHierarchy() const
@@ -186,10 +143,7 @@ public:
 		return isClassInHierarchy(doGetNormalizedMetaType<Class>());
 	}
 
-	bool isClassInHierarchy(const MetaType * classMetaType) const
-	{
-		return doFindClassInfo(classMetaType->getUnifiedType()) != nullptr;
-	}
+	bool isClassInHierarchy(const MetaType * classMetaType) const;
 
 	template <typename FT>
 	bool traverseBases(
@@ -247,103 +201,27 @@ private:
 		return getMetaType<U>();
 	}
 
-	const ClassInfo * doFindClassInfo(const void * type) const
-	{
-		auto it = classInfoMap.find(type);
-		if(it != classInfoMap.end()) {
-			return &it->second;
-		}
-		return nullptr;
-	}
+	const ClassInfo * doFindClassInfo(const void * type) const;
+	const ClassInfo * doGetClassInfo(const void * type) const;
 
-	const ClassInfo * doGetClassInfo(const void * type) const
-	{
-		const ClassInfo * result = doFindClassInfo(type);
-		if(result == nullptr) {
-			return doGetDummyClassInfo();
-		}
-		return result;
-	}
-
-	static const ClassInfo * doGetDummyClassInfo()
-	{
-		static ClassInfo classInfo {};
-		return &classInfo;
-	}
+	static const ClassInfo * doGetDummyClassInfo();
 
 	int doFindRelationship(
 		BaseDerived * entryList,
 		const MetaType * fromMetaType,
-		const MetaType * toMetaType) const
-	{
-		const void * fromUnifiedType = fromMetaType->getUnifiedType();
-		const ClassInfo * currentClassInfo = doFindClassInfo(fromUnifiedType);
-		if(currentClassInfo == nullptr) {
-			return 0;
-		}
-		const void * toUnifiedType = toMetaType->getUnifiedType();
-		if(doFindClassInfo(toUnifiedType) == nullptr) {
-			return 0;
-		}
-		int levels = doFindBaseClass(entryList, currentClassInfo, toUnifiedType, 0);
-		if(levels > 0) {
-			return levels;
-		}
-		levels = doFindDerivedClass(entryList, currentClassInfo, toUnifiedType, 0);
-		return -levels;
-	}
+		const MetaType * toMetaType) const;
 
 	int doFindBaseClass(
 		BaseDerived * entryList,
 		const ClassInfo * currentClassInfo,
 		const void * targetBaseUnifiedType,
-		const int level) const
-	{
-		assert(level < maxInheritanceLevels);
-
-		const size_t count = currentClassInfo->baseList.size();
-		if(count == 0) {
-			return 0;
-		}
-		for(size_t i = 0; i < count; ++i) {
-			entryList[level] = currentClassInfo->baseList[i];
-			if(currentClassInfo->baseList[i].targetMetaType->getUnifiedType() == targetBaseUnifiedType) {
-				return level + 1;
-			}
-			const ClassInfo * baseClassInfo = doGetClassInfo(currentClassInfo->baseList[i].targetMetaType->getUnifiedType());
-			const int nextLevel = doFindBaseClass(entryList, baseClassInfo, targetBaseUnifiedType, level + 1);
-			if(nextLevel > 0) {
-				return nextLevel;
-			}
-		}
-		return 0;
-	}
+		const int level) const;
 
 	int doFindDerivedClass(
 		BaseDerived * entryList,
 		const ClassInfo * currentClassInfo,
 		const void * targetDerivedUnifiedType,
-		const int level) const
-	{
-		assert(level < maxInheritanceLevels);
-
-		const size_t count = currentClassInfo->derivedList.size();
-		if(count == 0) {
-			return 0;
-		}
-		for(size_t i = 0; i < count; ++i) {
-			entryList[level] = currentClassInfo->derivedList[i];
-			if(currentClassInfo->derivedList[i].targetMetaType->getUnifiedType() == targetDerivedUnifiedType) {
-				return level + 1;
-			}
-			const ClassInfo * derivedClassInfo = doGetClassInfo(currentClassInfo->derivedList[i].targetMetaType->getUnifiedType());
-			const int nextLevel = doFindDerivedClass(entryList, derivedClassInfo, targetDerivedUnifiedType, level + 1);
-			if(nextLevel > 0) {
-				return nextLevel;
-			}
-		}
-		return 0;
-	}
+		const int level) const;
 
 	template <typename From, typename To>
 	static void * castObject(void * pointer)

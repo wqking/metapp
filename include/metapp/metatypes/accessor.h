@@ -18,6 +18,7 @@
 #define METAPP_ACCESSOR_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/variant.h"
 #include "metapp/thirdparty/accessorpp/accessor.h"
 
 namespace metapp {

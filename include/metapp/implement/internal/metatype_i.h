@@ -22,7 +22,23 @@
 namespace metapp {
 
 class MetaType;
+class Variant;
+
 class MetaClass;
+class MetaCallable;
+class MetaAccessible;
+class MetaArray;
+class MetaEnum;
+class MetaIndexable;
+class MetaIterable;
+class MetaStreaming;
+class MetaMap;
+class MetaMember;
+
+template <typename T, typename Enabled = void>
+struct DeclareMetaType;
+template <typename T>
+struct CommonDeclareMetaType;
 
 namespace internal_ {
 
@@ -311,7 +327,7 @@ struct UnifiedMetaTable
 
 struct MetaTable
 {
-	Variant (*toReference)(const Variant & value);
+	void (*toReference)(Variant * result, const Variant & value);
 };
 
 struct UpTypeData
@@ -353,7 +369,10 @@ private:
 	constexpr UnifiedType(
 		const TypeKind typeKind,
 		const internal_::UnifiedMetaTable & metaMethodTable
-	) noexcept;
+	) noexcept
+		: typeKind(typeKind), metaMethodTable(metaMethodTable)
+	{
+	}
 
 	template <typename T>
 	friend const UnifiedType * unifiedTypeGetter();
@@ -365,110 +384,6 @@ private:
 	TypeKind typeKind;
 	internal_::UnifiedMetaTable metaMethodTable;
 };
-
-inline constexpr UnifiedType::UnifiedType(
-	const TypeKind typeKind,
-	const internal_::UnifiedMetaTable & metaMethodTable
-) noexcept
-	: typeKind(typeKind), metaMethodTable(metaMethodTable)
-{
-}
-
-inline TypeKind UnifiedType::getTypeKind() const noexcept
-{
-	return typeKind;
-}
-
-inline const MetaClass * UnifiedType::getMetaClass() const
-{
-	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
-}
-
-inline const MetaCallable * UnifiedType::getMetaCallable() const
-{
-	return static_cast<const MetaCallable *>(doGetMetaInterface(internal_::mikMetaCallable));
-}
-
-inline const MetaAccessible * UnifiedType::getMetaAccessible() const
-{
-	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
-}
-
-inline const MetaEnum * UnifiedType::getMetaEnum() const
-{
-	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
-}
-
-inline const MetaIndexable * UnifiedType::getMetaIndexable() const
-{
-	return static_cast<const MetaIndexable *>(doGetMetaInterface(internal_::mikMetaIndexable));
-}
-
-inline const MetaIterable * UnifiedType::getMetaIterable() const
-{
-	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
-}
-
-inline const MetaStreaming * UnifiedType::getMetaStreaming() const
-{
-	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
-}
-
-inline const MetaMap * UnifiedType::getMetaMap() const
-{
-	return static_cast<const MetaMap *>(doGetMetaInterface(internal_::mikMetaMap));
-}
-
-inline const MetaMember * UnifiedType::getMetaMember() const
-{
-	return static_cast<const MetaMember *>(doGetMetaInterface(internal_::mikMetaMember));
-}
-
-inline const void * UnifiedType::getMetaUser() const
-{
-	return static_cast<const void *>(doGetMetaInterface(internal_::mikMetaUser));
-}
-
-inline const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
-{
-	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
-		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
-			return metaMethodTable.metaInterfaceData.items[0].getter();
-		}
-		const uint32_t count = (metaMethodTable.metaInterfaceData.kinds & metaInterfaceCountMask);
-		if(count > 1) {
-			for(uint16_t i = 1; i < count; ++i) {
-				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
-					return metaMethodTable.metaInterfaceData.items[i].getter();
-				}
-			}
-		}
-	}
-	return nullptr;
-}
-
-inline void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const
-{
-	return metaMethodTable.constructData(data, copyFrom);
-}
-
-inline void UnifiedType::destroy(void * instance) const
-{
-	metaMethodTable.destroy(instance);
-}
-
-inline bool UnifiedType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
-{
-	return metaMethodTable.cast(result, value, toMetaType);
-}
-
-inline bool UnifiedType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
-{
-	if(metaMethodTable.castFrom == nullptr) {
-		return false;
-	}
-	return metaMethodTable.castFrom(result, value, fromMetaType);
-}
 
 template <typename P>
 inline Variant doPointerToReference(const Variant & value, std::true_type)
@@ -490,9 +405,9 @@ struct ToReferenceBase <T,
 	typename std::enable_if<std::is_reference<T>::value>::type
 >
 {
-	static Variant toReference(const Variant & value)
+	static void toReference(Variant * result, const Variant & value)
 	{
-		return value;
+		*result = value;
 	}
 };
 
@@ -501,10 +416,10 @@ struct ToReferenceBase <T,
 	typename std::enable_if<std::is_pointer<T>::value>::type
 >
 {
-	static Variant toReference(const Variant & value)
+	static void toReference(Variant * result, const Variant & value)
 	{
 		using P = typename std::remove_pointer<T>::type;
-		return internal_::doPointerToReference<P>(value, std::is_void<P>());
+		*result = internal_::doPointerToReference<P>(value, std::is_void<P>());
 	}
 };
 
@@ -513,9 +428,9 @@ struct ToReferenceBase <T,
 	typename std::enable_if<! std::is_reference<T>::value && ! std::is_pointer<T>::value>::type
 >
 {
-	static Variant toReference(const Variant & value)
+	static void toReference(Variant * result, const Variant & value)
 	{
-		return Variant::create<T &>(value.get<T &>());
+		*result = Variant::create<T &>(value.get<T &>());
 	}
 };
 

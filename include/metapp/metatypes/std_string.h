@@ -18,6 +18,7 @@
 #define METAPP_STD_STRING_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/interfaces/bases/metastreamingbase.h"
 
 #include <string>
 
