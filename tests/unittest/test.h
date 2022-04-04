@@ -44,7 +44,7 @@ inline bool matchUpTypeKinds(const metapp::MetaType * metaType, Iterator begin, 
 		metaType = metaType->getUpType();
 		++begin;
 	}
-	return true;
+	return metaType == nullptr;
 }
 
 template <typename T>
