@@ -18,6 +18,9 @@
 #define METAPP_REGISTEREDCONSTRUCTOR_H_969872685611
 
 #include "metapp/registration/registeredannotation.h"
+#include "metapp/interfaces/metacallable.h"
+
+#include <vector>
 
 namespace metapp {
 

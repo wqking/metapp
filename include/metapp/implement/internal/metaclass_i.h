@@ -19,6 +19,8 @@
 
 namespace metapp {
 
+class MetaType;
+
 namespace internal_ {
 
 template <typename From, typename To>

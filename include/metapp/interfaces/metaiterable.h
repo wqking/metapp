@@ -17,6 +17,8 @@
 #ifndef METAPP_METAITERABLE_H_969872685611
 #define METAPP_METAITERABLE_H_969872685611
 
+#include "metapp/variant.h"
+
 #include <functional>
 
 namespace metapp {

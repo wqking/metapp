@@ -18,6 +18,7 @@
 #define METAPP_TYPELIST_H_969872685611
 
 #include <type_traits>
+#include <cstddef>
 
 namespace metapp {
 

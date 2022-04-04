@@ -18,7 +18,9 @@
 #define METAPP_ENUM_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/cast.h"
 #include "metapp/interfaces/metaenum.h"
+#include "metapp/utils/knowntypes.h"
 
 namespace metapp {
 
