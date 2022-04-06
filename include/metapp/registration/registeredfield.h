@@ -21,7 +21,7 @@
 #include "metapp/interfaces/metaaccessible.h"
 
 #include <string>
-#include <vector>
+#include <deque>
 #include <memory>
 
 namespace metapp {
@@ -86,7 +86,7 @@ private:
 	std::shared_ptr<Data> data;
 };
 
-using RegisteredFieldList = std::vector<RegisteredField>;
+using RegisteredFieldList = std::deque<RegisteredField>;
 
 
 } // namespace metapp

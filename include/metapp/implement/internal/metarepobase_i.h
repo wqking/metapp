@@ -20,6 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
+#include "metapp/registration/registeredtype.h"
 #include "metapp/registration/registeredfield.h"
 #include "metapp/registration/registeredmethod.h"
 
@@ -34,28 +35,20 @@ namespace internal_ {
 
 class MetaRepoBase
 {
-private:
-	using NamedMethodList = std::vector<RegisteredMethod>;
-
-public:
-	using VariantList = std::vector<std::reference_wrapper<const Variant> >;
-	using NameList = std::vector<std::reference_wrapper<const std::string> >;
-
 public:
 	MetaRepoBase();
 
-	void registerType(const MetaType * metaType, std::string name = "");
+	RegisteredType & registerType(const MetaType * metaType, std::string name = "");
 
 	template <typename T>
-	void registerType(const std::string & name = "") {
-		registerType(getMetaType<T>(), name);
+	RegisteredType & registerType(const std::string & name = "") {
+		return registerType(getMetaType<T>(), name);
 	}
 
-	const MetaType * getTypeByName(const std::string & name) const;
-	const MetaType * getTypeByKind(const TypeKind kind) const;
+	const RegisteredType & getTypeByName(const std::string & name) const;
+	const RegisteredType & getTypeByKind(const TypeKind kind) const;
 	std::string getNameByKind(const TypeKind kind) const;
-
-	std::vector<std::string> getTypeNameList() const;
+	const RegisteredTypeList & getTypeList() const;
 
 	RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
 	RegisteredField & registerField(const std::string & name, const Variant & field);
@@ -69,12 +62,17 @@ protected:
 	void doGetMethodList(RegisteredMethodList * result) const;
 
 private:
-	std::map<std::string, const MetaType *> nameTypeMap;
-	std::map<TypeKind, std::pair<std::string, const MetaType *> > kindTypeMap;
+	RegisteredTypeList typeList;
+	std::map<
+		std::reference_wrapper<const std::string>,
+		const RegisteredType *,
+		std::less<const std::string>
+	> nameTypeMap;
+	std::map<TypeKind, const RegisteredType *> kindTypeMap;
 
 	std::map<
 		std::reference_wrapper<const std::string>,
-		NamedMethodList,
+		RegisteredMethodList,
 		std::less<const std::string>
 	> methodMap;
 

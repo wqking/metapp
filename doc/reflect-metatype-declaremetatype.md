@@ -59,7 +59,7 @@ struct metapp::DeclareMetaType <MyClass>
 			*result = casted value;
 			return true;
 		}
-		return CommonDeclareMetaType<MyClass>::cast(result, value, toMetaType);
+		return metapp::CommonDeclareMetaType<MyClass>::cast(result, value, toMetaType);
 	}
 }
 ```
@@ -73,6 +73,8 @@ Function `setup` is invoked on the first time when the MetaType is initialized. 
 `setup` is useful when the `DeclareMetaType` needs to do initialize work. One use case is to register inheritance relationship.  
 
 **Example** 
+
+```c++
 struct A {};
 struct B {};
 struct C : A, B {};

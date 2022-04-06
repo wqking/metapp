@@ -20,7 +20,7 @@
 #include "metapp/registration/registeredannotation.h"
 #include "metapp/interfaces/metacallable.h"
 
-#include <vector>
+#include <deque>
 
 namespace metapp {
 
@@ -88,7 +88,7 @@ private:
 	std::shared_ptr<Data> data;
 };
 
-using RegisteredConstructorList = std::vector<RegisteredConstructor>;
+using RegisteredConstructorList = std::deque<RegisteredConstructor>;
 
 } // namespace metapp
 

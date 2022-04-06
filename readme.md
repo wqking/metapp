@@ -123,6 +123,6 @@ assert(v.get<int (&)[2][3]>()[1][2] == 6);
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
     - [List of all built-in type kinds](doc/typekinds.md)
-    - [Reflect meta type, DeclareMetaType](doc/reflect-metatype.md)
+    - [Reflect meta type, DeclareMetaType](doc/reflect-metatype-declaremetatype.md)
 
 - Meta interfaces

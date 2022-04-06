@@ -34,8 +34,8 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 	metapp::Variant v(func);
 	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkDefaultArgsFunction);
 	REQUIRE(v.getMetaType()->getUpType(0)->getTypeKind() == metapp::tkStdString);
-	REQUIRE(v.getMetaType()->getUpType(1)->getTypeKind() == metapp::tkStdString);
-	REQUIRE(v.getMetaType()->getUpType(2)->getTypeKind() == metapp::tkStdString);
+	REQUIRE(v.getMetaType()->getUpType(1)->getTypeKind() == metapp::tkInt);
+	REQUIRE(v.getMetaType()->getUpType(2)->getTypeKind() == metapp::tkReference);
 
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };

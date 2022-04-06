@@ -21,7 +21,7 @@
 #include "metapp/interfaces/metacallable.h"
 
 #include <string>
-#include <vector>
+#include <deque>
 
 namespace metapp {
 
@@ -101,7 +101,7 @@ private:
 	std::shared_ptr<Data> data;
 };
 
-using RegisteredMethodList = std::vector<RegisteredMethod>;
+using RegisteredMethodList = std::deque<RegisteredMethod>;
 
 } // namespace metapp
 

@@ -184,6 +184,7 @@ int InheritanceRepo::doFindDerivedClass(
 
 MetaRepoBase::MetaRepoBase()
 	:
+		typeList(),
 		nameTypeMap(),
 		kindTypeMap(),
 		methodMap(),
@@ -191,47 +192,52 @@ MetaRepoBase::MetaRepoBase()
 {
 }
 
-void MetaRepoBase::registerType(const MetaType * metaType, std::string name)
+RegisteredType & MetaRepoBase::registerType(const MetaType * metaType, std::string name)
 {
 	if(name.empty()) {
 		name = getNameByTypeKind(metaType->getTypeKind());
 	}
-	if(! name.empty()) {
-		nameTypeMap[name] = metaType;
+
+	typeList.emplace_back(name, metaType);
+	RegisteredType & registeredType = typeList.back();
+	if(! registeredType.getName().empty()) {
+		nameTypeMap[registeredType.getName()] = &registeredType;
 	}
-	kindTypeMap[metaType->getTypeKind()] = std::make_pair(name, metaType);
+	kindTypeMap[metaType->getTypeKind()] = &registeredType;
+
+	return registeredType;
 }
 
-const MetaType * MetaRepoBase::getTypeByName(const std::string & name) const
+const RegisteredType & MetaRepoBase::getTypeByName(const std::string & name) const
 {
 	auto it = nameTypeMap.find(name);
 	if(it != nameTypeMap.end()) {
-		return it->second;
+		return *it->second;
 	}
-	return nullptr;
+	return RegisteredType::getEmpty();
 }
 
-const MetaType * MetaRepoBase::getTypeByKind(const TypeKind kind) const
+const RegisteredType & MetaRepoBase::getTypeByKind(const TypeKind kind) const
 {
 	auto it = kindTypeMap.find(kind);
 	if(it != kindTypeMap.end()) {
-		return it->second.second;
+		return *it->second;
 	}
-	return nullptr;
+	return RegisteredType::getEmpty();
 }
 
 std::string MetaRepoBase::getNameByKind(const TypeKind kind) const
 {
 	auto it = kindTypeMap.find(kind);
 	if(it != kindTypeMap.end()) {
-		return it->second.first;
+		return it->second->getName();
 	}
 	return std::string();
 }
 
-std::vector<std::string> MetaRepoBase::getTypeNameList() const
+const RegisteredTypeList & MetaRepoBase::getTypeList() const
 {
-	return internal_::getMapKeys(nameTypeMap);
+	return typeList;
 }
 
 RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const Variant & method)
@@ -243,7 +249,7 @@ RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const 
 	RegisteredMethod registeredMethod{ name, method };
 	auto it = methodMap.find(name);
 	if(it == methodMap.end()) {
-		auto i = methodMap.insert(typename decltype(methodMap)::value_type(registeredMethod.getName(), NamedMethodList()));
+		auto i = methodMap.insert(typename decltype(methodMap)::value_type(registeredMethod.getName(), RegisteredMethodList()));
 		i.first->second.push_back(registeredMethod);
 		return i.first->second.back();
 	}

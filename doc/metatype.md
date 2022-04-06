@@ -5,20 +5,6 @@
 `metapp::MetaType` represents the meta information of arbitrary C++ type.  
 We can obtain almost all information on any C++ type through `metapp::MetaType`, such as, but not limited to, pointer, reference, const-volatile qualifier, array, function parameters, etc.  
 
-The pointer returned by `getMetaType()` is always the same for the same T. For example,  
-```c++
-getMetaType<int>() == getMetaType<int>();
-getMetaType<std::string>() == getMetaType<std::string>();
-```
-
-MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
-```c++
-getMetaType<int>() != getMetaType<const int>();
-getMetaType<std::string>() != getMetaType<volatile std::string>();
-```
-
-To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.  
-
 ## Header
 
 ```c++
@@ -37,6 +23,20 @@ const MetaType * getMetaType();
 `getMetaType` is a non-member free function.  
 Return a MetaType pointer of type T.  
 `getMetaType` can be used on any C++ type, the type doesn't need any registering or preprocessing.  
+
+The pointer returned by `getMetaType()` is always the same for the same T. For example,  
+```c++
+metapp::getMetaType<int>() == metapp::getMetaType<int>();
+metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>();
+```
+
+MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
+```c++
+metapp::getMetaType<int>() != metapp::getMetaType<const int>();
+metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>();
+```
+
+To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.  
 
 **Example**
 
@@ -76,7 +76,7 @@ Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaTy
 metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType();
 metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType();
 ```
-`UnifiedType` is an opaque type, so it's a `const void *`. It's only function is to identify or compare types.  
+`UnifiedType` is an opaque type, so it's a `const void *`. Its only function is to identify or compare types.  
 
 ### getUpType
 
@@ -123,7 +123,7 @@ constexpr bool isArray() const noexcept;
 `isVolatile` returns true if the type is volatile qualified.  
 `isPointer` returns true if the type is a pointer or nullptr.  
 `isReference` returns true if the type is a reference.  
-`isClass` returns true if the type is a class.  
+`isClass` returns true if the type is a C++ class or struct.  
 `isArray` returns true if the type is a raw array (int[3], std::string[2][3], etc).  
 
 ### Get meta interfaces

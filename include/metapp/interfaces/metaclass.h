@@ -65,7 +65,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	std::vector<RegisteredConstructor> constructorList;
+	RegisteredConstructorList constructorList;
 };
 
 

@@ -36,7 +36,7 @@ TEST_CASE("metatypes, VariadicFunction, sum")
 {
 	metapp::Variant v = (metapp::VariadicFunction<decltype(&sum)>(&sum));
 	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkVariadicFunction);
-	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkFunction);
+	REQUIRE(v.getMetaType()->getUpType() == nullptr);
 
 	SECTION("0 arguments") {
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(nullptr, 0));
