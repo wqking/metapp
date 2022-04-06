@@ -67,7 +67,6 @@ private:
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 public:
-	using UpType = FT;
 	static constexpr TypeKind typeKind = tkVariadicFunction;
 
 	static const MetaCallable * getMetaCallable() {

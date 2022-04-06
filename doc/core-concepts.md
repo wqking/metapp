@@ -9,12 +9,12 @@ This document gives an overview on the core concepts and core design in metapp. 
 `metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind. For example, `metapp::tkInt` is the meta type for `int`.  
 Each meta type has one and only one TypeKind, different meta types may have the same TypeKind, that's to say, TypeKind is not unique. For example, `metapp::tkStdSharedPtr` represents all meta types of `std::shared_ptr<T>`, in which T can be any C++ type.  
 
-See [TypeKind document](typekinds.md) for list of built-in type kinds.
+See [TypeKind document](typekinds.md) for a list of built-in type kinds.
 
 ## MetaType - the core meta type
 
 `metapp::MetaType` is the core class to represent the meta type. Unlike some other reflection libraries which are meta class based, everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions, constructors, containers, etc.  
-With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, streaming in/out the object, etc.  
+With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, etc.  
 A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at run time via class `MetaRepo`.  
 
 Prototype of `getMetaType()`  
@@ -51,7 +51,7 @@ Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaTy
 metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType();
 metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType();
 ```
-`UnifiedType` is an opaque type, so it's a `const void *`. It's only function is to identify or compare types.  
+`UnifiedType` is an opaque type, so it's a `const void *`. Its only function is to identify or compare types.  
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
 
@@ -66,8 +66,8 @@ const MetaType * getUpType(const size_t i) const;
 size_t getUpTypeCount() const noexcept;
 ```
 
-A MetaType only has one TypeKind, so it can represent only one type information, it can't represent compound information. For example, for type `int *`, the TypeKind of the MetaType is `tkPointer`, the `int` type is missed. For `std::vector<char>`, the TypeKind of the MetaType is `tkStdVector`, the `char` type is missed.  
-UpType is used to represent the missed type information.  
+A MetaType only has one TypeKind, so it can represent only one type information, it can't represent compound information. For example, for type `int *`, the TypeKind of the MetaType is `tkPointer`, the `int` type is lost. For `std::vector<char>`, the TypeKind of the MetaType is `tkStdVector`, the `char` type is lost.  
+UpType is used to represent the lost type information.  
 
 Here are some examples,  
 
@@ -113,24 +113,19 @@ class MyClass {};
 
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser;
 
-// DeclareMetaType must be in namespace metapp
-namespace metapp {
-
+// DeclareMetaType must be in global or in namespace metapp
 template <>
-struct DeclareMetaType <MyClass> : public DeclareMetaTypeBase <MyClass>
+struct metapp::DeclareMetaType <MyClass> : public metapp::DeclareMetaTypeBase <MyClass>
 {
-	static constexpr TypeKind typeKind = tkMyClass;
+	static constexpr metapp::TypeKind typeKind = tkMyClass;
 };
 
 assert(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
-
-} // namespace metapp
-
 ```
 
 ## Meta interface 
 
-The core class MetaType only has very few public functions, and provides very few functions. metapp obey the principle "You don't pay (or pay very little) for what you don't use". We usually don't need many function from most meta types, so the core MetaType is quite small. The powerful features are extensions in MetaType, which called meta interface. For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods, fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass, we can not and don't need to get class information from it.  
+The core class MetaType only has very few public functions, and provides very few functions. metapp obeys the principle "You don't pay (or pay very little) for what you don't use". We usually don't need many function from most meta types, so the core MetaType is quite small. The powerful features are extensions in MetaType, which called meta interface. For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods, fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass, we can not and don't need to get class information from it.  
 
 Here is a list of MetaType member functions to retrieve meta interfaces,  
 ```c++

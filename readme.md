@@ -1,11 +1,14 @@
 # metapp -- C++ library for runtime reflection and meta types
 
-metapp is a cross platform C++ library that adds powerful reflection feature to C++.
+metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
+With metapp we can retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more.  
+With metapp we can perform runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.
 
 ## Facts and features
 
 - **Powerful**
-    - Supports any C++ types, such as primary, pointer, reference, function, template, const-volatile qualifiers, and much more.
+    - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers, and much more.
+    - Support runtime generic programming.
     - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior, no template parameters are needed. All parameters and return values are passed via metapp::Variant.
     - Automatically type conversion when getting/setting fields, invoking methods, etc.
     - Support multiple inheritance and hierarchy.

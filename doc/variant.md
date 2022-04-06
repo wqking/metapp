@@ -3,7 +3,7 @@
 ## Overview
 
 `metapp::Variant` allows to store data of any type and convert between types.  
-Variant holds a single value of any type at the same time. They type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
+Variant holds a single value of any type at the same time. The type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
 
 For example,  
 
@@ -13,7 +13,7 @@ metapp::Variant v2 = std::vector<std::string>();
 metapp::Variant v3 = MyClass();
 ```
 
-In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 is metapp::tkObject unless MyClass is regitered with another type kind.
+In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 is metapp::tkObject unless MyClass is registered with another type kind.
 
 ## Header
 
@@ -55,7 +55,7 @@ Construct a Variant of type `metaType`, and initialize the default value using `
 Variant(const MetaType * metaType, const void * copyFrom);
 ```
 
-Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.
+Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`. `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
 
 ### Copy and move constructors
 
@@ -72,7 +72,7 @@ template <typename T>
 static Variant create(T value);
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
-This is similar with the constructor `template <typename T> Variant(T value);`, but the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
+This is similar with the constructor `template <typename T> Variant(T value)`, the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
 **Example**
@@ -98,6 +98,7 @@ static Variant takeFrom(const MetaType * metaType, void * instance);
 
 Return a Variant which data is the `instance`, type is `metaType`.  
 `instance` is a pointer that points to an object allocated on the heap, the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
+`metaType` should the type that `instance` points to, not the pointer type. The returned `Variant` is a value object, not a pointer.
 
 **Example**  
 ```c++
@@ -156,14 +157,19 @@ Return the meta type held by the variant. The result is always valid pointer. An
 ### canGet
 ```c++
 template <typename T>
-bool canGet() const;
+bool canGet() const; // #1
+
+bool canGet(const MetaType * toMetaType) const; // #2
 ```
 Return true if `myVariant.get<T>()` can be called to get the underlying value.  
+#1 form is equivalent to `canGet(metapp::getMetaType<T>())`. 
+ 
 The rules to determine `canGet`, assume the underlying value has type V,  
-1. If both T and V are reference, `canGet` returns true.  
-2. If both T and V are pointer, `canGet` returns true.  
-3. If either T or V is reference, the other one is not reference, `canGet` returns true only if the referred type is same as the non-reference type.  
-4. If neither T and V are reference or pointer, `canGet` returns true only if T is same as V.  
+1. If both T and V are references, `canGet` returns true.  
+2. If both T and V are pointers after reference is removed, `canGet` returns true.  
+3. If both T and V are C array after reference is removed, `canGet` returns true.  
+4. If either T or V is reference, the other one is not reference, `canGet` returns true only if the referred type is same as the non-reference type.  
+5. If neither T and V are reference or pointer, `canGet` returns true only if T is same as V.  
 
 `canGet` and `get` expect either T is same as underlying type V, or T and V are reference are pointer.  
 If You need to get the underlying value as different type, use `canCast` and `cast`.  
@@ -181,7 +187,7 @@ assert(v1.get<const int &>() == 5);
 assert(v1.canGet<long &>()); // rule 1
 v1.get<long &>(); // this may return wrong value, because long & is not int &
 
-metapp::Variant v2(38);
+metapp::Variant v2(38); // int
 assert(v2.canGet<int>()); // rule 4
 assert(v2.canGet<int &>()); // rule 3
 assert(! v2.canGet<long>()); // rule 4
@@ -201,7 +207,7 @@ T get() const;
 If `canGet<T>()` returns true, `get` returns the underlying value as T.  
 If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
-If T is function type, the return type is std::decay<T>::type.  
+If T is function type, the return type is function pointer.  
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string, we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference instead of copy the value. That helps to improve the performance.  
 

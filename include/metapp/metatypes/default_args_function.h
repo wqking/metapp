@@ -22,6 +22,11 @@
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/metatypes/utils/declareutil.h"
 #include "metapp/utils/utility.h"
+// requires these headers to get UpType
+#include "metapp/metatypes/function.h"
+#include "metapp/metatypes/member_function.h"
+#include "metapp/metatypes/constructor.h"
+#include "metapp/metatypes/std_function.h"
 
 #include <vector>
 #include <initializer_list>
@@ -85,7 +90,6 @@ struct DefaultArgsGetter
 
 template <typename FT, size_t defaultArgsCount>
 struct DeclareMetaTypeBase <DefaultArgsFunction<FT, defaultArgsCount> >
-	: CommonDeclareMetaType<DefaultArgsFunction<FT, defaultArgsCount> >
 {
 private:
 	using Underlying = DeclareMetaType<FT>;
@@ -97,7 +101,7 @@ private:
 	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 public:
-	using UpType = FT;
+	using UpType = typename Underlying::UpType;
 	static constexpr TypeKind typeKind = tkDefaultArgsFunction;
 
 	static const MetaCallable * getMetaCallable() {
