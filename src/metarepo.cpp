@@ -187,7 +187,9 @@ MetaRepoBase::MetaRepoBase()
 		typeList(),
 		nameTypeMap(),
 		kindTypeMap(),
+		methodList(),
 		methodMap(),
+		fieldList(),
 		fieldMap()
 {
 }
@@ -246,17 +248,18 @@ RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const 
 		errorWrongMetaType();
 	}
 
-	RegisteredMethod registeredMethod{ name, method };
+	methodList.emplace_back(name, method);
+	RegisteredMethod & registeredMethod = methodList.back();
 	auto it = methodMap.find(name);
 	if(it == methodMap.end()) {
-		auto i = methodMap.insert(typename decltype(methodMap)::value_type(registeredMethod.getName(), RegisteredMethodList()));
-		i.first->second.push_back(registeredMethod);
-		return i.first->second.back();
+		methodMap.insert(typename decltype(methodMap)::value_type(
+			registeredMethod.getName(), RegisteredMethodPointerList {&registeredMethod}
+		));
 	}
 	else {
-		it->second.push_back(registeredMethod);
-		return it->second.back();
+		it->second.push_back(&registeredMethod);
 	}
+	return registeredMethod;
 }
 
 RegisteredField & MetaRepoBase::registerField(const std::string & name, const Variant & field)
@@ -267,25 +270,29 @@ RegisteredField & MetaRepoBase::registerField(const std::string & name, const Va
 
 	auto it = fieldMap.find(name);
 	if(it != fieldMap.end()) {
-		return it->second;
+		return *it->second;
 	}
-	RegisteredField registeredField(name, field);
-	auto result = fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), registeredField));
-	return result.first->second;
+	fieldList.emplace_back(name, field);
+	RegisteredField & registeredField = fieldList.back();
+	fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), &registeredField));
+	return registeredField;
 }
 
 void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
 {
-	for(auto it = fieldMap.begin(); it != fieldMap.end(); ++it) {
-		result->push_back(it->second);
-	}
+	result->insert(result->end(), fieldList.begin(), fieldList.end());
+}
+
+const RegisteredFieldList & MetaRepoBase::doGetFieldList() const
+{
+	return fieldList;
 }
 
 const RegisteredField & MetaRepoBase::doGetField(const std::string & name) const
 {
 	auto it = fieldMap.find(name);
 	if(it != fieldMap.end()) {
-		return it->second;
+		return *it->second;
 	}
 	return RegisteredField::getEmpty();
 }
@@ -294,7 +301,7 @@ const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) con
 {
 	auto it = methodMap.find(name);
 	if(it != methodMap.end()) {
-		return it->second.at(0);
+		return *it->second.at(0);
 	}
 	return RegisteredMethod::getEmpty();
 }
@@ -304,18 +311,19 @@ void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodLis
 	auto it = methodMap.find(name);
 	if(it != methodMap.end()) {
 		for(auto i = it->second.begin(); i != it->second.end(); ++i) {
-			result->push_back(*i);
+			result->push_back(*(*i));
 		}
 	}
 }
 
 void MetaRepoBase::doGetMethodList(RegisteredMethodList * result) const
 {
-	for(auto it = methodMap.begin(); it != methodMap.end(); ++it) {
-		for(auto i = it->second.begin(); i != it->second.end(); ++i) {
-			result->push_back(*i);
-		}
-	}
+	result->insert(result->end(), methodList.begin(), methodList.end());
+}
+
+const RegisteredMethodList & MetaRepoBase::doGetMethodList() const
+{
+	return methodList;
 }
 
 } // namespace internal_
@@ -328,6 +336,11 @@ MetaRepo * getMetaRepo()
 }
 
 MetaRepo::MetaRepo()
+	:
+		internal_::MetaRepoBase(),
+		internal_::InheritanceRepo(),
+		repoList(),
+		repoMap()
 {
 	registerBuiltinTypes();
 }
@@ -347,6 +360,33 @@ RegisteredRepo & MetaRepo::registerRepo(const std::string & name, MetaRepo * rep
 const RegisteredRepoList & MetaRepo::getRepoList() const
 {
 	return repoList;
+}
+
+const RegisteredField & MetaRepo::getField(const std::string & name) const
+{
+	return doGetField(name);
+}
+
+const RegisteredFieldList & MetaRepo::getFieldList() const
+{
+	return doGetFieldList();
+}
+
+const RegisteredMethod & MetaRepo::getMethod(const std::string & name) const
+{
+	return doGetMethod(name);
+}
+
+RegisteredMethodList MetaRepo::getMethodList(const std::string & name) const
+{
+	RegisteredMethodList result;
+	doGetMethodList(name, &result);
+	return result;
+}
+
+const RegisteredMethodList & MetaRepo::getMethodList() const
+{
+	return doGetMethodList();
 }
 
 void MetaRepo::registerBuiltinTypes()

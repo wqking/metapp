@@ -36,6 +36,13 @@ public:
 	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
 	const RegisteredRepoList & getRepoList() const;
 
+	const RegisteredField & getField(const std::string & name) const;
+	const RegisteredFieldList & getFieldList() const;
+
+	const RegisteredMethod & getMethod(const std::string & name) const;
+	RegisteredMethodList getMethodList(const std::string & name) const;
+	const RegisteredMethodList & getMethodList() const;
+
 private:
 	void registerBuiltinTypes();
 

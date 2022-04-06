@@ -55,11 +55,13 @@ public:
 
 protected:
 	void doGetFieldList(RegisteredFieldList * result) const;
+	const RegisteredFieldList & doGetFieldList() const;
 	const RegisteredField & doGetField(const std::string & name) const;
 
 	const RegisteredMethod & doGetMethod(const std::string & name) const;
 	void doGetMethodList(const std::string & name, RegisteredMethodList * result) const;
 	void doGetMethodList(RegisteredMethodList * result) const;
+	const RegisteredMethodList & doGetMethodList() const;
 
 private:
 	RegisteredTypeList typeList;
@@ -70,15 +72,18 @@ private:
 	> nameTypeMap;
 	std::map<TypeKind, const RegisteredType *> kindTypeMap;
 
+	RegisteredMethodList methodList;
+	using RegisteredMethodPointerList = std::vector<RegisteredMethod *>;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredMethodList,
+		RegisteredMethodPointerList,
 		std::less<const std::string>
 	> methodMap;
 
+	RegisteredFieldList fieldList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredField,
+		RegisteredField *,
 		std::less<const std::string>
 	> fieldMap;
 };

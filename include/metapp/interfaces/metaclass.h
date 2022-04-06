@@ -29,9 +29,6 @@ namespace metapp {
 
 class MetaClass : public internal_::MetaRepoBase
 {
-private:
-	using super = internal_::MetaRepoBase;
-
 public:
 	using Flags = int;
 	static constexpr Flags flagIncludeBase = (1 << 0);
@@ -40,7 +37,7 @@ public:
 	template <typename FT>
 	MetaClass(const MetaType * classMetaType, FT callback)
 		:
-			super(),
+			internal_::MetaRepoBase(),
 			classMetaType(classMetaType),
 			constructorList()
 	{
