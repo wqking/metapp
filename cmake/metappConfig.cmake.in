@@ -1,0 +1,6 @@
+get_filename_component(metapp_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+if (NOT TARGET metapp::metapp)
+  include("${metapp_CMAKE_DIR}/metappTargets.cmake")
+endif ()
+
+set(metapp_LIBRARIES metapp::metapp)
