@@ -31,7 +31,6 @@
 
 #if __cplusplus >= 201703L
 	#define METAPP_SUPPORT_STANDARD_17
-	#define METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
 #else
 	// Visual Studio 2017 RTW (15.0)
 	#if defined(_MSC_VER) && _MSC_VER >= 1910
@@ -42,16 +41,12 @@
 	#endif
 #endif
 
-#ifndef NDEBUG
-#define METAPP_DEBUG_ENABLED
+#ifdef METAPP_SUPPORT_STANDARD_17
+#define METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
 #endif
 
-#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
-#define METAPP_NO_INLINE __attribute__((noinline))
-#elif defined(METAPP_COMPILER_VC)
-#define METAPP_NO_INLINE __declspec(noinline)
-#else
-#define METAPP_NO_INLINE
+#ifndef NDEBUG
+#define METAPP_DEBUG_ENABLED
 #endif
 
 

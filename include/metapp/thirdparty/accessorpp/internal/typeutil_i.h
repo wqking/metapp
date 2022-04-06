@@ -14,6 +14,8 @@
 #ifndef ACCESSORPP_TYPEUTIL_I_H_582750282985
 #define ACCESSORPP_TYPEUTIL_I_H_582750282985
 
+#include "metapp/thirdparty/accessorpp/compiler.h"
+
 #include <utility>
 #include <type_traits>
 
@@ -68,24 +70,67 @@ struct HelperCallableTypeChecker <RT (C::*)(Args...)>
 };
 
 template <typename RT, typename C, typename ...Args>
-struct HelperCallableTypeChecker <RT (C::*)(Args...) const> : HelperCallableTypeChecker <RT (C::*)(Args...)>
-{
-};
-
+struct HelperCallableTypeChecker <RT (C::*)(Args...) const> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
 template <typename RT, typename C, typename ...Args>
-struct HelperCallableTypeChecker <RT (C::*)(Args...) volatile> : HelperCallableTypeChecker <RT (C::*)(Args...)>
-{
-};
-
+struct HelperCallableTypeChecker <RT (C::*)(Args...) volatile> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
 template <typename RT, typename C, typename ...Args>
-struct HelperCallableTypeChecker <RT (C::*)(Args...) const volatile> : HelperCallableTypeChecker <RT (C::*)(Args...)>
-{
-};
+struct HelperCallableTypeChecker <RT (C::*)(Args...) const volatile> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
+
+#ifdef ACCESSORPP_SUPPORT_STANDARD_17
+template <typename RT, typename C, typename ...Args>
+struct HelperCallableTypeChecker <RT (C::*)(Args...) const noexcept> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
+template <typename RT, typename C, typename ...Args>
+struct HelperCallableTypeChecker <RT (C::*)(Args...) volatile noexcept> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
+template <typename RT, typename C, typename ...Args>
+struct HelperCallableTypeChecker <RT (C::*)(Args...) const volatile noexcept> : HelperCallableTypeChecker <RT (C::*)(Args...)> {};
+#endif
 
 template <typename T>
 struct CallableTypeChecker : HelperCallableTypeChecker<T>
 {
 };
+
+template <typename T>
+struct DetectValueType;
+
+template <typename T>
+struct DetectValueType <T *>
+{
+	using Type = T;
+};
+template <typename T> struct DetectValueType <T * const> : DetectValueType <T *> {};
+template <typename T> struct DetectValueType <T * volatile> : DetectValueType <T *> {};
+template <typename T> struct DetectValueType <T * const volatile> : DetectValueType <T *> {};
+
+template <typename T, typename C>
+struct DetectValueType <T C::*>
+{
+	using Type = T;
+};
+template <typename T, typename C> struct DetectValueType <T C::* const> : DetectValueType <T C::*> {};
+template <typename T, typename C> struct DetectValueType <T C::* volatile> : DetectValueType <T C::*> {};
+template <typename T, typename C> struct DetectValueType <T C::* const volatile> : DetectValueType <T C::*> {};
+
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...)>
+{
+	using Type = T;
+};
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) const> : DetectValueType <T (C::*)(Args...)> {};
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) volatile> : DetectValueType <T (C::*)(Args...)> {};
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) const volatile> : DetectValueType <T (C::*)(Args...)> {};
+
+#ifdef ACCESSORPP_SUPPORT_STANDARD_17
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) const noexcept> : DetectValueType <T (C::*)(Args...)> {};
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) volatile noexcept> : DetectValueType <T (C::*)(Args...)> {};
+template <typename T, typename C, typename ...Args>
+struct DetectValueType <T (C::*)(Args...) const volatile noexcept> : DetectValueType <T (C::*)(Args...)> {};
+#endif
 
 template <typename T>
 struct GetUnderlyingType

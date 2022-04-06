@@ -31,7 +31,7 @@ public:
 
 public:
 	Getter()
-		: getterFunc([](const void *){ return ValueType(); })
+		: getterFunc()
 	{
 	}
 

@@ -174,6 +174,87 @@ struct AccessorValueType <Accessor<T, PoliciesType> >
 	using Type = typename Accessor<T, PoliciesType>::ValueType;
 };
 
+template <typename T, typename G, typename S, typename Policies>
+Accessor<T, Policies> createAccessor(G && getter, S && setter, Policies = Policies())
+{
+	return Accessor<T, Policies>(std::forward<G>(getter), std::forward<S>(setter));
+}
+
+template <
+	typename T,
+	typename G, typename IG, typename S, typename IS,
+	typename Policies = DefaultPolicies
+>
+Accessor<T, Policies> createAccessor(
+		G && getter, IG && getterInstance,
+		S && setter, IS && setterInstance,
+		Policies = Policies()
+	)
+{
+	return Accessor<T, Policies>(
+		std::forward<G>(getter), std::forward<IG>(getterInstance),
+		std::forward<S>(setter), std::forward<IS>(setterInstance)
+	);
+}
+
+template <typename G, typename S, typename Policies = DefaultPolicies>
+auto createAccessor(G && getter, S && setter, Policies = Policies())
+	-> Accessor<typename private_::DetectValueType<G>::Type, Policies>
+{
+	using A = Accessor<typename private_::DetectValueType<G>::Type, Policies>;
+	return A(
+		std::forward<G>(getter),
+		std::forward<S>(setter)
+	);
+}
+
+template <
+	typename G, typename IG, typename S, typename IS,
+	typename Policies = DefaultPolicies
+>
+auto createAccessor(
+		G && getter, IG && getterInstance,
+		S && setter, IS && setterInstance,
+		Policies = Policies()
+	)
+	-> Accessor<typename private_::DetectValueType<G>::Type, Policies>
+{
+	using A = Accessor<typename private_::DetectValueType<G>::Type, Policies>;
+	return A(
+		std::forward<G>(getter), std::forward<IG>(getterInstance),
+		std::forward<S>(setter), std::forward<IS>(setterInstance)
+	);
+}
+
+template <typename T, typename G, typename Policies = DefaultPolicies>
+Accessor<T, Policies> createReadOnlyAccessor(G && getter, Policies = Policies())
+{
+	using A = Accessor<T, Policies>;
+	return A(getter, noSetter);
+}
+
+template <typename T, typename G, typename IG, typename Policies>
+Accessor<T, Policies> createReadOnlyAccessor(G && getter, IG && getterInstance, Policies)
+{
+	using A = Accessor<T, Policies>;
+	return A(A::GetterType(std::forward<G>(getter), std::forward<IG>(getterInstance)), noSetter);
+}
+
+template <typename G, typename Policies = DefaultPolicies>
+auto createReadOnlyAccessor(G && getter, Policies = Policies())
+	-> Accessor<typename private_::DetectValueType<G>::Type, Policies>
+{
+	using A = Accessor<typename private_::DetectValueType<G>::Type, Policies>;
+	return A(std::forward<G>(getter), noSetter);
+}
+
+template <typename G, typename IG, typename Policies>
+auto createReadOnlyAccessor(G && getter, IG && getterInstance, Policies)
+	-> Accessor<typename private_::DetectValueType<G>::Type, Policies>
+{
+	using A = Accessor<typename private_::DetectValueType<G>::Type, Policies>;
+	return A(A::GetterType(std::forward<G>(getter), std::forward<IG>(getterInstance)), noSetter);
+}
 
 
 template <typename T>

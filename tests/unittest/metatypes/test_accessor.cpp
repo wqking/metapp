@@ -52,3 +52,18 @@ TEST_CASE("metatypes, Accessor, member data, int Class1::*")
 	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, &obj).get<int>() == 98);
 }
 
+TEST_CASE("metatypes, Accessor, member data, std::map<int, std::string> Class1::*")
+{
+	using Map = std::map<int, std::string>;
+	struct Class1 { Map value; };
+
+	metapp::Variant v(metapp::createAccessor<const Map &>(&Class1::value, &Class1::value));
+	Class1 obj;
+	obj.value = { { 1, "a" }, { 2, "b" } };
+	metapp::Variant fieldValue = v.getMetaType()->getMetaAccessible()->get(v, &obj);
+	REQUIRE(fieldValue.getMetaType()->getUpType(0)->getTypeKind() == metapp::tkStdMap);
+	REQUIRE(fieldValue.getMetaType()->getUpType()->getUpType(0)->getTypeKind() == metapp::tkInt);
+	REQUIRE(fieldValue.getMetaType()->getUpType()->getUpType(1)->getTypeKind() == metapp::tkStdString);
+	REQUIRE(fieldValue.get<const Map &>() == obj.value);
+}
+

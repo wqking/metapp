@@ -38,13 +38,27 @@ using Accessor = accessorpp::Accessor <T, internal_::AccessorPolicies>;
 template <typename T, typename G, typename S>
 Accessor<T> createAccessor(G && getter, S && setter)
 {
-	return Accessor<T>(std::forward<G>(getter), std::forward<S>(setter));
+	return accessorpp::createAccessor<T>(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies());
+}
+
+template <typename G, typename S>
+auto createAccessor(G && getter, S && setter)
+	-> decltype(accessorpp::createAccessor(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies()))
+{
+	return accessorpp::createAccessor(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies());
 }
 
 template <typename T, typename G>
 Accessor<T> createReadOnlyAccessor(G && getter)
 {
-	return Accessor<T>(std::forward<G>(getter), accessorpp::noSetter);
+	return accessorpp::createReadOnlyAccessor<T>(std::forward<G>(getter), internal_::AccessorPolicies());
+}
+
+template <typename G>
+auto createReadOnlyAccessor(G && getter)
+	-> decltype(accessorpp::createReadOnlyAccessor(std::forward<G>(getter), accessorpp::noSetter, internal_::AccessorPolicies()))
+{
+	return accessorpp::createReadOnlyAccessor(std::forward<G>(getter), internal_::AccessorPolicies());
 }
 
 template <typename T, typename Policies>
@@ -78,7 +92,7 @@ public:
 
 	static Variant accessibleGet(const Variant & accessible, const void * instance) {
 		const AccessorType & accessor = accessible.get<const AccessorType &>();
-		return accessor.get(instance);
+		return Variant::create<T>(accessor.get(instance));
 	}
 
 	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
