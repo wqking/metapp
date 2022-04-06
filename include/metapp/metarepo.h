@@ -20,6 +20,7 @@
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
+#include "metapp/registration/registeredrepo.h"
 
 namespace metapp {
 
@@ -32,15 +33,19 @@ public:
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
 
-	MetaRepo * addRepo(const std::string & name);
-
-	std::vector<std::string> getRepoNameList() const;
+	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+	const RegisteredRepoList & getRepoList() const;
 
 private:
 	void registerBuiltinTypes();
 
 private:
-	std::map<std::string, std::unique_ptr<MetaRepo> > repoMap;
+	RegisteredRepoList repoList;
+	std::map<
+		std::reference_wrapper<const std::string>,
+		RegisteredRepo *,
+		std::less<const std::string>
+	> repoMap;
 };
 
 MetaRepo * getMetaRepo();

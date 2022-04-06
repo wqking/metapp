@@ -192,7 +192,7 @@ MetaRepoBase::MetaRepoBase()
 {
 }
 
-RegisteredType & MetaRepoBase::registerType(const MetaType * metaType, std::string name)
+RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
 {
 	if(name.empty()) {
 		name = getNameByTypeKind(metaType->getTypeKind());
@@ -332,17 +332,21 @@ MetaRepo::MetaRepo()
 	registerBuiltinTypes();
 }
 
-MetaRepo * MetaRepo::addRepo(const std::string & name)
+RegisteredRepo & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
 {
-	std::unique_ptr<MetaRepo> repo(new MetaRepo());
-	MetaRepo * result = repo.get();
-	repoMap[name] = std::move(repo);
-	return result;
+	if(repo == nullptr) {
+		repo = new MetaRepo();
+	}
+	repoList.emplace_back(name, repo);
+	RegisteredRepo & registeredRepo = repoList.back();
+	repoMap[registeredRepo.getName()] = &registeredRepo;
+
+	return registeredRepo;
 }
 
-std::vector<std::string> MetaRepo::getRepoNameList() const
+const RegisteredRepoList & MetaRepo::getRepoList() const
 {
-	return internal_::getMapKeys(repoMap);
+	return repoList;
 }
 
 void MetaRepo::registerBuiltinTypes()

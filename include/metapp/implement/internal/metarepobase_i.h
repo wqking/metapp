@@ -38,11 +38,11 @@ class MetaRepoBase
 public:
 	MetaRepoBase();
 
-	RegisteredType & registerType(const MetaType * metaType, std::string name = "");
+	RegisteredType & registerType(std::string name, const MetaType * metaType);
 
 	template <typename T>
 	RegisteredType & registerType(const std::string & name = "") {
-		return registerType(getMetaType<T>(), name);
+		return registerType(name, getMetaType<T>());
 	}
 
 	const RegisteredType & getTypeByName(const std::string & name) const;
