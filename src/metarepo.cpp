@@ -194,52 +194,20 @@ MetaRepoBase::MetaRepoBase()
 {
 }
 
-RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
+RegisteredField & MetaRepoBase::registerField(const std::string & name, const Variant & field)
 {
-	if(name.empty()) {
-		name = getNameByTypeKind(metaType->getTypeKind());
+	if(field.getMetaType()->getMetaAccessible() == nullptr) {
+		errorWrongMetaType();
 	}
 
-	typeList.emplace_back(name, metaType);
-	RegisteredType & registeredType = typeList.back();
-	if(! registeredType.getName().empty()) {
-		nameTypeMap[registeredType.getName()] = &registeredType;
-	}
-	kindTypeMap[metaType->getTypeKind()] = &registeredType;
-
-	return registeredType;
-}
-
-const RegisteredType & MetaRepoBase::getTypeByName(const std::string & name) const
-{
-	auto it = nameTypeMap.find(name);
-	if(it != nameTypeMap.end()) {
+	auto it = fieldMap.find(name);
+	if(it != fieldMap.end()) {
 		return *it->second;
 	}
-	return RegisteredType::getEmpty();
-}
-
-const RegisteredType & MetaRepoBase::getTypeByKind(const TypeKind kind) const
-{
-	auto it = kindTypeMap.find(kind);
-	if(it != kindTypeMap.end()) {
-		return *it->second;
-	}
-	return RegisteredType::getEmpty();
-}
-
-std::string MetaRepoBase::getNameByKind(const TypeKind kind) const
-{
-	auto it = kindTypeMap.find(kind);
-	if(it != kindTypeMap.end()) {
-		return it->second->getName();
-	}
-	return std::string();
-}
-
-const RegisteredTypeList & MetaRepoBase::getTypeList() const
-{
-	return typeList;
+	fieldList.emplace_back(name, field);
+	RegisteredField & registeredField = fieldList.back();
+	fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), &registeredField));
+	return registeredField;
 }
 
 RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const Variant & method)
@@ -262,20 +230,20 @@ RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const 
 	return registeredMethod;
 }
 
-RegisteredField & MetaRepoBase::registerField(const std::string & name, const Variant & field)
+RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
 {
-	if(field.getMetaType()->getMetaAccessible() == nullptr) {
-		errorWrongMetaType();
+	if(name.empty()) {
+		name = getNameByTypeKind(metaType->getTypeKind());
 	}
 
-	auto it = fieldMap.find(name);
-	if(it != fieldMap.end()) {
-		return *it->second;
+	typeList.emplace_back(name, metaType);
+	RegisteredType & registeredType = typeList.back();
+	if(! registeredType.getName().empty()) {
+		nameTypeMap[registeredType.getName()] = &registeredType;
 	}
-	fieldList.emplace_back(name, field);
-	RegisteredField & registeredField = fieldList.back();
-	fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), &registeredField));
-	return registeredField;
+	kindTypeMap[metaType->getTypeKind()] = &registeredType;
+
+	return registeredType;
 }
 
 void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
@@ -326,6 +294,34 @@ const RegisteredMethodList & MetaRepoBase::doGetMethodList() const
 	return methodList;
 }
 
+const RegisteredType & MetaRepoBase::doGetType(const std::string & name) const
+{
+	auto it = nameTypeMap.find(name);
+	if(it != nameTypeMap.end()) {
+		return *it->second;
+	}
+	return RegisteredType::getEmpty();
+}
+
+const RegisteredType & MetaRepoBase::doGetType(const TypeKind kind) const
+{
+	auto it = kindTypeMap.find(kind);
+	if(it != kindTypeMap.end()) {
+		return *it->second;
+	}
+	return RegisteredType::getEmpty();
+}
+
+void MetaRepoBase::doGetTypeList(RegisteredTypeList * result) const
+{
+	result->insert(result->end(), typeList.begin(), typeList.end());
+}
+
+const RegisteredTypeList & MetaRepoBase::doGetTypeList() const
+{
+	return typeList;
+}
+
 } // namespace internal_
 
 
@@ -343,23 +339,6 @@ MetaRepo::MetaRepo()
 		repoMap()
 {
 	registerBuiltinTypes();
-}
-
-RegisteredRepo & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
-{
-	if(repo == nullptr) {
-		repo = new MetaRepo();
-	}
-	repoList.emplace_back(name, repo);
-	RegisteredRepo & registeredRepo = repoList.back();
-	repoMap[registeredRepo.getName()] = &registeredRepo;
-
-	return registeredRepo;
-}
-
-const RegisteredRepoList & MetaRepo::getRepoList() const
-{
-	return repoList;
 }
 
 const RegisteredField & MetaRepo::getField(const std::string & name) const
@@ -387,6 +366,47 @@ RegisteredMethodList MetaRepo::getMethodList(const std::string & name) const
 const RegisteredMethodList & MetaRepo::getMethodList() const
 {
 	return doGetMethodList();
+}
+
+const RegisteredType & MetaRepo::getType(const std::string & name) const
+{
+	return doGetType(name);
+}
+
+const RegisteredType & MetaRepo::getType(const TypeKind kind) const
+{
+	return doGetType(kind);
+}
+
+const RegisteredTypeList & MetaRepo::getTypeList() const
+{
+	return doGetTypeList();
+}
+
+RegisteredRepo & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
+{
+	if(repo == nullptr) {
+		repo = new MetaRepo();
+	}
+	repoList.emplace_back(name, repo);
+	RegisteredRepo & registeredRepo = repoList.back();
+	repoMap[registeredRepo.getName()] = &registeredRepo;
+
+	return registeredRepo;
+}
+
+const RegisteredRepo & MetaRepo::getRepo(const std::string & name) const
+{
+	auto it = repoMap.find(name);
+	if(it != repoMap.end()) {
+		return *it->second;
+	}
+	return RegisteredRepo::getEmpty();
+}
+
+const RegisteredRepoList & MetaRepo::getRepoList() const
+{
+	return repoList;
 }
 
 void MetaRepo::registerBuiltinTypes()

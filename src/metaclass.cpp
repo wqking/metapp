@@ -129,5 +129,65 @@ RegisteredMethodList MetaClass::getMethodList(const Flags flags) const
 	return result;
 }
 
+const RegisteredType & MetaClass::getType(const std::string & name, const Flags flags) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		const RegisteredType * result = &RegisteredType::getEmpty();
+		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+			const MetaClass * metaClass = metaType->getMetaClass();
+			if(metaClass != nullptr) {
+				result = &metaClass->doGetType(name);
+				if(! result->isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+			});
+		return *result;
+	}
+	else {
+		return doGetType(name);
+	}
+}
+
+const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		const RegisteredType * result = &RegisteredType::getEmpty();
+		getMetaRepo()->traverseBases(classMetaType, [&result, kind](const MetaType * metaType) -> bool {
+			const MetaClass * metaClass = metaType->getMetaClass();
+			if(metaClass != nullptr) {
+				result = &metaClass->doGetType(kind);
+				if(! result->isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+			});
+		return *result;
+	}
+	else {
+		return doGetType(kind);
+	}
+}
+
+RegisteredTypeList MetaClass::getTypeList(const Flags flags) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		RegisteredTypeList result;
+		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
+			const MetaClass * metaClass = metaType->getMetaClass();
+			if(metaClass != nullptr) {
+				metaClass->doGetTypeList(&result);
+			}
+			return true;
+			});
+		return result;
+	}
+	else {
+		return doGetTypeList();
+	}
+}
+
 
 } // namespace metapp

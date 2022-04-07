@@ -33,15 +33,20 @@ public:
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
 
-	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
-	const RegisteredRepoList & getRepoList() const;
-
 	const RegisteredField & getField(const std::string & name) const;
 	const RegisteredFieldList & getFieldList() const;
 
 	const RegisteredMethod & getMethod(const std::string & name) const;
 	RegisteredMethodList getMethodList(const std::string & name) const;
 	const RegisteredMethodList & getMethodList() const;
+
+	const RegisteredType & getType(const std::string & name) const;
+	const RegisteredType & getType(const TypeKind kind) const;
+	const RegisteredTypeList & getTypeList() const;
+
+	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+	const RegisteredRepo & getRepo(const std::string & name) const;
+	const RegisteredRepoList & getRepoList() const;
 
 private:
 	void registerBuiltinTypes();

@@ -55,6 +55,10 @@ public:
 	RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const;
 	RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const;
 
+	const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
+	const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
+	RegisteredTypeList getTypeList(const Flags flags = flagIncludeBase) const;
+
 private:
 	bool hasFlag(const Flags flags, const Flags flag) const {
 		return (flags & flag) != 0;

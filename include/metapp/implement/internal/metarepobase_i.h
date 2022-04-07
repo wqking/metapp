@@ -38,20 +38,15 @@ class MetaRepoBase
 public:
 	MetaRepoBase();
 
-	RegisteredType & registerType(std::string name, const MetaType * metaType);
+	RegisteredField & registerField(const std::string & name, const Variant & field);
+
+	RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
 
 	template <typename T>
 	RegisteredType & registerType(const std::string & name = "") {
 		return registerType(name, getMetaType<T>());
 	}
-
-	const RegisteredType & getTypeByName(const std::string & name) const;
-	const RegisteredType & getTypeByKind(const TypeKind kind) const;
-	std::string getNameByKind(const TypeKind kind) const;
-	const RegisteredTypeList & getTypeList() const;
-
-	RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
-	RegisteredField & registerField(const std::string & name, const Variant & field);
+	RegisteredType & registerType(std::string name, const MetaType * metaType);
 
 protected:
 	void doGetFieldList(RegisteredFieldList * result) const;
@@ -62,6 +57,11 @@ protected:
 	void doGetMethodList(const std::string & name, RegisteredMethodList * result) const;
 	void doGetMethodList(RegisteredMethodList * result) const;
 	const RegisteredMethodList & doGetMethodList() const;
+
+	const RegisteredType & doGetType(const std::string & name) const;
+	const RegisteredType & doGetType(const TypeKind kind) const;
+	void doGetTypeList(RegisteredTypeList * result) const;
+	const RegisteredTypeList & doGetTypeList() const;
 
 private:
 	RegisteredTypeList typeList;

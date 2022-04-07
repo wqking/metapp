@@ -25,8 +25,8 @@
 
 TEST_CASE("MetaRepo")
 {
-	REQUIRE(! metapp::getMetaRepo()->getTypeByKind(metapp::tkInt).isEmpty());
-	REQUIRE(! metapp::getMetaRepo()->getTypeByName("int").isEmpty());
+	REQUIRE(! metapp::getMetaRepo()->getType(metapp::tkInt).isEmpty());
+	REQUIRE(! metapp::getMetaRepo()->getType("int").isEmpty());
 }
 
 
