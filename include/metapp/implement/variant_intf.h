@@ -29,6 +29,13 @@ namespace metapp {
 
 class MetaType;
 
+class RegisteredAnnotation;
+class RegisteredConstructor;
+class RegisteredField;
+class RegisteredMethod;
+class RegisteredRepo;
+class RegisteredType;
+
 class Variant
 {
 public:
@@ -57,6 +64,16 @@ public:
 
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;
+
+	// Disable construct from Registered items to avoid pass the item
+	// to variant where the underlying variant in the item
+	// (such as RegisteredField::getField()) should be used
+	Variant(const RegisteredAnnotation &) = delete;
+	Variant(const RegisteredConstructor &) = delete;
+	Variant(const RegisteredField &) = delete;
+	Variant(const RegisteredMethod &) = delete;
+	Variant(const RegisteredRepo &) = delete;
+	Variant(const RegisteredType &) = delete;
 
 	template <typename T>
 	Variant & operator = (T value);
