@@ -61,7 +61,7 @@ public:
 		return data->name;
 	}
 
-	const Variant & getMethod() const {
+	const Variant & getTarget() const {
 		return data->method;
 	}
 
@@ -93,8 +93,8 @@ public:
 		return data->method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
 	}
 
-	operator const Variant & () {
-		return data->method;
+	operator const Variant & () const {
+		return getTarget();
 	}
 
 private:

@@ -63,12 +63,16 @@ public:
 		return data->name;
 	}
 
-	const MetaType * getMetaType() const {
+	const MetaType * getTarget() const {
 		return data->metaType;
 	}
 
 	bool isEmpty() const {
 		return ! data;
+	}
+
+	operator const MetaType * () const {
+		return getTarget();
 	}
 
 private:

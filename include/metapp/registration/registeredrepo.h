@@ -63,12 +63,16 @@ public:
 		return data->name;
 	}
 
-	MetaRepo * getRepo() const {
+	MetaRepo * getTarget() const {
 		return data->repo.get();
 	}
 
 	bool isEmpty() const {
 		return ! data;
+	}
+
+	operator MetaRepo * () const {
+		return getTarget();
 	}
 
 private:

@@ -62,7 +62,7 @@ public:
 		return data->name;
 	}
 
-	const Variant & getField() const {
+	const Variant & getTarget() const {
 		return data->field;
 	}
 
@@ -81,6 +81,10 @@ public:
 	void set(void * instance, const Variant & value) const {
 		data->field.getMetaType()->getMetaAccessible()->set(data->field, instance, value);
 	} 
+
+	operator const Variant & () const {
+		return getTarget();
+	}
 
 private:
 	std::shared_ptr<Data> data;

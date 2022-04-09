@@ -29,12 +29,12 @@ class RegisteredConstructor : public RegisteredAnnotation
 private:
 	struct Data
 	{
-		explicit Data(const Variant & method)
-			: method(method)
+		explicit Data(const Variant & constructor)
+			: constructor(constructor)
 		{
 		}
 
-		Variant method;
+		Variant constructor;
 	};
 
 public:
@@ -48,8 +48,8 @@ public:
 	{
 	}
 
-	const Variant & getConstructor() const {
-		return data->method;
+	const Variant & getTarget() const {
+		return data->constructor;
 	}
 
 	bool isEmpty() const {
@@ -57,31 +57,31 @@ public:
 	}
 
 	size_t getParamCount() const {
-		return data->method.getMetaType()->getMetaCallable()->getParamCount();
+		return data->constructor.getMetaType()->getMetaCallable()->getParamCount();
 	}
 
 	const MetaType * getReturnType() const {
-		return data->method.getMetaType()->getMetaCallable()->getReturnType();
+		return data->constructor.getMetaType()->getMetaCallable()->getReturnType();
 	}
 
 	const MetaType * getParamType(const size_t index) const {
-		return data->method.getMetaType()->getMetaCallable()->getParamType(index);
+		return data->constructor.getMetaType()->getMetaCallable()->getParamType(index);
 	}
 
 	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+		return data->constructor.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
 	}
 
 	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+		return data->constructor.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
 	}
 
 	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
+		return data->constructor.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
 	}
 
-	operator const Variant & () {
-		return data->method;
+	operator const Variant & () const {
+		return getTarget();
 	}
 
 private:

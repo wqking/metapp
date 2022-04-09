@@ -124,8 +124,10 @@ void tutorialMetaClass()
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 	MyDerivedClass obj;
 	MyBaseClass * pBase = &obj;
-	ASSERT(metapp::accessibleGet(metaClass->getField("value").getField(), &obj).get<int>() == 0);
-	ASSERT(metapp::accessibleGet(metaClass->getField("value").getField(), pBase).get<int>() == 0);
+	// Call getTarget() to get the underlying Variant
+	ASSERT(metapp::accessibleGet(metaClass->getField("value").getTarget(), &obj).get<int>() == 0);
+	// getTarget() can also be omitted, the RegisteredField can convert to Variant automatically
+	ASSERT(metapp::accessibleGet(metaClass->getField("value"), pBase).get<int>() == 0);
 }
 
 
