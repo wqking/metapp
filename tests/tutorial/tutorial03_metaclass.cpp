@@ -124,8 +124,8 @@ void tutorialMetaClass()
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 	MyDerivedClass obj;
 	MyBaseClass * pBase = &obj;
-	ASSERT(metapp::accessibleGet(metaClass->getField("value"), &obj).get<int>() == 0);
-	ASSERT(metapp::accessibleGet(metaClass->getField("value"), pBase).get<int>() == 0);
+	ASSERT(metapp::accessibleGet(metaClass->getField("value").getField(), &obj).get<int>() == 0);
+	ASSERT(metapp::accessibleGet(metaClass->getField("value").getField(), pBase).get<int>() == 0);
 }
 
 

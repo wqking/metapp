@@ -2,7 +2,7 @@
 
 ## Overview
 
-Meta interface is an optional way to extend `MetaType` functional. If a template specialization of `DeclareMetaType` implements a meta interface, for example, `MetaClass`, then the user can retrieve the interface `MetaClass` and use all functions provided in `MetaClass`. If the specialization doesn't implement such interface, the user can not use the interface, and thus there is no (almost) any overhead for the interface.  
+Meta interface is an optional way to extend `MetaType` functionalities. If a template specialization of `DeclareMetaType` implements a meta interface, for example, `MetaClass`, then the user can retrieve the interface `MetaClass` and use all functions provided in `MetaClass`. If the specialization doesn't implement such interface, the user can not use the interface, and thus there is no (almost) any overhead for the interface.  
 Note: the term "interface" here is an extended concept. It's not the "interface" concept in the traditional Object Oriented Programming.  
 
 ## Get meta interface from MetaType
@@ -27,7 +27,7 @@ const void * getMetaUser() const;
 For example, assume meta type of `MyClass` implements the `MetaClass` interface, then we get the meta interface as,  
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
-const MetaClass * metaClass = metaType->getMetaClass();
+const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
 ## Implement meta interface
