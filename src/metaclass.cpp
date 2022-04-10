@@ -171,6 +171,27 @@ const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags
 	}
 }
 
+const RegisteredType & MetaClass::getType(const MetaType * metaType, const Flags flags) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		const RegisteredType * result = &RegisteredType::getEmpty();
+		getMetaRepo()->traverseBases(classMetaType, [&result, metaType](const MetaType * mt) -> bool {
+			const MetaClass * metaClass = mt->getMetaClass();
+			if(metaClass != nullptr) {
+				result = &metaClass->doGetType(metaType);
+				if(! result->isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+			});
+		return *result;
+	}
+	else {
+		return doGetType(metaType);
+	}
+}
+
 RegisteredTypeList MetaClass::getTypeList(const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {

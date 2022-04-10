@@ -31,6 +31,7 @@ class MetaClass : public internal_::MetaRepoBase
 {
 public:
 	using Flags = int;
+	static constexpr Flags flagNone = 0;
 	static constexpr Flags flagIncludeBase = (1 << 0);
 
 public:
@@ -57,6 +58,7 @@ public:
 
 	const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
 	const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
+	const RegisteredType & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
 	RegisteredTypeList getTypeList(const Flags flags = flagIncludeBase) const;
 
 private:

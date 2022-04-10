@@ -42,6 +42,7 @@ public:
 
 	const RegisteredType & getType(const std::string & name) const;
 	const RegisteredType & getType(const TypeKind kind) const;
+	const RegisteredType & getType(const MetaType * metaType) const;
 	const RegisteredTypeList & getTypeList() const;
 
 	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);

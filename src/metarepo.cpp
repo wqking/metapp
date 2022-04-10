@@ -236,12 +236,17 @@ RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * m
 		name = getNameByTypeKind(metaType->getTypeKind());
 	}
 
+	auto it = typeTypeMap.find(metaType);
+	if(it != typeTypeMap.end()) {
+		return *it->second;
+	}
 	typeList.emplace_back(name, metaType);
 	RegisteredType & registeredType = typeList.back();
 	if(! registeredType.getName().empty()) {
 		nameTypeMap[registeredType.getName()] = &registeredType;
 	}
 	kindTypeMap[metaType->getTypeKind()] = &registeredType;
+	typeTypeMap[metaType] = &registeredType;
 
 	return registeredType;
 }
@@ -312,6 +317,15 @@ const RegisteredType & MetaRepoBase::doGetType(const TypeKind kind) const
 	return RegisteredType::getEmpty();
 }
 
+const RegisteredType & MetaRepoBase::doGetType(const MetaType * metaType) const
+{
+	auto it = typeTypeMap.find(metaType);
+	if(it != typeTypeMap.end()) {
+		return *it->second;
+	}
+	return RegisteredType::getEmpty();
+}
+
 void MetaRepoBase::doGetTypeList(RegisteredTypeList * result) const
 {
 	result->insert(result->end(), typeList.begin(), typeList.end());
@@ -376,6 +390,11 @@ const RegisteredType & MetaRepo::getType(const std::string & name) const
 const RegisteredType & MetaRepo::getType(const TypeKind kind) const
 {
 	return doGetType(kind);
+}
+
+const RegisteredType & MetaRepo::getType(const MetaType * metaType) const
+{
+	return doGetType(metaType);
 }
 
 const RegisteredTypeList & MetaRepo::getTypeList() const

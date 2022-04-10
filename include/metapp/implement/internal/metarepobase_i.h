@@ -60,6 +60,7 @@ protected:
 
 	const RegisteredType & doGetType(const std::string & name) const;
 	const RegisteredType & doGetType(const TypeKind kind) const;
+	const RegisteredType & doGetType(const MetaType * metaType) const;
 	void doGetTypeList(RegisteredTypeList * result) const;
 	const RegisteredTypeList & doGetTypeList() const;
 
@@ -67,10 +68,11 @@ private:
 	RegisteredTypeList typeList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		const RegisteredType *,
+		RegisteredType *,
 		std::less<const std::string>
 	> nameTypeMap;
-	std::map<TypeKind, const RegisteredType *> kindTypeMap;
+	std::map<TypeKind, RegisteredType *> kindTypeMap;
+	std::map<const MetaType *, RegisteredType *> typeTypeMap;
 
 	RegisteredMethodList methodList;
 	using RegisteredMethodPointerList = std::vector<RegisteredMethod *>;
