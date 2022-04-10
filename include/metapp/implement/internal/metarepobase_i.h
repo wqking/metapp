@@ -65,29 +65,41 @@ protected:
 	const RegisteredTypeList & doGetTypeList() const;
 
 private:
-	RegisteredTypeList typeList;
-	std::map<
-		std::reference_wrapper<const std::string>,
-		RegisteredType *,
-		std::less<const std::string>
-	> nameTypeMap;
-	std::map<TypeKind, RegisteredType *> kindTypeMap;
-	std::map<const MetaType *, RegisteredType *> typeTypeMap;
+	struct TypeData
+	{
+		RegisteredTypeList typeList;
+		std::map<
+			std::reference_wrapper<const std::string>,
+			RegisteredType *,
+			std::less<const std::string>
+		> nameTypeMap;
+		std::map<TypeKind, RegisteredType *> kindTypeMap;
+		std::map<const MetaType *, RegisteredType *> typeTypeMap;
+	};
+	std::shared_ptr<TypeData> typeData;
 
-	RegisteredMethodList methodList;
-	using RegisteredMethodPointerList = std::vector<RegisteredMethod *>;
-	std::map<
-		std::reference_wrapper<const std::string>,
-		RegisteredMethodPointerList,
-		std::less<const std::string>
-	> methodMap;
+	struct MethodData
+	{
+		RegisteredMethodList methodList;
+		using RegisteredMethodPointerList = std::vector<RegisteredMethod *>;
+		std::map<
+			std::reference_wrapper<const std::string>,
+			RegisteredMethodPointerList,
+			std::less<const std::string>
+		> methodMap;
+	};
+	std::shared_ptr<MethodData> methodData;
 
-	RegisteredFieldList fieldList;
-	std::map<
-		std::reference_wrapper<const std::string>,
-		RegisteredField *,
-		std::less<const std::string>
-	> fieldMap;
+	struct FieldData
+	{
+		RegisteredFieldList fieldList;
+		std::map<
+			std::reference_wrapper<const std::string>,
+			RegisteredField *,
+			std::less<const std::string>
+		> fieldMap;
+	};
+	std::shared_ptr<FieldData> fieldData;
 };
 
 

@@ -184,13 +184,9 @@ int InheritanceRepo::doFindDerivedClass(
 
 MetaRepoBase::MetaRepoBase()
 	:
-		typeList(),
-		nameTypeMap(),
-		kindTypeMap(),
-		methodList(),
-		methodMap(),
-		fieldList(),
-		fieldMap()
+		typeData(),
+		methodData(),
+		fieldData()
 {
 }
 
@@ -200,13 +196,17 @@ RegisteredField & MetaRepoBase::registerField(const std::string & name, const Va
 		errorWrongMetaType();
 	}
 
-	auto it = fieldMap.find(name);
-	if(it != fieldMap.end()) {
+	if(! fieldData) {
+		fieldData = std::make_shared<FieldData>();
+	}
+
+	auto it = fieldData->fieldMap.find(name);
+	if(it != fieldData->fieldMap.end()) {
 		return *it->second;
 	}
-	fieldList.emplace_back(name, field);
-	RegisteredField & registeredField = fieldList.back();
-	fieldMap.insert(typename decltype(fieldMap)::value_type(registeredField.getName(), &registeredField));
+	fieldData->fieldList.emplace_back(name, field);
+	RegisteredField & registeredField = fieldData->fieldList.back();
+	fieldData->fieldMap.insert(typename decltype(fieldData->fieldMap)::value_type(registeredField.getName(), &registeredField));
 	return registeredField;
 }
 
@@ -216,12 +216,16 @@ RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const 
 		errorWrongMetaType();
 	}
 
-	methodList.emplace_back(name, method);
-	RegisteredMethod & registeredMethod = methodList.back();
-	auto it = methodMap.find(name);
-	if(it == methodMap.end()) {
-		methodMap.insert(typename decltype(methodMap)::value_type(
-			registeredMethod.getName(), RegisteredMethodPointerList {&registeredMethod}
+	if(! methodData) {
+		methodData = std::make_shared<MethodData>();
+	}
+
+	methodData->methodList.emplace_back(name, method);
+	RegisteredMethod & registeredMethod = methodData->methodList.back();
+	auto it = methodData->methodMap.find(name);
+	if(it == methodData->methodMap.end()) {
+		methodData->methodMap.insert(typename decltype(methodData->methodMap)::value_type(
+			registeredMethod.getName(), MethodData::RegisteredMethodPointerList {&registeredMethod}
 		));
 	}
 	else {
@@ -236,104 +240,147 @@ RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * m
 		name = getNameByTypeKind(metaType->getTypeKind());
 	}
 
-	auto it = typeTypeMap.find(metaType);
-	if(it != typeTypeMap.end()) {
+	if(! typeData) {
+		typeData = std::make_shared<TypeData>();
+	}
+
+	auto it = typeData->typeTypeMap.find(metaType);
+	if(it != typeData->typeTypeMap.end()) {
 		return *it->second;
 	}
-	typeList.emplace_back(name, metaType);
-	RegisteredType & registeredType = typeList.back();
+	typeData->typeList.emplace_back(name, metaType);
+	RegisteredType & registeredType = typeData->typeList.back();
 	if(! registeredType.getName().empty()) {
-		nameTypeMap[registeredType.getName()] = &registeredType;
+		typeData->nameTypeMap[registeredType.getName()] = &registeredType;
 	}
-	kindTypeMap[metaType->getTypeKind()] = &registeredType;
-	typeTypeMap[metaType] = &registeredType;
+	typeData->kindTypeMap[metaType->getTypeKind()] = &registeredType;
+	typeData->typeTypeMap[metaType] = &registeredType;
 
 	return registeredType;
 }
 
 void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
 {
-	result->insert(result->end(), fieldList.begin(), fieldList.end());
+	if(fieldData) {
+		result->insert(result->end(), fieldData->fieldList.begin(), fieldData->fieldList.end());
+	}
 }
+
+namespace {
+RegisteredFieldList dummyRegisteredFieldList;
+RegisteredMethodList dummyRegisteredMethodList;
+RegisteredTypeList dummyRegisteredTypeList;
+} // namespace
 
 const RegisteredFieldList & MetaRepoBase::doGetFieldList() const
 {
-	return fieldList;
+	if(fieldData) {
+		return fieldData->fieldList;
+	}
+	else {
+		return dummyRegisteredFieldList;
+	}
 }
 
 const RegisteredField & MetaRepoBase::doGetField(const std::string & name) const
 {
-	auto it = fieldMap.find(name);
-	if(it != fieldMap.end()) {
-		return *it->second;
+	if(fieldData) {
+		auto it = fieldData->fieldMap.find(name);
+		if(it != fieldData->fieldMap.end()) {
+			return *it->second;
+		}
 	}
 	return RegisteredField::getEmpty();
 }
 
 const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) const
 {
-	auto it = methodMap.find(name);
-	if(it != methodMap.end()) {
-		return *it->second.at(0);
+	if(methodData) {
+		auto it = methodData->methodMap.find(name);
+		if(it != methodData->methodMap.end()) {
+			return *it->second.at(0);
+		}
 	}
 	return RegisteredMethod::getEmpty();
 }
 
 void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodList * result) const
 {
-	auto it = methodMap.find(name);
-	if(it != methodMap.end()) {
-		for(auto i = it->second.begin(); i != it->second.end(); ++i) {
-			result->push_back(*(*i));
+	if(methodData) {
+		auto it = methodData->methodMap.find(name);
+		if(it != methodData->methodMap.end()) {
+			for(auto i = it->second.begin(); i != it->second.end(); ++i) {
+				result->push_back(*(*i));
+			}
 		}
 	}
 }
 
 void MetaRepoBase::doGetMethodList(RegisteredMethodList * result) const
 {
-	result->insert(result->end(), methodList.begin(), methodList.end());
+	if(methodData) {
+		result->insert(result->end(), methodData->methodList.begin(), methodData->methodList.end());
+	}
 }
 
 const RegisteredMethodList & MetaRepoBase::doGetMethodList() const
 {
-	return methodList;
+	if(methodData) {
+		return methodData->methodList;
+	}
+	else {
+		return dummyRegisteredMethodList;
+	}
 }
 
 const RegisteredType & MetaRepoBase::doGetType(const std::string & name) const
 {
-	auto it = nameTypeMap.find(name);
-	if(it != nameTypeMap.end()) {
-		return *it->second;
+	if(typeData) {
+		auto it = typeData->nameTypeMap.find(name);
+		if(it != typeData->nameTypeMap.end()) {
+			return *it->second;
+		}
 	}
 	return RegisteredType::getEmpty();
 }
 
 const RegisteredType & MetaRepoBase::doGetType(const TypeKind kind) const
 {
-	auto it = kindTypeMap.find(kind);
-	if(it != kindTypeMap.end()) {
-		return *it->second;
+	if(typeData) {
+		auto it = typeData->kindTypeMap.find(kind);
+		if(it != typeData->kindTypeMap.end()) {
+			return *it->second;
+		}
 	}
 	return RegisteredType::getEmpty();
 }
 
 const RegisteredType & MetaRepoBase::doGetType(const MetaType * metaType) const
 {
-	auto it = typeTypeMap.find(metaType);
-	if(it != typeTypeMap.end()) {
-		return *it->second;
+	if(typeData) {
+		auto it = typeData->typeTypeMap.find(metaType);
+		if(it != typeData->typeTypeMap.end()) {
+			return *it->second;
+		}
 	}
 	return RegisteredType::getEmpty();
 }
 
 void MetaRepoBase::doGetTypeList(RegisteredTypeList * result) const
 {
-	result->insert(result->end(), typeList.begin(), typeList.end());
+	if(typeData) {
+		result->insert(result->end(), typeData->typeList.begin(), typeData->typeList.end());
+	}
 }
 
 const RegisteredTypeList & MetaRepoBase::doGetTypeList() const
 {
-	return typeList;
+	if(typeData) {
+		return typeData->typeList;
+	}
+	else {
+		return dummyRegisteredTypeList;
+	}
 }
 
 } // namespace internal_
