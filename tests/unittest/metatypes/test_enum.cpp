@@ -62,8 +62,8 @@ struct metapp::DeclareMetaType <EnumHuman> : metapp::DeclareMetaTypeBase <EnumHu
 
 	static const metapp::MetaEnum * getMetaEnum() {
 		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
-			me.addValue("male", EnumHuman::male);
-			me.addValue("female", EnumHuman::female);
+			me.registerValue("male", EnumHuman::male);
+			me.registerValue("female", EnumHuman::female);
 		});
 		return &metaEnum;
 	}

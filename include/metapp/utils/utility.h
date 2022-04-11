@@ -187,6 +187,18 @@ inline void verifyVariantWritable(const Variant & var)
 	}
 }
 
+template <typename Signature, typename Class>
+auto selectOverload(Signature (Class::*func)) -> decltype(func)
+{
+	return func;
+}
+
+template <typename Signature>
+auto selectOverload(Signature * func) -> decltype(func)
+{
+	return func;
+}
+
 
 } // namespace metapp
 

@@ -20,20 +20,24 @@
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/interfaces/metaenum.h"
 
+// Define a class to reflect
 class MyClass
 {
 public:
+	// Nested type
 	enum class MyEnum {
 		one = 1,
 		two = 2
 	};
 
 public:
+	// Default constructor
 	MyClass()
 		: message(), value(0)
 	{
 	}
 
+	// Constructor with arguments
 	MyClass(const int value, const std::string & message)
 		: message(message), value(value)
 	{
@@ -64,7 +68,7 @@ public:
 	}
 
 	// static member function, it shows how to return values via reference/pointer in parameter.
-	static void obtainValues(MyClass * obj, std::string & message, int * value) {
+	static void obtainValues(std::string & message, int * value, MyClass * obj) {
 		message = obj->message;
 		*value = obj->getValue();
 	}
@@ -77,62 +81,62 @@ private:
 	int value;
 };
 
-namespace metapp {
-
-template <typename Signature, typename Class>
-auto selectOverload(Signature (Class::*func)) -> decltype(func)
-{
-	return func;
-}
-
-template <typename Signature>
-auto selectOverload(Signature * func) -> decltype(func)
-{
-	return func;
-}
-
-}
-
 constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
 
+// Declare meta type for MyClass::MyEnum,
+// it will be used when declare meta type for MyClass
 template <>
 struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <MyClass::MyEnum>
 {
+	// Define the TypeKind for the type. We don't need to define the TypeKind for
+	// every meta type unless we do need it.
+	// If we don't define the typeKind, it will be tkObject by default.
 	static constexpr metapp::TypeKind typeKind = tkMyEnum;
 
+	// Implement the MetaEnum interface
 	static const metapp::MetaEnum * getMetaEnum() {
 		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
-			me.addValue("one", MyClass::MyEnum::one);
-			me.addValue("two", MyClass::MyEnum::two);
+			// Register the enum name and values, then we can get the name and value later.
+			me.registerValue("one", MyClass::MyEnum::one);
+			me.registerValue("two", MyClass::MyEnum::two);
 		});
 		return &metaEnum;
 	}
 };
 
+// Declare meta type for MyClass,
 template <>
 struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 {
 	static constexpr metapp::TypeKind typeKind = tkMyClass;
 
+	// Implement the MetaClass interface
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyClass>(),
 			[](metapp::MetaClass & mc) {
+				// Register constructors
 				mc.registerConstructor(metapp::Constructor<MyClass ()>());
 				mc.registerConstructor(metapp::Constructor<MyClass (const int, const std::string &)>());
 
+				// Register field with getter/setter function
 				mc.registerField("value", metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
+				// Register member data as field
 				mc.registerField("message", &MyClass::message);
 
+				// Register a member function
 				mc.registerMethod("greeting", &MyClass::greeting);
 				
+				// Register overloaded member function
 				mc.registerMethod("makeMessage", metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
 				mc.registerMethod("makeMessage", metapp::selectOverload<std::string (const std::string &, const int) const>(&MyClass::makeMessage));
 				mc.registerMethod("makeMessage", metapp::selectOverload<std::string (const int, const std::string &) const>(&MyClass::makeMessage));
 				
+				// Register static member function
 				mc.registerMethod("obtainValues", &MyClass::obtainValues);
 
+				// Register nested type
 				mc.registerType<MyClass::MyEnum>("MyEnum");
 			}
 		);
@@ -206,6 +210,26 @@ void tutorialMetaClass_overloadedMethods()
 	ASSERT(metapp::invokeCallable(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 }
 
+void tutorialMetaClass_staticMethods()
+{
+	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+
+	MyClass obj;
+	obj.message = "Hello";
+	obj.setValue(38);
+
+	std::string message;
+	int value = 0;
+	ASSERT(message == "");
+	ASSERT(value == 0);
+
+	metapp::RegisteredMethod methodObjtainValues = metaClass->getMethod("obtainValues");
+	metapp::invokeCallable(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
+	ASSERT(message == "Hello");
+	ASSERT(value == 38);
+}
+
 void tutorialMetaClass_constructor()
 {
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -247,5 +271,6 @@ void tutorialMetaClass_type()
 RUN_TUTORIAL(tutorialMetaClass_field)
 RUN_TUTORIAL(tutorialMetaClass_method)
 RUN_TUTORIAL(tutorialMetaClass_overloadedMethods)
+RUN_TUTORIAL(tutorialMetaClass_staticMethods)
 RUN_TUTORIAL(tutorialMetaClass_constructor)
 RUN_TUTORIAL(tutorialMetaClass_type)

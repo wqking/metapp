@@ -37,7 +37,7 @@ public:
 	}
 
 	template <typename T>
-	void addValue(const std::string & name, const T value) {
+	void registerValue(const std::string & name, const T value) {
 		nameValueMap[name] = static_cast<ValueType>(value);
 	}
 
