@@ -170,11 +170,15 @@ void tutorialMetaClass_overloadedMethods()
 	ASSERT(itNoArgs != methodList.end());
 	metapp::Variant result = metapp::invokeCallable(*itNoArgs, &obj);
 	ASSERT(result.get<const std::string &>() == "Hello");
+	ASSERT(metapp::invokeCallable(methodList, &obj).get<const std::string &>() == "Hello");
 
 	metapp::Variant arguments[] = { 38, ", world"};
 	auto itWithArgs = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 2);
 	ASSERT(itWithArgs!= methodList.end());
 	ASSERT(itWithArgs->invoke(&obj, arguments, 2).get<const std::string &>() == "Hello38, world");
+	ASSERT(metapp::invokeCallable(methodList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
+
+	ASSERT(metapp::invokeCallable(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 }
 
 

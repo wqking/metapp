@@ -27,37 +27,6 @@
 
 namespace metapp {
 
-template <typename ...Args>
-struct CallableInvoker;
-
-template <typename Arg0, typename ...Args>
-struct CallableInvoker <Arg0, Args...>
-{
-	static Variant invoke(const Variant & func, void * instance, Arg0 arg0, Args ...args)
-	{
-		Variant arguments[] = {
-			arg0,
-			args...
-		};
-		return func.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, sizeof...(Args) + 1);
-	}
-};
-
-template <>
-struct CallableInvoker <>
-{
-	static Variant invoke(const Variant & func, void * instance)
-	{
-		return func.getMetaType()->getMetaCallable()->invoke(func, instance, nullptr, 0);
-	}
-};
-
-template <typename ...Args>
-inline Variant invokeCallable(const Variant & func, void * instance, Args ...args)
-{
-	return CallableInvoker<Args...>::invoke(func, instance, args...);
-}
-
 template <typename Iterator>
 Iterator findCallable(
 	Iterator first,
@@ -78,6 +47,75 @@ Iterator findCallable(
 		}
 	}
 	return result;
+}
+
+template <typename ...Args>
+struct CallableInvoker;
+
+template <typename Arg0, typename ...Args>
+struct CallableInvoker <Arg0, Args...>
+{
+	static Variant invoke(const Variant & func, void * instance, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		return func.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, sizeof...(Args) + 1);
+	}
+
+	template <typename Iterator>
+	static Variant invokeCallableList(Iterator first, Iterator last, void * instance, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		auto it = findCallable(first, last, arguments, sizeof...(Args) + 1);
+		if(it != last) {
+			const Variant & callable = (const Variant &)*it;
+			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments, sizeof...(Args) + 1);
+		}
+		else {
+			errorIllegalArgument();
+			return Variant();
+		}
+	}
+};
+
+template <>
+struct CallableInvoker <>
+{
+	static Variant invoke(const Variant & func, void * instance)
+	{
+		return func.getMetaType()->getMetaCallable()->invoke(func, instance, nullptr, 0);
+	}
+
+	template <typename Iterator>
+	static Variant invokeCallableList(Iterator first, Iterator last, void * instance)
+	{
+		auto it = findCallable(first, last, nullptr, 0);
+		if(it != last) {
+			const Variant & callable = (const Variant &)*it;
+			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, nullptr, 0);
+		}
+		else {
+			errorIllegalArgument();
+			return Variant();
+		}
+	}
+};
+
+template <typename ...Args>
+inline Variant invokeCallable(const Variant & func, void * instance, Args ...args)
+{
+	return CallableInvoker<Args...>::invoke(func, instance, args...);
+}
+
+template <template <typename, typename> class Container, typename T, typename Allocator, typename ...Args>
+inline Variant invokeCallable(const Container<T, Allocator> & callableList, void * instance, Args ...args)
+{
+	return CallableInvoker<Args...>::invokeCallableList(callableList.begin(), callableList.end(), instance, args...);
 }
 
 template <typename ...Types>
