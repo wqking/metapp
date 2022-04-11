@@ -18,12 +18,16 @@
 
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/interfaces/metaclass.h"
-#include "metapp/metarepo.h"
-
-#include <iostream>
+#include "metapp/interfaces/metaenum.h"
 
 class MyClass
 {
+public:
+	enum class MyEnum {
+		one = 1,
+		two = 2
+	};
+
 public:
 	MyClass()
 		: message(), value(0)
@@ -89,9 +93,28 @@ auto selectOverload(Signature * func) -> decltype(func)
 
 }
 
+constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
+constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
+
+template <>
+struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <MyClass::MyEnum>
+{
+	static constexpr metapp::TypeKind typeKind = tkMyEnum;
+
+	static const metapp::MetaEnum * getMetaEnum() {
+		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
+			me.addValue("one", MyClass::MyEnum::one);
+			me.addValue("two", MyClass::MyEnum::two);
+		});
+		return &metaEnum;
+	}
+};
+
 template <>
 struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 {
+	static constexpr metapp::TypeKind typeKind = tkMyClass;
+
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyClass>(),
@@ -109,6 +132,8 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 				mc.registerMethod("makeMessage", metapp::selectOverload<std::string (const int, const std::string &) const>(&MyClass::makeMessage));
 				
 				mc.registerMethod("obtainValues", &MyClass::obtainValues);
+
+				mc.registerType<MyClass::MyEnum>("MyEnum");
 			}
 		);
 		return &metaClass;
@@ -181,7 +206,46 @@ void tutorialMetaClass_overloadedMethods()
 	ASSERT(metapp::invokeCallable(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 }
 
+void tutorialMetaClass_constructor()
+{
+	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+
+	metapp::RegisteredConstructorList constructorList = metaClass->getConstructorList();
+	std::unique_ptr<MyClass> ptr(metapp::invokeCallable(constructorList, nullptr).get<MyClass *>());
+	ASSERT(ptr->getValue() == 0);
+	ASSERT(ptr->message == "");
+
+	metapp::Variant instance = metapp::Variant::takeFrom(metapp::invokeCallable(constructorList, nullptr, 3, "good").get<MyClass *>());
+	ASSERT(instance.getMetaType() == metapp::getMetaType<MyClass>());
+	ASSERT(instance.get<const MyClass &>().getValue() == 3);
+	ASSERT(instance.get<const MyClass &>().message == "good");
+}
+
+void tutorialMetaClass_type()
+{
+	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+
+	metapp::RegisteredType enumType;
+
+	enumType = metaClass->getType("MyEnum");
+	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+
+	enumType = metaClass->getType(tkMyEnum);
+	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+
+	enumType = metaClass->getType(metapp::getMetaType<MyClass::MyEnum>());
+	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+	ASSERT(enumType.getName() == "MyEnum");
+
+	const metapp::MetaEnum * metaEnum = enumType.getTarget()->getMetaEnum();
+	ASSERT(metaEnum->getValue("one") == 1);
+	ASSERT(metaEnum->getValue("two") == 2);
+}
 
 RUN_TUTORIAL(tutorialMetaClass_field)
 RUN_TUTORIAL(tutorialMetaClass_method)
 RUN_TUTORIAL(tutorialMetaClass_overloadedMethods)
+RUN_TUTORIAL(tutorialMetaClass_constructor)
+RUN_TUTORIAL(tutorialMetaClass_type)

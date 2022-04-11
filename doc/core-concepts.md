@@ -9,7 +9,7 @@ This document gives an overview on the core concepts and core design in metapp. 
 `metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind. For example, `metapp::tkInt` is the meta type for `int`.  
 Each meta type has one and only one TypeKind, different meta types may have the same TypeKind, that's to say, TypeKind is not unique. For example, `metapp::tkStdSharedPtr` represents all meta types of `std::shared_ptr<T>`, in which T can be any C++ type.  
 
-See [TypeKind document](typekinds.md) for a list of built-in type kinds.
+See [Built-in meta types document](built-in-meta-types.md) for a list of built-in type kinds.
 
 ## Variant - the core data
 
@@ -108,7 +108,7 @@ metapp::getMetaType<int>()->getUpType() == nullptr;
 
 UpType represents complicated C++ type recursively. With UpType, metapp can represent any C++ type.
 
-See [TypeKind document](typekinds.md) for the UpTypes for each TypeKind.
+See [Built-in meta types document](built-in-meta-types.md) for the UpTypes for each TypeKind.
 
 ## DeclareMetaType
 

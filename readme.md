@@ -122,7 +122,7 @@ assert(v.get<int (&)[2][3]>()[1][2] == 6);
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
-    - [List of all built-in type kinds](doc/typekinds.md)
+    - [List of all built-in meta types](doc/built-in-meta-types.md)
     - [Reflect meta type at compile time using DeclareMetaType](doc/reflect-metatype-declaremetatype.md)
 
 - Meta interfaces
