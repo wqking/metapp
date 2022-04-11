@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
-#include "metapp/metatypes/utils/declareutil.h"
+#include "metapp/implement/internal/declareutil_i.h"
 #include "metapp/utils/utility.h"
 // requires these headers to get UpType
 #include "metapp/metatypes/function.h"
@@ -142,7 +142,7 @@ public:
 			return 0;
 		}
 
-		return MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
 	static bool metaCallableCanInvoke(const Variant * arguments, const size_t argumentCount)
@@ -151,7 +151,7 @@ public:
 			return false;
 		}
 
-		return MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
 	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)

@@ -20,7 +20,6 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
-#include "metapp/metatypes/utils/declareutil.h"
 #include "metapp/utils/utility.h"
 
 namespace metapp {

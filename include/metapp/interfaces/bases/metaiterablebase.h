@@ -19,7 +19,6 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaiterable.h"
-#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 

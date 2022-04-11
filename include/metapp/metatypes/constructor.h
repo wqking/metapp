@@ -21,7 +21,6 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/bases/metacallablebase.h"
 #include "metapp/interfaces/bases/metamemberbase.h"
-#include "metapp/metatypes/utils/declareutil.h"
 
 namespace metapp {
 

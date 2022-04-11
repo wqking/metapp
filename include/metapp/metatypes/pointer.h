@@ -19,7 +19,6 @@
 
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
-#include "metapp/metatypes/utils/declareutil.h"
 #include "metapp/utils/utility.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 
