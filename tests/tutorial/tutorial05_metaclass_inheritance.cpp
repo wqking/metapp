@@ -118,7 +118,7 @@ struct metapp::DeclareMetaType <MyDerivedClass> : metapp::DeclareMetaTypeBase <M
 
 };
 
-void tutorialMetaClass()
+void tutorialMetaClass_inheritance()
 {
 	const metapp::MetaType * metaType = metapp::getMetaType<MyDerivedClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
@@ -131,4 +131,4 @@ void tutorialMetaClass()
 }
 
 
-RUN_TUTORIAL(tutorialMetaClass)
+RUN_TUTORIAL(tutorialMetaClass_inheritance)

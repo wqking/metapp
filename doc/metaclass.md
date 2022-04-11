@@ -69,6 +69,7 @@ RegisteredConstructor & registerConstructor(const Variant & constructor);
 ```
 
 Register a constructor. The parameter `constructor` is a Variant of `metapp::Constructor`.  
+The returned `RegisteredConstructor` can be used add annotations to the meta data.
 
 **Example**  
 ```c++
@@ -96,5 +97,136 @@ struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 
 ```
 
-## MetaClass member functions for retrieving information
+#### registerField
+
+```c++
+RegisteredField & registerField(const std::string & name, const Variant & field);
+```
+
+Register a field (member or static member data).
+The parameter `name` is the field name. The field can be got from the MetaClass by the name later. If a field with the same name has already registered, `registerField` doesn't register the new field and returns the previous registered field.  
+The parameter `field` is a Variant of MetaType that implements meta interface `MetaAccessible`. It can be pointer to member data, accessorpp::Accessor, or pointer to global data to simulate static member.  
+The returned `RegisteredField` can be used to add annotations to the meta data.  
+
+#### registerMethod
+
+```c++
+RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
+```
+Register a method (member or static member method).  
+The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
+The parameter `method` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to global free method to simulate static member, or even `std::function`.  
+The returned `RegisteredMethod` can be used to add annotations to the meta data.  
+
+#### registerType
+
+```c++
+template <typename T>
+RegisteredType & registerType(const std::string & name = ""); // #1
+	return registerType(name, getMetaType<T>());
+}
+RegisteredType & registerType(std::string name, const MetaType * metaType); // #2
+```
+
+Register a MetaType.  
+The #1 form is equivalent to `registerType(name, getMetaType<T>())`;  
+If the parameter `name` is empty, the function tries to get the name from built-in types. If the name is not found, then the name is not used and the MetaType can't be got by name.  
+The returned `RegisteredType` can be used to add annotations to the meta data.  
+This function can be used to register nested classes, or enum in the class.  
+
+
+## MetaClass member functions for retrieving meta data
+
+Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags` with default value of `MetaClass::flagIncludeBase`. For functions that find a certain meta data, that means if the function can't find the meta data in current meta class, it will look up all base class recursively for the meta data. For functions that get all meta data, that means the function will return all meta data in current meta class, and all meta data in base classes, recursively. If you want only current meta class be checked, pass `MetaClass::flagNone`.  
+
+#### getConstructorList
+
+```c++
+const RegisteredConstructorList & getConstructorList() const;
+
+using RegisteredConstructorList = std::deque<RegisteredConstructor>;
+```
+
+Get a list of RegisteredConstructor.  
+
+#### getField
+
+```c++
+const RegisteredField & getField(const std::string & name, const MetaClass::Flags flags = MetaClass::flagIncludeBase) const;
+```
+
+Get a field of `name`. If the field is not registered, an empty RegisteredField is returned (RegisteredField::isEmpty() is true).  
+
+#### getFieldList
+
+```c++
+RegisteredFieldList getFieldList(const Flags flags = flagIncludeBase) const;
+
+using RegisteredFieldList = std::deque<RegisteredField>;
+```
+
+Get a list of all registered field.  
+
+#### getMethod
+
+```c++
+const RegisteredMethod & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const;
+```
+
+Get a method of `name`. If the method is not registered, an empty RegisteredMethod is returned (RegisteredMethod::isEmpty() is true).  
+
+#### getMethodList by name
+
+```c++
+RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const;
+
+using RegisteredMethodList = std::deque<RegisteredMethod>;
+```
+
+Get a list of all registered methods which has `name`. This is useful to get the overload methods.  
+
+#### getMethodList
+
+```c++
+RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const;
+
+using RegisteredMethodList = std::deque<RegisteredMethod>;
+```
+
+Get a list of all registered methods.  
+
+#### getType by name
+
+```c++
+const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
+```
+
+Get a RegisteredType of `name`. If the type name is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).  
+
+#### getType by type kind
+
+```c++
+const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
+```
+
+Get a RegisteredType of `kind`. If the type kind is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).  
+
+#### getType by MetaType
+
+```c++
+const RegisteredType & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
+```
+
+Get a RegisteredType of `metaType`. If the meta type is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).   
+This function is useful to get the name of a registered meta type.
+
+#### getTypeList
+
+```c++
+RegisteredTypeList getTypeList(const Flags flags = flagIncludeBase) const;
+
+using RegisteredTypeList = std::deque<RegisteredType>;
+```
+
+Get a list of all registered types.  
 

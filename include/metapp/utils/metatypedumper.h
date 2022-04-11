@@ -45,11 +45,7 @@ private:
 		}
 		doDumpIndent(stream, level);
 		stream << "Type: " << metaType->getTypeKind();
-		std::string name;
-		auto & registeredType = metaRepo->getType(metaType->getTypeKind());
-		if(! registeredType.isEmpty()) {
-			name = registeredType.getName();
-		}
+		std::string name = metaRepo->getType(metaType).getName();
 		if(name.empty()) {
 			name = metapp::getNameByTypeKind(metaType->getTypeKind());
 		}

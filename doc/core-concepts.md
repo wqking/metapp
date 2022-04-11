@@ -11,6 +11,11 @@ Each meta type has one and only one TypeKind, different meta types may have the 
 
 See [TypeKind document](typekinds.md) for a list of built-in type kinds.
 
+## Variant - the core data
+
+`metapp::Variant` allows to store data of any type. `Variant` = `MetaType` + data instance.  
+`Variant` is used extensively in metapp library.  
+
 ## MetaType - the core meta type
 
 `metapp::MetaType` is the core class to represent the meta type. Unlike some other reflection libraries which are meta class based, everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions, constructors, containers, etc.  

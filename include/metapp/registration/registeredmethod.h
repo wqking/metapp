@@ -89,8 +89,8 @@ public:
 		return data->method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
 	}
 
-	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
+	Variant invoke(void * instance, const Variant * arguments, const size_t argumentCount) const {
+		return data->method.getMetaType()->getMetaCallable()->invoke(getTarget(), instance, arguments, argumentCount);
 	}
 
 	operator const Variant & () const {
