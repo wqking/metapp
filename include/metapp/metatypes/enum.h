@@ -20,13 +20,13 @@
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaenum.h"
-#include "metapp/utilities/knowntypes.h"
+#include "metapp/implement/internal/knowntypes_i.h"
 
 namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <T, typename std::enable_if<std::is_enum<T>::value>::type>
-	: CastFromToTypes<T, IntegralTypeList>
+	: CastFromToTypes<T, internal_::IntegralTypeList>
 {
 	using UpType = typename std::underlying_type<T>::type;
 	static constexpr TypeKind typeKind = tkEnum;

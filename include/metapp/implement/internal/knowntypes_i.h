@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_KNOWNTYPES_H_969872685611
-#define METAPP_KNOWNTYPES_H_969872685611
+#ifndef METAPP_KNOWNTYPES_I_H_969872685611
+#define METAPP_KNOWNTYPES_I_H_969872685611
 
 #include "metapp/utilities/typelist.h"
 #include "metapp/compiler.h"
@@ -27,6 +27,8 @@
 #endif
 
 namespace metapp {
+
+namespace internal_ {
 
 using IntegralTypeList = TypeList<
 	bool,
@@ -60,6 +62,7 @@ using OtherKnowTypeList = TypeList<
 using AllKnownTypeList = typename TypeListConcat<ArithmeticTypeList, OtherKnowTypeList>::Type;
 
 
+} // namespace internal_
 
 } // namespace metapp
 

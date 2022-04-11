@@ -19,7 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/utilities/typelist.h"
-#include "metapp/utilities/knowntypes.h"
+#include "metapp/implement/internal/knowntypes_i.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 #include "metapp/cast.h"
 
@@ -27,10 +27,10 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypeBase <T,
-	typename std::enable_if<TypeListIn<ArithmeticTypeList, T>::value>::type>
-	: CastFromToTypes<T, ArithmeticTypeList>, MetaStreamingBase<T>
+	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type>
+	: CastFromToTypes<T, internal_::ArithmeticTypeList>, MetaStreamingBase<T>
 {
-	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<ArithmeticTypeList, T>::value);
+	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
 
 };
 
