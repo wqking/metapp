@@ -17,7 +17,7 @@
 #ifndef METAPP_KNOWNTYPES_H_969872685611
 #define METAPP_KNOWNTYPES_H_969872685611
 
-#include "metapp/utils/typelist.h"
+#include "metapp/utilities/typelist.h"
 #include "metapp/compiler.h"
 
 #include <string>

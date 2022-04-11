@@ -15,7 +15,7 @@
 // limitations under the License.
 
 #include "metapp/variant.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 #include "metapp/interfaces/metastreaming.h"
 
 namespace metapp {

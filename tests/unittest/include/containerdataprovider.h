@@ -20,7 +20,7 @@
 #include "metapp/compiler.h"
 #include "metapp/metatype.h"
 #include "metapp/typekind.h"
-#include "metapp/utils/typelist.h"
+#include "metapp/utilities/typelist.h"
 
 #include <initializer_list>
 #include <array>

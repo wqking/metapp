@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaenum.h"
-#include "metapp/utils/knowntypes.h"
+#include "metapp/utilities/knowntypes.h"
 
 namespace metapp {
 

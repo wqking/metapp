@@ -20,7 +20,7 @@
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/metarepo.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 
 #include <string>
 #include <iostream>

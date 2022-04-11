@@ -22,7 +22,7 @@
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/interfaces/metacallable.h"
 // for invokeCallable
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 
 #include <iostream>
 #include <cstring>

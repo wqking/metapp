@@ -21,7 +21,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/implement/internal/declareutil_i.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 // requires these headers to get UpType
 #include "metapp/metatypes/function.h"
 #include "metapp/metatypes/member_function.h"

@@ -20,7 +20,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/metatype.h"
-#include "metapp/utils/typelist.h"
+#include "metapp/utilities/typelist.h"
 #include "metapp/exception.h"
 
 #include <type_traits>

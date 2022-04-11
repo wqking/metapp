@@ -19,7 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 
 namespace metapp {

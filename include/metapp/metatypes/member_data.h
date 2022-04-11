@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/interfaces/bases/metamemberbase.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 
 namespace metapp {
 

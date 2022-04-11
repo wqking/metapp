@@ -17,7 +17,7 @@
 #ifndef METAPP_TYPEUTIL_I_H_969872685611
 #define METAPP_TYPEUTIL_I_H_969872685611
 
-#include "metapp/utils/typelist.h"
+#include "metapp/utilities/typelist.h"
 
 #include <type_traits>
 #include <istream>

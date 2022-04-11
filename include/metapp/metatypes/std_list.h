@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/interfaces/bases/metaiterablebase.h"
 #include "metapp/interfaces/metaindexable.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 
 #include <list>
 

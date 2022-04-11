@@ -18,8 +18,8 @@
 #define METAPP_ARITHMETIC_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/utils/typelist.h"
-#include "metapp/utils/knowntypes.h"
+#include "metapp/utilities/typelist.h"
+#include "metapp/utilities/knowntypes.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 #include "metapp/cast.h"
 

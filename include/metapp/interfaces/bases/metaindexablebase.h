@@ -20,7 +20,7 @@
 #include "metapp/interfaces/metaindexable.h"
 #include "metapp/metatype.h"
 #include "metapp/exception.h"
-#include "metapp/utils/utility.h"
+#include "metapp/utilities/utility.h"
 
 #include <deque>
 #include <vector>
