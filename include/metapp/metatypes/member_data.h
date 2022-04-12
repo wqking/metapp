@@ -41,7 +41,7 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 		return &metaAccessible;
 	}
 
-	static const MetaType * accessibleGetValueType() {
+	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}
 

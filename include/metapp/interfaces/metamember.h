@@ -27,18 +27,18 @@ class MetaMember
 {
 public:
 	explicit MetaMember(
-		const MetaType * (*getClassType)()
+		const MetaType * (*getClassType)(const Variant & var)
 	)
 		: getClassType(getClassType)
 	{
 	}
 
-	const MetaType * (*getClassType)();
+	const MetaType * (*getClassType)(const Variant & var);
 };
 
 inline const MetaType * memberGetClassType(const Variant & var)
 {
-	return var.getMetaType()->getMetaMember()->getClassType();
+	return var.getMetaType()->getMetaMember()->getClassType(var);
 }
 
 

@@ -31,7 +31,7 @@ struct MetaMemberBase
 	}
 
 private:
-	static const MetaType * metaMemberGetClassType()
+	static const MetaType * metaMemberGetClassType(const Variant & /*var*/)
 	{
 		return getMetaType<ClassType>();
 	}

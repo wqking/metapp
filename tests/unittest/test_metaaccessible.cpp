@@ -33,7 +33,7 @@ TEST_CASE("MetaAccessible, pointer, int *")
 	auto metaAccessible = v.getMetaType()->getMetaAccessible();
 	REQUIRE(metaAccessible != nullptr);
 	REQUIRE(! metaAccessible->isReadOnly(v));
-	REQUIRE(metaAccessible->getValueType() == metapp::getMetaType<int>());
+	REQUIRE(metaAccessible->getValueType(v) == metapp::getMetaType<int>());
 	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 5);
 
 	n = 10;
@@ -50,7 +50,7 @@ TEST_CASE("MetaAccessible, pointer, const int *")
 	auto metaAccessible = v.getMetaType()->getMetaAccessible();
 	REQUIRE(metaAccessible != nullptr);
 	REQUIRE(metaAccessible->isReadOnly(v));
-	REQUIRE(metaAccessible->getValueType() == metapp::getMetaType<const int>());
+	REQUIRE(metaAccessible->getValueType(v) == metapp::getMetaType<const int>());
 	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 5);
 
 	REQUIRE_THROWS(metaAccessible->set(v, nullptr, 38));

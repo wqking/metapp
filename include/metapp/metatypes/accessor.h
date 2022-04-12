@@ -81,7 +81,7 @@ public:
 		return &metaAccessible;
 	}
 
-	static const MetaType * accessibleGetValueType() {
+	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}
 

@@ -71,7 +71,7 @@ public:
 	}
 
 	const MetaType * getValueType() const {
-		return data->field.getMetaType()->getMetaAccessible()->getValueType();
+		return data->field.getMetaType()->getMetaAccessible()->getValueType(data->field);
 	}
 
 	Variant get(const void * instance) const {
