@@ -179,14 +179,6 @@ inline const MetaType * getReferredMetaType(const Variant & value)
 	return getReferredMetaType(value.getMetaType());
 }
 
-inline void verifyVariantWritable(const Variant & var)
-{
-	auto metaType = getReferredMetaType(var);
-	if(metaType->isConst()) {
-		errorUnwritable();
-	}
-}
-
 template <typename Signature, typename Class>
 auto selectOverload(Signature (Class::*func)) -> decltype(func)
 {

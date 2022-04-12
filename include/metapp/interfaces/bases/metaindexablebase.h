@@ -95,7 +95,7 @@ private:
 	{
 		const Variant ref = var.toReference();
 
-		verifyVariantWritable(ref);
+		internal_::verifyVariantWritable(ref);
 
 		if(index >= metaIndexableGetSize(ref)) {
 			errorInvalidIndex();

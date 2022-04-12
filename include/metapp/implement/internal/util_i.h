@@ -17,6 +17,8 @@
 #ifndef METAPP_UTIL_I_H_969872685611
 #define METAPP_UTIL_I_H_969872685611
 
+#include "metapp/utilities/utility.h"
+
 #include <vector>
 #include <string>
 
@@ -59,6 +61,14 @@ auto getValueFromMap(
 		return defaultValue;
 	}
 	return it->second;
+}
+
+inline void verifyVariantWritable(const Variant & var)
+{
+	auto metaType = getReferredMetaType(var);
+	if(metaType->isConst()) {
+		errorUnwritable();
+	}
 }
 
 
