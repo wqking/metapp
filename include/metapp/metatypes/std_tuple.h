@@ -125,7 +125,7 @@ private:
 		using TupleType = std::tuple<Types...>;
 		using ValueType = typename std::tuple_element<index, TupleType>::type;
 
-		assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
+		internal_::assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
 	}
 
 	static void metaIterableForEach(const Variant & value, MetaIterable::Callback callback)

@@ -58,7 +58,7 @@ public:
 
 	static const MetaType * metaCallableGetParamType(const Variant & /*func*/, const size_t index)
 	{
-		return getMetaTypeAt<Args...>(index);
+		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
 	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)

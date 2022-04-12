@@ -58,7 +58,7 @@ private:
 		auto & container = var.get<ContainerType &>();
 		auto it = container.find(key.get<const KeyType &>());
 		if(it != container.end()) {
-			assignValue(it->second, value.get<const MappedType &>());
+			internal_::assignValue(it->second, value.get<const MappedType &>());
 		}
 		else {
 			errorUnwritable();

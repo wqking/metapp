@@ -97,7 +97,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(var.get<T &>()[index], value.cast<ElementType>().template get<ElementType &>());
+			internal_::assignValue(var.get<T &>()[index], value.cast<ElementType>().template get<ElementType &>());
 		}
 	}
 

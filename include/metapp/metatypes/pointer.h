@@ -65,7 +65,7 @@ public:
 	}
 
 	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
-		assignValue(*(accessible.get<T *>()), value.cast<T>().template get<const T &>());
+		internal_::assignValue(*(accessible.get<T *>()), value.cast<T>().template get<const T &>());
 	}
 
 };

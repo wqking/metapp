@@ -27,41 +27,6 @@
 
 namespace metapp {
 
-template <typename ...Types>
-inline const MetaType * getMetaTypeAt(const size_t index)
-{
-	const MetaType * metaTypeList[] = {
-		getMetaType<Types>()...,
-		nullptr
-	};
-	return metaTypeList[index];
-}
-
-template <typename ...Types>
-inline const MetaType * getMetaTypeAt(const size_t index, const TypeList<Types...> &)
-{
-	const MetaType * metaTypeList[] = {
-		getMetaType<Types>()...,
-		nullptr
-	};
-	return metaTypeList[index];
-}
-
-template <typename ToType, typename FromType>
-inline void assignValue(ToType & to, const FromType & from,
-	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
-{
-	using U = typename std::remove_cv<ToType>::type;
-	to = (U)from;
-}
-
-template <typename ToType, typename FromType>
-inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
-	typename std::enable_if<! std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
-{
-	errorUnwritable();
-}
-
 inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
 {
 	if(metaType->isReference()) {

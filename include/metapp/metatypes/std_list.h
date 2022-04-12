@@ -89,7 +89,7 @@ private:
 			auto & list = ref.get<ContainerType &>();
 			auto it = list.begin();
 			std::advance(it, index);
-			assignValue(*it, value.cast<ValueType &>().template get<ValueType &>());
+			internal_::assignValue(*it, value.cast<ValueType &>().template get<ValueType &>());
 		}
 	}
 

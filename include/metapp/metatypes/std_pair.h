@@ -73,10 +73,10 @@ private:
 		}
 		else {
 			if(index == 0) {
-				assignValue(var.get<PairType &>().first, value.get<T1 &>());
+				internal_::assignValue(var.get<PairType &>().first, value.get<T1 &>());
 			}
 			else {
-				assignValue(var.get<PairType &>().second, value.get<T2 &>());
+				internal_::assignValue(var.get<PairType &>().second, value.get<T2 &>());
 			}
 		}
 	}

@@ -101,7 +101,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			assignValue(ref.toReference().get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
+			internal_::assignValue(ref.toReference().get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
 		}
 	}
 
