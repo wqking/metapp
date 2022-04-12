@@ -41,13 +41,6 @@ private:
 	};
 
 public:
-	static const RegisteredField & getEmpty()
-	{
-		static RegisteredField emptyRegisteredField{};
-		return emptyRegisteredField;
-	}
-
-public:
 	RegisteredField()
 		: data()
 	{

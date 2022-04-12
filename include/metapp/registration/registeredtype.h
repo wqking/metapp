@@ -42,13 +42,6 @@ private:
 	};
 
 public:
-	static const RegisteredType & getEmpty()
-	{
-		static RegisteredType emptyRegisteredType{};
-		return emptyRegisteredType;
-	}
-
-public:
 	RegisteredType()
 		: data()
 	{

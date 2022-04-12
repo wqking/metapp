@@ -23,6 +23,19 @@ namespace metapp {
 
 namespace internal_ {
 
+namespace {
+
+RegisteredFieldList dummyRegisteredFieldList;
+RegisteredMethodList dummyRegisteredMethodList;
+RegisteredTypeList dummyRegisteredTypeList;
+
+} // namespace
+
+RegisteredField emptyRegisteredField;
+RegisteredMethod emptyRegisteredMethod;
+RegisteredType emptyRegisteredType;
+RegisteredRepo emptyRegisteredRepo;
+
 InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
 	return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->baseList);
@@ -266,12 +279,6 @@ void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
 	}
 }
 
-namespace {
-RegisteredFieldList dummyRegisteredFieldList;
-RegisteredMethodList dummyRegisteredMethodList;
-RegisteredTypeList dummyRegisteredTypeList;
-} // namespace
-
 const RegisteredFieldList & MetaRepoBase::doGetFieldList() const
 {
 	if(fieldData) {
@@ -290,7 +297,7 @@ const RegisteredField & MetaRepoBase::doGetField(const std::string & name) const
 			return *it->second;
 		}
 	}
-	return RegisteredField::getEmpty();
+	return internal_::emptyRegisteredField;
 }
 
 const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) const
@@ -301,7 +308,7 @@ const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) con
 			return *it->second.at(0);
 		}
 	}
-	return RegisteredMethod::getEmpty();
+	return internal_::emptyRegisteredMethod;
 }
 
 void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodList * result) const
@@ -341,7 +348,7 @@ const RegisteredType & MetaRepoBase::doGetType(const std::string & name) const
 			return *it->second;
 		}
 	}
-	return RegisteredType::getEmpty();
+	return internal_::emptyRegisteredType;
 }
 
 const RegisteredType & MetaRepoBase::doGetType(const TypeKind kind) const
@@ -352,7 +359,7 @@ const RegisteredType & MetaRepoBase::doGetType(const TypeKind kind) const
 			return *it->second;
 		}
 	}
-	return RegisteredType::getEmpty();
+	return internal_::emptyRegisteredType;
 }
 
 const RegisteredType & MetaRepoBase::doGetType(const MetaType * metaType) const
@@ -363,7 +370,7 @@ const RegisteredType & MetaRepoBase::doGetType(const MetaType * metaType) const
 			return *it->second;
 		}
 	}
-	return RegisteredType::getEmpty();
+	return internal_::emptyRegisteredType;
 }
 
 void MetaRepoBase::doGetTypeList(RegisteredTypeList * result) const
@@ -467,7 +474,7 @@ const RegisteredRepo & MetaRepo::getRepo(const std::string & name) const
 	if(it != repoMap.end()) {
 		return *it->second;
 	}
-	return RegisteredRepo::getEmpty();
+	return internal_::emptyRegisteredRepo;
 }
 
 const RegisteredRepoList & MetaRepo::getRepoList() const

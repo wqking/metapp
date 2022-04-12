@@ -24,8 +24,11 @@
 #include "metapp/exception.h"
 
 #include <type_traits>
+#include <string>
 
 namespace metapp {
+
+std::string getNameByTypeKind(const TypeKind typeKind);
 
 inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
 {
@@ -64,6 +67,10 @@ auto selectOverload(Signature * func) -> decltype(func)
 {
 	return func;
 }
+
+class MetaRepo;
+
+void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepository = nullptr);
 
 
 } // namespace metapp

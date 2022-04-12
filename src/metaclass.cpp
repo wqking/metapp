@@ -19,6 +19,14 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+extern RegisteredField emptyRegisteredField;
+extern RegisteredMethod emptyRegisteredMethod;
+extern RegisteredType emptyRegisteredType;
+
+} // namespace internal_
+
 RegisteredConstructor & MetaClass::registerConstructor(const Variant & constructor)
 {
 	if(constructor.getMetaType()->getMetaCallable() == nullptr) {
@@ -36,7 +44,7 @@ const RegisteredConstructorList & MetaClass::getConstructorList() const
 const RegisteredField & MetaClass::getField(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredField * result = &RegisteredField::getEmpty();
+		const RegisteredField * result = &internal_::emptyRegisteredField;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -75,7 +83,7 @@ RegisteredFieldList MetaClass::getFieldList(const Flags flags) const
 const RegisteredMethod & MetaClass::getMethod(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredMethod * result = &RegisteredMethod::getEmpty();
+		const RegisteredMethod * result = &internal_::emptyRegisteredMethod;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -132,7 +140,7 @@ RegisteredMethodList MetaClass::getMethodList(const Flags flags) const
 const RegisteredType & MetaClass::getType(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &RegisteredType::getEmpty();
+		const RegisteredType * result = &internal_::emptyRegisteredType;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -153,7 +161,7 @@ const RegisteredType & MetaClass::getType(const std::string & name, const Flags 
 const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &RegisteredType::getEmpty();
+		const RegisteredType * result = &internal_::emptyRegisteredType;
 		getMetaRepo()->traverseBases(classMetaType, [&result, kind](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -174,7 +182,7 @@ const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags
 const RegisteredType & MetaClass::getType(const MetaType * metaType, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &RegisteredType::getEmpty();
+		const RegisteredType * result = &internal_::emptyRegisteredType;
 		getMetaRepo()->traverseBases(classMetaType, [&result, metaType](const MetaType * mt) -> bool {
 			const MetaClass * metaClass = mt->getMetaClass();
 			if(metaClass != nullptr) {

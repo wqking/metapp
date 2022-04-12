@@ -42,13 +42,6 @@ private:
 	};
 
 public:
-	static const RegisteredRepo & getEmpty()
-	{
-		static RegisteredRepo emptyRegisteredRepo{};
-		return emptyRegisteredRepo;
-	}
-
-public:
 	RegisteredRepo()
 		: data()
 	{

@@ -40,13 +40,6 @@ private:
 	};
 
 public:
-	static const RegisteredMethod & getEmpty()
-	{
-		static RegisteredMethod emptyRegisteredMethod{};
-		return emptyRegisteredMethod;
-	}
-
-public:
 	RegisteredMethod()
 		: data()
 	{
