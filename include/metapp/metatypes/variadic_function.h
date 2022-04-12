@@ -80,27 +80,27 @@ public:
 		return &metaCallable;
 	}
 
-	static size_t metaCallableGetParamCount()
+	static size_t metaCallableGetParamCount(const Variant & /*func*/)
 	{
 		return 0;
 	}
 
-	static const MetaType * metaCallableGetReturnType()
+	static const MetaType * metaCallableGetReturnType(const Variant & /*func*/)
 	{
 		return getMetaType<ReturnType>();
 	}
 
-	static const MetaType * metaCallableGetParamType(const size_t /*index*/)
+	static const MetaType * metaCallableGetParamType(const Variant & /*func*/, const size_t /*index*/)
 	{
 		return nullptr;
 	}
 
-	static int metaCallableRankInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		return 1;
 	}
 
-	static bool metaCallableCanInvoke(const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
 		return true;
 	}

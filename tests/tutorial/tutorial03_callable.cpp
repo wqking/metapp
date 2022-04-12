@@ -21,7 +21,7 @@
 // To use all declared meta types, include this header
 #include "metapp/metatypes/metatypes.h"
 #include "metapp/interfaces/metacallable.h"
-// for invokeCallable
+// for callableInvoke
 #include "metapp/utilities/utility.h"
 
 #include <iostream>
@@ -44,8 +44,8 @@ void tutorialCallable_freeFunction()
 	metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
 	ASSERT(result.get<std::string>() == "5");
 
-	// Or we can use metapp::invokeCallable to pass the arguments directly
-	result = metapp::invokeCallable(v, nullptr, 38);
+	// Or we can use metapp::callableInvoke to pass the arguments directly
+	result = metapp::callableInvoke(v, nullptr, 38);
 	ASSERT(result.get<std::string>() == "38");
 }
 
@@ -60,7 +60,7 @@ void tutorialCallable_memberFunction()
 	};
 	metapp::Variant v(&MyClass::add);
 	MyClass obj { 5 };
-	metapp::Variant result = metapp::invokeCallable(v, &obj, 3, 9);
+	metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 	ASSERT(result.get<int>() == 17);
 }
 
@@ -71,7 +71,7 @@ void tutorialCallable_stdFunction()
 			return a + b;
 		}
 	));
-	metapp::Variant result = metapp::invokeCallable(v, nullptr, "Hello ", "world");
+	metapp::Variant result = metapp::callableInvoke(v, nullptr, "Hello ", "world");
 	ASSERT(result.get<const std::string &>() == "Hello world");
 }
 

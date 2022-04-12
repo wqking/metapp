@@ -70,23 +70,23 @@ public:
 	}
 
 	size_t getParamCount() const {
-		return data->method.getMetaType()->getMetaCallable()->getParamCount();
+		return data->method.getMetaType()->getMetaCallable()->getParamCount(data->method);
 	}
 
 	const MetaType * getReturnType() const {
-		return data->method.getMetaType()->getMetaCallable()->getReturnType();
+		return data->method.getMetaType()->getMetaCallable()->getReturnType(data->method);
 	}
 
 	const MetaType * getParamType(const size_t index) const {
-		return data->method.getMetaType()->getMetaCallable()->getParamType(index);
+		return data->method.getMetaType()->getMetaCallable()->getParamType(data->method, index);
 	}
 
 	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+		return data->method.getMetaType()->getMetaCallable()->rankInvoke(data->method, arguments, argumentCount);
 	}
 
 	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->method.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+		return data->method.getMetaType()->getMetaCallable()->canInvoke(data->method, arguments, argumentCount);
 	}
 
 	Variant invoke(void * instance, const Variant * arguments, const size_t argumentCount) const {

@@ -180,10 +180,10 @@ void tutorialMetaClass_method()
 	obj.message = "Hello";
 
 	metapp::RegisteredMethod methodGreeting = metaClass->getMethod("greeting");
-	metapp::Variant result = metapp::invokeCallable(methodGreeting, &obj, ", world");
+	metapp::Variant result = metapp::callableInvoke(methodGreeting, &obj, ", world");
 	ASSERT(result.get<const std::string &>() == "Hello, world");
 	
-	ASSERT(metapp::invokeCallable(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
+	ASSERT(metapp::callableInvoke(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
 }
 
 void tutorialMetaClass_overloadedMethods()
@@ -197,17 +197,17 @@ void tutorialMetaClass_overloadedMethods()
 	metapp::RegisteredMethodList methodList = metaClass->getMethodList("makeMessage");
 	auto itNoArgs = metapp::findCallable(methodList.begin(), methodList.end(), nullptr, 0);
 	ASSERT(itNoArgs != methodList.end());
-	metapp::Variant result = metapp::invokeCallable(*itNoArgs, &obj);
+	metapp::Variant result = metapp::callableInvoke(*itNoArgs, &obj);
 	ASSERT(result.get<const std::string &>() == "Hello");
-	ASSERT(metapp::invokeCallable(methodList, &obj).get<const std::string &>() == "Hello");
+	ASSERT(metapp::callableInvoke(methodList, &obj).get<const std::string &>() == "Hello");
 
 	metapp::Variant arguments[] = { 38, ", world"};
 	auto itWithArgs = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 2);
 	ASSERT(itWithArgs!= methodList.end());
 	ASSERT(itWithArgs->invoke(&obj, arguments, 2).get<const std::string &>() == "Hello38, world");
-	ASSERT(metapp::invokeCallable(methodList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
+	ASSERT(metapp::callableInvoke(methodList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
 
-	ASSERT(metapp::invokeCallable(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
+	ASSERT(metapp::callableInvoke(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 }
 
 void tutorialMetaClass_staticMethods()
@@ -225,7 +225,7 @@ void tutorialMetaClass_staticMethods()
 	ASSERT(value == 0);
 
 	metapp::RegisteredMethod methodObjtainValues = metaClass->getMethod("obtainValues");
-	metapp::invokeCallable(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
+	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
 	ASSERT(message == "Hello");
 	ASSERT(value == 38);
 }
@@ -236,11 +236,11 @@ void tutorialMetaClass_constructor()
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	metapp::RegisteredConstructorList constructorList = metaClass->getConstructorList();
-	std::unique_ptr<MyClass> ptr(metapp::invokeCallable(constructorList, nullptr).get<MyClass *>());
+	std::unique_ptr<MyClass> ptr(metapp::callableInvoke(constructorList, nullptr).get<MyClass *>());
 	ASSERT(ptr->getValue() == 0);
 	ASSERT(ptr->message == "");
 
-	metapp::Variant instance = metapp::Variant::takeFrom(metapp::invokeCallable(constructorList, nullptr, 3, "good").get<MyClass *>());
+	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorList, nullptr, 3, "good").get<MyClass *>());
 	ASSERT(instance.getMetaType() == metapp::getMetaType<MyClass>());
 	ASSERT(instance.get<const MyClass &>().getValue() == 3);
 	ASSERT(instance.get<const MyClass &>().message == "good");

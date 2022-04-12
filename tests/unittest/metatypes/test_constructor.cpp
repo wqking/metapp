@@ -59,8 +59,8 @@ TEST_CASE("metatypes, constructor")
 		}
 		REQUIRE(ctorCounter == 0);
 	}
-	SECTION("free by delete, using metapp::invokeCallable") {
-		Base * base = metapp::invokeCallable(ctor, nullptr, 7, &ctorCounter).get<Base *>();
+	SECTION("free by delete, using metapp::callableInvoke") {
+		Base * base = metapp::callableInvoke(ctor, nullptr, 7, &ctorCounter).get<Base *>();
 		REQUIRE(base->myValue == 7);
 		REQUIRE(ctorCounter == 1);
 		delete base;

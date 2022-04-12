@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaindexable.h"
-#include "metapp/utilities/utility.h"
+#include "metapp/implement/internal/util_i.h"
 
 namespace metapp {
 

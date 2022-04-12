@@ -39,12 +39,12 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 1));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 1));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1).get<std::string>() == "hello5");
 	}
 	SECTION("Invoke without default arguments") {
 		metapp::Variant arguments[] = { 6, "good" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2).get<std::string>() == "good6");
 	}
 }
@@ -82,7 +82,7 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 	MyClass obj { 3 };
 	SECTION("Invoke with 3 default arguments") {
 		metapp::Variant arguments[] = { 5, "hello" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 2).get<const std::vector<std::string> &>()
 			== 
 			std::vector<std::string> { "8", "hello", "38", "default", "97" }
@@ -90,7 +90,7 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 	}
 	SECTION("Invoke with 2 default arguments") {
 		metapp::Variant arguments[] = { 6, "good", 98 };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 3));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 3));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 3).get<const std::vector<std::string> &>()
 			== 
 			std::vector<std::string> { "9", "good", "98", "default", "97" }

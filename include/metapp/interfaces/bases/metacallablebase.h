@@ -46,22 +46,22 @@ public:
 		return &metaCallable;
 	}
 
-	static size_t metaCallableGetParamCount()
+	static size_t metaCallableGetParamCount(const Variant & /*func*/)
 	{
 		return argsCount;
 	}
 
-	static const MetaType * metaCallableGetReturnType()
+	static const MetaType * metaCallableGetReturnType(const Variant & /*func*/)
 	{
 		return getMetaType<RT>();
 	}
 
-	static const MetaType * metaCallableGetParamType(const size_t index)
+	static const MetaType * metaCallableGetParamType(const Variant & /*func*/, const size_t index)
 	{
 		return getMetaTypeAt<Args...>(index);
 	}
 
-	static int metaCallableRankInvoke(const Variant * arguments, const size_t argumentCount)
+	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return 0;
@@ -69,7 +69,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool metaCallableCanInvoke(const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return false;

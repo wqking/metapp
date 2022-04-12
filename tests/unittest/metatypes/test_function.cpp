@@ -37,10 +37,10 @@ TEST_CASE("metatypes, tkFunction, free function, types")
 	using namespace metapp;
 	auto metaType = v.getMetaType();
 	REQUIRE(metaType->getMetaMember() == nullptr);
-	REQUIRE(metaType->getMetaCallable()->getParamCount() == 2);
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(), { tkPointer, tkVoid }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(0), { tkInt }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(1), { tkReference, tkStdVector, tkInt }));
+	REQUIRE(metaType->getMetaCallable()->getParamCount(v) == 2);
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(v), { tkPointer, tkVoid }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(v, 0), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(v, 1), { tkReference, tkStdVector, tkInt }));
 }
 
 void myFunc(int & a, std::string & b)
@@ -66,8 +66,8 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant::create<int &>(a), metapp::Variant::create<std::string &>(b) };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(arguments, 2));
-		REQUIRE(! v.getMetaType()->getMetaCallable()->canInvoke(arguments, 1));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
+		REQUIRE(! v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 1));
 		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2);
 		REQUIRE(a == 15);
 		REQUIRE(b == "world");
@@ -76,12 +76,12 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2).get<std::string>() == "hello5");
-		REQUIRE(metapp::invokeCallable(v, nullptr, 6, "world").get<std::string>() == "world6");
+		REQUIRE(metapp::callableInvoke(v, nullptr, 6, "world").get<std::string>() == "world6");
 	}
 	{
 		metapp::Variant v(&myFunc3);
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, nullptr, 0).get<int>() == 38);
-		REQUIRE(metapp::invokeCallable(v, nullptr).get<int>() == 38);
+		REQUIRE(metapp::callableInvoke(v, nullptr).get<int>() == 38);
 	}
 }
 

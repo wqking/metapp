@@ -27,11 +27,11 @@ class MetaCallable
 {
 public:
 	MetaCallable(
-		size_t (*getParamCount)(),
-		const MetaType * (*getReturnType)(),
-		const MetaType * (*getParamType)(const size_t index),
-		int (*rankInvoke)(const Variant * arguments, const size_t argumentCount),
-		bool (*canInvoke)(const Variant * arguments, const size_t argumentCount),
+		size_t (*getParamCount)(const Variant & func),
+		const MetaType * (*getReturnType)(const Variant & func),
+		const MetaType * (*getParamType)(const Variant & func, const size_t index),
+		int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount),
+		bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount),
 		Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
@@ -44,43 +44,164 @@ public:
 	{
 	}
 
-	size_t (*getParamCount)();
-	const MetaType * (*getReturnType)();
-	const MetaType * (*getParamType)(const size_t index);
+	// The func parameter is not used in almost all functions except invoke, in C++ meta types.
+	// But it should be useful when func contains dynamic information, such as script method, or std::variant.
 
-	int (*rankInvoke)(const Variant * arguments, const size_t argumentCount);
-	bool (*canInvoke)(const Variant * arguments, const size_t argumentCount);
+	size_t (*getParamCount)(const Variant & func);
+	const MetaType * (*getReturnType)(const Variant & func);
+	const MetaType * (*getParamType)(const Variant & func, const size_t index);
+
+	int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
+	bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
 };
 
 inline size_t callableGetParamCount(const Variant & var)
 {
-	return var.getMetaType()->getMetaCallable()->getParamCount();
+	return var.getMetaType()->getMetaCallable()->getParamCount(var);
 }
 
 inline const MetaType * calllableGetReturnType(const Variant & var)
 {
-	return var.getMetaType()->getMetaCallable()->getReturnType();
+	return var.getMetaType()->getMetaCallable()->getReturnType(var);
 }
 
 inline const MetaType * calllableGetParamType(const Variant & var, const size_t index)
 {
-	return var.getMetaType()->getMetaCallable()->getParamType(index);
+	return var.getMetaType()->getMetaCallable()->getParamType(var, index);
 }
 
-inline int callableRankInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount)
+template <typename Iterator>
+Iterator findCallable(
+	Iterator first,
+	Iterator last,
+	const Variant * arguments,
+	const size_t argumentCount
+)
 {
-	return var.getMetaType()->getMetaCallable()->rankInvoke(arguments, argumentCount);
+	Iterator result = last;
+
+	int maxRank = 0;
+	for(; first != last; ++first) {
+		const Variant & callable = (const Variant &)*first;
+		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, arguments, argumentCount);
+		if(rank > maxRank) {
+			maxRank = rank;
+			result = first;
+		}
+	}
+	return result;
 }
 
-inline bool callableCanInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount)
+template <typename ...Args>
+struct CallableInvoker;
+
+template <typename Arg0, typename ...Args>
+struct CallableInvoker <Arg0, Args...>
 {
-	return var.getMetaType()->getMetaCallable()->canInvoke(arguments, argumentCount);
+	static Variant invoke(const Variant & func, void * instance, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		return func.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, sizeof...(Args) + 1);
+	}
+
+	template <typename Iterator>
+	static Variant invokeCallableList(Iterator first, Iterator last, void * instance, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		auto it = findCallable(first, last, arguments, sizeof...(Args) + 1);
+		if(it != last) {
+			const Variant & callable = (const Variant &)*it;
+			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments, sizeof...(Args) + 1);
+		}
+		else {
+			errorIllegalArgument();
+			return Variant();
+		}
+	}
+
+	static int rankInvoke(const Variant & func, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		return func.getMetaType()->getMetaCallable()->rankInvoke(func, arguments, sizeof...(Args) + 1);
+	}
+
+	static bool canInvoke(const Variant & func, Arg0 arg0, Args ...args)
+	{
+		Variant arguments[] = {
+			arg0,
+			args...
+		};
+		return func.getMetaType()->getMetaCallable()->canInvoke(func, arguments, sizeof...(Args) + 1);
+	}
+
+};
+
+template <>
+struct CallableInvoker <>
+{
+	static Variant invoke(const Variant & func, void * instance)
+	{
+		return func.getMetaType()->getMetaCallable()->invoke(func, instance, nullptr, 0);
+	}
+
+	template <typename Iterator>
+	static Variant invokeCallableList(Iterator first, Iterator last, void * instance)
+	{
+		auto it = findCallable(first, last, nullptr, 0);
+		if(it != last) {
+			const Variant & callable = (const Variant &)*it;
+			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, nullptr, 0);
+		}
+		else {
+			errorIllegalArgument();
+			return Variant();
+		}
+	}
+
+	static int rankInvoke(const Variant & func)
+	{
+		return func.getMetaType()->getMetaCallable()->rankInvoke(func, nullptr, 0);
+	}
+
+	static bool canInvoke(const Variant & func)
+	{
+		return func.getMetaType()->getMetaCallable()->canInvoke(func, nullptr, 0);
+	}
+
+};
+
+template <typename ...Args>
+inline int callableRankInvoke(const Variant & var, Args ...args)
+{
+	return CallableInvoker<Args...>::rankInvoke(var, args...);
 }
 
-inline Variant callableInvoke(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
+template <typename ...Args>
+inline bool callableCanInvoke(const Variant & var, Args ...args)
 {
-	return var.getMetaType()->getMetaCallable()->invoke(var, instance, arguments, argumentCount);
+	return CallableInvoker<Args...>::canInvoke(var, args...);
+}
+
+template <typename ...Args>
+inline Variant callableInvoke(const Variant & var, void * instance, Args ...args)
+{
+	return CallableInvoker<Args...>::invoke(var, instance, args...);
+}
+
+template <template <typename, typename> class Container, typename T, typename Allocator, typename ...Args>
+inline Variant callableInvoke(const Container<T, Allocator> & callableList, void * instance, Args ...args)
+{
+	return CallableInvoker<Args...>::invokeCallableList(callableList.begin(), callableList.end(), instance, args...);
 }
 
 

@@ -66,21 +66,21 @@ TEST_CASE("MetaClass, constructor")
 	SECTION("()") {
 		auto it = metapp::findCallable(constructorList.begin(), constructorList.end(), nullptr, 0);
 		REQUIRE(it == constructorList.begin());
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::invokeCallable(*it, nullptr));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr));
 		REQUIRE(obj.get<const A &>().text == "default");
 	}
 	SECTION("(std::string)") {
 		const metapp::Variant arguments[] = { "abc" };
 		auto it = metapp::findCallable(constructorList.begin(), constructorList.end(), arguments, 1);
 		REQUIRE(it == constructorList.begin() + 1);
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::invokeCallable(*it, nullptr, "abc"));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr, "abc"));
 		REQUIRE(obj.get<const A &>().text == "abc");
 	}
 	SECTION("(std::string, int)") {
 		const metapp::Variant arguments[] = { "abc", 5 };
 		auto it = metapp::findCallable(constructorList.begin(), constructorList.end(), arguments, 2);
 		REQUIRE(it == constructorList.begin() + 2);
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::invokeCallable(*it, nullptr, "abc", 5));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr, "abc", 5));
 		REQUIRE(obj.get<const A &>().text == "abc5");
 	}
 }
