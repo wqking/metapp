@@ -96,7 +96,7 @@ This is only useful if you are 100% sure the data in `var` can be in type `metaT
 static Variant takeFrom(const MetaType * metaType, void * instance);
 ```
 
-Return a Variant which data is the `instance`, type is `metaType`.  
+Return a Variant which data is the object pointed by `instance`, type is `metaType`.  
 `instance` is a pointer that points to an object allocated on the heap, the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
 `metaType` should the type that `instance` points to, not the pointer type. The returned `Variant` is a value object, not a pointer.
 
@@ -114,7 +114,7 @@ static Variant takeFrom(const Variant & var);
 
 Return a Variant which data is the pointer in `var`, type is the type in `var`.  
 `var` must hold a pointer. It must not hold the object direct.  
-This function is not useful in most case. The only useful case is to use it on the return value when invoking a meta constructor.
+This function is not useful in most cases. The only useful case is to use it on the return value when invoking a meta constructor.
 
 **Example**  
 
@@ -124,7 +124,8 @@ This function is not useful in most case. The only useful case is to use it on t
 //metapp::Variant var(MyClass());
 
 // This works, var hold the pointer, it doesn't hold the ownership of MyClass
-// Note: if we don't call takeFrom later, var will leak the object because it doesn't hold the ownership.
+// Note: if we don't call takeFrom later, var will leak the object
+// because it doesn't hold the ownership.
 metapp::Variant var(new MyClass());
 metapp::Variant v(metapp::Variant::takeFrom(var));
 ```

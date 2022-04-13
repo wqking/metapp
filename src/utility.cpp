@@ -117,7 +117,7 @@ private:
 			}
 		}
 		doDumpUpType(stream, metaType, level);
-	};
+	}
 
 	void doDumpUpType(std::ostream & stream, const metapp::MetaType * metaType, const int level) {
 		const size_t upCount = metaType->getUpTypeCount();

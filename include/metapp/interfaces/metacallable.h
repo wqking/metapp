@@ -46,6 +46,7 @@ public:
 
 	// The func parameter is not used in almost all functions except invoke, in C++ meta types.
 	// But it should be useful when func contains dynamic information, such as script method, or std::variant.
+	// Also adding the func parameter makes DefaultArgsFunction interface better
 
 	size_t (*getParamCount)(const Variant & func);
 	const MetaType * (*getReturnType)(const Variant & func);

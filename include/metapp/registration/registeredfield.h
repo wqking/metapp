@@ -69,11 +69,11 @@ public:
 
 	Variant get(const void * instance) const {
 		return data->field.getMetaType()->getMetaAccessible()->get(data->field, instance);
-	} 
+	}
 
 	void set(void * instance, const Variant & value) const {
 		data->field.getMetaType()->getMetaAccessible()->set(data->field, instance, value);
-	} 
+	}
 
 	operator const Variant & () const {
 		return getTarget();

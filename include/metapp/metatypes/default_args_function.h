@@ -33,7 +33,7 @@
 
 namespace metapp {
 
-template <typename FT, size_t defaultArgsCount>
+template <typename FT>
 class DefaultArgsFunction
 {
 public:
@@ -52,6 +52,10 @@ public:
 		return defaultArgs.data();
 	}
 
+	size_t getDefaultArgsCount() const {
+		return defaultArgs.size();
+	}
+
 private:
 	Variant func;
 	// If we use std::array here, initial it from the std::initializer_list
@@ -60,11 +64,11 @@ private:
 	std::vector<Variant> defaultArgs;
 };
 
-template <size_t defaultArgsCount, typename FT>
+template <typename FT>
 auto createDefaultArgsFunction(FT && func, const std::initializer_list<Variant> & defaultArgs_)
-	-> DefaultArgsFunction<FT, defaultArgsCount>
+	-> DefaultArgsFunction<FT>
 {
-	return DefaultArgsFunction<FT, defaultArgsCount>(std::forward<FT>(func), defaultArgs_);
+	return DefaultArgsFunction<FT>(std::forward<FT>(func), defaultArgs_);
 }
 
 namespace internal_ {
@@ -88,12 +92,12 @@ struct DefaultArgsGetter
 
 } // namespace internal_
 
-template <typename FT, size_t defaultArgsCount>
-struct DeclareMetaTypeBase <DefaultArgsFunction<FT, defaultArgsCount> >
+template <typename FT>
+struct DeclareMetaTypeBase <DefaultArgsFunction<FT> >
 {
 private:
 	using Underlying = DeclareMetaType<FT>;
-	using FunctionType = DefaultArgsFunction<FT, defaultArgsCount>;
+	using FunctionType = DefaultArgsFunction<FT>;
 	using ClassType = typename Underlying::ClassType;
 	using ReturnType = typename Underlying::ReturnType;
 	using ArgumentTypeList = typename Underlying::ArgumentTypeList;
@@ -116,9 +120,11 @@ public:
 		return &metaCallable;
 	}
 
-	static bool isValidArgumentCount(const size_t argumentCount)
+	static bool isValidArgumentCount(const Variant & func, const size_t argumentCount)
 	{
-		return argumentCount >= argsCount - defaultArgsCount && argumentCount <= argsCount;
+		return (argumentCount >= argsCount - func.get<FunctionType &>().getDefaultArgsCount())
+			&& (argumentCount <= argsCount)
+		;
 	}
 
 	static size_t metaCallableGetParamCount(const Variant & /*func*/)
@@ -136,18 +142,18 @@ public:
 		return internal_::getMetaTypeAt(index, ArgumentTypeList());
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
+	static int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
-		if(! isValidArgumentCount(argumentCount)) {
+		if(! isValidArgumentCount(func, argumentCount)) {
 			return 0;
 		}
 
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
-		if(! isValidArgumentCount(argumentCount)) {
+		if(! isValidArgumentCount(func, argumentCount)) {
 			return false;
 		}
 
@@ -156,7 +162,7 @@ public:
 
 	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
-		if(! isValidArgumentCount(argumentCount)) {
+		if(! isValidArgumentCount(func, argumentCount)) {
 			errorIllegalArgument();
 			return Variant();
 		}

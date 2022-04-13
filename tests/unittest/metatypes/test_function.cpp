@@ -49,9 +49,9 @@ void myFunc(int & a, std::string & b)
 	b = "world";
 }
 
-std::string myFunc2(const int a, const std::string & b)
+std::string myFunc2(const int a, const metapp::Variant & b)
 {
-	return b + std::to_string(a);
+	return b.cast<const std::string &>().get<const std::string &>() + std::to_string(a);
 }
 
 int myFunc3()
