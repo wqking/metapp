@@ -131,9 +131,6 @@ void swap(Variant & a, Variant & b) noexcept;
 
 TypeKind getTypeKind(const Variant & v);
 
-// This is to avoid copying Variant when returning empty Variant from a function
-const Variant & getEmptyVariant();
-
 } // namespace metapp
 
 

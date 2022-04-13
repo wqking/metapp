@@ -20,6 +20,8 @@
 
 namespace metapp {
 
+Variant emptyVariant;
+
 Variant Variant::retype(const MetaType * metaType, const Variant & var)
 {
 	Variant result;
@@ -35,7 +37,7 @@ Variant Variant::takeFrom(const MetaType * metaType, void * instance)
 	result.metaType = metaType;
 	result.data.constructObject(std::shared_ptr<void>(instance, [metaType](void * p) {
 		metaType->destroy(p);
-		}));
+	}));
 
 	return result;
 }
@@ -51,29 +53,29 @@ Variant Variant::takeFrom(const Variant & var)
 
 Variant::Variant(const MetaType * metaType)
 	:
-	metaType(metaType)
+		metaType(metaType)
 {
 	metaType->constructData(&data, nullptr);
 }
 
 Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
-	metaType(metaType)
+		metaType(metaType)
 {
 	metaType->constructData(&data, copyFrom);
 }
 
 Variant::Variant(const Variant & other) noexcept
 	:
-	metaType(other.metaType),
-	data(other.data)
+		metaType(other.metaType),
+		data(other.data)
 {
 }
 
 Variant::Variant(Variant && other) noexcept
 	:
-	metaType(std::move(other.metaType)),
-	data(std::move(other.data))
+		metaType(std::move(other.metaType)),
+		data(std::move(other.data))
 {
 }
 
@@ -221,12 +223,6 @@ void swap(Variant & a, Variant & b) noexcept
 TypeKind getTypeKind(const Variant & v)
 {
 	return v.getMetaType()->getTypeKind();
-}
-
-const Variant & getEmptyVariant()
-{
-	static Variant emptyVariant {};
-	return emptyVariant;
 }
 
 
