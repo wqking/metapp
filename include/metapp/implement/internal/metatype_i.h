@@ -308,7 +308,7 @@ struct UnifiedMetaTable
 
 struct MetaTable
 {
-	void (*toReference)(Variant * result, const Variant & value);
+	const MetaType * (*addReference)();
 };
 
 struct UpTypeData
@@ -378,46 +378,8 @@ inline Variant doPointerToReference(const Variant & value, std::false_type)
 	return Variant::create<P &>(**(P **)value.getAddress());
 }
 
-template <typename T, typename Enabled = void>
-struct ToReferenceBase;
-
-template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<std::is_reference<T>::value>::type
->
-{
-	static void toReference(Variant * result, const Variant & value)
-	{
-		*result = value;
-	}
-};
-
-template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<std::is_pointer<T>::value>::type
->
-{
-	static void toReference(Variant * result, const Variant & value)
-	{
-		using P = typename std::remove_pointer<T>::type;
-		*result = internal_::doPointerToReference<P>(value, std::is_void<P>());
-	}
-};
-
-template <typename T>
-struct ToReferenceBase <T,
-	typename std::enable_if<! std::is_reference<T>::value && ! std::is_pointer<T>::value>::type
->
-{
-	static void toReference(Variant * result, const Variant & value)
-	{
-		*result = Variant::create<T &>(value.get<T &>());
-	}
-};
-
 
 } // namespace internal_
-
 
 } // namespace metapp
 

@@ -17,7 +17,6 @@
 #ifndef METAPP_METAREPO_H_969872685611
 #define METAPP_METAREPO_H_969872685611
 
-#include "metapp/metatypes/metatypes.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
 #include "metapp/registration/registeredrepo.h"

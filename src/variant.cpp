@@ -131,9 +131,17 @@ void * Variant::getAddress() const
 
 Variant Variant::toReference() const
 {
-	Variant result;
-	metaType->toReference(&result, *this);
-	return result;
+	if(metaType->isReference()) {
+		return *this;
+	}
+	if(metaType->isPointer()) {
+		const MetaType * newMetaType = metaType->getUpType()->addReference();
+		return Variant(newMetaType, *(void **)(getAddress()));
+	}
+	else {
+		const MetaType * newMetaType = metaType->addReference();
+		return Variant(newMetaType, getAddress());
+	}
 }
 
 Variant Variant::dereference() const

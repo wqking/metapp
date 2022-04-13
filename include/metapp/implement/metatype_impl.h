@@ -81,7 +81,7 @@ const MetaType * doGetMetaTypeStorage()
 	static const MetaType metaType(
 		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
 		MetaTable {
-			&SelectDeclareClass<T, HasMember_toReference<M>::value>::toReference,
+			&SelectDeclareClass<T, HasMember_addReference<M>::value>::addReference,
 		},
 		UpTypeGetter<
 			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
@@ -181,12 +181,20 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance)
 #endif
 }
 
+// It's trivial to implement addReference, but it's not easy to implement addPointer
+// because the added pointer will instantiate more added pointer and cause
+// endless recursive template instantiation
+template <typename T>
+inline const MetaType * CommonDeclareMetaType<T>::addReference()
+{
+	return getMetaType<typename std::add_lvalue_reference<T>::type>();
+}
+
 template <typename T>
 inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 {
 	return internal_::doCast(result, value, getMetaType<T>(), toMetaType);
 }
-
 
 template <typename T>
 inline const MetaType * getMetaType()

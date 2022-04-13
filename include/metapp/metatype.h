@@ -114,7 +114,7 @@ public:
 
 	void destroy(void * instance) const;
 
-	void toReference(Variant * result, const Variant & value) const;
+	const MetaType * addReference() const;
 	
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
@@ -146,7 +146,7 @@ private:
 };
 
 template <typename T>
-struct CommonDeclareMetaType : internal_::ToReferenceBase<T>
+struct CommonDeclareMetaType
 {
 private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
@@ -170,6 +170,8 @@ public:
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
+
+	static const MetaType * addReference();
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
@@ -201,7 +203,7 @@ struct DeclareMetaTypeVoidBase
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
-	static void toReference(Variant * result, const Variant & value);
+	static const MetaType * addReference();
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 

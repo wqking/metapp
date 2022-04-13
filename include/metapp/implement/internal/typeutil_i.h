@@ -136,7 +136,7 @@ METAPP_HAS_MEMBER(getMetaUser);
 
 METAPP_HAS_MEMBER(constructData);
 METAPP_HAS_MEMBER(destroy);
-METAPP_HAS_MEMBER(toReference);
+METAPP_HAS_MEMBER(addReference);
 METAPP_HAS_MEMBER(cast);
 METAPP_HAS_MEMBER(castFrom);
 METAPP_HAS_MEMBER(typeKind);

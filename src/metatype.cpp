@@ -278,9 +278,9 @@ void DeclareMetaTypeVoidBase::destroy(void * /*instance*/)
 {
 }
 
-void DeclareMetaTypeVoidBase::toReference(Variant * result, const Variant & value)
+const MetaType * DeclareMetaTypeVoidBase::addReference()
 {
-	*result = value;
+	return nullptr;
 }
 
 bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*toMetaType*/)
@@ -408,9 +408,9 @@ void MetaType::destroy(void * instance) const
 	doGetUnifiedType()->destroy(instance);
 }
 
-void MetaType::toReference(Variant * result, const Variant & value) const
+const MetaType * MetaType::addReference() const
 {
-	metaTable.toReference(result, value);
+	return metaTable.addReference();
 }
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const

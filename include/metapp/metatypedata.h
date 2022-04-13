@@ -71,7 +71,7 @@ public:
 	}
 
 	void constructReference(const void * copyFrom) {
-		podAs<void *>() = *(void **)&copyFrom;
+		podAs<const void *>() = copyFrom;
 		setStorageType(storageReference);
 	}
 
