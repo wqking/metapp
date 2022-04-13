@@ -92,16 +92,16 @@ const MetaType * doGetMetaTypeStorage()
 }
 
 template <typename T>
-auto doGetMetaType()
--> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
+constexpr auto doGetMetaType()
+	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
 {
 	return nullptr;
 }
 
 template <typename T>
-auto doGetMetaType()
+constexpr  auto doGetMetaType()
 	-> typename std::enable_if<
-		!std::is_same<T, NoneUpType>::value && !HasMember_setup<DeclareMetaType<T> >::value,
+		! std::is_same<T, NoneUpType>::value && ! HasMember_setup<DeclareMetaType<T> >::value,
 		const MetaType *>::type
 {
 	return doGetMetaTypeStorage<T>();
@@ -110,7 +110,7 @@ auto doGetMetaType()
 template <typename T>
 auto doGetMetaType()
 	-> typename std::enable_if<
-		!std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
+		! std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
 		const MetaType *>::type
 {
 	static std::atomic_flag hasCalledSetup;
@@ -181,7 +181,7 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance)
 #endif
 }
 
-// It's trivial to implement addReference, but it's not easy to implement addPointer
+// It's trivial to implement addReference, but it's not easy to implement addPointer,
 // because the added pointer will instantiate more added pointer and cause
 // endless recursive template instantiation
 template <typename T>
@@ -197,7 +197,7 @@ inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & val
 }
 
 template <typename T>
-inline const MetaType * getMetaType()
+inline constexpr const MetaType * getMetaType()
 {
 	return internal_::doGetMetaType<T>();
 }

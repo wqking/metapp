@@ -45,7 +45,7 @@ class MetaMap;
 class MetaMember;
 
 template <typename T>
-const MetaType * getMetaType();
+constexpr const MetaType * getMetaType();
 
 namespace internal_ {
 
