@@ -24,11 +24,10 @@ namespace metapp {
 template <>
 struct DeclareMetaTypeBase <Variant>
 {
-	using Common = CommonDeclareMetaType <Variant>;
 	static constexpr TypeKind typeKind = tkVariant;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(Common::cast(result, value, toMetaType)) {
+		if(commonCast(result, value, getMetaType<Variant>(), toMetaType)) {
 			return true;
 		}
 		else {

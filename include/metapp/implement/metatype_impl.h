@@ -140,13 +140,6 @@ const UnifiedType * unifiedTypeGetter()
 	return &unifiedType;
 }
 
-bool doCast(
-	Variant * result,
-	const Variant & value,
-	const MetaType * fromMetaType,
-	const MetaType * toMetaType
-);
-
 } // namespace internal_
 
 template <typename T>
@@ -193,7 +186,7 @@ inline const MetaType * CommonDeclareMetaType<T>::addReference()
 template <typename T>
 inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 {
-	return internal_::doCast(result, value, getMetaType<T>(), toMetaType);
+	return commonCast(result, value, getMetaType<T>(), toMetaType);
 }
 
 template <typename T>

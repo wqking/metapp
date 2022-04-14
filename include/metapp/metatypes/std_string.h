@@ -27,8 +27,6 @@ namespace metapp {
 template <>
 struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 {
-	using Common = CommonDeclareMetaType<std::string>;
-
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
@@ -39,7 +37,7 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 			return true;
 		}
 		else {
-			return Common::cast(result, value, toMetaType);
+			return commonCast(result, value, getMetaType<std::string>(), toMetaType);
 		}
 	}
 
@@ -52,8 +50,6 @@ private:
 template <>
 struct DeclareMetaTypeBase <std::wstring>
 {
-	using Common = CommonDeclareMetaType<std::wstring>;
-
 	static constexpr TypeKind typeKind = tkStdWideString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
@@ -64,7 +60,7 @@ struct DeclareMetaTypeBase <std::wstring>
 			return true;
 		}
 		else {
-			return Common::cast(result, value, toMetaType);
+			return commonCast(result, value, getMetaType<std::wstring>(), toMetaType);
 		}
 	}
 

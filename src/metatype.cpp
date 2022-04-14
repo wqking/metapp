@@ -149,26 +149,6 @@ TristateBool doCastPointerReference(
 	return TristateBool::unknown;
 }
 
-bool doCast(
-	Variant * result,
-	const Variant & value,
-	const MetaType * fromMetaType,
-	const MetaType * toMetaType
-)
-{
-	const internal_::TristateBool tristate = internal_::doCastPointerReference(result, value, fromMetaType, toMetaType);
-	if(tristate != internal_::TristateBool::unknown) {
-		return tristate == internal_::TristateBool::yes;
-	}
-
-	if(toMetaType->castFrom(result, value, fromMetaType)) {
-		return true;
-	}
-
-	return false;
-}
-
-
 TypeKind UnifiedType::getTypeKind() const noexcept
 {
 	return typeKind;
@@ -421,6 +401,25 @@ bool MetaType::cast(Variant * result, const Variant & value, const MetaType * to
 bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
 	return doGetUnifiedType()->castFrom(result, value, fromMetaType);
+}
+
+bool commonCast(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+)
+{
+	const internal_::TristateBool tristate = internal_::doCastPointerReference(result, value, fromMetaType, toMetaType);
+	if(tristate != internal_::TristateBool::unknown) {
+		return tristate == internal_::TristateBool::yes;
+	}
+
+	if(toMetaType->castFrom(result, value, fromMetaType)) {
+		return true;
+	}
+
+	return false;
 }
 
 

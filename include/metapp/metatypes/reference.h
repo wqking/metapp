@@ -26,7 +26,6 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <T &>
 {
-	using Common = CommonDeclareMetaType<T &>;
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
@@ -46,12 +45,10 @@ struct DeclareMetaTypeBase <T &&> : DeclareMetaTypeBase<T &>
 
 template <typename T>
 struct DeclareMetaTypeBase <std::reference_wrapper<T> >
-	: DeclareMetaTypeBase<T &>
 {
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
-	using Common = CommonDeclareMetaType<T &>;
-	static constexpr TypeFlags typeFlags = tfReference | Common::typeFlags;
+	static constexpr TypeFlags typeFlags = tfReference;
 
 	using WrapperType = std::reference_wrapper<T>;
 

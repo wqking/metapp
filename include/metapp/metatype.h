@@ -47,6 +47,13 @@ class MetaMember;
 template <typename T>
 constexpr const MetaType * getMetaType();
 
+bool commonCast(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+);
+
 namespace internal_ {
 
 template <typename T>
