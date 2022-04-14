@@ -18,7 +18,7 @@
 #include "include/dataprovider.h"
 
 #include "metapp/variant.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 #include "metapp/metarepo.h"
 
 #include <string>

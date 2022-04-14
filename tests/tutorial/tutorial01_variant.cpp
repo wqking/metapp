@@ -19,7 +19,7 @@
 // Include the header for metapp::Variant
 #include "metapp/variant.h"
 // To use all declared meta types, include this header
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 #include <iostream>
 #include <cstring>

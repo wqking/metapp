@@ -17,7 +17,7 @@
 #include "../test.h"
 
 #include "metapp/variant.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 TEST_CASE("metatypes, std::map<int, std::string>")
 {

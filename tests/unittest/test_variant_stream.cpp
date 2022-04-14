@@ -18,7 +18,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metarepo.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 #include <string>
 #include <sstream>

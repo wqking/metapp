@@ -17,7 +17,7 @@
 #include "../test.h"
 
 #include "metapp/variant.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 #ifndef METAPP_COMPILER_GCC
 // I'm pretty sure MingW GCC 8.3.0 has a bug that

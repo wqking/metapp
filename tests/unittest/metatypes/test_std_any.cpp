@@ -21,7 +21,7 @@
 #ifdef METAPP_SUPPORT_STANDARD_17
 
 #include "metapp/variant.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 TEST_CASE("metatypes, tkStdAny, std::any")
 {

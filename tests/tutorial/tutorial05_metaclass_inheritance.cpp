@@ -16,7 +16,7 @@
 
 #include "tutorial.h"
 
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metarepo.h"
 

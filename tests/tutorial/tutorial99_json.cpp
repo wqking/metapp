@@ -17,7 +17,7 @@
 #include "tutorial.h"
 
 #include "metapp/variant.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 #include "metapp/utilities/utility.h"
 
 #include <iostream>

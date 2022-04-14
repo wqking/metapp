@@ -17,7 +17,7 @@
 #include "tutorial.h"
 
 // To use all declared meta types, include this header
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 #include <iostream>
 
@@ -41,32 +41,60 @@ void tutorialMetaType_identify_MetaType()
 
 void tutorialMetaType_attributes()
 {
-	// int
-	const metapp::MetaType * metaType1 = metapp::getMetaType<int>();
-	ASSERT(metaType1->getTypeKind() == metapp::tkInt);
+	{
+		// int
+		const metapp::MetaType * metaType = metapp::getMetaType<int>();
+		ASSERT(metaType->getTypeKind() == metapp::tkInt);
+	}
 
-	// constness
-	auto metaType2 = metapp::getMetaType<const int>();
-	ASSERT(metaType2->getTypeKind() == metapp::tkInt);
-	ASSERT(metaType2->isConst());
+	{
+		// constness
+		auto metaType = metapp::getMetaType<const int>();
+		ASSERT(metaType->getTypeKind() == metapp::tkInt);
+		ASSERT(metaType->isConst());
+	}
 
-	// pointer
-	auto metaType3 = metapp::getMetaType<const int *>();
-	ASSERT(metaType3->getTypeKind() == metapp::tkPointer);
-	ASSERT(metaType3->getUpType()->getTypeKind() == metapp::tkInt);
-	// "const int *" is not a const type
-	ASSERT(! metaType3->isConst());
-	// The UpType "const int" is const
-	ASSERT(metaType3->getUpType()->isConst());
+	{
+		// pointer
+		auto metaType = metapp::getMetaType<const int *>();
+		ASSERT(metaType->getTypeKind() == metapp::tkPointer);
+		ASSERT(metaType->getUpType()->getTypeKind() == metapp::tkInt);
+		// "const int *" is not a const type
+		ASSERT(! metaType->isConst());
+		// The UpType "const int" is const
+		ASSERT(metaType->getUpType()->isConst());
+	}
 
-	// std::map
-	auto metaType4 = metapp::getMetaType<std::map<long, std::string> >();
-	ASSERT(metaType4->getTypeKind() == metapp::tkStdMap);
-	// it has two UpType, the first is long, the second is std::string
-	ASSERT(metaType4->getUpTypeCount() == 2);
-	ASSERT(metaType4->getUpType(0)->getTypeKind() == metapp::tkLong);
-	ASSERT(metaType4->getUpType(1)->getTypeKind() == metapp::tkStdString);
+	{
+		// std::map
+		auto metaType = metapp::getMetaType<std::map<long, std::string> >();
+		ASSERT(metaType->getTypeKind() == metapp::tkStdMap);
+		// it has two UpType, the first is long, the second is std::string
+		ASSERT(metaType->getUpTypeCount() == 2);
+		ASSERT(metaType->getUpType(0)->getTypeKind() == metapp::tkLong);
+		ASSERT(metaType->getUpType(1)->getTypeKind() == metapp::tkStdString);
+	}
+}
+
+void tutorialMetaType_upType()
+{
+	{
+		// MetaType `int` doesn't have any UpType.  
+		const metapp::MetaType * metaType = metapp::getMetaType<int>();
+		ASSERT(metaType->getTypeKind() == metapp::tkInt);
+		ASSERT(metaType->getUpTypeCount() == 0);
+		ASSERT(metaType->getUpType() == nullptr);
+	}
+
+	{
+		// MetaType `int *` has one UpType.  
+		const metapp::MetaType * metaType = metapp::getMetaType<int *>();
+		ASSERT(metaType->getTypeKind() == metapp::tkInt);
+		ASSERT(metaType->getUpTypeCount() == 1);
+		ASSERT(metaType->getUpType() == metapp::getMetaType<int>());
+	}
 }
 
 RUN_TUTORIAL(tutorialMetaType_identify_MetaType)
 RUN_TUTORIAL(tutorialMetaType_attributes)
+RUN_TUTORIAL(tutorialMetaType_upType)

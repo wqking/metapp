@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METATYPES_H_969872685611
-#define METAPP_METATYPES_H_969872685611
+#ifndef METAPP_ALLMETATYPES_H_969872685611
+#define METAPP_ALLMETATYPES_H_969872685611
 
 #include "metapp/compiler.h"
 

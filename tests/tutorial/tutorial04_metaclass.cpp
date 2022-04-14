@@ -16,8 +16,8 @@
 
 #include "tutorial.h"
 
-// To use the built-in meta types, we must include "metapp/metatypes/metatypes.h"
-#include "metapp/metatypes/metatypes.h"
+// To use the built-in meta types, we must include "metapp/allmetatypes.h"
+#include "metapp/allmetatypes.h"
 
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/interfaces/metaenum.h"

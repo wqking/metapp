@@ -5,7 +5,7 @@
 To use the meta types, below header must be included.  
 
 ```c++
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 ```
 
 ## List of type kinds and equivalent C++ types

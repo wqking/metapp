@@ -19,7 +19,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/interfaces/metaclass.h"
-#include "metapp/metatypes/metatypes.h"
+#include "metapp/allmetatypes.h"
 
 #include <string>
 #include <iostream>
