@@ -47,8 +47,6 @@ class UnifiedType;
 template <typename T>
 const UnifiedType * unifiedTypeGetter();
 
-struct NoneUpType {};
-
 using MetaInterfaceKind = uint32_t;
 using MetaInterfaceGetter = const void * (*)();
 

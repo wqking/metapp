@@ -159,7 +159,7 @@ private:
 	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
 
 public:
-	using UpType = internal_::NoneUpType;
+	using UpType = TypeList<>;
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
@@ -202,7 +202,7 @@ struct DeclareMetaType : DeclareMetaTypeBase<T>
 
 struct DeclareMetaTypeVoidBase
 {
-	using UpType = internal_::NoneUpType;
+	using UpType = TypeList<>;
 
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;

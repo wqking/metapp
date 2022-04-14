@@ -92,26 +92,15 @@ const MetaType * doGetMetaTypeStorage()
 }
 
 template <typename T>
-constexpr auto doGetMetaType()
-	-> typename std::enable_if<std::is_same<T, NoneUpType>::value, const MetaType *>::type
-{
-	return nullptr;
-}
-
-template <typename T>
 constexpr  auto doGetMetaType()
-	-> typename std::enable_if<
-		! std::is_same<T, NoneUpType>::value && ! HasMember_setup<DeclareMetaType<T> >::value,
-		const MetaType *>::type
+	-> typename std::enable_if<! HasMember_setup<DeclareMetaType<T> >::value, const MetaType *>::type
 {
 	return doGetMetaTypeStorage<T>();
 }
 
 template <typename T>
 auto doGetMetaType()
-	-> typename std::enable_if<
-		! std::is_same<T, NoneUpType>::value && HasMember_setup<DeclareMetaType<T> >::value,
-		const MetaType *>::type
+	-> typename std::enable_if<HasMember_setup<DeclareMetaType<T> >::value,	const MetaType *>::type
 {
 	static std::atomic_flag hasCalledSetup;
 	const MetaType * metaType = doGetMetaTypeStorage<T>();

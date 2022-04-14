@@ -297,11 +297,17 @@ const void * MetaType::getUnifiedType() const noexcept
 
 const MetaType * MetaType::getUpType() const
 {
+	if(upTypeData.upTypeList == nullptr) {
+		return nullptr;
+	}
 	return upTypeData.upTypeList[1];
 }
 
 const MetaType * MetaType::getUpType(const size_t i) const
 {
+	if(upTypeData.upTypeList == nullptr) {
+		return nullptr;
+	}
 	return upTypeData.upTypeList[i + 1];
 }
 

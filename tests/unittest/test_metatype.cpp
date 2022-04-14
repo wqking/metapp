@@ -23,6 +23,23 @@
 #include <iostream>
 #include <climits>
 
+TEST_CASE("MetaType, UpType")
+{
+	SECTION("int") {
+		const metapp::MetaType * metaType = metapp::getMetaType<int>();
+		REQUIRE(metaType->getTypeKind() == metapp::tkInt);
+		REQUIRE(metaType->getUpTypeCount() == 0);
+		REQUIRE(metaType->getUpType() == nullptr);
+	}
+
+	SECTION("int *") {
+		const metapp::MetaType * metaType = metapp::getMetaType<int *>();
+		REQUIRE(metaType->getTypeKind() == metapp::tkPointer);
+		REQUIRE(metaType->getUpTypeCount() == 1);
+		REQUIRE(metaType->getUpType() == metapp::getMetaType<int>());
+	}
+}
+
 TEST_CASE("MetaType, construct")
 {
 	SECTION("int") {

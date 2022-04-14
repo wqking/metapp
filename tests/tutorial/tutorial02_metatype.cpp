@@ -89,7 +89,7 @@ void tutorialMetaType_upType()
 	{
 		// MetaType `int *` has one UpType.  
 		const metapp::MetaType * metaType = metapp::getMetaType<int *>();
-		ASSERT(metaType->getTypeKind() == metapp::tkInt);
+		ASSERT(metaType->getTypeKind() == metapp::tkPointer);
 		ASSERT(metaType->getUpTypeCount() == 1);
 		ASSERT(metaType->getUpType() == metapp::getMetaType<int>());
 	}
