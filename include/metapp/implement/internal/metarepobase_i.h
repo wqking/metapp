@@ -21,8 +21,8 @@
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
 #include "metapp/registration/registeredtype.h"
-#include "metapp/registration/registeredfield.h"
-#include "metapp/registration/registeredmethod.h"
+#include "metapp/registration/registeredaccessible.h"
+#include "metapp/registration/registeredcallable.h"
 
 #include <map>
 #include <deque>
@@ -38,9 +38,9 @@ class MetaRepoBase
 public:
 	MetaRepoBase();
 
-	RegisteredField & registerField(const std::string & name, const Variant & field);
+	RegisteredAccessible & registerAccessible(const std::string & name, const Variant & accessible);
 
-	RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
+	RegisteredCallable & registerCallable(const std::string & name, const Variant & callable);
 
 	template <typename T>
 	RegisteredType & registerType(const std::string & name = "") {
@@ -49,14 +49,14 @@ public:
 	RegisteredType & registerType(std::string name, const MetaType * metaType);
 
 protected:
-	void doGetFieldList(RegisteredFieldList * result) const;
-	const RegisteredFieldList & doGetFieldList() const;
-	const RegisteredField & doGetField(const std::string & name) const;
+	void doGetAccessibleList(RegisteredAccessibleList * result) const;
+	const RegisteredAccessibleList & doGetAccessibleList() const;
+	const RegisteredAccessible & doGetAccessible(const std::string & name) const;
 
-	const RegisteredMethod & doGetMethod(const std::string & name) const;
-	void doGetMethodList(const std::string & name, RegisteredMethodList * result) const;
-	void doGetMethodList(RegisteredMethodList * result) const;
-	const RegisteredMethodList & doGetMethodList() const;
+	const RegisteredCallable & doGetCallable(const std::string & name) const;
+	void doGetCallableList(const std::string & name, RegisteredCallableList * result) const;
+	void doGetCallableList(RegisteredCallableList * result) const;
+	const RegisteredCallableList & doGetCallableList() const;
 
 	const RegisteredType & doGetType(const std::string & name) const;
 	const RegisteredType & doGetType(const TypeKind kind) const;
@@ -78,28 +78,28 @@ private:
 	};
 	std::shared_ptr<TypeData> typeData;
 
-	struct MethodData
+	struct CallableData
 	{
-		RegisteredMethodList methodList;
-		using RegisteredMethodPointerList = std::vector<RegisteredMethod *>;
+		RegisteredCallableList callableList;
+		using RegisteredCallablePointerList = std::vector<RegisteredCallable *>;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredMethodPointerList,
+			RegisteredCallablePointerList,
 			std::less<const std::string>
-		> methodMap;
+		> callableMap;
 	};
-	std::shared_ptr<MethodData> methodData;
+	std::shared_ptr<CallableData> callableData;
 
-	struct FieldData
+	struct AccessibleData
 	{
-		RegisteredFieldList fieldList;
+		RegisteredAccessibleList accessibleList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredField *,
+			RegisteredAccessible *,
 			std::less<const std::string>
-		> fieldMap;
+		> accessibleMap;
 	};
-	std::shared_ptr<FieldData> fieldData;
+	std::shared_ptr<AccessibleData> accessibleData;
 };
 
 

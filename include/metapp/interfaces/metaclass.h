@@ -17,7 +17,6 @@
 #ifndef METAPP_METACLASS_H_969872685611
 #define METAPP_METACLASS_H_969872685611
 
-#include "metapp/implement/internal/metaclass_i.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/metarepo.h"
 #include "metapp/registration/registeredconstructor.h"
@@ -49,12 +48,12 @@ public:
 	
 	const RegisteredConstructorList & getConstructorList() const;
 
-	const RegisteredField & getField(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredFieldList getFieldList(const Flags flags = flagIncludeBase) const;
+	const RegisteredAccessible & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
+	RegisteredAccessibleList getAccessibleList(const Flags flags = flagIncludeBase) const;
 
-	const RegisteredMethod & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const;
+	const RegisteredCallable & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
+	RegisteredCallableList getCallableList(const std::string & name, const Flags flags = flagIncludeBase) const;
+	RegisteredCallableList getCallableList(const Flags flags = flagIncludeBase) const;
 
 	const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
 	const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;

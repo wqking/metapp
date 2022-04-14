@@ -71,7 +71,7 @@ struct metapp::DeclareMetaType <BaseFirst> : metapp::DeclareMetaTypeBase <BaseFi
 			[](metapp::MetaClass & mc) {
 				mc.registerConstructor(metapp::Constructor<BaseFirst()>());
 				mc.registerConstructor(metapp::Constructor<BaseFirst(int)>());
-				mc.registerField("first", &BaseFirst::first);
+				mc.registerAccessible("first", &BaseFirst::first);
 			}
 		);
 		return &metaClass;

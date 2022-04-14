@@ -21,8 +21,8 @@ namespace metapp {
 
 namespace internal_ {
 
-extern RegisteredField emptyRegisteredField;
-extern RegisteredMethod emptyRegisteredMethod;
+extern RegisteredAccessible emptyRegisteredAccessible;
+extern RegisteredCallable emptyRegisteredCallable;
 extern RegisteredType emptyRegisteredType;
 
 } // namespace internal_
@@ -41,14 +41,14 @@ const RegisteredConstructorList & MetaClass::getConstructorList() const
 	return constructorList;
 }
 
-const RegisteredField & MetaClass::getField(const std::string & name, const Flags flags) const
+const RegisteredAccessible & MetaClass::getAccessible(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredField * result = &internal_::emptyRegisteredField;
+		const RegisteredAccessible * result = &internal_::emptyRegisteredAccessible;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				result = &metaClass->doGetField(name);
+				result = &metaClass->doGetAccessible(name);
 				if(! result->isEmpty()) {
 					return false;
 				}
@@ -58,36 +58,36 @@ const RegisteredField & MetaClass::getField(const std::string & name, const Flag
 		return *result;
 	}
 	else {
-		return doGetField(name);
+		return doGetAccessible(name);
 	}
 }
 
-RegisteredFieldList MetaClass::getFieldList(const Flags flags) const
+RegisteredAccessibleList MetaClass::getAccessibleList(const Flags flags) const
 {
-	RegisteredFieldList result;
+	RegisteredAccessibleList result;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				metaClass->doGetFieldList(&result);
+				metaClass->doGetAccessibleList(&result);
 			}
 			return true;
 			});
 	}
 	else {
-		doGetFieldList(&result);
+		doGetAccessibleList(&result);
 	}
 	return result;
 }
 
-const RegisteredMethod & MetaClass::getMethod(const std::string & name, const Flags flags) const
+const RegisteredCallable & MetaClass::getCallable(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredMethod * result = &internal_::emptyRegisteredMethod;
+		const RegisteredCallable * result = &internal_::emptyRegisteredCallable;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				result = &metaClass->doGetMethod(name);
+				result = &metaClass->doGetCallable(name);
 				if(! result->isEmpty()) {
 					return false;
 				}
@@ -97,42 +97,42 @@ const RegisteredMethod & MetaClass::getMethod(const std::string & name, const Fl
 		return *result;
 	}
 	else {
-		return doGetMethod(name);
+		return doGetCallable(name);
 	}
 }
 
-RegisteredMethodList MetaClass::getMethodList(const std::string & name, const Flags flags) const
+RegisteredCallableList MetaClass::getCallableList(const std::string & name, const Flags flags) const
 {
-	RegisteredMethodList result;
+	RegisteredCallableList result;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				metaClass->doGetMethodList(name, &result);
+				metaClass->doGetCallableList(name, &result);
 			}
 			return true;
 			});
 	}
 	else {
-		doGetMethodList(name, &result);
+		doGetCallableList(name, &result);
 	}
 	return result;
 }
 
-RegisteredMethodList MetaClass::getMethodList(const Flags flags) const
+RegisteredCallableList MetaClass::getCallableList(const Flags flags) const
 {
-	RegisteredMethodList result;
+	RegisteredCallableList result;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				metaClass->doGetMethodList(&result);
+				metaClass->doGetCallableList(&result);
 			}
 			return true;
 			});
 	}
 	else {
-		doGetMethodList(&result);
+		doGetCallableList(&result);
 	}
 	return result;
 }

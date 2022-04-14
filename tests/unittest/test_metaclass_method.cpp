@@ -84,8 +84,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerMethod("methodA", &A::methodA);
-				mc.registerMethod("virtualMethod", &A::virtualMethod);
+				mc.registerCallable("methodA", &A::methodA);
+				mc.registerCallable("virtualMethod", &A::virtualMethod);
 			}
 		);
 		return &metaClass;
@@ -105,7 +105,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				auto & item = mc.registerMethod("methodB", &B::methodB);
+				auto & item = mc.registerCallable("methodB", &B::methodB);
 				item.addAnnotation("hello", 5);
 			}
 		);
@@ -121,7 +121,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerMethod("methodB2", &B2::methodB2);
+				mc.registerCallable("methodB2", &B2::methodB2);
 			}
 		);
 		return &metaClass;
@@ -141,7 +141,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerMethod("methodC", &C::methodC);
+				mc.registerCallable("methodC", &C::methodC);
 			}
 		);
 		return &metaClass;
@@ -157,13 +157,13 @@ TEST_CASE("MetaClass, method, struct B")
 	B b;
 	b.value = 2;
 
-	REQUIRE(metaClassB->getMethod("notExist").isEmpty());
+	REQUIRE(metaClassB->getCallable("notExist").isEmpty());
 	
-	const auto & methodB = metaClassB->getMethod("methodB");
+	const auto & methodB = metaClassB->getCallable("methodB");
 	REQUIRE(metapp::callableInvoke(methodB, &b, "great").get<const std::string &>() == "goodgreat");
 	REQUIRE(methodB.getAnnotation("hello").get<int>() == 5);
 
-	const auto & virtualMethod = metaClassB->getMethod("virtualMethod");
+	const auto & virtualMethod = metaClassB->getCallable("virtualMethod");
 	REQUIRE(metapp::callableInvoke(virtualMethod, &b).get<int>() == 11);
 }
 

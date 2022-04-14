@@ -112,20 +112,20 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 				mc.registerConstructor(metapp::Constructor<MyClass (const int, const std::string &)>());
 
 				// Register field with getter/setter function
-				mc.registerField("value", metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
+				mc.registerAccessible("value", metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
 				// Register member data as field
-				mc.registerField("message", &MyClass::message);
+				mc.registerAccessible("message", &MyClass::message);
 
 				// Register a member function
-				mc.registerMethod("greeting", &MyClass::greeting);
+				mc.registerCallable("greeting", &MyClass::greeting);
 				
 				// Register overloaded member functions
-				mc.registerMethod("makeMessage", metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
-				mc.registerMethod("makeMessage", metapp::selectOverload<std::string (const std::string &, const int) const>(&MyClass::makeMessage));
-				mc.registerMethod("makeMessage", metapp::selectOverload<std::string (const int, const std::string &) const>(&MyClass::makeMessage));
+				mc.registerCallable("makeMessage", metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
+				mc.registerCallable("makeMessage", metapp::selectOverload<std::string (const std::string &, const int) const>(&MyClass::makeMessage));
+				mc.registerCallable("makeMessage", metapp::selectOverload<std::string (const int, const std::string &) const>(&MyClass::makeMessage));
 				
 				// Register static member function
-				mc.registerMethod("obtainValues", &MyClass::obtainValues);
+				mc.registerCallable("obtainValues", &MyClass::obtainValues);
 
 				// Register nested type.
 				// The declaration of meta type for MyClass::MyInner is not required,
@@ -179,12 +179,12 @@ void tutorialMetaClass_field()
 	MyClass obj;
 
 	// Get the meta data of field "value"
-	metapp::RegisteredField fieldValue = metaClass->getField("value");
+	metapp::RegisteredAccessible fieldValue = metaClass->getAccessible("value");
 
 	// Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.
 	// Call getTarget() to get the underlying Variant.
 	ASSERT(metapp::accessibleGet(fieldValue.getTarget(), &obj).get<int>() == 0);
-	// getTarget() can also be omitted, the RegisteredField can convert to Variant automatically
+	// getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 
 	// Now let's set a new value
@@ -193,7 +193,7 @@ void tutorialMetaClass_field()
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 5);
 
 	// Now set 'message' with some new text
-	metapp::RegisteredField fieldMessage = metaClass->getField("message");
+	metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
 	ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "");
 	metapp::accessibleSet(fieldMessage, &obj, "This is a test");
 	ASSERT(obj.message == "This is a test");
@@ -210,7 +210,7 @@ void tutorialMetaClass_method()
 	obj.message = "Hello";
 
 	// Get the meta data of method "greeting".
-	metapp::RegisteredMethod methodGreeting = metaClass->getMethod("greeting");
+	metapp::RegisteredCallable methodGreeting = metaClass->getCallable("greeting");
 	
 	// Call metapp::callableInvoke to invoke the method, and pass the arguments.
 	// The return value is a metapp::Variant.
@@ -230,9 +230,9 @@ void tutorialMetaClass_overloadedMethods()
 	MyClass obj;
 	obj.message = "Hello";
 
-	// Get all the overloaded methods of "makeMessage" by calling metaClass->getMethodList
-	// If we use metaClass->getMethod("makeMessage"), the only first method is returned.
-	metapp::RegisteredMethodList methodList = metaClass->getMethodList("makeMessage");
+	// Get all the overloaded methods of "makeMessage" by calling metaClass->getCallableList
+	// If we use metaClass->getCallable("makeMessage"), the only first method is returned.
+	metapp::RegisteredCallableList callableList = metaClass->getCallableList("makeMessage");
 
 	// There are various ways to call the overload methods
 
@@ -240,9 +240,9 @@ void tutorialMetaClass_overloadedMethods()
 	// Use metapp::findCallable to find the callable method.
 	// The last two arguments are the arguments and argument count, here they are nullptr and 0, indicate no arguments
 	// The return value is an iterator
-	auto itNoArgs = metapp::findCallable(methodList.begin(), methodList.end(), nullptr, 0);
+	auto itNoArgs = metapp::findCallable(callableList.begin(), callableList.end(), nullptr, 0);
 	// Found the method "std::string makeMessage() const"
-	ASSERT(itNoArgs != methodList.end());
+	ASSERT(itNoArgs != callableList.end());
 	// Invoke the found method
 	metapp::Variant result = itNoArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
 		itNoArgs->getTarget(), &obj, nullptr, 0);
@@ -250,17 +250,17 @@ void tutorialMetaClass_overloadedMethods()
 
 	// Find another method, which should be "std::string makeMessage(const int a, const std::string & b) const"
 	metapp::Variant arguments[] = { 38, ", world"};
-	auto itWithArgs = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 2);
-	ASSERT(itWithArgs!= methodList.end());
+	auto itWithArgs = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 2);
+	ASSERT(itWithArgs!= callableList.end());
 	ASSERT(itWithArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
 		itWithArgs->getTarget(), &obj, arguments, 2).get<const std::string &>() == "Hello38, world");
 
 	// Approach 2
 	// We can use metapp::callableInvoke to "invoke" the method list directly.
 	// metapp::callableInvoke will try to find the proper method, then call it.
-	ASSERT(metapp::callableInvoke(methodList, &obj).get<const std::string &>() == "Hello");
-	ASSERT(metapp::callableInvoke(methodList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
-	ASSERT(metapp::callableInvoke(methodList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
+	ASSERT(metapp::callableInvoke(callableList, &obj).get<const std::string &>() == "Hello");
+	ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
+	ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 }
 
 // Now let's see how to use static method
@@ -278,7 +278,7 @@ void tutorialMetaClass_staticMethods()
 	ASSERT(message == "");
 	ASSERT(value == 0);
 
-	metapp::RegisteredMethod methodObjtainValues = metaClass->getMethod("obtainValues");
+	metapp::RegisteredCallable methodObjtainValues = metaClass->getCallable("obtainValues");
 	// There is no much difference between member methods and static methods, the only difference
 	// is that the instance can be nullptr when invoking the method.
 	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);

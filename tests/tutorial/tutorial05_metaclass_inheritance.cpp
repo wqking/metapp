@@ -76,8 +76,8 @@ struct metapp::DeclareMetaType <MyBaseClass> : metapp::DeclareMetaTypeBase <MyBa
 			[](metapp::MetaClass & mc) {
 				mc.registerConstructor(metapp::Constructor<MyBaseClass ()>());
 				mc.registerConstructor(metapp::Constructor<MyBaseClass (const int)>());
-				mc.registerField("value", metapp::Accessor<int>(&MyBaseClass::getValue, &MyBaseClass::setValue));
-				mc.registerMethod("greeting", &MyBaseClass::greeting);
+				mc.registerAccessible("value", metapp::Accessor<int>(&MyBaseClass::getValue, &MyBaseClass::setValue));
+				mc.registerCallable("greeting", &MyBaseClass::greeting);
 			}
 		);
 		return &metaClass;
@@ -92,7 +92,7 @@ struct metapp::DeclareMetaType <MyAnotherBase> : metapp::DeclareMetaTypeBase <My
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyAnotherBase>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerMethod("getText", &MyAnotherBase::getText);
+				mc.registerCallable("getText", &MyAnotherBase::getText);
 			}
 		);
 		return &metaClass;
@@ -125,9 +125,9 @@ void tutorialMetaClass_inheritance()
 	MyDerivedClass obj;
 	MyBaseClass * pBase = &obj;
 	// Call getTarget() to get the underlying Variant
-	ASSERT(metapp::accessibleGet(metaClass->getField("value").getTarget(), &obj).get<int>() == 0);
-	// getTarget() can also be omitted, the RegisteredField can convert to Variant automatically
-	ASSERT(metapp::accessibleGet(metaClass->getField("value"), pBase).get<int>() == 0);
+	ASSERT(metapp::accessibleGet(metaClass->getAccessible("value").getTarget(), &obj).get<int>() == 0);
+	// getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
+	ASSERT(metapp::accessibleGet(metaClass->getAccessible("value"), pBase).get<int>() == 0);
 }
 
 

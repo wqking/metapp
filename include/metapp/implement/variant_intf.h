@@ -31,8 +31,8 @@ class MetaType;
 
 class RegisteredAnnotation;
 class RegisteredConstructor;
-class RegisteredField;
-class RegisteredMethod;
+class RegisteredAccessible;
+class RegisteredCallable;
 class RegisteredRepo;
 class RegisteredType;
 
@@ -67,11 +67,11 @@ public:
 
 	// Disable construct from Registered items to avoid pass the item
 	// to variant where the underlying variant in the item
-	// (such as RegisteredField::getField()) should be used
+	// (such as RegisteredAccessible::getTarget()) should be used
 	Variant(const RegisteredAnnotation &) = delete;
 	Variant(const RegisteredConstructor &) = delete;
-	Variant(const RegisteredField &) = delete;
-	Variant(const RegisteredMethod &) = delete;
+	Variant(const RegisteredAccessible &) = delete;
+	Variant(const RegisteredCallable &) = delete;
 	Variant(const RegisteredRepo &) = delete;
 	Variant(const RegisteredType &) = delete;
 

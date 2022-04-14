@@ -38,6 +38,12 @@ enum class InheritanceRelationship
 
 namespace internal_ {
 
+struct BaseDerived
+{
+	const MetaType * metaType;
+	void * (*cast)(void * pointer);
+};
+
 class InheritanceRepo
 {
 private:

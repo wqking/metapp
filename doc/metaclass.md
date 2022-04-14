@@ -97,26 +97,26 @@ struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 
 ```
 
-#### registerField
+#### registerAccessible
 
 ```c++
-RegisteredField & registerField(const std::string & name, const Variant & field);
+RegisteredAccessible & registerAccessible(const std::string & name, const Variant & field);
 ```
 
 Register a field (member or static member data).
-The parameter `name` is the field name. The field can be got from the MetaClass by the name later. If a field with the same name has already registered, `registerField` doesn't register the new field and returns the previous registered field.  
+The parameter `name` is the field name. The field can be got from the MetaClass by the name later. If a field with the same name has already registered, `registerAccessible` doesn't register the new field and returns the previous registered field.  
 The parameter `field` is a Variant of MetaType that implements meta interface `MetaAccessible`. It can be pointer to member data, accessorpp::Accessor, or pointer to global data to simulate static member.  
-The returned `RegisteredField` can be used to add annotations to the meta data.  
+The returned `RegisteredAccessible` can be used to add annotations to the meta data.  
 
-#### registerMethod
+#### registerCallable
 
 ```c++
-RegisteredMethod & registerMethod(const std::string & name, const Variant & method);
+RegisteredCallable & registerCallable(const std::string & name, const Variant & method);
 ```
 Register a method (member or static member method).  
 The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
 The parameter `method` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to global free method to simulate static member, or even `std::function`.  
-The returned `RegisteredMethod` can be used to add annotations to the meta data.  
+The returned `RegisteredCallable` can be used to add annotations to the meta data.  
 
 #### registerType
 
@@ -149,48 +149,48 @@ using RegisteredConstructorList = std::deque<RegisteredConstructor>;
 
 Get a list of RegisteredConstructor.  
 
-#### getField
+#### getAccessible
 
 ```c++
-const RegisteredField & getField(const std::string & name, const MetaClass::Flags flags = MetaClass::flagIncludeBase) const;
+const RegisteredAccessible & getAccessible(const std::string & name, const MetaClass::Flags flags = MetaClass::flagIncludeBase) const;
 ```
 
-Get a field of `name`. If the field is not registered, an empty RegisteredField is returned (RegisteredField::isEmpty() is true).  
+Get a field of `name`. If the field is not registered, an empty RegisteredAccessible is returned (RegisteredAccessible::isEmpty() is true).  
 
-#### getFieldList
+#### getAccessibleList
 
 ```c++
-RegisteredFieldList getFieldList(const Flags flags = flagIncludeBase) const;
+RegisteredAccessibleList getAccessibleList(const Flags flags = flagIncludeBase) const;
 
-using RegisteredFieldList = std::deque<RegisteredField>;
+using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
 ```
 
 Get a list of all registered field.  
 
-#### getMethod
+#### getCallable
 
 ```c++
-const RegisteredMethod & getMethod(const std::string & name, const Flags flags = flagIncludeBase) const;
+const RegisteredCallable & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
 ```
 
-Get a method of `name`. If the method is not registered, an empty RegisteredMethod is returned (RegisteredMethod::isEmpty() is true).  
+Get a method of `name`. If the method is not registered, an empty RegisteredCallable is returned (RegisteredCallable::isEmpty() is true).  
 
-#### getMethodList by name
+#### getCallableList by name
 
 ```c++
-RegisteredMethodList getMethodList(const std::string & name, const Flags flags = flagIncludeBase) const;
+RegisteredCallableList getCallableList(const std::string & name, const Flags flags = flagIncludeBase) const;
 
-using RegisteredMethodList = std::deque<RegisteredMethod>;
+using RegisteredCallableList = std::deque<RegisteredCallable>;
 ```
 
 Get a list of all registered methods which has `name`. This is useful to get the overload methods.  
 
-#### getMethodList
+#### getCallableList
 
 ```c++
-RegisteredMethodList getMethodList(const Flags flags = flagIncludeBase) const;
+RegisteredCallableList getCallableList(const Flags flags = flagIncludeBase) const;
 
-using RegisteredMethodList = std::deque<RegisteredMethod>;
+using RegisteredCallableList = std::deque<RegisteredCallable>;
 ```
 
 Get a list of all registered methods.  

@@ -32,12 +32,12 @@ public:
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
 
-	const RegisteredField & getField(const std::string & name) const;
-	const RegisteredFieldList & getFieldList() const;
+	const RegisteredAccessible & getAccessible(const std::string & name) const;
+	const RegisteredAccessibleList & getAccessibleList() const;
 
-	const RegisteredMethod & getMethod(const std::string & name) const;
-	RegisteredMethodList getMethodList(const std::string & name) const;
-	const RegisteredMethodList & getMethodList() const;
+	const RegisteredCallable & getCallable(const std::string & name) const;
+	RegisteredCallableList getCallableList(const std::string & name) const;
+	const RegisteredCallableList & getCallableList() const;
 
 	const RegisteredType & getType(const std::string & name) const;
 	const RegisteredType & getType(const TypeKind kind) const;

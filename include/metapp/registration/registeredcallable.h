@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_REGISTEREDMETHOD_H_969872685611
-#define METAPP_REGISTEREDMETHOD_H_969872685611
+#ifndef METAPP_REGISTEREDCALLABLE_H_969872685611
+#define METAPP_REGISTEREDCALLABLE_H_969872685611
 
 #include "metapp/registration/registeredannotation.h"
 #include "metapp/interfaces/metacallable.h"
@@ -25,28 +25,28 @@
 
 namespace metapp {
 
-class RegisteredMethod : public RegisteredAnnotation
+class RegisteredCallable : public RegisteredAnnotation
 {
 private:
 	struct Data
 	{
-		Data(const std::string & name, const Variant & method)
-			: name(name), method(method)
+		Data(const std::string & name, const Variant & callable)
+			: name(name), callable(callable)
 		{
 		}
 
 		std::string name;
-		Variant method;
+		Variant callable;
 	};
 
 public:
-	RegisteredMethod()
+	RegisteredCallable()
 		: data()
 	{
 	}
 
-	RegisteredMethod(const std::string & name, const Variant & method)
-		: data(std::make_shared<Data>(name, method))
+	RegisteredCallable(const std::string & name, const Variant & callable)
+		: data(std::make_shared<Data>(name, callable))
 	{
 	}
 
@@ -55,7 +55,7 @@ public:
 	}
 
 	const Variant & getTarget() const {
-		return data->method;
+		return data->callable;
 	}
 
 	bool isEmpty() const {
@@ -70,7 +70,7 @@ private:
 	std::shared_ptr<Data> data;
 };
 
-using RegisteredMethodList = std::deque<RegisteredMethod>;
+using RegisteredCallableList = std::deque<RegisteredCallable>;
 
 } // namespace metapp
 

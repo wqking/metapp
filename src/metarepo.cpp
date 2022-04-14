@@ -25,14 +25,14 @@ namespace internal_ {
 
 namespace {
 
-RegisteredFieldList dummyRegisteredFieldList;
-RegisteredMethodList dummyRegisteredMethodList;
+RegisteredAccessibleList dummyRegisteredAccessibleList;
+RegisteredCallableList dummyRegisteredCallableList;
 RegisteredTypeList dummyRegisteredTypeList;
 
 } // namespace
 
-RegisteredField emptyRegisteredField;
-RegisteredMethod emptyRegisteredMethod;
+RegisteredAccessible emptyRegisteredAccessible;
+RegisteredCallable emptyRegisteredCallable;
 RegisteredType emptyRegisteredType;
 RegisteredRepo emptyRegisteredRepo;
 
@@ -198,53 +198,53 @@ int InheritanceRepo::doFindDerivedClass(
 MetaRepoBase::MetaRepoBase()
 	:
 		typeData(),
-		methodData(),
-		fieldData()
+		callableData(),
+		accessibleData()
 {
 }
 
-RegisteredField & MetaRepoBase::registerField(const std::string & name, const Variant & field)
+RegisteredAccessible & MetaRepoBase::registerAccessible(const std::string & name, const Variant & accessible)
 {
-	if(field.getMetaType()->getMetaAccessible() == nullptr) {
+	if(accessible.getMetaType()->getMetaAccessible() == nullptr) {
 		errorWrongMetaType();
 	}
 
-	if(! fieldData) {
-		fieldData = std::make_shared<FieldData>();
+	if(! accessibleData) {
+		accessibleData = std::make_shared<AccessibleData>();
 	}
 
-	auto it = fieldData->fieldMap.find(name);
-	if(it != fieldData->fieldMap.end()) {
+	auto it = accessibleData->accessibleMap.find(name);
+	if(it != accessibleData->accessibleMap.end()) {
 		return *it->second;
 	}
-	fieldData->fieldList.emplace_back(name, field);
-	RegisteredField & registeredField = fieldData->fieldList.back();
-	fieldData->fieldMap.insert(typename decltype(fieldData->fieldMap)::value_type(registeredField.getName(), &registeredField));
-	return registeredField;
+	accessibleData->accessibleList.emplace_back(name, accessible);
+	RegisteredAccessible & registeredAccessible = accessibleData->accessibleList.back();
+	accessibleData->accessibleMap.insert(typename decltype(accessibleData->accessibleMap)::value_type(registeredAccessible.getName(), &registeredAccessible));
+	return registeredAccessible;
 }
 
-RegisteredMethod & MetaRepoBase::registerMethod(const std::string & name, const Variant & method)
+RegisteredCallable & MetaRepoBase::registerCallable(const std::string & name, const Variant & callable)
 {
-	if(method.getMetaType()->getMetaCallable() == nullptr) {
+	if(callable.getMetaType()->getMetaCallable() == nullptr) {
 		errorWrongMetaType();
 	}
 
-	if(! methodData) {
-		methodData = std::make_shared<MethodData>();
+	if(! callableData) {
+		callableData = std::make_shared<CallableData>();
 	}
 
-	methodData->methodList.emplace_back(name, method);
-	RegisteredMethod & registeredMethod = methodData->methodList.back();
-	auto it = methodData->methodMap.find(name);
-	if(it == methodData->methodMap.end()) {
-		methodData->methodMap.insert(typename decltype(methodData->methodMap)::value_type(
-			registeredMethod.getName(), MethodData::RegisteredMethodPointerList {&registeredMethod}
+	callableData->callableList.emplace_back(name, callable);
+	RegisteredCallable & registeredCallable = callableData->callableList.back();
+	auto it = callableData->callableMap.find(name);
+	if(it == callableData->callableMap.end()) {
+		callableData->callableMap.insert(typename decltype(callableData->callableMap)::value_type(
+			registeredCallable.getName(), CallableData::RegisteredCallablePointerList {&registeredCallable}
 		));
 	}
 	else {
-		it->second.push_back(&registeredMethod);
+		it->second.push_back(&registeredCallable);
 	}
-	return registeredMethod;
+	return registeredCallable;
 }
 
 RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
@@ -272,50 +272,50 @@ RegisteredType & MetaRepoBase::registerType(std::string name, const MetaType * m
 	return registeredType;
 }
 
-void MetaRepoBase::doGetFieldList(RegisteredFieldList * result) const
+void MetaRepoBase::doGetAccessibleList(RegisteredAccessibleList * result) const
 {
-	if(fieldData) {
-		result->insert(result->end(), fieldData->fieldList.begin(), fieldData->fieldList.end());
+	if(accessibleData) {
+		result->insert(result->end(), accessibleData->accessibleList.begin(), accessibleData->accessibleList.end());
 	}
 }
 
-const RegisteredFieldList & MetaRepoBase::doGetFieldList() const
+const RegisteredAccessibleList & MetaRepoBase::doGetAccessibleList() const
 {
-	if(fieldData) {
-		return fieldData->fieldList;
+	if(accessibleData) {
+		return accessibleData->accessibleList;
 	}
 	else {
-		return dummyRegisteredFieldList;
+		return dummyRegisteredAccessibleList;
 	}
 }
 
-const RegisteredField & MetaRepoBase::doGetField(const std::string & name) const
+const RegisteredAccessible & MetaRepoBase::doGetAccessible(const std::string & name) const
 {
-	if(fieldData) {
-		auto it = fieldData->fieldMap.find(name);
-		if(it != fieldData->fieldMap.end()) {
+	if(accessibleData) {
+		auto it = accessibleData->accessibleMap.find(name);
+		if(it != accessibleData->accessibleMap.end()) {
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredField;
+	return internal_::emptyRegisteredAccessible;
 }
 
-const RegisteredMethod & MetaRepoBase::doGetMethod(const std::string & name) const
+const RegisteredCallable & MetaRepoBase::doGetCallable(const std::string & name) const
 {
-	if(methodData) {
-		auto it = methodData->methodMap.find(name);
-		if(it != methodData->methodMap.end()) {
+	if(callableData) {
+		auto it = callableData->callableMap.find(name);
+		if(it != callableData->callableMap.end()) {
 			return *it->second.at(0);
 		}
 	}
-	return internal_::emptyRegisteredMethod;
+	return internal_::emptyRegisteredCallable;
 }
 
-void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodList * result) const
+void MetaRepoBase::doGetCallableList(const std::string & name, RegisteredCallableList * result) const
 {
-	if(methodData) {
-		auto it = methodData->methodMap.find(name);
-		if(it != methodData->methodMap.end()) {
+	if(callableData) {
+		auto it = callableData->callableMap.find(name);
+		if(it != callableData->callableMap.end()) {
 			for(auto i = it->second.begin(); i != it->second.end(); ++i) {
 				result->push_back(*(*i));
 			}
@@ -323,20 +323,20 @@ void MetaRepoBase::doGetMethodList(const std::string & name, RegisteredMethodLis
 	}
 }
 
-void MetaRepoBase::doGetMethodList(RegisteredMethodList * result) const
+void MetaRepoBase::doGetCallableList(RegisteredCallableList * result) const
 {
-	if(methodData) {
-		result->insert(result->end(), methodData->methodList.begin(), methodData->methodList.end());
+	if(callableData) {
+		result->insert(result->end(), callableData->callableList.begin(), callableData->callableList.end());
 	}
 }
 
-const RegisteredMethodList & MetaRepoBase::doGetMethodList() const
+const RegisteredCallableList & MetaRepoBase::doGetCallableList() const
 {
-	if(methodData) {
-		return methodData->methodList;
+	if(callableData) {
+		return callableData->callableList;
 	}
 	else {
-		return dummyRegisteredMethodList;
+		return dummyRegisteredCallableList;
 	}
 }
 
@@ -409,31 +409,31 @@ MetaRepo::MetaRepo()
 	registerBuiltinTypes();
 }
 
-const RegisteredField & MetaRepo::getField(const std::string & name) const
+const RegisteredAccessible & MetaRepo::getAccessible(const std::string & name) const
 {
-	return doGetField(name);
+	return doGetAccessible(name);
 }
 
-const RegisteredFieldList & MetaRepo::getFieldList() const
+const RegisteredAccessibleList & MetaRepo::getAccessibleList() const
 {
-	return doGetFieldList();
+	return doGetAccessibleList();
 }
 
-const RegisteredMethod & MetaRepo::getMethod(const std::string & name) const
+const RegisteredCallable & MetaRepo::getCallable(const std::string & name) const
 {
-	return doGetMethod(name);
+	return doGetCallable(name);
 }
 
-RegisteredMethodList MetaRepo::getMethodList(const std::string & name) const
+RegisteredCallableList MetaRepo::getCallableList(const std::string & name) const
 {
-	RegisteredMethodList result;
-	doGetMethodList(name, &result);
+	RegisteredCallableList result;
+	doGetCallableList(name, &result);
 	return result;
 }
 
-const RegisteredMethodList & MetaRepo::getMethodList() const
+const RegisteredCallableList & MetaRepo::getCallableList() const
 {
-	return doGetMethodList();
+	return doGetCallableList();
 }
 
 const RegisteredType & MetaRepo::getType(const std::string & name) const

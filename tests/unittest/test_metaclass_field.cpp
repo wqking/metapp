@@ -62,8 +62,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerField("a", &A::a);
-				mc.registerField("value", &A::value);
+				mc.registerAccessible("a", &A::a);
+				mc.registerAccessible("value", &A::value);
 			}
 		);
 		return &metaClass;
@@ -83,8 +83,8 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerField("b", &B::b);
-				mc.registerField("value", &B::value);
+				mc.registerAccessible("b", &B::b);
+				mc.registerAccessible("value", &B::value);
 			}
 		);
 		return &metaClass;
@@ -99,7 +99,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerField("b2", &B2::b2);
+				mc.registerAccessible("b2", &B2::b2);
 			}
 		);
 		return &metaClass;
@@ -119,9 +119,9 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerField("c", &C::c);
-				mc.registerField("value", &C::value);
-				mc.registerField("staticValue", &C::staticValue);
+				mc.registerAccessible("c", &C::c);
+				mc.registerAccessible("value", &C::value);
+				mc.registerAccessible("staticValue", &C::staticValue);
 			}
 		);
 		return &metaClass;
@@ -138,13 +138,13 @@ TEST_CASE("MetaClass, field, struct B")
 	b.a = 3;
 	b.value = "hello";
 	
-	REQUIRE(metaClassB->getField("notExist").isEmpty());
+	REQUIRE(metaClassB->getAccessible("notExist").isEmpty());
 	
-	const auto & field = metaClassB->getField("value");
+	const auto & field = metaClassB->getAccessible("value");
 	REQUIRE(metapp::accessibleGetValueType(field)->getTypeKind() == metapp::tkStdString);
 	REQUIRE(metapp::accessibleGet(field, &b).template get<const std::string &>() == "hello");
 
-	const auto & a = metaClassB->getField("a");
+	const auto & a = metaClassB->getAccessible("a");
 	REQUIRE(metapp::accessibleGetValueType(a)->getTypeKind() == metapp::tkInt);
 	REQUIRE(metapp::accessibleGet(a, &b).template get<int>() == 3);
 }
@@ -158,20 +158,20 @@ TEST_CASE("MetaClass, field, struct C")
 	c.c = 8;
 	c.value = 5;
 
-	REQUIRE(metaClassC->getField("notExist").isEmpty());
+	REQUIRE(metaClassC->getAccessible("notExist").isEmpty());
 
-	const auto & field = metaClassC->getField("value");
+	const auto & field = metaClassC->getAccessible("value");
 	REQUIRE(metapp::accessibleGet(field, &c).template get<int>() == 5);
 
-	const auto & a = metaClassC->getField("a");
+	const auto & a = metaClassC->getAccessible("a");
 	REQUIRE(metapp::accessibleGet(a, &c).template get<int>() == 3);
 
-	const auto & staticValue = metaClassC->getField("staticValue");
+	const auto & staticValue = metaClassC->getAccessible("staticValue");
 	REQUIRE(metapp::accessibleGet(staticValue, nullptr).template get<bool>() == true);
 
 	std::map<std::string, int> fieldNameMap;
-	auto fieldList = metaClassC->getFieldList();
-	for(auto it = fieldList.begin(); it != fieldList.end(); ++it) {
+	auto accessibleList = metaClassC->getAccessibleList();
+	for(auto it = accessibleList.begin(); it != accessibleList.end(); ++it) {
 		++fieldNameMap[it->getName()];
 	}
 	REQUIRE(fieldNameMap["value"] == 3);

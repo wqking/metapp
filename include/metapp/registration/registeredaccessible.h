@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_REGISTEREDFIELD_H_969872685611
-#define METAPP_REGISTEREDFIELD_H_969872685611
+#ifndef METAPP_REGISTEREDACCESSIBLE_H_969872685611
+#define METAPP_REGISTEREDACCESSIBLE_H_969872685611
 
 #include "metapp/registration/registeredannotation.h"
 #include "metapp/interfaces/metaaccessible.h"
@@ -26,28 +26,28 @@
 
 namespace metapp {
 
-class RegisteredField : public RegisteredAnnotation
+class RegisteredAccessible : public RegisteredAnnotation
 {
 private:
 	struct Data
 	{
-		Data(const std::string & name, const Variant & field)
-			: name(name), field(field)
+		Data(const std::string & name, const Variant & accessible)
+			: name(name), accessible(accessible)
 		{
 		}
 
 		std::string name;
-		Variant field;
+		Variant accessible;
 	};
 
 public:
-	RegisteredField()
+	RegisteredAccessible()
 		: data()
 	{
 	}
 
-	RegisteredField(const std::string & name, const Variant & field)
-		: data(std::make_shared<Data>(name, field))
+	RegisteredAccessible(const std::string & name, const Variant & accessible)
+		: data(std::make_shared<Data>(name, accessible))
 	{
 	}
 
@@ -56,7 +56,7 @@ public:
 	}
 
 	const Variant & getTarget() const {
-		return data->field;
+		return data->accessible;
 	}
 
 	bool isEmpty() const {
@@ -71,7 +71,7 @@ private:
 	std::shared_ptr<Data> data;
 };
 
-using RegisteredFieldList = std::deque<RegisteredField>;
+using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
 
 
 } // namespace metapp
