@@ -57,21 +57,6 @@ public:
 	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
 };
 
-inline size_t callableGetParamCount(const Variant & var)
-{
-	return var.getMetaType()->getMetaCallable()->getParamCount(var);
-}
-
-inline const MetaType * calllableGetReturnType(const Variant & var)
-{
-	return var.getMetaType()->getMetaCallable()->getReturnType(var);
-}
-
-inline const MetaType * calllableGetParamType(const Variant & var, const size_t index)
-{
-	return var.getMetaType()->getMetaCallable()->getParamType(var, index);
-}
-
 template <typename Iterator>
 Iterator findCallable(
 	Iterator first,
@@ -180,6 +165,21 @@ struct CallableInvoker <>
 	}
 
 };
+
+inline size_t callableGetParamCount(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getParamCount(var);
+}
+
+inline const MetaType * calllableGetReturnType(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getReturnType(var);
+}
+
+inline const MetaType * calllableGetParamType(const Variant & var, const size_t index)
+{
+	return var.getMetaType()->getMetaCallable()->getParamType(var, index);
+}
 
 template <typename ...Args>
 inline int callableRankInvoke(const Variant & var, Args ...args)

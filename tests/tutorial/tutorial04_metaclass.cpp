@@ -244,14 +244,16 @@ void tutorialMetaClass_overloadedMethods()
 	// Found the method "std::string makeMessage() const"
 	ASSERT(itNoArgs != methodList.end());
 	// Invoke the found method
-	metapp::Variant result = itNoArgs->invoke(&obj, nullptr, 0);
+	metapp::Variant result = itNoArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
+		itNoArgs->getTarget(), &obj, nullptr, 0);
 	ASSERT(result.get<const std::string &>() == "Hello");
 
 	// Find another method, which should be "std::string makeMessage(const int a, const std::string & b) const"
 	metapp::Variant arguments[] = { 38, ", world"};
 	auto itWithArgs = metapp::findCallable(methodList.begin(), methodList.end(), arguments, 2);
 	ASSERT(itWithArgs!= methodList.end());
-	ASSERT(itWithArgs->invoke(&obj, arguments, 2).get<const std::string &>() == "Hello38, world");
+	ASSERT(itWithArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
+		itWithArgs->getTarget(), &obj, arguments, 2).get<const std::string &>() == "Hello38, world");
 
 	// Approach 2
 	// We can use metapp::callableInvoke to "invoke" the method list directly.

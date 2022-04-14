@@ -141,12 +141,12 @@ TEST_CASE("MetaClass, field, struct B")
 	REQUIRE(metaClassB->getField("notExist").isEmpty());
 	
 	const auto & field = metaClassB->getField("value");
-	REQUIRE(field.getValueType()->getTypeKind() == metapp::tkStdString);
-	REQUIRE(field.get(&b).template get<const std::string &>() == "hello");
+	REQUIRE(metapp::accessibleGetValueType(field)->getTypeKind() == metapp::tkStdString);
+	REQUIRE(metapp::accessibleGet(field, &b).template get<const std::string &>() == "hello");
 
 	const auto & a = metaClassB->getField("a");
-	REQUIRE(a.getValueType()->getTypeKind() == metapp::tkInt);
-	REQUIRE(a.get(&b).template get<int>() == 3);
+	REQUIRE(metapp::accessibleGetValueType(a)->getTypeKind() == metapp::tkInt);
+	REQUIRE(metapp::accessibleGet(a, &b).template get<int>() == 3);
 }
 
 TEST_CASE("MetaClass, field, struct C")
@@ -161,13 +161,13 @@ TEST_CASE("MetaClass, field, struct C")
 	REQUIRE(metaClassC->getField("notExist").isEmpty());
 
 	const auto & field = metaClassC->getField("value");
-	REQUIRE(field.get(&c).template get<int>() == 5);
+	REQUIRE(metapp::accessibleGet(field, &c).template get<int>() == 5);
 
 	const auto & a = metaClassC->getField("a");
-	REQUIRE(a.get(&c).template get<int>() == 3);
+	REQUIRE(metapp::accessibleGet(a, &c).template get<int>() == 3);
 
 	const auto & staticValue = metaClassC->getField("staticValue");
-	REQUIRE(staticValue.get(nullptr).template get<bool>() == true);
+	REQUIRE(metapp::accessibleGet(staticValue, nullptr).template get<bool>() == true);
 
 	std::map<std::string, int> fieldNameMap;
 	auto fieldList = metaClassC->getFieldList();

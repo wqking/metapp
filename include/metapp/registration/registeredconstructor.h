@@ -56,30 +56,6 @@ public:
 		return ! data;
 	}
 
-	size_t getParamCount() const {
-		return data->constructor.getMetaType()->getMetaCallable()->getParamCount(data->constructor);
-	}
-
-	const MetaType * getReturnType() const {
-		return data->constructor.getMetaType()->getMetaCallable()->getReturnType(data->constructor);
-	}
-
-	const MetaType * getParamType(const size_t index) const {
-		return data->constructor.getMetaType()->getMetaCallable()->getParamType(data->constructor, index);
-	}
-
-	int rankInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->constructor.getMetaType()->getMetaCallable()->rankInvoke(data->constructor, arguments, argumentCount);
-	}
-
-	bool canInvoke(const Variant * arguments, const size_t argumentCount) const {
-		return data->constructor.getMetaType()->getMetaCallable()->canInvoke(data->constructor, arguments, argumentCount);
-	}
-
-	Variant invoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount) const {
-		return data->constructor.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, argumentCount);
-	}
-
 	operator const Variant & () const {
 		return getTarget();
 	}
