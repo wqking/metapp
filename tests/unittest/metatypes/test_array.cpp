@@ -157,3 +157,36 @@ TEST_CASE("metatypes, tkArray, int[2][3]")
 	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 7);
 	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 8);
 }
+
+TEST_CASE("metatypes, tkArray, empty int[2][3]")
+{
+	metapp::Variant v(metapp::getMetaType<int[2][3]>());
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+	REQUIRE(v.get<int[][3]>()[0][0] == 0);
+	REQUIRE(v.get<int[][3]>()[0][1] == 0);
+	REQUIRE(v.get<int[][3]>()[0][2] == 0);
+	REQUIRE(v.get<int[][3]>()[1][0] == 0);
+	REQUIRE(v.get<int[][3]>()[1][1] == 0);
+	REQUIRE(v.get<int[][3]>()[1][2] == 0);
+
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	auto upMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(upMetaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSize(v) == 2);
+	REQUIRE(upMetaIndexable->getSize(v) == 3);
+	metapp::Variant v1 = metaIndexable->get(v, 1);
+	REQUIRE(metapp::getTypeKind(v1) == metapp::tkReference);
+	auto v1UpMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
+	REQUIRE(v1UpMetaIndexable->get(v1, 0).get<int>() == 0);
+	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 0);
+	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 0);
+
+	REQUIRE_THROWS(v1UpMetaIndexable->set(v, 1, "abc"));
+	v1UpMetaIndexable->set(v1, 0, 6);
+	v1UpMetaIndexable->set(v1, 1, 7);
+	v1UpMetaIndexable->set(v1, 2, 8);
+	REQUIRE(v1UpMetaIndexable->get(v1, 0).get<int>() == 6);
+	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 7);
+	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 8);
+}

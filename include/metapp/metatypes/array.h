@@ -47,7 +47,6 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 	}
 
 private:
-	using Common = CommonDeclareMetaType<T &>;
 	struct ArrayWrapper
 	{
 		T data;
@@ -55,11 +54,21 @@ private:
 
 	template <bool hasLength>
 	static void * doConstructData(MetaTypeData * data, const void * copyFrom, typename std::enable_if<hasLength>::type * = nullptr) {
-		if(data != nullptr && copyFrom != nullptr) {
-			data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+		if(data != nullptr) {
+			if(copyFrom != nullptr) {
+				data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+			}
+			else {
+				data->construct<ArrayWrapper>(nullptr);
+			}
 		}
 		else {
-			return Common::constructData(data, copyFrom);
+			if(copyFrom != nullptr) {
+				return internal_::constructOnHeap<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+			}
+			else {
+				return internal_::constructOnHeap<ArrayWrapper>(nullptr);
+			}
 		}
 		return nullptr;
 	}
