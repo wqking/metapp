@@ -165,7 +165,7 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance)
 
 // It's trivial to implement addReference, but it's not easy to implement addPointer,
 // because the added pointer will instantiate more added pointer and cause
-// endless recursive template instantiation
+// infinite recursive template instantiation
 template <typename T>
 inline const MetaType * CommonDeclareMetaType<T>::addReference()
 {

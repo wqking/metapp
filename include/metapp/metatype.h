@@ -116,17 +116,12 @@ public:
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
 
-	// re-implementable meta methods, begin
-	void * constructData(MetaTypeData * data, const void * copyFrom) const;
-
 	void destroy(void * instance) const;
 
 	const MetaType * addReference() const;
-	
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
-	// re-implementable meta methods, end
 
 private:
 	MetaType(
@@ -136,8 +131,13 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
+	void * constructData(MetaTypeData * data, const void * copyFrom) const;
+
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();
+	
+	// Variant needs to call constructData
+	friend class Variant;
 
 private:
 	const internal_::UnifiedType * (*doGetUnifiedType)();
