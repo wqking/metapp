@@ -41,8 +41,24 @@
 	#endif
 #endif
 
+#if __cplusplus >= 202002L
+	#define METAPP_SUPPORT_STANDARD_20
+#else
+	// Visual Studio 2017 RTW (15.0)
+	#if defined(_MSC_VER) && _MSC_VER >= 1910
+		// the code is inspired by vcruntime.h
+		#if defined(_MSVC_LANG) && (_MSVC_LANG > 201703L)
+			#define METAPP_SUPPORT_STANDARD_20
+		#endif
+	#endif
+#endif
+
 #ifdef METAPP_SUPPORT_STANDARD_17
 #define METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
+#endif
+
+#ifdef METAPP_SUPPORT_STANDARD_20
+#define METAPP_SUPPORT_CHAR8_T
 #endif
 
 #ifndef NDEBUG

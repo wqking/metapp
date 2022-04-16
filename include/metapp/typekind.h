@@ -107,6 +107,10 @@ constexpr TypeFlags tfPointer = 1 << 2;
 constexpr TypeFlags tfReference = 1 << 3;
 constexpr TypeFlags tfClass = 1 << 4;
 constexpr TypeFlags tfArray = 1 << 5;
+constexpr TypeFlags tfEnum = 1 << 6;
+constexpr TypeFlags tfMemberPointer = 1 << 7;
+constexpr TypeFlags tfIntegral = 1 << 8;
+constexpr TypeFlags tfFloat = 1 << 9;
 
 inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
 {

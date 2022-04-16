@@ -117,14 +117,26 @@ constexpr bool isPointer() const noexcept;
 constexpr bool isReference() const noexcept;
 constexpr bool isClass() const noexcept;
 constexpr bool isArray() const noexcept;
+constexpr bool isEnum() const noexcept;
+constexpr bool isMemberPointer() const noexcept;
+constexpr bool isIntegral() const noexcept;
+constexpr bool isFloat() const noexcept;
+constexpr bool isArithmetic() const noexcept;
 ```
 
-`isConst` returns true if the type is const qualified.  
-`isVolatile` returns true if the type is volatile qualified.  
-`isPointer` returns true if the type is a pointer or nullptr.  
-`isReference` returns true if the type is a reference.  
-`isClass` returns true if the type is a C++ class or struct.  
-`isArray` returns true if the type is a raw array (int[3], std::string[2][3], etc).  
+`isConst` returns true if the type is const qualified. It uses `std::is_const` to detect it.  
+`isVolatile` returns true if the type is volatile qualified. It uses `std::is_volatile` to detect it.  
+`isPointer` returns true if the type is a pointer or nullptr. It uses `std::is_pointer` and checking nullptr_t to detect it.  
+`isReference` returns true if the type is a reference. It uses `std::is_reference` to detect it.  
+`isClass` returns true if the type is a C++ class or struct.  It uses `std::is_class` to detect it. 
+`isArray` returns true if the type is a raw array (int[3], std::string[2][3], etc). It uses `std::is_array` to detect it.  
+`isEnum` returns true if the type is a C++ enum. It uses `std::is_enum` to detect it.    
+`isMemberPointer` returns true if the type is a class member data or member function. It uses `std::is_member_pointer` to detect it.    
+`isIntegral` returns true if the type is integral type. It uses `std::is_integral` to detect it.  
+`isFloat` returns true if the type is float point type. It uses `std::is_floating_point` to detect it.    
+`isArithmetic` returns true if the type is arithmetic type. It equals to `isIntegral() || isFloat()`.  
+
+Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType. That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
 
 ### Get meta interfaces
 

@@ -40,8 +40,8 @@ public:
 	DefaultArgsFunction() : func() {
 	}
 
-	DefaultArgsFunction(FT func, const std::initializer_list<Variant> & defaultArgs_)
-		: func(func), defaultArgs(defaultArgs_.begin(), defaultArgs_.end()) {
+	DefaultArgsFunction(FT func, std::vector<Variant> defaultArgs)
+		: func(func), defaultArgs(std::move(defaultArgs)) {
 	}
 
 	const Variant & getFunc() const {
@@ -58,17 +58,14 @@ public:
 
 private:
 	Variant func;
-	// If we use std::array here, initial it from the std::initializer_list
-	// will cause the first Variant wrongly captures the std::initializer_list
-	// as tkObject
 	std::vector<Variant> defaultArgs;
 };
 
 template <typename FT>
-auto createDefaultArgsFunction(FT && func, const std::initializer_list<Variant> & defaultArgs_)
+auto createDefaultArgsFunction(FT && func, std::vector<Variant> defaultArgs)
 	-> DefaultArgsFunction<FT>
 {
-	return DefaultArgsFunction<FT>(std::forward<FT>(func), defaultArgs_);
+	return DefaultArgsFunction<FT>(std::forward<FT>(func), std::move(defaultArgs));
 }
 
 namespace internal_ {

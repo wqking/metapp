@@ -102,6 +102,26 @@ public:
 		return typeFlags & tfArray;
 	}
 
+	constexpr bool isEnum() const noexcept {
+		return typeFlags & tfEnum;
+	}
+
+	constexpr bool isMemberPointer() const noexcept {
+		return typeFlags & tfMemberPointer;
+	}
+
+	constexpr bool isIntegral() const noexcept {
+		return typeFlags & tfIntegral;
+	}
+
+	constexpr bool isFloat() const noexcept {
+		return typeFlags & tfFloat;
+	}
+
+	constexpr bool isArithmetic() const noexcept {
+		return isIntegral() || isFloat();
+	}
+
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
@@ -163,16 +183,16 @@ public:
 
 	static constexpr TypeKind typeKind = tkObject;
 	static constexpr TypeFlags typeFlags = 0
-		| ((
-			(std::is_pointer<T>::value || std::is_same<std::nullptr_t, typename std::remove_cv<T>::type>::value)
-			&& ! std::is_reference<T>::value)
-			? tfPointer : 0
-			)
-		| (std::is_reference<T>::value ? tfReference : 0)
 		| (std::is_const<T>::value ? tfConst : 0)
 		| (std::is_volatile<T>::value ? tfVolatile : 0)
+		| ((std::is_pointer<T>::value || std::is_same<std::nullptr_t, T>::value) ? tfPointer : 0)
+		| (std::is_reference<T>::value ? tfReference : 0)
 		| (std::is_class<T>::value ? tfClass : 0)
 		| (std::is_array<T>::value ? tfArray : 0)
+		| (std::is_enum<T>::value ? tfEnum : 0)
+		| (std::is_member_pointer<T>::value ? tfMemberPointer : 0)
+		| (std::is_integral<T>::value ? tfIntegral : 0)
+		| (std::is_floating_point<T>::value ? tfFloat : 0)
 	;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
