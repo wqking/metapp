@@ -23,7 +23,7 @@ In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 
 
 ## Construct a Variant
 
-### Default constructor
+#### Default constructor
 
 ```c++
 Variant() noexcept;
@@ -31,7 +31,7 @@ Variant() noexcept;
 
 Construct an empty Variant of type `tkVoid`.
 
-### Construct from a value
+#### Construct from a value
 
 ```c++
 template <typename T>
@@ -41,7 +41,7 @@ Variant(T value);
 Construct a Variant of type T and copy value into Variant.  
 Since there is no way to specify the template parameter T explicitly when calling a constructor, we can't construct reference (tkReference) or C array (tkArray) using this constructor, because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
 
-### Construct from a type
+#### Construct from a type
 
 ```c++
 explicit Variant(const MetaType * metaType);
@@ -49,7 +49,7 @@ explicit Variant(const MetaType * metaType);
 
 Construct a Variant of type `metaType`, and initialize the default value using `metaType`.
 
-### Construct from a type and a value
+#### Construct from a type and a value
 
 ```c++
 Variant(const MetaType * metaType, const void * copyFrom);
@@ -57,7 +57,7 @@ Variant(const MetaType * metaType, const void * copyFrom);
 
 Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`. `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
 
-### Copy and move constructors
+#### Copy and move constructors
 
 ```c++
 Variant(const Variant & other) noexcept;
@@ -66,7 +66,7 @@ Variant(Variant && other) noexcept;
 
 Copy and move constructors.
 
-### create
+#### create
 ```c++
 template <typename T>
 static Variant create(T value);
@@ -83,7 +83,24 @@ int n = 5;
 metapp::Variant v = metapp::Variant::create<int &>(n);
 ```
 
-### retype
+#### reference
+```c++
+template <typename T>
+static Variant reference(T && value);
+```
+
+Create a Variant of reference to `value`. `value` can be either lvalue or rvalue reference.  
+This is equivalent to `Variant::create<T &>(value);`, but in `reference` the template argument can be deduced.
+
+**Example**
+
+```c++
+int n = 5;
+// The type held by v is tkReference
+metapp::Variant v = metapp::Variant::reference(n);
+```
+
+#### retype
 ```c++
 static Variant retype(const MetaType * metaType, const Variant & var);
 ```
@@ -91,7 +108,7 @@ static Variant retype(const MetaType * metaType, const Variant & var);
 Return a Variant which data is the data in `var`, type is `metaType`.  
 This is only useful if you are 100% sure the data in `var` can be in type `metaType`, otherwise, you should cast the Variant instead of retyping it.  
 
-### takeFrom
+#### takeFrom
 ```c++
 static Variant takeFrom(const MetaType * metaType, void * instance);
 ```
@@ -107,7 +124,7 @@ metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<MyClass>(), in
 // Now v will free instance when v is destoryed
 ```
 
-### takeFrom another Variant
+#### takeFrom another Variant
 ```c++
 static Variant takeFrom(const Variant & var);
 ```
@@ -132,7 +149,7 @@ metapp::Variant v(metapp::Variant::takeFrom(var));
 
 ## Member functions
 
-### Assign from value
+#### Assign from value
 ```c++
 template <typename T>
 Variant & operator = (T value) noexcept;
@@ -141,7 +158,7 @@ Variant & operator = (T value) noexcept;
 Assign to the Variant with `value`.  
 The previous value held by the variant is destroyed after assigned with the new value.  
 
-### Copy and move assignment
+#### Copy and move assignment
 ```c++
 Variant & operator = (const Variant & other) noexcept;
 Variant & operator = (Variant && other) noexcept;
@@ -149,13 +166,13 @@ Variant & operator = (Variant && other) noexcept;
 Copy and move assignment.  
 The previous value held by the variant is destroyed after assigned with the new variant.  
 
-### getMetaType
+#### getMetaType
 ```c++
 const MetaType * getMetaType() const noexcept;
 ```
 Return the meta type held by the variant. The result is always valid pointer. Any variant, including the default constructed, always contains a meta type.
 
-### canGet
+#### canGet
 ```c++
 template <typename T>
 bool canGet() const; // #1
@@ -200,7 +217,7 @@ assert(v3.canGet<const int *>()); // rule 2
 assert(! v3.canGet<int>()); // rule 2
 ```
 
-### get
+#### get
 ```c++
 template <typename T>
 T get() const;
@@ -212,7 +229,7 @@ If T is function type, the return type is function pointer.
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string, we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference instead of copy the value. That helps to improve the performance.  
 
-### getAddress
+#### getAddress
 ```c++
 void * getAddress() const;
 ```
@@ -246,7 +263,7 @@ assert(m == 10);
 assert(m == 15);
 ```
 
-### toReference
+#### toReference
 ```c++
 Variant toReference() const;
 ```
@@ -294,7 +311,7 @@ assert(v3.get<int &>() == 15);
 assert(r3.get<int &>() == 15);
 ```
 
-### dereference
+#### dereference
 ```c++
 Variant dereference() const;
 ```
@@ -304,7 +321,7 @@ If `this` Variant is a pointer, return the value that `this` points to.
 If `this` Variant is a value, return `*this`.  
 Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant, which may be expensive.  
 
-### canCast
+#### canCast
 ```c++
 bool canCast(const MetaType * toMetaType) const;
 
@@ -314,7 +331,8 @@ template <typename T>
 bool canCast() const;
 ```
 
-Return true if `myVariant.cast(toMetaType)` can be called to cast the underlying value to `toMetaType`.  
+Return true if `myVariant.cast(toMetaType)` can be called to cast the underlying value to `toMetaType`.   
+Note: if both the Variant and `toMetaType` are class pointers or references, the function will use the global MetaRepo returned by `metapp::getMetaRepo()` to cast between base and derived classes.  
 Below table shows the rules to determine `canCast`, assume the underlying value has meta type `from`, and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are value type, they are not reference, not pointer.  
 
 | from | to  | canCast returns                                                                                            |
@@ -327,7 +345,7 @@ Below table shows the rules to determine `canCast`, assume the underlying value 
 | F    | T * | false                                                                                                      |
 | F    | T   | determined by canCast                                                                                      |
 
-### cast
+#### cast
 ```c++
 Variant cast(const MetaType * toMetaType) const;
 
@@ -341,7 +359,7 @@ If `canCast` returns true, `cast` returns the casted variant which type matches 
 If `canCast<T>()` returns false, it throws exception `metapp::BadCastException`.  
 To get the casted value, call `get` on the returned variant. For example, `int castedValue = v.cast<int>().get<int>()`.  
 
-### castSilently
+#### castSilently
 ```c++
 Variant castSilently(const MetaType * toMetaType) const;
 template <typename T>
@@ -355,13 +373,13 @@ If you only want to check if it's cast-able, but don't need to perform the cast,
 If you want a variant must be casted, and throw exception if it can't be casted, use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
 If you want a variant be casted, and allow the cast fail, use `castSilently`, then check if the result is empty.  
 
-### isEmpty
+#### isEmpty
 ```c++
 bool isEmpty() const noexcept;
 ```
 Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`. Such a variant can't be got value, and can't be casted.  
 
-### clone
+#### clone
 ```c++
 Variant clone() const;
 ```
@@ -369,7 +387,7 @@ Variant clone() const;
 Clone the underlying object and return a Variant that holds the cloned object.  
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
-### swap
+#### swap
 ```c++
 void swap(Variant & other) noexcept;
 ```
@@ -378,14 +396,14 @@ Swap with another variant.
 
 ## Free functions
 
-### getTypeKind
+#### getTypeKind
 ```c++
 TypeKind getTypeKind(const Variant & v);
 ```
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-### Streaming operators
+#### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
 std::ostream & operator << (std::ostream & stream, const Variant & v);
@@ -394,7 +412,7 @@ std::ostream & operator << (std::ostream & stream, const Variant & v);
 Variant supports input and output stream if the underlying value supports the stream.  
 If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
-### swap
+#### swap
 ```c++
 void swap(Variant & a, Variant & b) noexcept;
 
@@ -404,14 +422,14 @@ Swap two variants.
 
 ## Memory management in Variant
 
-### The data storage in Variant is similar to native C++
+#### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference, it doesn't store the data pointed by the pointer or reference.  
 If the underlying value is C array, the array is copied to the internal memory.  
 If the underlying value is function, it's decayed to function pointer.  
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory, and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
-### Copying variants is different from native C++
+#### Copying variants is different from native C++
 
 For value which is fundamental types such as int, long, or pointer, or any POD struct which size is smaller enough (the max size is 8 or 16 bytes, depending on the platform and the compiler), the value is stored in Variant directly. That means when the Variant is copied, the value is copied too.  
 For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr` that's managed by Variant. That's to say, when the Variant is copied, the value is not copied. If you want the value be copied, use `Variant::clone`.  

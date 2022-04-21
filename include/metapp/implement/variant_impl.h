@@ -39,6 +39,12 @@ inline Variant Variant::create(T value,
 	return Variant(metapp::getMetaType<T>(), (const void *)&value);
 }
 
+template <typename T>
+inline Variant Variant::reference(T && value)
+{
+	return create<T &>((T &)value);
+}
+
 inline Variant::Variant() noexcept
 	: 
 	metaType(metapp::getMetaType<void>()),

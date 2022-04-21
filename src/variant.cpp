@@ -20,8 +20,6 @@
 
 namespace metapp {
 
-Variant emptyVariant;
-
 Variant Variant::retype(const MetaType * metaType, const Variant & var)
 {
 	Variant result;
