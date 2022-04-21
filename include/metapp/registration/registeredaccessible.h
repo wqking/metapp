@@ -52,11 +52,11 @@ public:
 	}
 
 	const std::string & getName() const {
-		return data->name;
+		return data ? data->name : internal_::emptyString;
 	}
 
 	const Variant & getTarget() const {
-		return data->accessible;
+		return data ? data->accessible : internal_::emptyVariant;
 	}
 
 	bool isEmpty() const {

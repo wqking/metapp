@@ -31,6 +31,8 @@ RegisteredTypeList dummyRegisteredTypeList;
 
 } // namespace
 
+Variant emptyVariant;
+std::string emptyString;
 RegisteredAccessible emptyRegisteredAccessible;
 RegisteredCallable emptyRegisteredCallable;
 RegisteredType emptyRegisteredType;
@@ -390,13 +392,14 @@ const RegisteredTypeList & MetaRepoBase::doGetTypeList() const
 	}
 }
 
+static MetaRepo globalRepo;
+
 } // namespace internal_
 
 
 MetaRepo * getMetaRepo()
 {
-	static MetaRepo repo;
-	return &repo;
+	return &internal_::globalRepo;
 }
 
 MetaRepo::MetaRepo()

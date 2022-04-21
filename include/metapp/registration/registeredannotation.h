@@ -24,7 +24,12 @@
 
 namespace metapp {
 
+namespace internal_ {
+
 extern Variant emptyVariant;
+extern std::string emptyString;
+
+} // namespace internal_
 
 class RegisteredAnnotation
 {
@@ -43,7 +48,7 @@ public:
 		if(it != nameValueMap.end()) {
 			return it->second;
 		}
-		return emptyVariant;
+		return internal_::emptyVariant;
 	}
 
 	const std::map<std::string, Variant> & getAllAnnotations() const {

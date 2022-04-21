@@ -49,7 +49,7 @@ public:
 	}
 
 	const Variant & getTarget() const {
-		return data->constructor;
+		return data ? data->constructor : internal_::emptyVariant;
 	}
 
 	bool isEmpty() const {

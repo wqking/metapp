@@ -53,11 +53,11 @@ public:
 	}
 
 	const std::string & getName() const {
-		return data->name;
+		return data ? data->name : internal_::emptyString;
 	}
 
 	MetaRepo * getTarget() const {
-		return data->repo.get();
+		return data ? data->repo.get() : nullptr;
 	}
 
 	bool isEmpty() const {

@@ -53,11 +53,11 @@ public:
 	}
 
 	const std::string & getName() const {
-		return data->name;
+		return data ? data->name : internal_::emptyString;
 	}
 
 	const MetaType * getTarget() const {
-		return data->metaType;
+		return data ? data->metaType : nullptr;
 	}
 
 	bool isEmpty() const {
