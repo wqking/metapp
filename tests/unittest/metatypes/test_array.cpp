@@ -50,7 +50,7 @@ TEST_CASE("metatypes, tkArray, int[3]")
 TEST_CASE("metatypes, tkArray, int (&)[3]")
 {
 	int array[] = { 3, 8, 9 };
-	metapp::Variant v(metapp::Variant::create<int (&)[3]>(array));
+	metapp::Variant v(metapp::Variant::reference(array));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkArray);
 	REQUIRE(v.canGet<int[]>());

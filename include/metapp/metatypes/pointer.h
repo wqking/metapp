@@ -60,7 +60,7 @@ public:
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
-		return *accessible.get<T *>();
+		return Variant::reference(*accessible.get<T *>());
 	}
 
 	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {

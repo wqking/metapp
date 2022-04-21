@@ -126,6 +126,47 @@ TEST_CASE("Variant, clone, MyClass")
 	REQUIRE(cloned.get<MyClass &>().value == 38);
 }
 
+TEST_CASE("Variant, create")
+{
+}
+
+TEST_CASE("Variant, reference")
+{
+	SECTION("int &") {
+		int n = 5;
+		metapp::Variant v = metapp::Variant::reference(n);
+		REQUIRE(v.getMetaType()->isReference());
+		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(! v.getMetaType()->getUpType()->isConst());
+		REQUIRE(v.get<int>() == 5);
+		n = 38;
+		REQUIRE(v.get<int>() == 38);
+	}
+
+	SECTION("const int &") {
+		const int n = 5;
+		metapp::Variant v = metapp::Variant::reference(n);
+		REQUIRE(v.getMetaType()->isReference());
+		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(v.getMetaType()->getUpType()->isConst());
+		REQUIRE(v.get<int>() == 5);
+	}
+
+	SECTION("int &&") {
+		int n = 5;
+		metapp::Variant v = metapp::Variant::reference(std::move(n));
+		REQUIRE(v.getMetaType()->isReference());
+		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		n = 38;
+		REQUIRE(v.get<int>() == 38);
+	}
+
+}
+
 struct CtorCounter
 {
 	CtorCounter() = default;

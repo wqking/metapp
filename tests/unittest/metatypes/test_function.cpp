@@ -65,7 +65,7 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 		metapp::Variant v(&myFunc);
 		int a = 0;
 		std::string b;
-		metapp::Variant arguments[] = { metapp::Variant::create<int &>(a), metapp::Variant::create<std::string &>(b) };
+		metapp::Variant arguments[] = { metapp::Variant::reference(a), metapp::Variant::reference(b) };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
 		REQUIRE(! v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 1));
 		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2);

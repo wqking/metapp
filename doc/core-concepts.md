@@ -153,3 +153,12 @@ const MetaMap * getMetaMap() const;
 const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```
+
+## Accessible
+
+"Accessible" can be pointer to global variable, member data, the object created by metapp::createAccessor, or anything that implements meta interface `MetaAccessible`. The term "accessible" is used for "field" or "property" in other reflection system.  
+
+## Callable
+
+"Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`. The term "callable" is used for "method" or "function" in other reflection system.
+

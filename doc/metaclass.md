@@ -2,7 +2,7 @@
 
 ## Overview
 
-`MetaClass` is a meta interface to provide information of a class, such as constructors, member functions, member fields, etc.  
+`MetaClass` is a meta interface to provide meta information of a class, such as constructors, member functions, member fields, etc.  
 
 ## Get MetaClass interface
 
@@ -45,7 +45,7 @@ struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 #include "metapp/interfaces/metaclass.h"
 ```
 
-## MetaClass member functions for registration information
+## MetaClass member functions for registration meta data
 
 #### MetaClass constructor
 
@@ -56,6 +56,7 @@ MetaClass(const MetaType * classMetaType, FT callback);
 
 `classMetaType` is the MetaType of the class being registered. It's used when traversing in the inheritance hierarchy.  
 `callback` is a callback function. MetaClass invokes the callback in the constructor. Since the interface is usually implemented as static variable inside static function, the "callback in constructor" mechanism can guarantee thread safety.  
+
 `callback` prototype,  
 ```c++
 void callback(metapp::MetaClass & mc);
@@ -111,11 +112,11 @@ The returned `RegisteredAccessible` can be used to add annotations to the meta d
 #### registerCallable
 
 ```c++
-RegisteredCallable & registerCallable(const std::string & name, const Variant & method);
+RegisteredCallable & registerCallable(const std::string & name, const Variant & callable);
 ```
 Register a method (member or static member method).  
 The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
-The parameter `method` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to global free method to simulate static member, or even `std::function`.  
+The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to global free method to simulate static member, or even `std::function`.  
 The returned `RegisteredCallable` can be used to add annotations to the meta data.  
 
 #### registerType

@@ -114,7 +114,10 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 				// Register field with getter/setter function
 				mc.registerAccessible("value", metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
 				// Register member data as field
-				mc.registerAccessible("message", &MyClass::message);
+				auto & item = mc.registerAccessible("message", &MyClass::message);
+				// Add some annotations to the accessible
+				item.addAnnotation("description", "This is a description");
+				item.addAnnotation("notes", std::vector<std::string> { "first", "second" });
 
 				// Register a member function
 				mc.registerCallable("greeting", &MyClass::greeting);
@@ -162,7 +165,7 @@ struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <
 };
 
 // Now let's see how to use field meta data
-void tutorialMetaClass_field()
+void tutorialMetaClass_accessible()
 {
 	// First let's get the MetaType of MyClass
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -341,9 +344,30 @@ void tutorialMetaClass_type()
 	ASSERT(inner->n == 1999);
 }
 
-RUN_TUTORIAL(tutorialMetaClass_field)
+void tutorialMetaClass_annotation()
+{
+	// First let's get the MetaType of MyClass
+	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+
+	// Get the MetaClass from the MetaType.
+	// If the MetaType doesn't implement MetaClass, the return value is nullptr.
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+
+	metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
+	const metapp::Variant & description = fieldMessage.getAnnotation("description");
+	ASSERT(description.cast<std::string>().get<const std::string &>() == "This is a description");
+	const metapp::Variant & notes = fieldMessage.getAnnotation("notes");
+	ASSERT(notes.get<const std::vector<std::string> &>()[0] == "first");
+	ASSERT(notes.get<const std::vector<std::string> &>()[1] == "second");
+	const metapp::Variant & notExist = fieldMessage.getAnnotation("notExist");
+	ASSERT(notExist.isEmpty());
+}
+
+RUN_TUTORIAL(tutorialMetaClass_accessible)
 RUN_TUTORIAL(tutorialMetaClass_method)
 RUN_TUTORIAL(tutorialMetaClass_overloadedMethods)
 RUN_TUTORIAL(tutorialMetaClass_staticMethods)
 RUN_TUTORIAL(tutorialMetaClass_constructor)
 RUN_TUTORIAL(tutorialMetaClass_type)
+RUN_TUTORIAL(tutorialMetaClass_annotation)
+

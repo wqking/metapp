@@ -19,6 +19,7 @@
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metaclass.h"
+#include "metapp/utilities/utility.h"
 
 #include <string>
 #include <iostream>
@@ -26,6 +27,7 @@
 
 TEST_CASE("play camp")
 {
+	metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
 }
 
 class MyClass

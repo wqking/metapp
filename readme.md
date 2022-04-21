@@ -1,8 +1,12 @@
 # metapp -- C++ library for runtime reflection and meta types
 
 metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
-With metapp we can retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more.  
-With metapp we can perform runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.
+
+## Highlight features
+
+- Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more. Can you understand the type `char *(*(* * [][8])())[]` in 20 seconds? metapp can understand it in no time!   
+- Allow runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.  
+- Meta type information can be obtained either at compile time, or at running time.  
 
 ## Facts and features
 
@@ -21,6 +25,7 @@ With metapp we can perform runtime generic programming. For example, we can acce
     - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead. If you don't use the meta data, no any performance overhead. If you build and use the meta data, you get trivial memory and performance overhead beside very powerful reflection system.
     - Doesn't require C++ RTTI.
     - Written in standard and portable C++, only require C++11, and support later C++ standard.
+    - Cross platforms, cross compilers.
 
 - **Language features that can be reflected**
     - Member and static fields with any data type.
@@ -42,11 +47,16 @@ With metapp we can perform runtime generic programming. For example, we can acce
 
 Apache License, Version 2.0  
 
-## Version 0.1 RC
+## Version 0.1 WIP
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
-This is the first release candidate version.   
-metapp needs more tests.  
+The project is under working in progress.  
+Currently the architecture is almost stable, though minor parts may be refactored.  
+Most code should work correctly.  
+
+To put the library to first release, we need to,   
+1. Add more test.
+2. Complete the documentations.
 
 ## Source code
 
@@ -116,6 +126,33 @@ assert(v.get<int (&)[2][3]>()[1][2] == 6);
 
 ### Invoke function
 
+Let's see how to invoke free function.
+func1 is the function we are going to invoke.
+
+```c++
+ std::string func1(const int n)
+{
+	return std::to_string(n);
+}
+```
+
+Now invoke func1 via Variant
+
+```c++
+// v is pointer to func1
+metapp::Variant v(&func1);
+
+// Prepare the arguments array
+metapp::Variant arguments[] { 5 };
+// Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
+metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
+ASSERT(result.get<std::string>() == "5");
+
+// Or we can use metapp::callableInvoke to pass the arguments directly
+result = metapp::callableInvoke(v, nullptr, 38);
+ASSERT(result.get<std::string>() == "38");
+```
+
 ## Documentations
 
 - Core components, classes, concepts
@@ -123,8 +160,12 @@ assert(v.get<int (&)[2][3]>()[1][2] == 6);
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
     - [List of all built-in meta types](doc/built-in-meta-types.md)
-    - [Reflect meta type at compile time using DeclareMetaType](doc/reflect-metatype-declaremetatype.md)
+
+- Build meta data
+    - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
+    - [Register meta type at running time using MetaRepo](doc/metarepo.md)
 
 - Meta interfaces
     - [Overview](doc/meta-interface-overview.md)
     - [MetaClass](doc/metaclass.md)
+    - [MetaIndexable](doc/metaindexable.md)

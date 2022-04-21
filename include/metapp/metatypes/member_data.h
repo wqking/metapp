@@ -50,7 +50,7 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const void * instance) {
-		return ((const Class *)instance)->*(accessible.get<T Class::*>());
+		return Variant::reference(((const Class *)instance)->*(accessible.get<T Class::*>()));
 	}
 
 	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
