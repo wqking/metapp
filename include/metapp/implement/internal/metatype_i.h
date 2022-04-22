@@ -32,7 +32,7 @@ class MetaEnum;
 class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
-class MetaMap;
+class MetaMappable;
 class MetaMember;
 
 template <typename T, typename Enabled = void>
@@ -332,7 +332,7 @@ private:
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
-	const MetaMap * getMetaMap() const;
+	const MetaMappable * getMetaMap() const;
 	const MetaMember * getMetaMember() const;
 	const void * getMetaUser() const;
 

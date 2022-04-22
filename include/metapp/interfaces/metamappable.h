@@ -14,17 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METAMAP_H_969872685611
-#define METAPP_METAMAP_H_969872685611
+#ifndef METAPP_METAMAPPABLE_H_969872685611
+#define METAPP_METAMAPPABLE_H_969872685611
 
 #include "metapp/variant.h"
 
 namespace metapp {
 
-class MetaMap
+class MetaMappable
 {
 public:
-	MetaMap(
+	MetaMappable(
 		std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & var),
 		Variant (*get)(const Variant & var, const Variant & key),
 		void (*set)(const Variant & var, const Variant & key, const Variant & value)
@@ -41,12 +41,12 @@ public:
 	void (*set)(const Variant & var, const Variant & key, const Variant & value);
 };
 
-inline Variant mapGet(const Variant & var, const Variant & key)
+inline Variant mappableGet(const Variant & var, const Variant & key)
 {
 	return var.getMetaType()->getMetaMap()->get(var, key);
 }
 
-inline void mapSet(const Variant & var, const Variant & key, const Variant & value)
+inline void mappableSet(const Variant & var, const Variant & key, const Variant & value)
 {
 	var.getMetaType()->getMetaMap()->set(var, key, value);
 }

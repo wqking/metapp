@@ -19,7 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/bases/metaiterablebase.h"
-#include "metapp/interfaces/bases/metamapbase.h"
+#include "metapp/interfaces/bases/metamappablebase.h"
 
 #include <unordered_map>
 
@@ -28,7 +28,7 @@ namespace metapp {
 template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
 struct DeclareMetaTypeBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 	: MetaIterableBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >,
-		MetaMapBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
+		MetaMappableBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdUnorderedMap;
@@ -38,7 +38,7 @@ struct DeclareMetaTypeBase <std::unordered_map<Key, T, Hash, KeyEqual, Allocator
 template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
 struct DeclareMetaTypeBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
 	: MetaIterableBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >,
-		MetaMapBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
+		MetaMappableBase <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdUnorderedMultimap;

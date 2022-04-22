@@ -116,12 +116,12 @@ To use the meta types, below header must be included.
 | tkStdStack             |                                |
 | tkStdQueue             |                                |
 | tkStdPriorityQueue     |                                |
-| tkStdMap               | MetaIterable<br/>MetaMap       |
-| tkStdMultimap          | MetaIterable<br/>MetaMap       |
+| tkStdMap               | MetaIterable<br/>MetaMappable       |
+| tkStdMultimap          | MetaIterable<br/>MetaMappable       |
 | tkStdSet               | MetaIterable                   |
 | tkStdMultiset          | MetaIterable                   |
-| tkStdUnorderedMap      | MetaIterable<br/>MetaMap       |
-| tkStdUnorderedMultimap | MetaIterable<br/>MetaMap       |
+| tkStdUnorderedMap      | MetaIterable<br/>MetaMappable       |
+| tkStdUnorderedMultimap | MetaIterable<br/>MetaMappable       |
 | tkStdUnorderedSet      | MetaIterable                   |
 | tkStdUnorderedMultiset | MetaIterable                   |
 | tkStdPair              | MetaIndexable                  |

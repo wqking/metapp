@@ -47,7 +47,7 @@ TEST_CASE("metatypes, std::multimap<int, std::string>")
 	REQUIRE(v.getMetaType()->getUpType(1)->getTypeKind() == metapp::tkStdString);
 }
 
-TEST_CASE("metatypes, std::map<int, std::string>, MetaMap")
+TEST_CASE("metatypes, std::map<int, std::string>, MetaMappable")
 {
 	using Type = std::map<int, std::string>;
 	metapp::Variant v(Type { { 1, "perfect" } });

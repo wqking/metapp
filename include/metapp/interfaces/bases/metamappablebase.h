@@ -14,19 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METAMAPBASE_H_969872685611
-#define METAPP_METAMAPBASE_H_969872685611
+#ifndef METAPP_METAMAPPABLEBASE_H_969872685611
+#define METAPP_METAMAPPABLEBASE_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/interfaces/metamap.h"
+#include "metapp/interfaces/metamappable.h"
 
 namespace metapp {
 
 template <typename ContainerType>
-struct MetaMapBase
+struct MetaMappableBase
 {
-	static const MetaMap * getMetaMap() {
-		static MetaMap metaMap(
+	static const MetaMappable * getMetaMap() {
+		static MetaMappable metaMap(
 			&metaMapGetValueType,
 			&metaMapGet,
 			&metaMapSet

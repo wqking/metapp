@@ -19,7 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/bases/metaiterablebase.h"
-#include "metapp/interfaces/bases/metamapbase.h"
+#include "metapp/interfaces/bases/metamappablebase.h"
 
 #include <map>
 
@@ -28,7 +28,7 @@ namespace metapp {
 template <typename Key, typename T, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 	: MetaIterableBase<std::map<Key, T, Compare, Allocator> >,
-		MetaMapBase<std::map<Key, T, Compare, Allocator> >
+		MetaMappableBase<std::map<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdMap;
@@ -38,7 +38,7 @@ struct DeclareMetaTypeBase <std::map<Key, T, Compare, Allocator> >
 template <typename Key, typename T, typename Compare, typename Allocator>
 struct DeclareMetaTypeBase <std::multimap<Key, T, Compare, Allocator> >
 	: MetaIterableBase<std::multimap<Key, T, Compare, Allocator> >,
-		MetaMapBase<std::multimap<Key, T, Compare, Allocator> >
+		MetaMappableBase<std::multimap<Key, T, Compare, Allocator> >
 {
 	using UpType = TypeList<Key, T>;
 	static constexpr TypeKind typeKind = tkStdMultimap;

@@ -189,9 +189,9 @@ const MetaStreaming * UnifiedType::getMetaStreaming() const
 	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
 }
 
-const MetaMap * UnifiedType::getMetaMap() const
+const MetaMappable * UnifiedType::getMetaMap() const
 {
-	return static_cast<const MetaMap *>(doGetMetaInterface(internal_::mikMetaMap));
+	return static_cast<const MetaMappable *>(doGetMetaInterface(internal_::mikMetaMap));
 }
 
 const MetaMember * UnifiedType::getMetaMember() const
@@ -359,7 +359,7 @@ const MetaStreaming * MetaType::getMetaStreaming() const
 	return doGetUnifiedType()->getMetaStreaming();
 }
 
-const MetaMap * MetaType::getMetaMap() const
+const MetaMappable * MetaType::getMetaMap() const
 {
 	return doGetUnifiedType()->getMetaMap();
 }
