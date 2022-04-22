@@ -103,6 +103,8 @@ MAKE_CONTAINER_DATA_PROVIDER((std::vector<int>), metapp::tkStdVector, metapp::tk
 	({ -5, 0, 123456789, 38, -98765 }))
 MAKE_CONTAINER_DATA_PROVIDER((std::vector<std::string>), metapp::tkStdVector, metapp::tkStdString,
 	({ "hello", "", "world", "This is great!", "Very good" }))
+MAKE_CONTAINER_DATA_PROVIDER((std::vector<int *>), metapp::tkStdVector, metapp::tkPointer,
+	({ (int *)0, (int *)1, (int *)2, (int *)3, (int *)4 }))
 
 MAKE_CONTAINER_DATA_PROVIDER((std::deque<int>), metapp::tkStdDeque, metapp::tkInt,
 	({ -5, 0, 123456789, 38, -98765 }))
@@ -156,6 +158,7 @@ using TestTypes_Indexables = metapp::TypeList<
 	std::array<std::string, 5>,
 	std::vector<int>,
 	std::vector<std::string>,
+	std::vector<int *>,
 	std::deque<int>,
 	std::deque<std::string>
 >;

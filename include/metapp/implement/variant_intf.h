@@ -82,7 +82,7 @@ public:
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 
-	Variant clone() const;
+	const MetaType * getMetaType() const noexcept;
 
 	template <typename T>
 	bool canGet() const;
@@ -100,8 +100,6 @@ public:
 	) const -> typename internal_::VariantReturnType<T>::Type;
 
 	void * getAddress() const;
-	Variant toReference() const;
-	Variant dereference() const;
 
 	bool canCast(const MetaType * toMetaType) const;
 	template <typename T>
@@ -117,7 +115,10 @@ public:
 
 	bool isEmpty() const noexcept;
 
-	const MetaType * getMetaType() const noexcept;
+	Variant clone() const;
+
+	Variant toReference() const;
+	Variant dereference() const;
 
 	void swap(Variant & other) noexcept;
 

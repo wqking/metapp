@@ -32,7 +32,7 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - Global fields (global variable) with any data type.
     - Properties (fields with getter and setter). Can be either member or global.
     - Member and static functions with any parameters and return type.
-    - Global functions (free functions).
+    - Non-member functions (free functions).
     - Overloaded function.
     - Default arguments of functions.
     - Functions with variadic parameters.
@@ -172,3 +172,4 @@ ASSERT(result.get<std::string>() == "38");
     - [Overview and implement meta interface](doc/meta-interface-overview.md)
     - [MetaClass](doc/metaclass.md)
     - [MetaIndexable](doc/metaindexable.md)
+    - [MetaIterable](doc/metaiterable.md)

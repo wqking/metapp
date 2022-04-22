@@ -97,12 +97,9 @@ Variant & Variant::operator = (Variant && other) noexcept
 	return *this;
 }
 
-Variant Variant::clone() const
+const MetaType * Variant::getMetaType() const noexcept
 {
-	Variant result;
-	result.metaType = metaType;
-	result.metaType->constructData(&result.data, getAddress());
-	return result;
+	return metaType;
 }
 
 bool Variant::canGet(const MetaType * toMetaType) const
@@ -125,6 +122,40 @@ bool Variant::canGet(const MetaType * toMetaType) const
 void * Variant::getAddress() const
 {
 	return data.getAddress();
+}
+
+bool Variant::canCast(const MetaType * toMetaType) const
+{
+	return metaType->cast(nullptr, *this, toMetaType);
+}
+
+Variant Variant::cast(const MetaType * toMetaType) const
+{
+	Variant result;
+	if(! metaType->cast(&result, *this, toMetaType)) {
+		errorBadCast();
+	}
+	return result;
+}
+
+Variant Variant::castSilently(const MetaType * toMetaType) const
+{
+	Variant result;
+	metaType->cast(&result, *this, toMetaType);
+	return result;
+}
+
+bool Variant::isEmpty() const noexcept
+{
+	return metaType->getTypeKind() == tkVoid;
+}
+
+Variant Variant::clone() const
+{
+	Variant result;
+	result.metaType = metaType;
+	result.metaType->constructData(&result.data, getAddress());
+	return result;
 }
 
 Variant Variant::toReference() const
@@ -158,37 +189,6 @@ Variant Variant::dereference() const
 		return Variant(mt, address);
 	}
 	return *this;
-}
-
-bool Variant::canCast(const MetaType * toMetaType) const
-{
-	return metaType->cast(nullptr, *this, toMetaType);
-}
-
-Variant Variant::cast(const MetaType * toMetaType) const
-{
-	Variant result;
-	if(! metaType->cast(&result, *this, toMetaType)) {
-		errorBadCast();
-	}
-	return result;
-}
-
-Variant Variant::castSilently(const MetaType * toMetaType) const
-{
-	Variant result;
-	metaType->cast(&result, *this, toMetaType);
-	return result;
-}
-
-bool Variant::isEmpty() const noexcept
-{
-	return metaType->getTypeKind() == tkVoid;
-}
-
-const MetaType * Variant::getMetaType() const noexcept
-{
-	return metaType;
 }
 
 void Variant::swap(Variant & other) noexcept

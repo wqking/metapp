@@ -94,7 +94,7 @@ RegisteredCallable & registerCallable(const std::string & name, const Variant & 
 ```
 Register a method (member or static member method).  
 The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
-The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to global free method to simulate static member, or even `std::function`.  
+The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to non-member free method to simulate static member, or even `std::function`.  
 The returned `RegisteredCallable` can be used to add annotations to the meta data.  
 
 #### registerType
