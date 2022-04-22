@@ -4,6 +4,12 @@
 
 `MetaClass` is a meta interface to provide meta information of a class, such as constructors, member functions, member fields, etc.  
 
+## Header
+
+```c++
+#include "metapp/interfaces/metaclass.h"
+```
+
 ## Get MetaClass interface
 
 We can call `MetaType::getMetaClass()` to get the MetaClass interface. If the type doesn't implement the interface, `nullptr` is returned.
@@ -17,37 +23,7 @@ const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 None
 
-## How to implement MetaClass
-
-Usually MetaClass interface is implemented as static variable of `MetaClass` inside static function `getMetaClass` in template specialization `DeclareMetaType`.  
-
-For example, to implement MetaClass for `MyClass`,   
-```c++
-template <>
-struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
-{
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyClass>(),
-			[](metapp::MetaClass & mc) {
-				// here add information to mc
-			}
-		);
-		return &metaClass;
-	}
-};
-
-```
-
-## Header
-
-```c++
-#include "metapp/interfaces/metaclass.h"
-```
-
-## MetaClass member functions for registration meta data
-
-#### MetaClass constructor
+## MetaClass constructor
 
 ```c++
 template <typename FT>
@@ -61,7 +37,9 @@ MetaClass(const MetaType * classMetaType, FT callback);
 ```c++
 void callback(metapp::MetaClass & mc);
 ```
-The MetaClass instance under constructing is passed as the parameter.
+The MetaClass instance under constructing is passed as the parameter. The callback should register all meta data to `mc`.
+
+## MetaClass member functions for registration meta data
 
 #### registerConstructor
 

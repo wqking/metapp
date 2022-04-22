@@ -25,10 +25,10 @@ class MetaAccessible
 {
 public:
 	MetaAccessible(
-		const MetaType * (*getValueType)(const Variant & accessible),
-		bool (*isReadOnly)(const Variant & accessible),
-		Variant (*get)(const Variant & accessible, const void * instance),
-		void (*set)(const Variant & accessible, void * instance, const Variant & value)
+		const MetaType * (*getValueType)(const Variant & var),
+		bool (*isReadOnly)(const Variant & var),
+		Variant (*get)(const Variant & var, const void * instance),
+		void (*set)(const Variant & var, void * instance, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
@@ -37,10 +37,10 @@ public:
 			set(set)
 	{}
 
-	const MetaType * (*getValueType)(const Variant & accessible);
-	bool (*isReadOnly)(const Variant & accessible);
-	Variant (*get)(const Variant & accessible, const void * instance);
-	void (*set)(const Variant & accessible, void * instance, const Variant & value);
+	const MetaType * (*getValueType)(const Variant & var);
+	bool (*isReadOnly)(const Variant & var);
+	Variant (*get)(const Variant & var, const void * instance);
+	void (*set)(const Variant & var, void * instance, const Variant & value);
 };
 
 inline const MetaType * accessibleGetValueType(const Variant & var)

@@ -34,6 +34,7 @@ const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 We can implement meta interface in the specialization of DeclareMetaType for the type we want to declare.  
 An "implemented" meta interface is just a static function with exactly same prototype as the member functions in MetaType.  
+The static function defines a static instance of the meta interface with proper arguments to the constructor, then returns a pointer to the static instance.  
 A meta type can implement more than one meta interfaces.  
 
 For example, to implement meta interface `MetaClass` for `MyClass`,  

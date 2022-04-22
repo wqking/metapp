@@ -155,6 +155,9 @@ ASSERT(result.get<std::string>() == "38");
 
 ## Documentations
 
+- Tutorials
+    - [MetaClass](doc/tutorial_metaclass.md)
+
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
     - [Class Variant reference](doc/variant.md)
@@ -166,6 +169,6 @@ ASSERT(result.get<std::string>() == "38");
     - [Register meta type at running time using MetaRepo](doc/metarepo.md)
 
 - Meta interfaces
-    - [Overview](doc/meta-interface-overview.md)
+    - [Overview and implement meta interface](doc/meta-interface-overview.md)
     - [MetaClass](doc/metaclass.md)
     - [MetaIndexable](doc/metaindexable.md)

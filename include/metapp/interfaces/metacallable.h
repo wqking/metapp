@@ -27,12 +27,12 @@ class MetaCallable
 {
 public:
 	MetaCallable(
-		size_t (*getParamCount)(const Variant & func),
-		const MetaType * (*getReturnType)(const Variant & func),
-		const MetaType * (*getParamType)(const Variant & func, const size_t index),
-		int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount),
-		bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount),
-		Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+		size_t (*getParamCount)(const Variant & var),
+		const MetaType * (*getReturnType)(const Variant & var),
+		const MetaType * (*getParamType)(const Variant & var, const size_t index),
+		int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
+		bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
+		Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
 			getParamCount(getParamCount),
@@ -44,17 +44,17 @@ public:
 	{
 	}
 
-	// The func parameter is not used in almost all functions except invoke, in C++ meta types.
-	// But it should be useful when func contains dynamic information, such as script method, or std::variant.
-	// Also adding the func parameter makes DefaultArgsFunction interface better
+	// The var parameter is not used in almost all functions except invoke, in C++ meta types.
+	// But it should be useful when var contains dynamic information, such as script method, or std::variant.
+	// Also adding the var parameter makes DefaultArgsFunction interface better
 
-	size_t (*getParamCount)(const Variant & func);
-	const MetaType * (*getReturnType)(const Variant & func);
-	const MetaType * (*getParamType)(const Variant & func, const size_t index);
+	size_t (*getParamCount)(const Variant & var);
+	const MetaType * (*getReturnType)(const Variant & var);
+	const MetaType * (*getParamType)(const Variant & var, const size_t index);
 
-	int (*rankInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
-	bool (*canInvoke)(const Variant & func, const Variant * arguments, const size_t argumentCount);
-	Variant (*invoke)(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount);
+	int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
+	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
+	Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount);
 };
 
 template <typename Iterator>
@@ -85,13 +85,13 @@ struct CallableInvoker;
 template <typename Arg0, typename ...Args>
 struct CallableInvoker <Arg0, Args...>
 {
-	static Variant invoke(const Variant & func, void * instance, Arg0 arg0, Args ...args)
+	static Variant invoke(const Variant & var, void * instance, Arg0 arg0, Args ...args)
 	{
 		Variant arguments[] = {
 			arg0,
 			args...
 		};
-		return func.getMetaType()->getMetaCallable()->invoke(func, instance, arguments, sizeof...(Args) + 1);
+		return var.getMetaType()->getMetaCallable()->invoke(var, instance, arguments, sizeof...(Args) + 1);
 	}
 
 	template <typename Iterator>
@@ -112,22 +112,22 @@ struct CallableInvoker <Arg0, Args...>
 		}
 	}
 
-	static int rankInvoke(const Variant & func, Arg0 arg0, Args ...args)
+	static int rankInvoke(const Variant & var, Arg0 arg0, Args ...args)
 	{
 		Variant arguments[] = {
 			arg0,
 			args...
 		};
-		return func.getMetaType()->getMetaCallable()->rankInvoke(func, arguments, sizeof...(Args) + 1);
+		return var.getMetaType()->getMetaCallable()->rankInvoke(var, arguments, sizeof...(Args) + 1);
 	}
 
-	static bool canInvoke(const Variant & func, Arg0 arg0, Args ...args)
+	static bool canInvoke(const Variant & var, Arg0 arg0, Args ...args)
 	{
 		Variant arguments[] = {
 			arg0,
 			args...
 		};
-		return func.getMetaType()->getMetaCallable()->canInvoke(func, arguments, sizeof...(Args) + 1);
+		return var.getMetaType()->getMetaCallable()->canInvoke(var, arguments, sizeof...(Args) + 1);
 	}
 
 };
@@ -135,9 +135,9 @@ struct CallableInvoker <Arg0, Args...>
 template <>
 struct CallableInvoker <>
 {
-	static Variant invoke(const Variant & func, void * instance)
+	static Variant invoke(const Variant & var, void * instance)
 	{
-		return func.getMetaType()->getMetaCallable()->invoke(func, instance, nullptr, 0);
+		return var.getMetaType()->getMetaCallable()->invoke(var, instance, nullptr, 0);
 	}
 
 	template <typename Iterator>
@@ -154,14 +154,14 @@ struct CallableInvoker <>
 		}
 	}
 
-	static int rankInvoke(const Variant & func)
+	static int rankInvoke(const Variant & var)
 	{
-		return func.getMetaType()->getMetaCallable()->rankInvoke(func, nullptr, 0);
+		return var.getMetaType()->getMetaCallable()->rankInvoke(var, nullptr, 0);
 	}
 
-	static bool canInvoke(const Variant & func)
+	static bool canInvoke(const Variant & var)
 	{
-		return func.getMetaType()->getMetaCallable()->canInvoke(func, nullptr, 0);
+		return var.getMetaType()->getMetaCallable()->canInvoke(var, nullptr, 0);
 	}
 
 };

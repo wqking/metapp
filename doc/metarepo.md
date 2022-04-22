@@ -65,7 +65,7 @@ RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullpt
 ```
 
 Register a sub MetaRepo.  
-If the parameter `repo` is nullptr, `registerRepo` creates a new MetaRepo and register it under the `name`.  
+If the parameter `repo` is nullptr, `registerRepo` creates a new MetaRepo and register it under the `name`. The created `MetaRepo` can be got via `RegisteredRepo::getTarget()` in the returned value.  
 If the parameter `repo` is not nullptr, `registerRepo` takes ownership of the `repo`. That to say, `repo` should not be freed by the program. `MetaRepo` will free it later.  
 The returned `RegisteredRepo` can be used to add annotations to the meta data.  
 Note: registering a MetaRepo can simulate namespace. A MetaRepo can be treated as a namespace.  
