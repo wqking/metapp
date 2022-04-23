@@ -52,7 +52,7 @@ TEST_CASE("metatypes, std::map<int, std::string>, MetaMappable")
 	using Type = std::map<int, std::string>;
 	metapp::Variant v(Type { { 1, "perfect" } });
 	auto metaType = v.getMetaType();
-	auto metaMap = metaType->getMetaMap();
+	auto metaMap = metaType->getMetaMappable();
 	REQUIRE(metaMap != nullptr);
 	REQUIRE(metaMap->get(v, 1).get<std::string &>() == "perfect");
 }

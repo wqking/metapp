@@ -22,7 +22,7 @@
 TEST_CASE("metatypes, Accessor")
 {
 	int n = 5;
-	metapp::Variant v(metapp::createAccessor<int>(&n, &n));
+	metapp::Variant v(metapp::createAccessor(&n, &n));
 	REQUIRE(v.getMetaType()->getMetaAccessible()->get(v, nullptr).get<int>() == 5);
 
 	v.getMetaType()->getMetaAccessible()->set(v, nullptr, 38);

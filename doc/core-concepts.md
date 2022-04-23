@@ -149,7 +149,7 @@ const MetaEnum * getMetaEnum() const;
 const MetaIndexable * getMetaIndexable() const;
 const MetaIterable * getMetaIterable() const;
 const MetaStreaming * getMetaStreaming() const;
-const MetaMappable * getMetaMap() const;
+const MetaMappable * getMetaMappable() const;
 const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```

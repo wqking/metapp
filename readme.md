@@ -171,5 +171,7 @@ ASSERT(result.get<std::string>() == "38");
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta-interface-overview.md)
     - [MetaClass](doc/metaclass.md)
+    - [MetaAccessible](doc/metaaccessible.md)
     - [MetaIndexable](doc/metaindexable.md)
     - [MetaIterable](doc/metaiterable.md)
+    - [MetaMappable](doc/metamappable.md)

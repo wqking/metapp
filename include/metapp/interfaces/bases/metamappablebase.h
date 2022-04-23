@@ -25,7 +25,7 @@ namespace metapp {
 template <typename ContainerType>
 struct MetaMappableBase
 {
-	static const MetaMappable * getMetaMap() {
+	static const MetaMappable * getMetaMappable() {
 		static MetaMappable metaMap(
 			&metaMapGetValueType,
 			&metaMapGet,

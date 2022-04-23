@@ -191,7 +191,7 @@ struct MakeMetaInterfaceItem_MetaMap
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaMap
+			(MetaInterfaceGetter)&M::getMetaMappable
 		};
 	}
 };
@@ -252,7 +252,7 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaIndexable<M>::value,
 		HasMember_getMetaIterable<M>::value,
 		HasMember_getMetaStreaming<M>::value,
-		HasMember_getMetaMap<M>::value,
+		HasMember_getMetaMappable<M>::value,
 		HasMember_getMetaMember<M>::value,
 		HasMember_getMetaUser<M>::value
 		>
@@ -332,7 +332,7 @@ private:
 	const MetaIndexable * getMetaIndexable() const;
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
-	const MetaMappable * getMetaMap() const;
+	const MetaMappable * getMetaMappable() const;
 	const MetaMember * getMetaMember() const;
 	const void * getMetaUser() const;
 

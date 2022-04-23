@@ -56,7 +56,7 @@ private:
 		else if(ref.canCast<std::string>()) {
 			doDumpString(ref.cast<std::string>().get<std::string>());
 		}
-		else if(metaType->getMetaMap() != nullptr) {
+		else if(metaType->getMetaMappable() != nullptr) {
 			doDumpObject(ref, level);
 		}
 		else if(metaType->getMetaIterable() != nullptr) {

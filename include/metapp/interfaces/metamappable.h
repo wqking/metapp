@@ -41,14 +41,19 @@ public:
 	void (*set)(const Variant & var, const Variant & key, const Variant & value);
 };
 
+inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & var)
+{
+	return var.getMetaType()->getMetaMappable()->getValueType(var);
+}
+
 inline Variant mappableGet(const Variant & var, const Variant & key)
 {
-	return var.getMetaType()->getMetaMap()->get(var, key);
+	return var.getMetaType()->getMetaMappable()->get(var, key);
 }
 
 inline void mappableSet(const Variant & var, const Variant & key, const Variant & value)
 {
-	var.getMetaType()->getMetaMap()->set(var, key, value);
+	var.getMetaType()->getMetaMappable()->set(var, key, value);
 }
 
 
