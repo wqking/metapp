@@ -26,6 +26,10 @@
 
 namespace metapp {
 
+static constexpr unsigned int invokeRankMatch = 1000u;
+static constexpr unsigned int invokeRankCast = 1u;
+static constexpr unsigned int invokeRankNone = 0u;
+
 namespace internal_ {
 
 template <typename TL, size_t N, typename Args>
@@ -38,19 +42,19 @@ bool canCastArgument(const Args & arguments, const size_t argumentCount)
 }
 
 template <typename TL, size_t N, typename Args>
-int rankArgumentMatching(const Args & arguments, const size_t argumentCount)
+unsigned int rankArgumentMatching(const Args & arguments, const size_t argumentCount)
 {
 	if(N >= argumentCount) {
-		return 1000;
+		return invokeRankMatch;
 	}
 	using To = typename TypeListGetAt<TL, N>::Type;
 	if(arguments[N].template canGet<To>()) {
-		return 1000;
+		return invokeRankMatch;
 	}
 	if(arguments[N].template canCast<To>()) {
-		return 1;
+		return invokeRankCast;
 	}
-	return 0;
+	return invokeRankNone;
 }
 
 template <typename TL, size_t N, typename Args>
@@ -90,24 +94,31 @@ struct MetaCallableInvokeChecker
 	}
 
 	template <typename Args>
-	static int rankInvoke(const Args & arguments, const size_t argumentCount) {
+	static unsigned int rankInvoke(const Args & arguments, const size_t argumentCount) {
 		using Sequence = typename MakeSizeSequence<argCount>::Type;
 		return doRankInvoke(arguments, argumentCount, Sequence());
 	}
 
 	template <size_t ...Indexes, typename Args>
-	static int doRankInvoke(const Args & arguments, const size_t argumentCount, SizeConstantList<Indexes...>) {
+	static unsigned int doRankInvoke(const Args & arguments, const size_t argumentCount, SizeConstantList<Indexes...>) {
 		if(argCount == argumentCount && argumentCount == 0) {
-			return 1000;
+			return invokeRankMatch;
 		}
-		std::array<int, argCount> rankList {
+		std::array<unsigned int, argCount> rankList {
 			rankArgumentMatching<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
 		// avoid unused warning if there is no arguments
 		(void)arguments;
 		(void)argumentCount;
 		(void)rankList;
-		return std::accumulate(std::begin(rankList), std::end(rankList), 0);
+		unsigned int rank = 0;
+		for(auto it = std::begin(rankList); it != std::end(rankList); ++it) {
+			if(*it == invokeRankNone) {
+				return invokeRankNone;
+			}
+			rank += *it;
+		}
+		return rank;
 	}
 };
 

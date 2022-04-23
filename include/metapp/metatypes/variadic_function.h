@@ -95,9 +95,9 @@ public:
 		return nullptr;
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static unsigned int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
 	{
-		return 1;
+		return invokeRankCast;
 	}
 
 	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)

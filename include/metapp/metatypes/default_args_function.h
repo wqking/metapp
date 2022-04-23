@@ -139,10 +139,10 @@ public:
 		return internal_::getMetaTypeAt(index, ArgumentTypeList());
 	}
 
-	static int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
+	static unsigned int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
 	{
 		if(! isValidArgumentCount(func, argumentCount)) {
-			return 0;
+			return invokeRankNone;
 		}
 
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);

@@ -61,7 +61,7 @@ public:
 		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*var*/, const Variant * arguments, const size_t argumentCount)
+	static unsigned int metaCallableRankInvoke(const Variant & /*var*/, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return 0;

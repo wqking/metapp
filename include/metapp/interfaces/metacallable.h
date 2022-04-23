@@ -30,7 +30,7 @@ public:
 		size_t (*getParameterCount)(const Variant & var),
 		const MetaType * (*getReturnType)(const Variant & var),
 		const MetaType * (*getParameterType)(const Variant & var, const size_t index),
-		int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
+		unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
 		bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
 		Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
@@ -52,7 +52,7 @@ public:
 	const MetaType * (*getReturnType)(const Variant & var);
 	const MetaType * (*getParameterType)(const Variant & var, const size_t index);
 
-	int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
+	unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount);
 };
@@ -67,10 +67,10 @@ Iterator findCallable(
 {
 	Iterator result = last;
 
-	int maxRank = 0;
+	unsigned int maxRank = 0;
 	for(; first != last; ++first) {
 		const Variant & callable = (const Variant &)*first;
-		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, arguments, argumentCount);
+		const unsigned int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, arguments, argumentCount);
 		if(rank > maxRank) {
 			maxRank = rank;
 			result = first;
@@ -112,7 +112,7 @@ struct CallableInvoker <Arg0, Args...>
 		}
 	}
 
-	static int rankInvoke(const Variant & var, Arg0 arg0, Args ...args)
+	static unsigned int rankInvoke(const Variant & var, Arg0 arg0, Args ...args)
 	{
 		Variant arguments[] = {
 			arg0,
@@ -154,7 +154,7 @@ struct CallableInvoker <>
 		}
 	}
 
-	static int rankInvoke(const Variant & var)
+	static unsigned int rankInvoke(const Variant & var)
 	{
 		return var.getMetaType()->getMetaCallable()->rankInvoke(var, nullptr, 0);
 	}
@@ -171,18 +171,18 @@ inline size_t callableGetParameterCount(const Variant & var)
 	return var.getMetaType()->getMetaCallable()->getParameterCount(var);
 }
 
-inline const MetaType * calllableGetReturnType(const Variant & var)
+inline const MetaType * callableGetReturnType(const Variant & var)
 {
 	return var.getMetaType()->getMetaCallable()->getReturnType(var);
 }
 
-inline const MetaType * calllableGetParameterType(const Variant & var, const size_t index)
+inline const MetaType * callableGetParameterType(const Variant & var, const size_t index)
 {
 	return var.getMetaType()->getMetaCallable()->getParameterType(var, index);
 }
 
 template <typename ...Args>
-inline int callableRankInvoke(const Variant & var, Args ...args)
+inline unsigned int callableRankInvoke(const Variant & var, Args ...args)
 {
 	return CallableInvoker<Args...>::rankInvoke(var, args...);
 }
