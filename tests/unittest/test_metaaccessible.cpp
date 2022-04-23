@@ -17,7 +17,7 @@
 #include "test.h"
 
 #include "metapp/variant.h"
-#include "metapp/interfaces/metaclass.h"
+#include "metapp/interfaces/metaaccessible.h"
 #include "metapp/allmetatypes.h"
 
 #include <string>

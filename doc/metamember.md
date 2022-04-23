@@ -21,7 +21,7 @@ const metapp::MetaMember * metaMember = metaType->getMetaMember();
 
 ## Implemented built-in meta types
 
-constructor (tkConstructor)  
+Constructor (tkConstructor)  
 Member data pointer, T C::* (tkMemberPointer)  
 Member function pointer, T (C::*)(arguments...) (tkMemberPointer)  
 

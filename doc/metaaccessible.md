@@ -88,7 +88,7 @@ Set a new value.
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaAccessible`.  
-Usually you should prefer the utility functions to calling `MetaAccessible` member function directly. However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance application, you may store `var.getMetaType()->MetaAccessible()` to a local variable, then use the variable to call the member functions. This is because `MetaAccessible()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaAccessible` member function directly. However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance application, you may store `var.getMetaType()->getMetaAccessible()` to a local variable, then use the variable to call the member functions. This is because `getMetaAccessible()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
 inline const MetaType * accessibleGetValueType(const Variant & var)
