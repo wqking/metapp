@@ -47,10 +47,10 @@ TEST_CASE("metatypes, tkMemberFunction, types")
 	REQUIRE(metaType->isConst());
 	REQUIRE(metaType->getMetaMember() != nullptr);
 	REQUIRE(metaType->getMetaMember()->getClassType(v)->getTypeKind() == 2000);
-	REQUIRE(metaType->getMetaCallable()->getParamCount(v) == 2);
+	REQUIRE(metaType->getMetaCallable()->getParameterCount(v) == 2);
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(v), { tkPointer, tkVoid }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(v, 0), { tkInt }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParamType(v, 1), { tkReference, tkStdVector, tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 0), { tkInt }));
+	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 1), { tkReference, tkStdVector, tkInt }));
 }
 
 struct Base

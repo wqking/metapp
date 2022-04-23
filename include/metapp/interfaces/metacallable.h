@@ -27,17 +27,17 @@ class MetaCallable
 {
 public:
 	MetaCallable(
-		size_t (*getParamCount)(const Variant & var),
+		size_t (*getParameterCount)(const Variant & var),
 		const MetaType * (*getReturnType)(const Variant & var),
-		const MetaType * (*getParamType)(const Variant & var, const size_t index),
+		const MetaType * (*getParameterType)(const Variant & var, const size_t index),
 		int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
 		bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
 		Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
-			getParamCount(getParamCount),
+			getParameterCount(getParameterCount),
 			getReturnType(getReturnType),
-			getParamType(getParamType),
+			getParameterType(getParameterType),
 			rankInvoke(rankInvoke),
 			canInvoke(canInvoke),
 			invoke(invoke)
@@ -48,9 +48,9 @@ public:
 	// But it should be useful when var contains dynamic information, such as script method, or std::variant.
 	// Also adding the var parameter makes DefaultArgsFunction interface better
 
-	size_t (*getParamCount)(const Variant & var);
+	size_t (*getParameterCount)(const Variant & var);
 	const MetaType * (*getReturnType)(const Variant & var);
-	const MetaType * (*getParamType)(const Variant & var, const size_t index);
+	const MetaType * (*getParameterType)(const Variant & var, const size_t index);
 
 	int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
@@ -166,9 +166,9 @@ struct CallableInvoker <>
 
 };
 
-inline size_t callableGetParamCount(const Variant & var)
+inline size_t callableGetParameterCount(const Variant & var)
 {
-	return var.getMetaType()->getMetaCallable()->getParamCount(var);
+	return var.getMetaType()->getMetaCallable()->getParameterCount(var);
 }
 
 inline const MetaType * calllableGetReturnType(const Variant & var)
@@ -176,9 +176,9 @@ inline const MetaType * calllableGetReturnType(const Variant & var)
 	return var.getMetaType()->getMetaCallable()->getReturnType(var);
 }
 
-inline const MetaType * calllableGetParamType(const Variant & var, const size_t index)
+inline const MetaType * calllableGetParameterType(const Variant & var, const size_t index)
 {
-	return var.getMetaType()->getMetaCallable()->getParamType(var, index);
+	return var.getMetaType()->getMetaCallable()->getParameterType(var, index);
 }
 
 template <typename ...Args>

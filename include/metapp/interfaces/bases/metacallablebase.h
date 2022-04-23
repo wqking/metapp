@@ -36,9 +36,9 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			&metaCallableGetParamCount,
+			&metaCallableGetParameterCount,
 			&metaCallableGetReturnType,
-			&metaCallableGetParamType,
+			&metaCallableGetParameterType,
 			&metaCallableRankInvoke,
 			&metaCallableCanInvoke,
 			&metaCallableInvoke
@@ -46,7 +46,7 @@ public:
 		return &metaCallable;
 	}
 
-	static size_t metaCallableGetParamCount(const Variant & /*var*/)
+	static size_t metaCallableGetParameterCount(const Variant & /*var*/)
 	{
 		return argsCount;
 	}
@@ -56,7 +56,7 @@ public:
 		return getMetaType<RT>();
 	}
 
-	static const MetaType * metaCallableGetParamType(const Variant & /*var*/, const size_t index)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*var*/, const size_t index)
 	{
 		return internal_::getMetaTypeAt<Args...>(index);
 	}

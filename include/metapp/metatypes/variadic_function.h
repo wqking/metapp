@@ -70,9 +70,9 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
-			&metaCallableGetParamCount,
+			&metaCallableGetParameterCount,
 			&metaCallableGetReturnType,
-			&metaCallableGetParamType,
+			&metaCallableGetParameterType,
 			&metaCallableRankInvoke,
 			&metaCallableCanInvoke,
 			&metaCallableInvoke
@@ -80,7 +80,7 @@ public:
 		return &metaCallable;
 	}
 
-	static size_t metaCallableGetParamCount(const Variant & /*func*/)
+	static size_t metaCallableGetParameterCount(const Variant & /*func*/)
 	{
 		return 0;
 	}
@@ -90,7 +90,7 @@ public:
 		return getMetaType<ReturnType>();
 	}
 
-	static const MetaType * metaCallableGetParamType(const Variant & /*func*/, const size_t /*index*/)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const size_t /*index*/)
 	{
 		return nullptr;
 	}
