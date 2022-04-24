@@ -162,7 +162,6 @@ ASSERT(result.get<std::string>() == "38");
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
-    - [List of all built-in meta types](doc/built-in-meta-types.md)
 
 - Build meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
@@ -170,13 +169,16 @@ ASSERT(result.get<std::string>() == "38");
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta-interface-overview.md)
-    - [MetaClass](doc/metaclass.md)
-    - [MetaCallable](doc/metacallable.md)
-    - [MetaAccessible](doc/metaaccessible.md)
-    - MetaEnum
-    - [MetaIndexable](doc/metaindexable.md)
-    - [MetaIterable](doc/metaiterable.md)
-    - MetaStreaming
-    - [MetaMappable](doc/metamappable.md)
-    - [MetaMember](doc/metamember.md)
-    - User defined meta interface
+    - [MetaClass](doc/interfaces/metaclass.md)
+    - [MetaCallable](doc/interfaces/metacallable.md)
+    - [MetaAccessible](doc/interfaces/metaaccessible.md)
+    - [MetaEnum](doc/interfaces/metaenum.md)
+    - [MetaIndexable](doc/interfaces/metaindexable.md)
+    - [MetaIterable](doc/interfaces/metaiterable.md)
+    - [MetaStreaming](doc/interfaces/metastreaming.md)
+    - [MetaMappable](doc/interfaces/metamappable.md)
+    - [MetaMember](doc/interfaces/metamember.md)
+    - [User defined meta interface](doc/interfaces/metauser.md)
+
+- Built-in meta types
+    - [List of all built-in meta types](doc/built-in-meta-types.md)

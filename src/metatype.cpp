@@ -55,7 +55,7 @@ TristateBool doCastObject(
 	if(fromUpType->isClass() && toUpType->isClass()) {
 		const MetaRepo * metaRepo = getMetaRepo();
 		if(metaRepo->isClassInHierarchy(fromUpType) && metaRepo->isClassInHierarchy(toUpType)) {
-			if(metaRepo->getRelationship(fromUpType, toUpType) != InheritanceRelationship::none) {
+			if(metaRepo->getRelationship(fromUpType, toUpType) != MetaRepo::Relationship::none) {
 				if(result != nullptr) {
 					void * instance = nullptr;
 					if(fromMetaType->isPointer()) {

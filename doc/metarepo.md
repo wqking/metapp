@@ -170,3 +170,150 @@ const RegisteredRepoList & getRepoList() const;
 
 Get a list of all registered sub repos.  
 
+
+## MetaRepo member functions for class hierarchy
+
+Unlike some other reflection libraries that class hierarchy information is bound to the class type, metapp separates class hierarchy from MetaClass. The benefit is that class hierarchy information can be used without declaring MetaClass.  
+We can register and get class hierarchy information in `MetaRepo`.  
+
+#### enum MetaRepo::Relationship
+
+```c++
+enum class Relationship
+{
+	none,
+	base,
+	derived
+};
+```
+
+Enum for relationship between two classes. The relationship can be got via member function `getRelationship()`.    
+Given class A and B, `Relationship::none` means A and B are not derived from each other. `Relationship::base` means B is the base class of A, or to say, A derives from B. `Relationship::derived` means B derives from A, or to say, A is the base class of B.  
+
+#### class MetaRepo::TypesView
+
+```c++
+class TypesView
+{
+public:
+	size_t getCount() const;
+	const MetaType * get(const size_t index) const;
+};
+```
+
+A class to wrap the MetaType list for base classes or derived classes.  
+Function `getCount` returns the number of meta types.  
+Function `get` returns the meta type at `index`.  
+
+#### registerBase
+
+```c++
+template <typename Class, typename ...Bases>
+void registerBase();
+```
+
+Register base classes of a class.  
+Template parameter `Class` is the derived class, `Bases` are the base classes.  
+
+#### getBases
+
+```c++
+template <typename Class>
+TypesView getBases() const;
+
+TypesView getBases(const MetaType * classMetaType) const;
+```
+
+Returns meta types of all base class for `Class`, or for `classMetaType`.  
+The first templated form is similar to `getBases(metapp::getMetaType<remove all cv and reference of Class>())`.
+
+#### getDerives
+
+```c++
+template <typename Class>
+TypesView getDerives() const;
+
+TypesView getDerives(const MetaType * classMetaType) const;
+```
+
+Returns meta types of all derived class for `Class`, or for `classMetaType`.  
+The first templated form is similar to `getDerives(metapp::getMetaType<remove all cv and reference of Class>())`.
+
+#### castToBase
+
+```c++
+template <typename Class>
+void * castToBase(void * instance, const size_t baseIndex) const;
+
+void * castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const;
+```
+
+Casts `instance` of `Class`, or of `classMetaType`, to its base class at `baseIndex` in the base list returned by `getBases`, then returns the casted pointer.  
+The first templated form is similar to `castToBase(instance, metapp::getMetaType<remove all cv and reference of Class>(), baseIndex)`.
+
+#### castToBase
+
+```c++
+template <typename Class>
+void * castToDerived(void * instance, const size_t derivedIndex) const;
+
+void * castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const;
+```
+
+Casts `instance` of `Class`, or of `classMetaType`, to its derived class at `derivedIndex` in the derived list returned by `getDerives`, then returns the casted pointer.  
+The first templated form is similar to `castToDerived(instance, metapp::getMetaType<remove all cv and reference of Class>(), derivedIndex)`.
+
+#### cast
+
+```c++
+template <typename Class, typename ToClass>
+void * cast(void * instance) const;
+
+void * cast(void * instance, const MetaType * classMetaType, const MetaType * toMetaType) const;
+```
+
+Casts `instance` of `Class`, or of `classMetaType`, to `ToClass`, or `toMetaType`, then returns the casted pointer.  
+The first templated form is similar to `cast(instance, metapp::getMetaType<remove all cv and reference of Class>(), metapp::getMetaType<remove all cv and reference of ToClass>())`.  
+
+`Class` can be parent or ancient class of `ToClass`, or child or any depth grandson class of `ToClass`.  
+If `Class` and `ToClass` doesn't have deriving relationship, `nullptr` is returned.  
+
+#### getRelationship
+
+```c++
+template <typename Class, typename ToClass>
+MetaRepo::Relationship getRelationship() const;
+
+MetaRepo::Relationship getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const;
+```
+
+Get relationship between `Class`, or `classMetaType`, and `ToClass`, or `toMetaType`.  
+The first templated form is similar to `getRelationship(metapp::getMetaType<remove all cv and reference of Class>(), metapp::getMetaType<remove all cv and reference of ToClass>())`.  
+
+Enum `MetaRepo::Relationship` has 3 values,  
+`MetaRepo::Relationship::none`: `Class` and `ToClass` doesn't derive from each other, they don't have relationship.  
+`MetaRepo::Relationship::base`: `ToClass` is base class of `Class`, or to say, `Class` derives from `ToClass`.  
+`MetaRepo::Relationship::derived`: `ToClass` derives from `Class`, or to say, `Class` is base class of `ToClass`.
+
+#### isClassInHierarchy
+
+```c++
+template <typename Class>
+bool isClassInHierarchy() const;
+
+bool isClassInHierarchy(const MetaType * classMetaType) const;
+```
+
+Returns true if `Class`, or `classMetaType`, is registered as base or derived class.  
+The first templated form is similar to `isClassInHierarchy(metapp::getMetaType<remove all cv and reference of Class>())`.  
+
+#### traverseBases
+
+```c++
+template <typename FT>
+bool traverseBases(const MetaType * metaType, FT && callback) const;
+```
+
+Traverses all base classes of `metaType`, and call `callback` on each meta type. The first meta type is always `metaType`.  
+It's guaranteed duplicated meta types are only passed to `callback` once.  
+`callback` prototype is `bool callback(const MetaType * metaType)`. If `callback` returns false, the traversing stops.

@@ -29,13 +29,6 @@
 
 namespace metapp {
 
-enum class InheritanceRelationship
-{
-	none,
-	base,
-	derived
-};
-
 namespace internal_ {
 
 struct BaseDerived
@@ -62,6 +55,13 @@ private:
 	static constexpr int maxInheritanceLevels = 256;
 
 public:
+	enum class Relationship
+	{
+		none,
+		base,
+		derived
+	};
+
 	class TypesView
 	{
 	public:
@@ -136,12 +136,12 @@ public:
 	void * cast(void * instance, const MetaType * classMetaType, const MetaType * toMetaType) const;
 
 	template <typename Class, typename ToClass>
-	InheritanceRelationship getRelationship() const
+	Relationship getRelationship() const
 	{
 		return getRelationship(doGetNormalizedMetaType<Class>(), doGetNormalizedMetaType<ToClass>());
 	}
 
-	InheritanceRelationship getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const;
+	Relationship getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const;
 
 	template <typename Class>
 	bool isClassInHierarchy() const

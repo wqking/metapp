@@ -233,10 +233,10 @@ TEST_CASE("MetaRepo, hierarchy, relationship")
 	repo->registerBase<C1, B1>();
 	repo->registerBase<C2, B1, B2>();
 
-	REQUIRE(repo->getRelationship(metapp::getMetaType<A2>(), metapp::getMetaType<B1>()) == metapp::InheritanceRelationship::none);
-	REQUIRE(repo->getRelationship(metapp::getMetaType<A1>(), metapp::getMetaType<B1>()) == metapp::InheritanceRelationship::derived);
-	REQUIRE(repo->getRelationship<A1, C1>() == metapp::InheritanceRelationship::derived);
-	REQUIRE(repo->getRelationship<A1, C2>() == metapp::InheritanceRelationship::derived);
+	REQUIRE(repo->getRelationship(metapp::getMetaType<A2>(), metapp::getMetaType<B1>()) == metapp::MetaRepo::Relationship::none);
+	REQUIRE(repo->getRelationship(metapp::getMetaType<A1>(), metapp::getMetaType<B1>()) == metapp::MetaRepo::Relationship::derived);
+	REQUIRE(repo->getRelationship<A1, C1>() == metapp::MetaRepo::Relationship::derived);
+	REQUIRE(repo->getRelationship<A1, C2>() == metapp::MetaRepo::Relationship::derived);
 }
 
 
