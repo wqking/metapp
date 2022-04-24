@@ -18,6 +18,7 @@
 #include "metapp/metarepo.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
+#include "metapp/registration/registeredenumvalue.h"
 
 namespace metapp {
 
@@ -37,6 +38,7 @@ RegisteredAccessible emptyRegisteredAccessible;
 RegisteredCallable emptyRegisteredCallable;
 RegisteredType emptyRegisteredType;
 RegisteredRepo emptyRegisteredRepo;
+RegisteredEnumValue emptyRegisteredEnumValue;
 
 InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
@@ -80,17 +82,17 @@ void * InheritanceRepo::cast(void * instance, const MetaType * classMetaType, co
 	return nullptr;
 }
 
-InheritanceRelationship InheritanceRepo::getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const
+InheritanceRepo::Relationship InheritanceRepo::getRelationship(const MetaType * classMetaType, const MetaType * toMetaType) const
 {
 	std::array<BaseDerived, maxInheritanceLevels> entryList;
 	const int levels = doFindRelationship(entryList.data(), classMetaType, toMetaType);
 	if(levels > 0) {
-		return InheritanceRelationship::base;
+		return Relationship::base;
 	}
 	if(levels < 0) {
-		return InheritanceRelationship::derived;
+		return Relationship::derived;
 	}
-	return InheritanceRelationship::none;
+	return Relationship::none;
 }
 
 bool InheritanceRepo::isClassInHierarchy(const MetaType * classMetaType) const

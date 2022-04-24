@@ -17,41 +17,80 @@
 #ifndef METAPP_METAENUM_H_969872685611
 #define METAPP_METAENUM_H_969872685611
 
+#include "metapp/variant.h"
+#include "metapp/registration/registeredenumvalue.h"
 #include "metapp/implement/internal/util_i.h"
 
 #include <vector>
 #include <map>
+#include <algorithm>
 
 namespace metapp {
+
+namespace internal_ {
+extern RegisteredEnumValue emptyRegisteredEnumValue;
+} // namespace internal_
 
 class MetaEnum
 {
 public:
-	using ValueType = long long;
+	using ValueType = RegisteredEnumValue::ValueType;
 
 public:
 	template <typename FT>
-	MetaEnum(FT callback)
+	explicit MetaEnum(FT callback)
 	{
 		callback(*this);
 	}
 
 	template <typename T>
-	void registerValue(const std::string & name, const T value) {
-		nameValueMap[name] = static_cast<ValueType>(value);
+	RegisteredEnumValue & registerValue(const std::string & name, const T value) {
+		auto it = nameValueMap.find(name);
+		if(it != nameValueMap.end()) {
+			return *it->second;
+		}
+		valueList.emplace_back(name, static_cast<ValueType>(value));
+		RegisteredEnumValue & registeredEnumValue = valueList.back();
+		nameValueMap.insert(typename decltype(nameValueMap)::value_type(registeredEnumValue.getName(), &registeredEnumValue));
+		return registeredEnumValue;
+	}
+
+	const RegisteredEnumValue & getValue(const std::string & name) const {
+		auto it = nameValueMap.find(name);
+		if(it != nameValueMap.end()) {
+			return *it->second;
+		}
+		return internal_::emptyRegisteredEnumValue;
 	}
 
 	std::vector<std::string> getNameList() const {
-		return internal_::getMapKeys(nameValueMap);
-	}
-
-	ValueType getValue(const std::string & name) const {
-		return internal_::getValueFromMap(nameValueMap, name);
+		std::vector<std::string> nameList;
+		std::transform(valueList.begin(), valueList.end(), std::back_inserter(nameList),
+			[](const RegisteredEnumValue & item) {
+				return item.getName();
+			}
+		);
+		return nameList;
 	}
 
 private:
-	std::map<std::string, ValueType> nameValueMap;
+	RegisteredEnumValueList valueList;
+	std::map<
+		std::reference_wrapper<const std::string>,
+		RegisteredEnumValue *,
+		std::less<const std::string>
+	> nameValueMap;
 };
+
+inline const RegisteredEnumValue & enumGetValue(const Variant & var, const std::string & name)
+{
+	return var.getMetaType()->getMetaEnum()->getValue(name);
+}
+
+inline std::vector<std::string> enumGetNameList(const Variant & var)
+{
+	return var.getMetaType()->getMetaEnum()->getNameList();
+}
 
 
 } // namespace metapp
