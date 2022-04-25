@@ -47,7 +47,7 @@ using ValueType = long long;
 
 Represents the `enum` value type.
 
-## MetaEnum member functions for registration meta data
+## MetaEnum member functions for registering meta data
 
 #### registerValue
 

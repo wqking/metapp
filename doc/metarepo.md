@@ -20,7 +20,7 @@ MetaRepo * getMetaRepo();
 
 Note: it's possible to use MetaRepo as local variable, instead of the global instance. There is no much difference. The only difference is, the function `Variant::cast` uses the global MetaRepo to cast between base and derived classes.  
 
-## MetaRepo member functions for registration meta data
+## MetaRepo member functions for registering meta data
 
 #### registerAccessible
 

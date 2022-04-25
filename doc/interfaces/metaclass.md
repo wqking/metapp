@@ -39,7 +39,7 @@ void callback(metapp::MetaClass & mc);
 ```
 The MetaClass instance under constructing is passed as the parameter. The callback should register all meta data to `mc`.
 
-## MetaClass member functions for registration meta data
+## MetaClass member functions for registering meta data
 
 #### registerConstructor
 

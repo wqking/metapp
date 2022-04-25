@@ -6,7 +6,6 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 
 - Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more. Can you understand the type `char *(*(* * [][8])())[]` in 20 seconds? metapp can understand it in no time!   
 - Allow runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.  
-- Meta type information can be obtained either at compile time, or at running time.  
 
 ## Facts and features
 
@@ -165,7 +164,7 @@ ASSERT(result.get<std::string>() == "38");
 
 - Build meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
-    - [Register meta type at running time using MetaRepo](doc/metarepo.md)
+    - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta-interface-overview.md)
