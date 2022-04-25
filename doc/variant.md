@@ -121,7 +121,7 @@ Return a Variant which data is the object pointed by `instance`, type is `metaTy
 ```c++
 MyClass * instance = new MyClass();
 metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<MyClass>(), instance);
-// Now v will free instance when v is destoryed
+// Now v will free instance when v is destroyed
 ```
 
 #### takeFrom another Variant
@@ -228,6 +228,7 @@ If T is array such as int[3], the return type is the reference to the array, e.g
 If T is function type, the return type is function pointer.  
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string, we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference instead of copy the value. That helps to improve the performance.  
+We should always getting as reference to avoid copying, unless you do want to copy the value.  
 
 #### getAddress
 ```c++

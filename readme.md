@@ -155,7 +155,8 @@ ASSERT(result.get<std::string>() == "38");
 ## Documentations
 
 - Tutorials
-    - [MetaClass](doc/tutorial_metaclass.md)
+    - [MetaClass](doc/tutorials/tutorial_metaclass.md)
+    - [Callable, function, member function, etc](doc/tutorials/tutorial_callable.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
@@ -165,6 +166,7 @@ ASSERT(result.get<std::string>() == "38");
 - Build meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
     - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
+    - [Registered items (RegisteredCallable, etc)](doc/registered-items.md)
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta-interface-overview.md)
@@ -180,4 +182,6 @@ ASSERT(result.get<std::string>() == "38");
     - [User defined meta interface](doc/interfaces/metauser.md)
 
 - Built-in meta types
-    - [List of all built-in meta types](doc/built-in-meta-types.md)
+    - [Overview](doc/metatypes/overview.md)
+    - [List of all built-in meta types](doc/metatypes/list-all.md)
+    - [Constructor](doc/metatypes/constructor.md)

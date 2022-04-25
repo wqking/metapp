@@ -1,13 +1,5 @@
 # List of all built-in meta types
 
-## How to use the build-in meta types
-
-To use the meta types, below header must be included.  
-
-```c++
-#include "metapp/allmetatypes.h"
-```
-
 ## List of type kinds and equivalent C++ types
 
 | TypeKind               | Value | C++ type                                                                                                 |

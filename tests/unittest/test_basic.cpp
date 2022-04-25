@@ -25,16 +25,11 @@
 #include <iostream>
 #include <climits>
 
-TEST_CASE("play camp")
-{
-	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
-}
-
 class MyClass
 {
 public:
-	MyClass();
-	MyClass(const std::string & a, const int b);
+	MyClass() {}
+	MyClass(const std::string & a, const int b) {}
 };
 
 template <>
@@ -52,8 +47,12 @@ struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 	}
 };
 
-// This test case is used for writting the sample code in the documentation
-TEST_CASE("For writting document")
+TEST_CASE("play camp")
 {
+	metapp::Variant ctor = metapp::Constructor<MyClass (const std::string &, const int)>();
+	metapp::Variant instance(metapp::callableInvoke(ctor, nullptr, "hello", 5));
+	delete instance.get<MyClass *>();
+
+	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
 }
 
