@@ -22,112 +22,66 @@
 
 #include <iostream>
 
-class MyBaseClass
+struct Parent1
 {
-public:
-	MyBaseClass() : value(0) {
-	}
-
-	explicit MyBaseClass(const int n) : value(n) {
-	}
-
-	int getValue() const {
-		return value;
-	}
-	
-	void setValue(const int n) {
-		value = n;
-	}
-
-	virtual std::string greeting() const {
-		return "Hello, base";
-	}
-
-private:
-	int value;
+	// make some data to make derived class has `this` pointer at different address
+	char p1[4];
 };
 
-class MyAnotherBase
+struct Parent2
 {
-public:
-	std::string getText() const {
-		return "another";
-	}
-
-private:
-	int anotherValue;
+	char p2[16];
 };
 
-class MyDerivedClass : public MyBaseClass, public MyAnotherBase
+struct Son1 : Parent1
 {
-public:
-	std::string greeting() const override {
-		return "Hi, derived";
-	}
+	char s1[5];
+};
 
+struct Son2 : Parent1, Parent2
+{
+	char s2[2];
+};
+
+struct Grandson1 : Son1
+{
+	char g1[35];
+};
+
+struct Grandson2 : Son1, Parent2
+{
+	char g2[50];
 };
 
 template <>
-struct metapp::DeclareMetaType <MyBaseClass> : metapp::DeclareMetaTypeBase <MyBaseClass>
-{
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyBaseClass>(),
-			[](metapp::MetaClass & mc) {
-				mc.registerConstructor(metapp::Constructor<MyBaseClass ()>());
-				mc.registerConstructor(metapp::Constructor<MyBaseClass (const int)>());
-				mc.registerAccessible("value", metapp::Accessor<int>(&MyBaseClass::getValue, &MyBaseClass::setValue));
-				mc.registerCallable("greeting", &MyBaseClass::greeting);
-			}
-		);
-		return &metaClass;
-	}
-
-};
-
-template <>
-struct metapp::DeclareMetaType <MyAnotherBase> : metapp::DeclareMetaTypeBase <MyAnotherBase>
-{
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyAnotherBase>(),
-			[](metapp::MetaClass & mc) {
-				mc.registerCallable("getText", &MyAnotherBase::getText);
-			}
-		);
-		return &metaClass;
-	}
-
-};
-
-template <>
-struct metapp::DeclareMetaType <MyDerivedClass> : metapp::DeclareMetaTypeBase <MyDerivedClass>
+struct metapp::DeclareMetaType <Son1> : metapp::DeclareMetaTypeBase <Son1>
 {
 	static void setup() {
-		metapp::getMetaRepo()->registerBase<MyDerivedClass, MyBaseClass, MyAnotherBase>();
+		metapp::getMetaRepo()->registerBase<Son1, Parent1>();
 	}
-
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyDerivedClass>(),
-			[](metapp::MetaClass & /*mc*/) {
-			}
-		);
-		return &metaClass;
-	}
-
 };
 
 void tutorialMetaClass_inheritance()
 {
-	const metapp::MetaType * metaType = metapp::getMetaType<MyDerivedClass>();
-	const metapp::MetaClass * metaClass = metaType->getMetaClass();
-	MyDerivedClass obj;
-	MyBaseClass * pBase = &obj;
-	// Call getTarget() to get the underlying Variant
-	ASSERT(metapp::accessibleGet(metaClass->getAccessible("value").getTarget(), &obj).get<int>() == 0);
-	// getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
-	ASSERT(metapp::accessibleGet(metaClass->getAccessible("value"), pBase).get<int>() == 0);
+	metapp::getMetaRepo()->registerBase<Son2, Parent1, Parent2>();
+	metapp::getMetaRepo()->registerBase<Grandson1, Son1>();
+	metapp::getMetaRepo()->registerBase<Grandson2, Son1, Parent2>();
+
+	auto baseTypesViewSon1 = metapp::getMetaRepo()->getBases(metapp::getMetaType<Son1>());
+	ASSERT(baseTypesViewSon1.getCount() == 1);
+	ASSERT(baseTypesViewSon1.get(0) == metapp::getMetaType<Parent1>());
+
+	auto baseTypesViewGrandson2 = metapp::getMetaRepo()->getBases<Grandson2>();
+	ASSERT(baseTypesViewGrandson2.getCount() == 2);
+	ASSERT(baseTypesViewGrandson2.get(0) == metapp::getMetaType<Son1>());
+	ASSERT(baseTypesViewGrandson2.get(1) == metapp::getMetaType<Parent2>());
+
+	Son2 son2;
+	ASSERT(metapp::getMetaRepo()->castToBase<Son2>(&son2, 0) == static_cast<Parent1 *>(&son2));
+	ASSERT(metapp::getMetaRepo()->castToBase<Son2>(&son2, 1) == static_cast<Parent2 *>(&son2));
+
+	Son1 son1;
+	ASSERT(metapp::getMetaRepo()->castToDerived<Son1>(&son1, 0) == static_cast<Grandson1 *>(&son1));
 }
 
 

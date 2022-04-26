@@ -16,21 +16,19 @@
 
 #include "tutorial.h"
 
-// Include the header for metapp::Variant
+// The header for MetaCallable
+#include "metapp/interfaces/metacallable.h"
+// The header for metapp::Variant
 #include "metapp/variant.h"
 // To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
-#include "metapp/interfaces/metacallable.h"
-// for callableInvoke
-#include "metapp/utilities/utility.h"
-
-#include <iostream>
-#include <cstring>
 
 namespace {
 
-// Let's see how to invoke free function.
-// func1 is the function we are going to invoke.
+/*
+Let's see how to invoke free function.
+func1 is the function we are going to invoke.
+*/
 inline std::string func1(const int n)
 {
 	return std::to_string(n);
