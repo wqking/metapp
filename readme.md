@@ -155,8 +155,8 @@ ASSERT(result.get<std::string>() == "38");
 ## Documentations
 
 - Tutorials
-    - [MetaClass](doc/tutorials/tutorial_metaclass.md)
-    - [Callable, function, member function, etc](doc/tutorials/tutorial_callable.md)
+    - [MetaClass](doc/tutorial/tutorial_metaclass.md)
+    - [Callable, function, member function, etc](doc/tutorial/tutorial_callable.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
