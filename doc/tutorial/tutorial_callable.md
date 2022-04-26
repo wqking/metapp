@@ -1,6 +1,20 @@
+
 # Tutorial for invoking callables
 
-Let's see how to invoke free function. func1 is the function we are going to invoke.
+
+```c++
+// The header for MetaCallable
+#include "metapp/interfaces/metacallable.h"
+// The header for metapp::Variant
+#include "metapp/variant.h"
+// To use all declared meta types, include this header
+#include "metapp/allmetatypes.h"
+```
+
+
+Let's see how to invoke free function.
+func1 is the function we are going to invoke.
+
 
 ```c++
 inline std::string func1(const int n)
@@ -25,7 +39,9 @@ void tutorialCallable_freeFunction()
 }
 ```
 
+
 Now let's invoke class member function
+
 
 ```c++
 void tutorialCallable_memberFunction()
@@ -45,7 +61,9 @@ void tutorialCallable_memberFunction()
 }
 ```
 
+
 We can also invoke std::function
+
 
 ```c++
 void tutorialCallable_stdFunction()
@@ -60,8 +78,11 @@ void tutorialCallable_stdFunction()
 }
 ```
 
-We also support default arguments myDefaultArgsFunc is the function we are going to invoke with default arguments.  
+
+We also support default arguments
+myDefaultArgsFunc is the function we are going to invoke with default arguments
 The C++ function doesn't need to have default argument.
+
 
 ```c++
 std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
@@ -88,8 +109,11 @@ void tutorialCallable_defaultArgs()
 }
 ```
 
-We can also use variadic function.  
-The function must accept two arguments, the first the an array of Variant, which contains the arguments. The second argument is the number of Variant in the array.  
+
+We can also use variadic function.
+The function must accept two arguments, the first the an array of Variant, which contains
+the arguments. The second argument is the number of Variant in the array.
+
 
 ```c++
 int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount)
@@ -116,4 +140,3 @@ void tutorialCallable_variadic()
 	ASSERT(metapp::callableInvoke(v, nullptr, 10, 9.1, 8LL, 7, 6, 5, 4, 3, 2, 1).get<int>() == 55);
 }
 ```
-
