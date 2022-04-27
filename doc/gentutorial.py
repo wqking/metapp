@@ -1,26 +1,13 @@
 import enum
 import re
 import codecs
+import sys
 
 @enum.unique
 class BlockType(enum.IntEnum) :
 	desc = 0
 	singleLineDesc = 1
 	code = 2
-
-sourcePath = '../tests/tutorial/'
-docPath = './tutorial/'
-
-def makeFileInfo(fileName) :
-	return {
-		'input' : sourcePath + fileName + '.cpp',
-		'output' : docPath + fileName + '.md',
-	}
-
-fileInfoList = [
-	makeFileInfo('tutorial_callable'),
-	makeFileInfo('tutorial_metaclass'),
-]
 
 def writeFile(fileName, content) :
 	with codecs.open(fileName, "w", "utf-8") as file :
@@ -216,7 +203,11 @@ def doProcessFile(inputFile, outputFile) :
 	writeFile(outputFile, "\n".join(outputLineList))
 
 def doMain() :
-	for fileInfo in fileInfoList :
-		doProcessFile(fileInfo['input'], fileInfo['output'])
+	if len(sys.argv) != 3 :
+		print('Usage: python gentutorial.py INPUT_FILE OUTPUT_FILE')
+		return
+	inputFile = sys.argv[1]
+	outputFile = sys.argv[2]
+	doProcessFile(inputFile, outputFile)
 
 doMain()
