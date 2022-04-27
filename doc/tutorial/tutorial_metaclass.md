@@ -1,5 +1,8 @@
 # Tutorial for using MetaClass
 
+`MetaClass` is a meta interface to provide meta information of a class,
+such as constructors, member functions, member fields, etc.  
+
 ## Include headers
 Header for MetaClass
 

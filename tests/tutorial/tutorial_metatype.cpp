@@ -18,6 +18,10 @@
 
 /*desc
 # Tutorial for using MetaType
+
+`metapp::MetaType` represents the meta information of arbitrary C++ type.  
+We can obtain almost all information on any C++ type through `metapp::MetaType`,
+such as, but not limited to, pointer, reference, const-volatile qualifier, array, function parameters, etc.  
 desc*/
 
 //desc ## Include headers

@@ -1,5 +1,9 @@
 # Tutorial for using Variant
 
+`metapp::Variant` allows to store data of any type and convert between types.  
+Variant holds a single value of any type at the same time.
+The type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
+
 ## Include headers
 Include the header for metapp::Variant
 

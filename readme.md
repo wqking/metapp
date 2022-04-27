@@ -83,84 +83,98 @@ In brief, MSVC, GCC, Clang that has well support for C++11, or released after 20
 
 ## Example code
 
-### Variant
+Here is simple code pieces. There are comprehensive tutorials documentations.
+
+### Use Variant
+Header for Variant
 
 ```c++
-// v contains int
+#include "metapp/variant.h"
+```
+
+To use all declared meta types, include this header
+
+```c++
+#include "metapp/allmetatypes.h"
+```
+
+v contains int.
+
+```c++
 metapp::Variant v(5);
-assert(v.get<int>() == 5);
-
-// now v contains std::string
-v = std::string("hello");
-assert(v.get<std::string>() == "hello");
-// get as reference to avoid copy
-assert(v.get<const std::string &>() == "hello");
-v.get<std::string &>() = "world";
-assert(v.get<const std::string &>() == "world");
-
-// cast to const char *
-const char * s = v.cast<const char *>().get<const char *>();
-assert(strcmp(s, "world") == 0);
-
-// now v contains char *
-v = "great";
-assert(strcmp(v.get<const char *>(), "great") == 0);
-
-int array[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-// now v contains reference to int[2][3]
-v = metapp::Variant::create<int (&)[2][3]>(array);
-assert(v.get<int (&)[2][3]>()[1][2] == 6);
-array[1][2] = 10;
-// since v is a reference to array, modify array will also modify v
-assert(v.get<int (&)[2][3]>()[1][2] == 10);
-
-int anotherArray[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-// Now we copy array into v
-v = metapp::Variant::create<int [2][3]>(anotherArray);
-assert(v.get<int (&)[2][3]>()[1][2] == 6);
-anotherArray[1][2] = 10;
-// since v is a copy of anotherArray, modify anotherArray will not affect v
-assert(v.get<int (&)[2][3]>()[1][2] == 6);
 ```
 
-### Invoke function
-
-Let's see how to invoke free function.
-func1 is the function we are going to invoke.
+Get the value
 
 ```c++
- std::string func1(const int n)
-{
-	return std::to_string(n);
-}
+ASSERT(v.get<int>() == 5);
 ```
 
-Now invoke func1 via Variant
+Now v contains std::string.
 
 ```c++
-// v is pointer to func1
-metapp::Variant v(&func1);
-
-// Prepare the arguments array
-metapp::Variant arguments[] { 5 };
-// Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
-metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
-ASSERT(result.get<std::string>() == "5");
-
-// Or we can use metapp::callableInvoke to pass the arguments directly
-result = metapp::callableInvoke(v, nullptr, 38);
-ASSERT(result.get<std::string>() == "38");
+metapp::Variant v = std::string("hello");
 ```
+
+Get as reference to avoid copy.
+
+```c++
+ASSERT(v.get<const std::string &>() == "hello");
+```
+
+Cast to const char *.
+
+```c++
+metapp::Variant casted = v.cast<const char *>();
+const char * s = casted.get<const char *>();
+ASSERT(strcmp(s, "world") == 0);
+```
+
+### Use MetaType
+int
+
+```c++
+const metapp::MetaType * metaType = metapp::getMetaType<int>();
+ASSERT(metaType->getTypeKind() == metapp::tkInt);
+```
+
+constness
+
+```c++
+auto metaType = metapp::getMetaType<const int>();
+ASSERT(metaType->getTypeKind() == metapp::tkInt);
+ASSERT(metaType->isConst());
+```
+
+### Call function
+
+```c++
+struct MyClass {
+  int value;
+
+  int add(const int delta1, const int delta2) const {
+    return value + delta1 + delta2;
+  }
+};
+
+metapp::Variant v(&MyClass::add);
+MyClass obj { 5 };
+// The second argument is the pointer to obj, it's required when invoking member function
+metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
+ASSERT(result.get<int>() == 17);
+```
+
+## Tutorials
+
+- [Use Variant](doc/tutorial/tutorial_variant.md)
+- [Use MetaType](doc/tutorial/tutorial_metatype.md)
+- [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
+- [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+- [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
+- [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
+- [Afterword and notes](doc/tutorial/afterword.md)
 
 ## Documentations
-
-- Tutorials
-    - [Variant](doc/tutorial/tutorial_variant.md)
-    - [MetaType](doc/tutorial/tutorial_metatype.md)
-    - [MetaClass](doc/tutorial/tutorial_metaclass.md)
-    - [MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
-    - [MetaRepo](doc/tutorial/tutorial_metarepo.md)
-    - [Inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)

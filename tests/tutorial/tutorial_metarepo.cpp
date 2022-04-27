@@ -18,6 +18,9 @@
 
 /*desc
 # Tutorial for using MetaRepo and runtime meta data
+
+`MetaRepo` is used to register and retrieve meta types at running time.
+The registered meta types can be any C++ types, no matter if they are declared with DeclareMetaType or not.   
 desc*/
 
 //desc ## Include headers

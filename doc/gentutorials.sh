@@ -4,6 +4,7 @@ sourcePath="../tests/tutorial/"
 docPath="./tutorial/"
 command="python gentutorial.py"
 fileList=(
+	tutorial_start
 	tutorial_variant
 	tutorial_metatype
 	tutorial_callable
