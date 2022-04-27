@@ -18,6 +18,15 @@
 
 /*desc
 # Tutorial for invoking callables
+
+`MetaCallable` is the core meta interface for invoking callables
+and get type information from a callable.  
+Use the member function `MetaType::getMetaCallable()` to get the meta interface.
+If the meta type doesn't implement the interface, `nullptr` is returned.
+desc*/
+
+/*desc
+## Include headers
 desc*/
 
 // code
@@ -32,7 +41,9 @@ desc*/
 namespace {
 
 /*desc
-Let's see how to invoke free function.
+## Invoke non-member function
+
+Let's see how to invoke non-member (free) function.
 func1 is the function we are going to invoke.
 desc*/
 
@@ -41,9 +52,12 @@ inline std::string func1(const int n)
 {
 	return std::to_string(n);
 }
+//code
 
 void tutorialCallable_freeFunction()
 {
+	//code
+
 	// v is pointer to func1
 	metapp::Variant v(&func1);
 
@@ -56,16 +70,19 @@ void tutorialCallable_freeFunction()
 	// Or we can use metapp::callableInvoke to pass the arguments directly
 	result = metapp::callableInvoke(v, nullptr, 38);
 	ASSERT(result.get<std::string>() == "38");
+
+	//code
 }
-//code
 
 /*desc
+## Invoke class member function
+
 Now let's invoke class member function
 desc*/
 
-//code
 void tutorialCallable_memberFunction()
 {
+	//code
 	struct MyClass {
 		int value;
 
@@ -73,21 +90,24 @@ void tutorialCallable_memberFunction()
 			return value + delta1 + delta2;
 		}
 	};
+
 	metapp::Variant v(&MyClass::add);
 	MyClass obj { 5 };
 	// The second argument is the pointer to obj, it's required when invoking member function
 	metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 	ASSERT(result.get<int>() == 17);
+	//code
 }
-//code
 
 /*desc
-We can also invoke std::function
+## Invoke std::function
+
+We can also invoke `std::function`
 desc*/
 
-//code
 void tutorialCallable_stdFunction()
 {
+	//code
 	metapp::Variant v(std::function<std::string (const std::string &, const std::string &)>(
 		[](const std::string & a, const std::string & b) -> std::string {
 			return a + b;
@@ -95,12 +115,14 @@ void tutorialCallable_stdFunction()
 	));
 	metapp::Variant result = metapp::callableInvoke(v, nullptr, "Hello ", "world");
 	ASSERT(result.get<const std::string &>() == "Hello world");
+	//code
 }
-//code
 
 /*desc
-We also support default arguments
-myDefaultArgsFunc is the function we are going to invoke with default arguments
+## Using default argument
+
+We also support default arguments.  
+`myDefaultArgsFunc` is the function we are going to invoke with default arguments.  
 The C++ function doesn't need to have default argument.
 desc*/
 
@@ -109,15 +131,21 @@ std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
 {
 	return std::to_string(a) + (b ? "true" : "false") + c;
 }
+//code
 
 void tutorialCallable_defaultArgs()
 {
-	// Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.
-	// The first argument is the function, it can be any meta callable, such as free function, member function, constructor, etc.
-	// The second argument is a list of default arguments, it must be specified
-	// in the right to left order in the function prototype
+	/*desc
+	Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.  
+	The first argument is the function, it can be any meta callable, such as free function, member function, constructor, etc.  
+	The second argument is a list of default arguments, it must be specified
+	in the right to left order in the function prototype
+	desc*/
+	//code
 	metapp::Variant v(metapp::createDefaultArgsFunction(&myDefaultArgsFunc, { "hello", true }));
+	//code
 
+	//code
 	// Invoke the function, with 2 default arguments
 	ASSERT(metapp::callableInvoke(v, nullptr, 5).get<const std::string &>() == "5truehello");
 
@@ -126,13 +154,16 @@ void tutorialCallable_defaultArgs()
 
 	// Invoke the function, with no default arguments
 	ASSERT(metapp::callableInvoke(v, nullptr, 19, false, "GOOD").get<const std::string &>() == "19falseGOOD");
+
+	//code
 }
-//code
 
 /*desc
-We can also use variadic function.
-The function must accept two arguments, the first the an array of Variant, which contains
-the arguments. The second argument is the number of Variant in the array.
+## Using variadic function
+
+We can also use variadic function.  
+The function must accept two arguments, the first is a pointer to Variant, which contains
+the arguments array. The second argument is the number of Variant in the array.
 desc*/
 
 //code
@@ -144,9 +175,12 @@ int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount
 	}
 	return total;
 }
+//code
 
 void tutorialCallable_variadic()
 {
+	//code
+
 	metapp::Variant v(metapp::createVariadicFunction(&myVariadicFunc));
 
 	// Invoke the function with no arguments.
@@ -157,9 +191,11 @@ void tutorialCallable_variadic()
 
 	// Invoke the function with 10 arguments, the arguments can have different type,
 	// as long as the target function can process (cast) them.
-	ASSERT(metapp::callableInvoke(v, nullptr, 10, 9.1, 8LL, 7, 6, 5, 4, 3, 2, 1).get<int>() == 55);
+	ASSERT(metapp::callableInvoke(v, nullptr,
+		10, 9.1, 8LL, 7, 6, 5, 4, 3, 2, 1).get<int>() == 55);
+
+	//code
 }
-//code
 
 RUN_TUTORIAL(tutorialCallable_freeFunction)
 RUN_TUTORIAL(tutorialCallable_memberFunction)

@@ -16,13 +16,24 @@
 
 #include "tutorial.h"
 
+/* desc
+# Tutorial for using MetaClass
+desc */
+
+//code
 // To use the built-in meta types, we must include "metapp/allmetatypes.h"
 #include "metapp/allmetatypes.h"
-
+// The header for MetaClass
 #include "metapp/interfaces/metaclass.h"
+// The header for MetaEnum
 #include "metapp/interfaces/metaenum.h"
+//code
 
-// Define a class to reflect
+/* desc
+Define a class to reflect
+desc */
+
+//code
 class MyClass
 {
 public:
@@ -76,7 +87,8 @@ public:
 		return message + std::to_string(a) + b;
 	}
 
-	// static member function, it shows how to return values via reference/pointer in parameter.
+	// static member function, it shows how to return values
+	// via reference/pointer in parameter.
 	static void obtainValues(std::string & message, int * value, MyClass * obj) {
 		message = obj->message;
 		*value = obj->getValue();
@@ -89,11 +101,16 @@ public:
 private:
 	int value;
 };
+//code
 
+/* desc
+Declare meta type for MyClass,
+desc */
+
+//code
 constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
 
-// Declare meta type for MyClass,
 template <>
 struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 {
@@ -109,10 +126,13 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 			[](metapp::MetaClass & mc) {
 				// Register constructors
 				mc.registerConstructor(metapp::Constructor<MyClass ()>());
-				mc.registerConstructor(metapp::Constructor<MyClass (const int, const std::string &)>());
+				mc.registerConstructor(metapp::Constructor<
+					MyClass (const int, const std::string &)
+				>());
 
 				// Register field with getter/setter function
-				mc.registerAccessible("value", metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
+				mc.registerAccessible("value",
+					metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
 				// Register member data as field
 				auto & item = mc.registerAccessible("message", &MyClass::message);
 				// Add some annotations to the accessible
@@ -123,9 +143,14 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 				mc.registerCallable("greeting", &MyClass::greeting);
 				
 				// Register overloaded member functions
-				mc.registerCallable("makeMessage", metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
-				mc.registerCallable("makeMessage", metapp::selectOverload<std::string (const std::string &, const int) const>(&MyClass::makeMessage));
-				mc.registerCallable("makeMessage", metapp::selectOverload<std::string (const int, const std::string &) const>(&MyClass::makeMessage));
+				mc.registerCallable("makeMessage",
+					metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
+				mc.registerCallable("makeMessage",
+					metapp::selectOverload<std::string (const std::string &, const int) const>(
+						&MyClass::makeMessage));
+				mc.registerCallable("makeMessage",
+					metapp::selectOverload<std::string (const int, const std::string &) const>(
+						&MyClass::makeMessage));
 				
 				// Register static member function
 				mc.registerCallable("obtainValues", &MyClass::obtainValues);
@@ -145,9 +170,14 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 	}
 
 };
+//code
 
-// Declare meta type for MyClass::MyEnum,
-// it is used when declaring meta type for MyClass
+/* desc
+Declare meta type for MyClass::MyEnum,
+it is used when declaring meta type for MyClass
+desc */
+
+//code
 template <>
 struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <MyClass::MyEnum>
 {
@@ -163,10 +193,14 @@ struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <
 		return &metaEnum;
 	}
 };
+//code
 
-// Now let's see how to use field meta data
+/* desc
+Now let's see how to use field meta data
+desc */
 void tutorialMetaClass_accessible()
 {
+	//code
 	// First let's get the MetaType of MyClass
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	
@@ -201,11 +235,15 @@ void tutorialMetaClass_accessible()
 	metapp::accessibleSet(fieldMessage, &obj, "This is a test");
 	ASSERT(obj.message == "This is a test");
 	ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "This is a test");
+	//code
 }
 
-// Now let's call the member method
+/* desc
+Now let's call the member method
+desc */
 void tutorialMetaClass_method()
 {
+	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
@@ -222,11 +260,15 @@ void tutorialMetaClass_method()
 	
 	// Call the method again with different arguments.
 	ASSERT(metapp::callableInvoke(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
+	//code
 }
 
-// Now let's call the overloaded member method
+/* desc
+Now let's call the overloaded member method
+desc */
 void tutorialMetaClass_overloadedMethods()
 {
+	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
@@ -264,11 +306,15 @@ void tutorialMetaClass_overloadedMethods()
 	ASSERT(metapp::callableInvoke(callableList, &obj).get<const std::string &>() == "Hello");
 	ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
 	ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
+	//code
 }
 
-// Now let's see how to use static method
+/* desc
+Now let's see how to use static method
+desc */
 void tutorialMetaClass_staticMethods()
 {
+	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
@@ -287,11 +333,15 @@ void tutorialMetaClass_staticMethods()
 	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
 	ASSERT(message == "Hello");
 	ASSERT(value == 38);
+	//code
 }
 
-// Now let's play with contructors
+/* desc
+Now let's play with contructors
+desc */
 void tutorialMetaClass_constructor()
 {
+	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
@@ -315,10 +365,15 @@ void tutorialMetaClass_constructor()
 	ASSERT(instance.get<const MyClass &>().getValue() == 3);
 	ASSERT(instance.get<const MyClass &>().message == "good");
 	// instance will free the object when instance is freed
+	//code
 }
 
+/* desc
+Now let's play with types
+desc */
 void tutorialMetaClass_type()
 {
+	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
@@ -342,10 +397,15 @@ void tutorialMetaClass_type()
 	ASSERT(innerType.getTarget() == metapp::getMetaType<MyClass::MyInner>());
 	std::unique_ptr<MyClass::MyInner> inner(static_cast<MyClass::MyInner *>(innerType.getTarget()->construct()));
 	ASSERT(inner->n == 1999);
+	//code
 }
 
+/* desc
+Now let's play with annotations
+desc */
 void tutorialMetaClass_annotation()
 {
+	//code
 	// First let's get the MetaType of MyClass
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 
@@ -361,6 +421,7 @@ void tutorialMetaClass_annotation()
 	ASSERT(notes.get<const std::vector<std::string> &>()[1] == "second");
 	const metapp::Variant & notExist = fieldMessage.getAnnotation("notExist");
 	ASSERT(notExist.isEmpty());
+	//code
 }
 
 RUN_TUTORIAL(tutorialMetaClass_accessible)

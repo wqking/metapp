@@ -32,7 +32,7 @@ def readFile(fileName) :
 
 def doTabToSpace(text) :
 	def callback(m) :
-		return '    ' * len(m.group(1))
+		return '  ' * len(m.group(1))
 	text = re.sub(r'^(\t+)', callback, text)
 	return text
 
@@ -60,6 +60,26 @@ def doProcessCodeLines(lineList, beginIndex, endIndex) :
 		lineList[index] = line
 		index += 1
 
+def trim(text) :
+	return text.strip(" \t\r\n")
+
+def doRemoveBlankCodeLines(lineList, beginIndex, endIndex) :
+	index = beginIndex
+	while index <= endIndex :
+		line = trim(lineList[index])
+		if line != '' :
+			break
+		del lineList[index]
+		endIndex -= 1
+	beginIndex = index
+	index = endIndex
+	while index >= beginIndex :
+		line = trim(lineList[index])
+		if line != '' :
+			break
+		del lineList[index]
+		index -= 1
+
 def doProcessFile(inputFile, outputFile) :
 	lineList = readFile(inputFile).splitlines()
 	outputLineList = []
@@ -80,6 +100,7 @@ def doProcessFile(inputFile, outputFile) :
 		elif command == 'code' :
 			if state == State.code :
 				state = State.none
+				doRemoveBlankCodeLines(outputLineList, codeBeginIndex, len(outputLineList) - 1)
 				doProcessCodeLines(outputLineList, codeBeginIndex, len(outputLineList) - 1)
 				outputLineList.append("```")
 				outputLineList.append("")
@@ -90,6 +111,8 @@ def doProcessFile(inputFile, outputFile) :
 				codeBeginIndex = len(outputLineList)
 		else :
 			if state != State.none :
+				if state == State.desc :
+					line = line.lstrip()
 				outputLineList.append(line)
 	writeFile(outputFile, "\n".join(outputLineList))
 
