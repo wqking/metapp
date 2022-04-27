@@ -208,6 +208,7 @@ def doMain() :
 		return
 	inputFile = sys.argv[1]
 	outputFile = sys.argv[2]
+	print(inputFile)
 	doProcessFile(inputFile, outputFile)
 
 doMain()

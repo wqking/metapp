@@ -1,13 +1,21 @@
 # Tutorial for using MetaClass
 
 ## Include headers
+Header for MetaClass
 
 ```c++
-// To use the built-in meta types, we must include "metapp/allmetatypes.h"
-#include "metapp/allmetatypes.h"
-// The header for MetaClass
 #include "metapp/interfaces/metaclass.h"
-// The header for MetaEnum
+```
+
+To use the built-in meta types, we must include "metapp/allmetatypes.h"
+
+```c++
+#include "metapp/allmetatypes.h"
+```
+
+Header for MetaEnum
+
+```c++
 #include "metapp/interfaces/metaenum.h"
 ```
 

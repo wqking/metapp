@@ -6,11 +6,15 @@ Use the member function `MetaType::getMetaCallable()` to get the meta interface.
 If the meta type doesn't implement the interface, `nullptr` is returned.
 
 ## Include headers
+Header for MetaCallable
 
 ```c++
-// The header for MetaCallable
 #include "metapp/interfaces/metacallable.h"
-// The header for metapp::Variant
+```
+
+Header for metapp::Variant
+
+```c++
 #include "metapp/variant.h"
 // To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"

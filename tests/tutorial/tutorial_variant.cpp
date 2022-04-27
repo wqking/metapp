@@ -16,63 +16,76 @@
 
 #include "tutorial.h"
 
-// Include the header for metapp::Variant
+/*desc
+# Tutorial for using Variant
+desc*/
+
+//desc ## Include headers
+
+//code
+//desc Include the header for metapp::Variant
 #include "metapp/variant.h"
-// To use all declared meta types, include this header
+//desc To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
+//code
 
 #include <iostream>
 #include <cstring>
 
+//desc ## Use Variant
+
 void tutorialVariant()
 {
-	// v contains int
+	//code
+	//desc v contains int.
 	metapp::Variant v(5);
 	ASSERT(v.get<int>() == 5);
-	// We can get as reference, to avoid copy the value
+	//desc We can get as reference, to avoid copy the value.
 	ASSERT(v.get<int &>() == 5);
 	ASSERT(v.get<const int &>() == 5);
-	// We can even get as fancy const volatile reference
+	//desc We can even get as fancy const volatile reference.
 	ASSERT(v.get<const volatile int &>() == 5);
 
-	// Now v contains std::string
+	//desc Now v contains std::string.
 	v = std::string("hello");
-	// Get as std::string will copy the value, that's inefficient
-	// We should get as reference
+	//desc Get as std::string will copy the value, that's inefficient.  
+	//desc We should get as reference.
 	ASSERT(v.get<std::string>() == "hello");
-	// Get as reference to avoid copy
+	//desc Get as reference to avoid copy.
 	ASSERT(v.get<const std::string &>() == "hello");
-	// Whether the reference is const, it doesn't matter
+	//desc Whether the reference is const, it doesn't matter.
 	ASSERT(v.get<std::string &>() == "hello");
 	v.get<std::string &>() = "world";
 	ASSERT(v.get<const std::string &>() == "world");
 
-	// Cast to const char *
+	//desc Cast to const char *.
 	metapp::Variant casted = v.cast<const char *>();
 	const char * s = casted.get<const char *>();
 	ASSERT(strcmp(s, "world") == 0);
 
-	// Now v contains char *
+	//desc Now v contains char *.
 	v = "great";
 	ASSERT(strcmp(v.get<const char *>(), "great") == 0);
 
+	//desc Let's see how Variant works with array
 	int array[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-	// Now v contains reference to int[2][3]
-	// We can't simple assign array to v because the array type will be lost.
-	// We need to call Variant::create to retain the array type.
+	//desc Now v contains reference to int[2][3].
+	//desc We can't simply assign array to v because the array type will be lost.
+	//desc We need to call Variant::create to retain the array type.
 	v = metapp::Variant::create<int (&)[2][3]>(array);
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
+	//desc Since v is a reference to array, modify array will also modify v
 	array[1][2] = 10;
-	// Since v is a reference to array, modify array will also modify v
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 10);
 
+	//desc Now we copy array into v.
 	int anotherArray[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-	// Now we copy array into v
 	v = metapp::Variant::create<int [2][3]>(anotherArray);
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
+	//desc Since v is a copy of anotherArray, modify anotherArray will not affect v.
 	anotherArray[1][2] = 10;
-	// Since v is a copy of anotherArray, modify anotherArray will not affect v
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
+	//code
 }
 
 RUN_TUTORIAL(tutorialVariant)

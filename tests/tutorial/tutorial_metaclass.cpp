@@ -23,11 +23,11 @@ desc */
 //desc ## Include headers
 
 //code
-// To use the built-in meta types, we must include "metapp/allmetatypes.h"
-#include "metapp/allmetatypes.h"
-// The header for MetaClass
+//desc Header for MetaClass
 #include "metapp/interfaces/metaclass.h"
-// The header for MetaEnum
+//desc To use the built-in meta types, we must include "metapp/allmetatypes.h"
+#include "metapp/allmetatypes.h"
+//desc Header for MetaEnum
 #include "metapp/interfaces/metaenum.h"
 //code
 

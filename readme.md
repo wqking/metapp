@@ -155,8 +155,12 @@ ASSERT(result.get<std::string>() == "38");
 ## Documentations
 
 - Tutorials
+    - [Variant](doc/tutorial/tutorial_variant.md)
+    - [MetaType](doc/tutorial/tutorial_metatype.md)
     - [MetaClass](doc/tutorial/tutorial_metaclass.md)
-    - [Callable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+    - [MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+    - [MetaRepo](doc/tutorial/tutorial_metarepo.md)
+    - [Inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)

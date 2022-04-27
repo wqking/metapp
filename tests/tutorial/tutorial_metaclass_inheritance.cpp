@@ -16,12 +16,23 @@
 
 #include "tutorial.h"
 
+/*desc
+# Tutorial for using class inheritance
+desc*/
+
 #include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metarepo.h"
 
 #include <iostream>
 
+/* desc
+## Define the C++ classes to reflect for
+
+Here is the class hierarchy we are going to reflect for.
+desc */
+
+//code
 struct Parent1
 {
 	// make some data to make derived class has `this` pointer at different address
@@ -52,7 +63,15 @@ struct Grandson2 : Son1, Parent2
 {
 	char g2[50];
 };
+//code
 
+//code
+/*desc
+If we DeclareMetaType for any classes, we can register the base classes in `setup` function.  
+`setup` is a static function in DeclareMetaType. It will be called when the meta type is used,
+and it's guaranteed to be called only once.  
+`setup` is a good place to register the base classes.
+desc*/
 template <>
 struct metapp::DeclareMetaType <Son1> : metapp::DeclareMetaTypeBase <Son1>
 {
@@ -60,9 +79,13 @@ struct metapp::DeclareMetaType <Son1> : metapp::DeclareMetaTypeBase <Son1>
 		metapp::getMetaRepo()->registerBase<Son1, Parent1>();
 	}
 };
+//code
 
 void tutorialMetaClass_inheritance()
 {
+	//code
+	//desc If we don't DeclareMetaType any classes, or we don't want to use `setup`,
+	//desc we can register the base classes anywhere in the code.
 	metapp::getMetaRepo()->registerBase<Son2, Parent1, Parent2>();
 	metapp::getMetaRepo()->registerBase<Grandson1, Son1>();
 	metapp::getMetaRepo()->registerBase<Grandson2, Son1, Parent2>();
@@ -82,6 +105,7 @@ void tutorialMetaClass_inheritance()
 
 	Son1 son1;
 	ASSERT(metapp::getMetaRepo()->castToDerived<Son1>(&son1, 0) == static_cast<Grandson1 *>(&son1));
+	//code
 }
 
 

@@ -27,14 +27,14 @@ desc*/
 
 //desc ## Include headers
 
-// code
-// The header for MetaCallable
+//code
+//desc Header for MetaCallable
 #include "metapp/interfaces/metacallable.h"
-// The header for metapp::Variant
+//desc Header for metapp::Variant
 #include "metapp/variant.h"
 // To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
-// code
+//code
 
 namespace {
 
