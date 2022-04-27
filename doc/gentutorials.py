@@ -3,9 +3,9 @@ import re
 import codecs
 
 @enum.unique
-class State(enum.IntEnum) :
-	none = 0
-	desc = 1
+class BlockType(enum.IntEnum) :
+	desc = 0
+	singleLineDesc = 1
 	code = 2
 
 sourcePath = '../tests/tutorial/'
@@ -36,18 +36,19 @@ def doTabToSpace(text) :
 	text = re.sub(r'^(\t+)', callback, text)
 	return text
 
-def doProcessCodeLines(lineList, beginIndex, endIndex) :
+def doProcessCodeLines(lineList, beginIndex, endIndex, unindent) :
 	# find out the redundant leading spaces to remove from (unindent)
 	leadingSpaceLength = None
-	index = beginIndex
-	while index <= endIndex :
-		line = lineList[index]
-		matches = re.match(r'^(\s*)\S+', line)
-		if matches is not None :
-			leadingLength = len(matches.group(1))
-			if (leadingSpaceLength is None) or (leadingLength < leadingSpaceLength) :
-				leadingSpaceLength = leadingLength
-		index += 1
+	if unindent :
+		index = beginIndex
+		while index <= endIndex :
+			line = lineList[index]
+			matches = re.match(r'^(\s*)\S+', line)
+			if matches is not None :
+				leadingLength = len(matches.group(1))
+				if (leadingSpaceLength is None) or (leadingLength < leadingSpaceLength) :
+					leadingSpaceLength = leadingLength
+			index += 1
 
 	if leadingSpaceLength is None :
 		leadingSpaceLength = 0
@@ -62,6 +63,9 @@ def doProcessCodeLines(lineList, beginIndex, endIndex) :
 
 def trim(text) :
 	return text.strip(" \t\r\n")
+
+def isEmptyText(text) :
+	return text.strip(" \t\r\n") == ''
 
 def doRemoveBlankCodeLines(lineList, beginIndex, endIndex) :
 	index = beginIndex
@@ -80,40 +84,135 @@ def doRemoveBlankCodeLines(lineList, beginIndex, endIndex) :
 		del lineList[index]
 		index -= 1
 
+class BlockParser :
+	def __init__(self) :
+		self._blockList = []
+		self._blockStack = []
+		self._hasParent = False
+
+	def process(self, lineList) :
+		for line in lineList :
+			matches = re.match(r'\s*//\s*desc\s*(.*)\s*', line, re.I)
+			if matches is not None :
+				text = matches.group(1)
+				self._processCommand(BlockType.singleLineDesc)
+				self._processLine(text)
+				self._processCommand(BlockType.singleLineDesc)
+				continue
+			matches = re.match(r'\s*[\/\*]*\s*(\w+)\s*[\/\*]*\s*', line)
+			command = None
+			if matches is not None :
+				command = matches.group(1).lower()
+			if command == 'desc' :
+				self._processCommand(BlockType.desc)
+			elif command == 'code' :
+				self._processCommand(BlockType.code)
+			else :
+				self._processLine(line)
+	
+		return self._blockList
+
+	def _getCurrentBlock(self) :
+		if len(self._blockStack) > 0 :
+			return self._blockStack[-1]
+		return None
+
+	def _beginBlock(self, type) :
+		block = {
+			'type' : type,
+			'lineList' : [],
+			'hasParent' : self._hasParent
+		}
+		self._blockStack.append(block)
+		self._blockList.append(block)
+
+	def _endBlock(self) :
+		if len(self._blockStack) == 0 :
+			return
+		self._blockStack.pop()
+		currentBlock = self._getCurrentBlock()
+		if currentBlock is not None :
+			self._blockStack.pop()
+			self._beginBlock(currentBlock['type'])
+
+	def _processCommand(self, type) :
+		currentBlock = self._getCurrentBlock()
+		if currentBlock is None :
+			self._hasParent = False
+			self._beginBlock(type)
+		elif currentBlock['type'] == type :
+			if type != BlockType.desc :
+				self._hasParent = False
+			self._endBlock()
+		else :
+			self._hasParent = True
+			self._beginBlock(type)
+	
+	def _processLine(self, line) :
+		currentBlock = self._getCurrentBlock()
+		if currentBlock is not None :
+			currentBlock['lineList'].append(line)
+
+def doParseBlocks(lineList) :
+	return BlockParser().process(lineList)
+
+def doConvertDescBlock(block) :
+	lineList = block['lineList']
+	resultList = []
+	for line in lineList :
+		line = line.lstrip()
+		resultList.append(line)
+	resultList.append('')
+	return resultList
+
+def doConvertCodeBlock(block) :
+	lineList = block['lineList']
+	resultList = [] + lineList
+	doRemoveBlankCodeLines(resultList, 0, len(resultList) - 1)
+	doProcessCodeLines(resultList, 0, len(resultList) - 1, not block['hasParent'])
+	resultList = ([ "```c++" ] + resultList + [ "```", "" ])
+	return resultList
+
+def doConvertBlock(block) :
+	if block['type'] == BlockType.desc :
+		return doConvertDescBlock(block)
+	if block['type'] == BlockType.code :
+		return doConvertCodeBlock(block)
+	return block['lineList']
+
+def doRemoveEmptyBlocks(blockList) :
+	resultList = []
+	for block in blockList :
+		for line in block['lineList'] :
+			if not isEmptyText(line) :
+				resultList.append(block)
+				break
+	return resultList
+
+def doCombineSingleLineDescBlocks(blockList) :
+	resultList = []
+	previousSingleLineBlock = None
+	for block in blockList :
+		if block['type'] != BlockType.singleLineDesc :
+			previousSingleLineBlock = None
+			resultList.append(block)
+			continue
+		if previousSingleLineBlock is None :
+			previousSingleLineBlock = block.copy()
+			previousSingleLineBlock['type'] = BlockType.desc
+			resultList.append(previousSingleLineBlock)
+		else :
+			previousSingleLineBlock['lineList'] += block['lineList']
+	return resultList
+
 def doProcessFile(inputFile, outputFile) :
 	lineList = readFile(inputFile).splitlines()
 	outputLineList = []
-	state = State.none
-	codeBeginIndex = 0
-	for line in lineList :
-		matches = re.match(r'\s*[\/\*]*\s*(\w+)\s*[\/\*]*\s*', line)
-		command = None
-		if matches is not None :
-			command = matches.group(1).lower()
-		if command == 'desc' :
-			if state == State.desc :
-				state = State.none
-				outputLineList.append("")
-			else :
-				state = State.desc
-				outputLineList.append("")
-		elif command == 'code' :
-			if state == State.code :
-				state = State.none
-				doRemoveBlankCodeLines(outputLineList, codeBeginIndex, len(outputLineList) - 1)
-				doProcessCodeLines(outputLineList, codeBeginIndex, len(outputLineList) - 1)
-				outputLineList.append("```")
-				outputLineList.append("")
-			else :
-				state = State.code
-				outputLineList.append("")
-				outputLineList.append("```c++")
-				codeBeginIndex = len(outputLineList)
-		else :
-			if state != State.none :
-				if state == State.desc :
-					line = line.lstrip()
-				outputLineList.append(line)
+	blockList = doParseBlocks(lineList)
+	blockList = doRemoveEmptyBlocks(blockList)
+	blockList = doCombineSingleLineDescBlocks(blockList)
+	for block in blockList :
+		outputLineList += doConvertBlock(block)
 	writeFile(outputFile, "\n".join(outputLineList))
 
 def doMain() :
