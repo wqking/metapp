@@ -1,4 +1,3 @@
-
 # Tutorial for invoking callables
 
 `MetaCallable` is the core meta interface for invoking callables
@@ -6,9 +5,7 @@ and get type information from a callable.
 Use the member function `MetaType::getMetaCallable()` to get the meta interface.
 If the meta type doesn't implement the interface, `nullptr` is returned.
 
-
 ## Include headers
-
 
 ```c++
 // The header for MetaCallable
@@ -19,12 +16,10 @@ If the meta type doesn't implement the interface, `nullptr` is returned.
 #include "metapp/allmetatypes.h"
 ```
 
-
 ## Invoke non-member function
 
 Let's see how to invoke non-member (free) function.
 func1 is the function we are going to invoke.
-
 
 ```c++
 inline std::string func1(const int n)
@@ -33,27 +28,35 @@ inline std::string func1(const int n)
 }
 ```
 
+v is pointer to func1
 
 ```c++
-// v is pointer to func1
 metapp::Variant v(&func1);
+```
 
-// Prepare the arguments array
+Prepare the arguments array
+
+```c++
 metapp::Variant arguments[] { 5 };
-// Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
+```
+
+Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
+
+```c++
 metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
 ASSERT(result.get<std::string>() == "5");
+```
 
-// Or we can use metapp::callableInvoke to pass the arguments directly
+Or we can use metapp::callableInvoke to pass the arguments directly
+
+```c++
 result = metapp::callableInvoke(v, nullptr, 38);
 ASSERT(result.get<std::string>() == "38");
 ```
 
-
 ## Invoke class member function
 
 Now let's invoke class member function
-
 
 ```c++
 struct MyClass {
@@ -71,11 +74,9 @@ metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 ASSERT(result.get<int>() == 17);
 ```
 
-
 ## Invoke std::function
 
 We can also invoke `std::function`
-
 
 ```c++
 metapp::Variant v(std::function<std::string (const std::string &, const std::string &)>(
@@ -87,13 +88,11 @@ metapp::Variant result = metapp::callableInvoke(v, nullptr, "Hello ", "world");
 ASSERT(result.get<const std::string &>() == "Hello world");
 ```
 
-
-## Using default argument
+## Use default argument
 
 We also support default arguments.  
 `myDefaultArgsFunc` is the function we are going to invoke with default arguments.  
 The C++ function doesn't need to have default argument.
-
 
 ```c++
 std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
@@ -102,17 +101,14 @@ std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
 }
 ```
 
-
 Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.  
 The first argument is the function, it can be any meta callable, such as free function, member function, constructor, etc.  
 The second argument is a list of default arguments, it must be specified
 in the right to left order in the function prototype
 
-
 ```c++
 metapp::Variant v(metapp::createDefaultArgsFunction(&myDefaultArgsFunc, { "hello", true }));
 ```
-
 
 ```c++
 // Invoke the function, with 2 default arguments
@@ -125,13 +121,11 @@ ASSERT(metapp::callableInvoke(v, nullptr, 38, false).get<const std::string &>() 
 ASSERT(metapp::callableInvoke(v, nullptr, 19, false, "GOOD").get<const std::string &>() == "19falseGOOD");
 ```
 
-
-## Using variadic function
+## Use variadic function
 
 We can also use variadic function.  
 The function must accept two arguments, the first is a pointer to Variant, which contains
 the arguments array. The second argument is the number of Variant in the array.
-
 
 ```c++
 int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount)
@@ -143,7 +137,6 @@ int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount
   return total;
 }
 ```
-
 
 ```c++
 metapp::Variant v(metapp::createVariadicFunction(&myVariadicFunc));

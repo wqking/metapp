@@ -20,6 +20,8 @@
 # Tutorial for using MetaClass
 desc */
 
+//desc ## Include headers
+
 //code
 // To use the built-in meta types, we must include "metapp/allmetatypes.h"
 #include "metapp/allmetatypes.h"
@@ -30,7 +32,9 @@ desc */
 //code
 
 /* desc
-Define a class to reflect
+## Define the C++ class to reflect for
+
+Here is the class we are going to reflect for.
 desc */
 
 //code
@@ -104,22 +108,33 @@ private:
 //code
 
 /* desc
-Declare meta type for MyClass,
+## Declare meta type for MyClass
 desc */
 
 //code
 constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
 
+/* desc
+Now declare meta type for MyClass.  
+The declaration must be specialization of metapp::DeclareMetaType, and inherit from metapp::DeclareMetaTypeBase.
+desc */
 template <>
 struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 {
-	// Define the TypeKind for the type. We don't need to define the TypeKind for
-	// every meta type unless we do need it.
-	// If we don't define the typeKind, it will be tkObject by default.
+	/* desc
+	Define the TypeKind for the type. We don't need to define the TypeKind for
+	every meta type unless we do need it.  
+	If we don't define the typeKind, it will be tkObject by default.  
+	desc */
 	static constexpr metapp::TypeKind typeKind = tkMyClass;
 
-	// Implement the MetaClass interface
+	/* desc
+	Implement the MetaClass interface.  
+	Not every classes need to implement MetaClass. Without MetaClass, we can still construct object of the class.  
+	But with MetaClass we can get more information such as member data, member functions, etc.  
+	Note the code is inside the specialization `struct metapp::DeclareMetaType <MyClass>`.  
+	desc */
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<MyClass>(),
@@ -174,7 +189,7 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 
 /* desc
 Declare meta type for MyClass::MyEnum,
-it is used when declaring meta type for MyClass
+it is used when declaring meta type for MyClass.
 desc */
 
 //code
@@ -196,7 +211,9 @@ struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <
 //code
 
 /* desc
-Now let's see how to use field meta data
+## Use member data
+
+Now let's see how to use field meta data.
 desc */
 void tutorialMetaClass_accessible()
 {
@@ -239,7 +256,9 @@ void tutorialMetaClass_accessible()
 }
 
 /* desc
-Now let's call the member method
+## Use member function
+
+Now let's call the member method.
 desc */
 void tutorialMetaClass_method()
 {
@@ -264,7 +283,9 @@ void tutorialMetaClass_method()
 }
 
 /* desc
-Now let's call the overloaded member method
+## Use overloaded member functions
+
+Now let's call the overloaded member method.
 desc */
 void tutorialMetaClass_overloadedMethods()
 {
@@ -310,7 +331,9 @@ void tutorialMetaClass_overloadedMethods()
 }
 
 /* desc
-Now let's see how to use static method
+## Use static member function
+
+Now let's see how to use static method.
 desc */
 void tutorialMetaClass_staticMethods()
 {
@@ -337,7 +360,9 @@ void tutorialMetaClass_staticMethods()
 }
 
 /* desc
-Now let's play with contructors
+## Use constructor
+
+Now let's play with contructors.
 desc */
 void tutorialMetaClass_constructor()
 {
@@ -369,7 +394,9 @@ void tutorialMetaClass_constructor()
 }
 
 /* desc
-Now let's play with types
+## Use nested types
+
+Now let's play with types.
 desc */
 void tutorialMetaClass_type()
 {
@@ -401,6 +428,8 @@ void tutorialMetaClass_type()
 }
 
 /* desc
+## Use annotations
+
 Now let's play with annotations
 desc */
 void tutorialMetaClass_annotation()

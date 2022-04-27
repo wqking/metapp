@@ -25,9 +25,7 @@ Use the member function `MetaType::getMetaCallable()` to get the meta interface.
 If the meta type doesn't implement the interface, `nullptr` is returned.
 desc*/
 
-/*desc
-## Include headers
-desc*/
+//desc ## Include headers
 
 // code
 // The header for MetaCallable
@@ -58,16 +56,16 @@ void tutorialCallable_freeFunction()
 {
 	//code
 
-	// v is pointer to func1
+	//desc v is pointer to func1
 	metapp::Variant v(&func1);
 
-	// Prepare the arguments array
+	//desc Prepare the arguments array
 	metapp::Variant arguments[] { 5 };
-	// Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
+	//desc Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
 	metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
 	ASSERT(result.get<std::string>() == "5");
 
-	// Or we can use metapp::callableInvoke to pass the arguments directly
+	//desc Or we can use metapp::callableInvoke to pass the arguments directly
 	result = metapp::callableInvoke(v, nullptr, 38);
 	ASSERT(result.get<std::string>() == "38");
 
@@ -119,7 +117,7 @@ void tutorialCallable_stdFunction()
 }
 
 /*desc
-## Using default argument
+## Use default argument
 
 We also support default arguments.  
 `myDefaultArgsFunc` is the function we are going to invoke with default arguments.  
@@ -159,7 +157,7 @@ void tutorialCallable_defaultArgs()
 }
 
 /*desc
-## Using variadic function
+## Use variadic function
 
 We can also use variadic function.  
 The function must accept two arguments, the first is a pointer to Variant, which contains

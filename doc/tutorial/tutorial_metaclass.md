@@ -1,6 +1,6 @@
-
 # Tutorial for using MetaClass
 
+## Include headers
 
 ```c++
 // To use the built-in meta types, we must include "metapp/allmetatypes.h"
@@ -11,9 +11,9 @@
 #include "metapp/interfaces/metaenum.h"
 ```
 
+## Define the C++ class to reflect for
 
-Define a class to reflect
-
+Here is the class we are going to reflect for.
 
 ```c++
 class MyClass
@@ -85,23 +85,36 @@ private:
 };
 ```
 
-
-Declare meta type for MyClass,
-
+## Declare meta type for MyClass
 
 ```c++
 constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
+```
 
+Now declare meta type for MyClass.  
+The declaration must be specialization of metapp::DeclareMetaType, and inherit from metapp::DeclareMetaTypeBase.
+
+```c++
 template <>
 struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 {
-  // Define the TypeKind for the type. We don't need to define the TypeKind for
-  // every meta type unless we do need it.
-  // If we don't define the typeKind, it will be tkObject by default.
-  static constexpr metapp::TypeKind typeKind = tkMyClass;
+```
 
-  // Implement the MetaClass interface
+Define the TypeKind for the type. We don't need to define the TypeKind for
+every meta type unless we do need it.  
+If we don't define the typeKind, it will be tkObject by default.  
+
+```c++
+  static constexpr metapp::TypeKind typeKind = tkMyClass;
+```
+
+Implement the MetaClass interface.  
+Not every classes need to implement MetaClass. Without MetaClass, we can still construct object of the class.  
+But with MetaClass we can get more information such as member data, member functions, etc.  
+Note the code is inside the specialization `struct metapp::DeclareMetaType <MyClass>`.  
+
+```c++
   static const metapp::MetaClass * getMetaClass() {
     static const metapp::MetaClass metaClass(
       metapp::getMetaType<MyClass>(),
@@ -154,10 +167,8 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 };
 ```
 
-
 Declare meta type for MyClass::MyEnum,
-it is used when declaring meta type for MyClass
-
+it is used when declaring meta type for MyClass.
 
 ```c++
 template <>
@@ -177,9 +188,9 @@ struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <
 };
 ```
 
+## Use member data
 
-Now let's see how to use field meta data
-
+Now let's see how to use field meta data.
 
 ```c++
 // First let's get the MetaType of MyClass
@@ -218,9 +229,9 @@ ASSERT(obj.message == "This is a test");
 ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "This is a test");
 ```
 
+## Use member function
 
-Now let's call the member method
-
+Now let's call the member method.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -241,9 +252,9 @@ ASSERT(result.get<const std::string &>() == "Hello, world");
 ASSERT(metapp::callableInvoke(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
 ```
 
+## Use overloaded member functions
 
-Now let's call the overloaded member method
-
+Now let's call the overloaded member method.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -285,9 +296,9 @@ ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::st
 ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 ```
 
+## Use static member function
 
-Now let's see how to use static method
-
+Now let's see how to use static method.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -310,9 +321,9 @@ ASSERT(message == "Hello");
 ASSERT(value == 38);
 ```
 
+## Use constructor
 
-Now let's play with contructors
-
+Now let's play with contructors.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -340,9 +351,9 @@ ASSERT(instance.get<const MyClass &>().message == "good");
 // instance will free the object when instance is freed
 ```
 
+## Use nested types
 
-Now let's play with types
-
+Now let's play with types.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
@@ -370,9 +381,9 @@ std::unique_ptr<MyClass::MyInner> inner(static_cast<MyClass::MyInner *>(innerTyp
 ASSERT(inner->n == 1999);
 ```
 
+## Use annotations
 
 Now let's play with annotations
-
 
 ```c++
 // First let's get the MetaType of MyClass
