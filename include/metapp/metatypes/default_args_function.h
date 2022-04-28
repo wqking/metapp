@@ -68,27 +68,6 @@ auto createDefaultArgsFunction(FT && func, std::vector<Variant> defaultArgs)
 	return DefaultArgsFunction<FT>(std::forward<FT>(func), std::move(defaultArgs));
 }
 
-namespace internal_ {
-
-struct DefaultArgsGetter
-{
-	size_t argumentCount;
-	const Variant * passedArguments;
-	size_t passedArgumentCount;
-	const Variant * defaultArguments;
-
-	const Variant & operator[] (const size_t index) const {
-		if(index < passedArgumentCount) {
-			return passedArguments[index];
-		}
-		else {
-			return defaultArguments[(argumentCount - index) - 1];
-		}
-	}
-};
-
-} // namespace internal_
-
 template <typename FT>
 struct DeclareMetaTypeBase <DefaultArgsFunction<FT> >
 {
