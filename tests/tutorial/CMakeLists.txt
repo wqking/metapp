@@ -9,6 +9,12 @@ add_executable(
 	${SRC_LIB}
 )
 
+target_include_directories(
+	${TARGET_TUTORIAL}
+	PUBLIC
+	./
+)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(${TARGET_TUTORIAL} Threads::Threads)

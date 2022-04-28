@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "../test.h"
+#include "test.h"
 
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
