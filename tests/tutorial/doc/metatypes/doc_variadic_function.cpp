@@ -75,7 +75,7 @@ void docVariadicFunction()
 {
 	//code
 	//desc Create the VariadicFunction Variant
-	metapp::Variant func = (metapp::VariadicFunction<decltype(&sum)>(&sum));
+	metapp::Variant func = (metapp::createVariadicFunction(&sum));
 
 	//desc Invoke func without arguments
 	ASSERT(metapp::callableInvoke(func, nullptr).get<int>() == 0);
