@@ -52,7 +52,7 @@ inline std::string func1(const int n)
 }
 //code
 
-void tutorialCallable_freeFunction()
+TEST_CASE("tutorialCallable_freeFunction")
 {
 	//code
 
@@ -78,7 +78,7 @@ void tutorialCallable_freeFunction()
 Now let's invoke class member function
 desc*/
 
-void tutorialCallable_memberFunction()
+TEST_CASE("tutorialCallable_memberFunction")
 {
 	//code
 	struct MyClass {
@@ -103,7 +103,7 @@ void tutorialCallable_memberFunction()
 We can also invoke `std::function`
 desc*/
 
-void tutorialCallable_stdFunction()
+TEST_CASE("tutorialCallable_stdFunction")
 {
 	//code
 	metapp::Variant v(std::function<std::string (const std::string &, const std::string &)>(
@@ -131,7 +131,7 @@ std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
 }
 //code
 
-void tutorialCallable_defaultArgs()
+TEST_CASE("tutorialCallable_defaultArgs")
 {
 	/*desc
 	Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.  
@@ -175,7 +175,7 @@ int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount
 }
 //code
 
-void tutorialCallable_variadic()
+TEST_CASE("tutorialCallable_variadic")
 {
 	//code
 
@@ -194,11 +194,5 @@ void tutorialCallable_variadic()
 
 	//code
 }
-
-RUN_TUTORIAL(tutorialCallable_freeFunction)
-RUN_TUTORIAL(tutorialCallable_memberFunction)
-RUN_TUTORIAL(tutorialCallable_stdFunction)
-RUN_TUTORIAL(tutorialCallable_defaultArgs)
-RUN_TUTORIAL(tutorialCallable_variadic)
 
 } // namespace

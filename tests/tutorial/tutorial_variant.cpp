@@ -38,7 +38,7 @@ desc*/
 
 //desc ## Use Variant
 
-void tutorialVariant()
+TEST_CASE("tutorialVariant")
 {
 	//code
 	//desc v contains int.
@@ -92,4 +92,3 @@ void tutorialVariant()
 	//code
 }
 
-RUN_TUTORIAL(tutorialVariant)

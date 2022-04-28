@@ -58,7 +58,7 @@ std::string docDefaultArgsFunc(const std::string & a, const int b)
 }
 //code
 
-void docDefaultArgsFunction()
+TEST_CASE("docDefaultArgsFunction")
 {
 	//code
 	//desc Then we can have,
@@ -76,4 +76,4 @@ void docDefaultArgsFunction()
 
 } // namespace
 
-RUN_TUTORIAL(docDefaultArgsFunction)
+

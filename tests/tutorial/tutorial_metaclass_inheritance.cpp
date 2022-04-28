@@ -81,7 +81,7 @@ struct metapp::DeclareMetaType <Son1> : metapp::DeclareMetaTypeBase <Son1>
 };
 //code
 
-void tutorialMetaClass_inheritance()
+TEST_CASE("tutorialMetaClass_inheritance")
 {
 	//code
 	//desc If we don't DeclareMetaType any classes, or we don't want to use `setup`,
@@ -108,5 +108,3 @@ void tutorialMetaClass_inheritance()
 	//code
 }
 
-
-RUN_TUTORIAL(tutorialMetaClass_inheritance)

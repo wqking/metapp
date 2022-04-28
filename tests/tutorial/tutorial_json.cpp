@@ -134,7 +134,7 @@ private:
 	std::ostream & stream;
 };
 
-void tutorialJson()
+TEST_CASE("tutorialJson")
 {
 	long ln = 987654321L;
 	auto myTuple = std::make_tuple("def", 1, 'w');
@@ -159,4 +159,4 @@ void tutorialJson()
 	JsonDumper(std::cout).dump(value);
 }
 
-RUN_TUTORIAL(tutorialJson)
+

@@ -36,7 +36,7 @@ desc*/
 /*desc
 ## Identify and compare MetaType
 desc*/
-void tutorialMetaType_identify_MetaType()
+TEST_CASE("tutorialMetaType_identify_MetaType")
 {
 	//code
 	//desc We can use metapp::getMetaType<T>() to get the MetaType for T at compile time.  
@@ -60,7 +60,7 @@ void tutorialMetaType_identify_MetaType()
 /*desc
 ## Inspect MetaType attributes
 desc*/
-void tutorialMetaType_attributes()
+TEST_CASE("tutorialMetaType_attributes")
 {
 	{
 		//code
@@ -108,7 +108,7 @@ void tutorialMetaType_attributes()
 /*desc
 ## Working with up type
 desc*/
-void tutorialMetaType_upType()
+TEST_CASE("tutorialMetaType_upType")
 {
 	{
 		//code
@@ -131,6 +131,3 @@ void tutorialMetaType_upType()
 	}
 }
 
-RUN_TUTORIAL(tutorialMetaType_identify_MetaType)
-RUN_TUTORIAL(tutorialMetaType_attributes)
-RUN_TUTORIAL(tutorialMetaType_upType)

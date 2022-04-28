@@ -71,7 +71,7 @@ int sum(const metapp::Variant * arguments, const size_t argumentCount)
 }
 //code
 
-void docVariadicFunction()
+TEST_CASE("docVariadicFunction")
 {
 	//code
 	//desc Create the VariadicFunction Variant
@@ -92,4 +92,3 @@ void docVariadicFunction()
 
 } // namespace
 
-RUN_TUTORIAL(docVariadicFunction)

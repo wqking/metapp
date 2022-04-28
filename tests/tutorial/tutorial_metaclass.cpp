@@ -218,7 +218,7 @@ struct metapp::DeclareMetaType <TmClass::MyEnum> : metapp::DeclareMetaTypeBase <
 
 Now let's see how to use field meta data.
 desc */
-void tutorialMetaClass_accessible()
+TEST_CASE("tutorialMetaClass_accessible")
 {
 	//code
 	// First let's get the MetaType of TmClass
@@ -263,7 +263,7 @@ void tutorialMetaClass_accessible()
 
 Now let's call the member method.
 desc */
-void tutorialMetaClass_method()
+TEST_CASE("tutorialMetaClass_method")
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
@@ -290,7 +290,7 @@ void tutorialMetaClass_method()
 
 Now let's call the overloaded member method.
 desc */
-void tutorialMetaClass_overloadedMethods()
+TEST_CASE("tutorialMetaClass_overloadedMethods")
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
@@ -338,7 +338,7 @@ void tutorialMetaClass_overloadedMethods()
 
 Now let's see how to use static method.
 desc */
-void tutorialMetaClass_staticMethods()
+TEST_CASE("tutorialMetaClass_staticMethods")
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
@@ -367,7 +367,7 @@ void tutorialMetaClass_staticMethods()
 
 Now let's play with contructors.
 desc */
-void tutorialMetaClass_constructor()
+TEST_CASE("tutorialMetaClass_constructor")
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
@@ -401,7 +401,7 @@ void tutorialMetaClass_constructor()
 
 Now let's play with types.
 desc */
-void tutorialMetaClass_type()
+TEST_CASE("tutorialMetaClass_type")
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
@@ -435,7 +435,7 @@ void tutorialMetaClass_type()
 
 Now let's play with annotations
 desc */
-void tutorialMetaClass_annotation()
+TEST_CASE("tutorialMetaClass_annotation")
 {
 	//code
 	// First let's get the MetaType of TmClass
@@ -455,12 +455,4 @@ void tutorialMetaClass_annotation()
 	ASSERT(notExist.isEmpty());
 	//code
 }
-
-RUN_TUTORIAL(tutorialMetaClass_accessible)
-RUN_TUTORIAL(tutorialMetaClass_method)
-RUN_TUTORIAL(tutorialMetaClass_overloadedMethods)
-RUN_TUTORIAL(tutorialMetaClass_staticMethods)
-RUN_TUTORIAL(tutorialMetaClass_constructor)
-RUN_TUTORIAL(tutorialMetaClass_type)
-RUN_TUTORIAL(tutorialMetaClass_annotation)
 

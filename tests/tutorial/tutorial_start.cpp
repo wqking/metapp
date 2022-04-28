@@ -28,7 +28,7 @@
 #include "metapp/allmetatypes.h"
 //code
 
-void tutorialStart_Variant()
+TEST_CASE("tutorialStart_Variant")
 {
 	{
 		//code
@@ -54,7 +54,7 @@ void tutorialStart_Variant()
 }
 
 //desc ### Use MetaType
-void tutorialStart_MetaType()
+TEST_CASE("tutorialStart_MetaType")
 {
 	{
 		//code
@@ -75,7 +75,7 @@ void tutorialStart_MetaType()
 }
 
 //desc ### Call function
-void tutorialStart_Callable()
+TEST_CASE("tutorialStart_Callable")
 {
 	//code
 	struct MyClass {
@@ -94,6 +94,3 @@ void tutorialStart_Callable()
 	//code
 }
 
-RUN_TUTORIAL(tutorialStart_Variant)
-RUN_TUTORIAL(tutorialStart_MetaType)
-RUN_TUTORIAL(tutorialStart_Callable)

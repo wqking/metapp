@@ -79,7 +79,7 @@ struct DaClass
 };
 //code
 
-void docAccessor()
+TEST_CASE("docAccessor")
 {
 	//code
 
@@ -97,4 +97,3 @@ void docAccessor()
 
 } // namespace
 
-RUN_TUTORIAL(docAccessor)

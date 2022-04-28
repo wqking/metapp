@@ -177,7 +177,7 @@ void tutorialMetaRepo_type()
 	//code
 }
 
-void tutorialMetaRepo_main()
+TEST_CASE("tutorialMetaRepo_main")
 {
 	tutorialMetaRepo_registerMetaData();
 
@@ -186,4 +186,3 @@ void tutorialMetaRepo_main()
 	tutorialMetaRepo_type();
 }
 
-RUN_TUTORIAL(tutorialMetaRepo_main)

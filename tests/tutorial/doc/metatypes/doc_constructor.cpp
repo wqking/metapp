@@ -46,7 +46,7 @@ public:
 };
 //code
 
-void docConstructor()
+TEST_CASE("docConstructor")
 {
 	//code
 	//desc Then we can have,
@@ -75,4 +75,3 @@ void docConstructor()
 	//code
 }
 
-RUN_TUTORIAL(docConstructor)
