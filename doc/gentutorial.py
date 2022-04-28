@@ -10,11 +10,11 @@ class BlockType(enum.IntEnum) :
 	code = 2
 
 def writeFile(fileName, content) :
-	with codecs.open(fileName, "w", "utf-8") as file :
+	with open(fileName, 'w') as file:
 		file.write(str(content))
 
 def readFile(fileName) :
-	with codecs.open(fileName, "r", "utf-8") as file :
+	with open(fileName, 'r') as file:
 		return file.read()
 
 def doTabToSpace(text) :
