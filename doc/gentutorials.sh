@@ -1,9 +1,9 @@
 #!/bin/bash
 
-sourcePath="../tests/tutorial/"
-docPath="./tutorial/"
+sourcePath="../tests/tutorial"
+tutorialDestPath="./tutorial"
 command="python gentutorial.py"
-fileList=(
+tutorialFileList=(
 	tutorial_start
 	tutorial_variant
 	tutorial_metatype
@@ -13,7 +13,20 @@ fileList=(
 	tutorial_metarepo
 )
 
-for file in ${fileList[@]}
+for file in ${tutorialFileList[@]}
 do
-	${command} ${sourcePath}${file}.cpp ${docPath}${file}.md
+	${command} ${sourcePath}/${file}.cpp ${tutorialDestPath}/${file}.md
 done
+
+metaTypeFileList=(
+	accessor
+	constructor
+	default_args_function
+	variadic_function
+)
+
+for file in ${metaTypeFileList[@]}
+do
+	${command} ${sourcePath}/doc/metatypes/doc_${file}.cpp ./metatypes/${file}.md
+done
+

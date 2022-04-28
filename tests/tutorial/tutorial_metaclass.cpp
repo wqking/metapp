@@ -41,7 +41,7 @@ Here is the class we are going to reflect for.
 desc */
 
 //code
-class MyClass
+class TmClass
 {
 public:
 	// Nested enum type, its meta type will be declared
@@ -59,13 +59,13 @@ public:
 
 public:
 	// Default constructor
-	MyClass()
+	TmClass()
 		: message(), value(0)
 	{
 	}
 
 	// Constructor with arguments
-	MyClass(const int value, const std::string & message)
+	TmClass(const int value, const std::string & message)
 		: message(message), value(value)
 	{
 	}
@@ -96,7 +96,7 @@ public:
 
 	// static member function, it shows how to return values
 	// via reference/pointer in parameter.
-	static void obtainValues(std::string & message, int * value, MyClass * obj) {
+	static void obtainValues(std::string & message, int * value, TmClass * obj) {
 		message = obj->message;
 		*value = obj->getValue();
 	}
@@ -111,7 +111,7 @@ private:
 //code
 
 /* desc
-## Declare meta type for MyClass
+## Declare meta type for TmClass
 desc */
 
 //code
@@ -119,11 +119,11 @@ constexpr metapp::TypeKind tkMyEnum = metapp::tkUser;
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
 
 /* desc
-Now declare meta type for MyClass.  
+Now declare meta type for TmClass.  
 The declaration must be specialization of metapp::DeclareMetaType, and inherit from metapp::DeclareMetaTypeBase.
 desc */
 template <>
-struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
+struct metapp::DeclareMetaType <TmClass> : metapp::DeclareMetaTypeBase <TmClass>
 {
 	/* desc
 	Define the TypeKind for the type. We don't need to define the TypeKind for
@@ -136,52 +136,52 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 	Implement the MetaClass interface.  
 	Not every classes need to implement MetaClass. Without MetaClass, we can still construct object of the class.  
 	But with MetaClass we can get more information such as member data, member functions, etc.  
-	Note the code is inside the specialization `struct metapp::DeclareMetaType <MyClass>`.  
+	Note the code is inside the specialization `struct metapp::DeclareMetaType <TmClass>`.  
 	desc */
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyClass>(),
+			metapp::getMetaType<TmClass>(),
 			[](metapp::MetaClass & mc) {
 				// Register constructors
-				mc.registerConstructor(metapp::Constructor<MyClass ()>());
+				mc.registerConstructor(metapp::Constructor<TmClass ()>());
 				mc.registerConstructor(metapp::Constructor<
-					MyClass (const int, const std::string &)
+					TmClass (const int, const std::string &)
 				>());
 
 				// Register field with getter/setter function
 				mc.registerAccessible("value",
-					metapp::createAccessor(&MyClass::getValue, &MyClass::setValue));
+					metapp::createAccessor(&TmClass::getValue, &TmClass::setValue));
 				// Register member data as field
-				auto & item = mc.registerAccessible("message", &MyClass::message);
+				auto & item = mc.registerAccessible("message", &TmClass::message);
 				// Add some annotations to the accessible
 				item.addAnnotation("description", "This is a description");
 				item.addAnnotation("notes", std::vector<std::string> { "first", "second" });
 
 				// Register a member function
-				mc.registerCallable("greeting", &MyClass::greeting);
+				mc.registerCallable("greeting", &TmClass::greeting);
 				
 				// Register overloaded member functions
 				mc.registerCallable("makeMessage",
-					metapp::selectOverload<std::string () const>(&MyClass::makeMessage));
+					metapp::selectOverload<std::string () const>(&TmClass::makeMessage));
 				mc.registerCallable("makeMessage",
 					metapp::selectOverload<std::string (const std::string &, const int) const>(
-						&MyClass::makeMessage));
+						&TmClass::makeMessage));
 				mc.registerCallable("makeMessage",
 					metapp::selectOverload<std::string (const int, const std::string &) const>(
-						&MyClass::makeMessage));
+						&TmClass::makeMessage));
 				
 				// Register static member function
-				mc.registerCallable("obtainValues", &MyClass::obtainValues);
+				mc.registerCallable("obtainValues", &TmClass::obtainValues);
 
 				// Register nested type.
-				// The declaration of meta type for MyClass::MyInner is not required,
-				mc.registerType<MyClass::MyInner>("MyInner");
+				// The declaration of meta type for TmClass::MyInner is not required,
+				mc.registerType<TmClass::MyInner>("MyInner");
 
-				// We declare the meta type for MyClass::MyEnum later.
-				// The declaration of meta type for MyClass::MyEnum is not required,
-				// if it's not declared, we can still registerType<MyClass::MyEnum>,
+				// We declare the meta type for TmClass::MyEnum later.
+				// The declaration of meta type for TmClass::MyEnum is not required,
+				// if it's not declared, we can still registerType<TmClass::MyEnum>,
 				// but we can't get any name or value from the enum.
-				mc.registerType<MyClass::MyEnum>("MyEnum");
+				mc.registerType<TmClass::MyEnum>("MyEnum");
 			}
 		);
 		return &metaClass;
@@ -191,13 +191,13 @@ struct metapp::DeclareMetaType <MyClass> : metapp::DeclareMetaTypeBase <MyClass>
 //code
 
 /* desc
-Declare meta type for MyClass::MyEnum,
-it is used when declaring meta type for MyClass.
+Declare meta type for TmClass::MyEnum,
+it is used when declaring meta type for TmClass.
 desc */
 
 //code
 template <>
-struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <MyClass::MyEnum>
+struct metapp::DeclareMetaType <TmClass::MyEnum> : metapp::DeclareMetaTypeBase <TmClass::MyEnum>
 {
 	static constexpr metapp::TypeKind typeKind = tkMyEnum;
 
@@ -205,8 +205,8 @@ struct metapp::DeclareMetaType <MyClass::MyEnum> : metapp::DeclareMetaTypeBase <
 	static const metapp::MetaEnum * getMetaEnum() {
 		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
 			// Register the enum name and values, then we can get the name and value later.
-			me.registerValue("one", MyClass::MyEnum::one);
-			me.registerValue("two", MyClass::MyEnum::two);
+			me.registerValue("one", TmClass::MyEnum::one);
+			me.registerValue("two", TmClass::MyEnum::two);
 		});
 		return &metaEnum;
 	}
@@ -221,19 +221,19 @@ desc */
 void tutorialMetaClass_accessible()
 {
 	//code
-	// First let's get the MetaType of MyClass
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	// First let's get the MetaType of TmClass
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	
-	// If we have a Variant that holds a MyClass, we can get the MetaType from the Variant as well
-	//metapp::Variant v = MyClass();
+	// If we have a Variant that holds a TmClass, we can get the MetaType from the Variant as well
+	//metapp::Variant v = TmClass();
 	//const metapp::MetaType * metaType = v.getMetaType();
 
 	// Get the MetaClass from the MetaType.
 	// If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	// Declare an instace of MyClass, we will use the field meta data to access it's member data
-	MyClass obj;
+	// Declare an instace of TmClass, we will use the field meta data to access it's member data
+	TmClass obj;
 
 	// Get the meta data of field "value"
 	metapp::RegisteredAccessible fieldValue = metaClass->getAccessible("value");
@@ -266,10 +266,10 @@ desc */
 void tutorialMetaClass_method()
 {
 	//code
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	MyClass obj;
+	TmClass obj;
 	obj.message = "Hello";
 
 	// Get the meta data of method "greeting".
@@ -293,10 +293,10 @@ desc */
 void tutorialMetaClass_overloadedMethods()
 {
 	//code
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	MyClass obj;
+	TmClass obj;
 	obj.message = "Hello";
 
 	// Get all the overloaded methods of "makeMessage" by calling metaClass->getCallableList
@@ -341,10 +341,10 @@ desc */
 void tutorialMetaClass_staticMethods()
 {
 	//code
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	MyClass obj;
+	TmClass obj;
 	obj.message = "Hello";
 	obj.setValue(38);
 
@@ -370,7 +370,7 @@ desc */
 void tutorialMetaClass_constructor()
 {
 	//code
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	// Get all constructors from the meta class
@@ -382,16 +382,16 @@ void tutorialMetaClass_constructor()
 	// used when invoking constructors.
 	// The constructor returns a Variant, which is a pointer to the constructed object.
 	// The caller must free the pointer. The returned Variant doesn't free it.
-	std::unique_ptr<MyClass> ptr(metapp::callableInvoke(constructorList, nullptr).get<MyClass *>());
+	std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructorList, nullptr).get<TmClass *>());
 	ASSERT(ptr->getValue() == 0);
 	ASSERT(ptr->message == "");
 
 	// If we want to convert the returned pointer to a Variant which manage the object lifetime,
 	// we can use metapp::Variant::takeFrom to create a new Variant that owns the object.
-	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorList, nullptr, 3, "good").get<MyClass *>());
-	ASSERT(instance.getMetaType() == metapp::getMetaType<MyClass>());
-	ASSERT(instance.get<const MyClass &>().getValue() == 3);
-	ASSERT(instance.get<const MyClass &>().message == "good");
+	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorList, nullptr, 3, "good").get<TmClass *>());
+	ASSERT(instance.getMetaType() == metapp::getMetaType<TmClass>());
+	ASSERT(instance.get<const TmClass &>().getValue() == 3);
+	ASSERT(instance.get<const TmClass &>().message == "good");
 	// instance will free the object when instance is freed
 	//code
 }
@@ -404,19 +404,19 @@ desc */
 void tutorialMetaClass_type()
 {
 	//code
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	metapp::RegisteredType enumType;
 
 	enumType = metaClass->getType("MyEnum");
-	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+	ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
 
 	enumType = metaClass->getType(tkMyEnum);
-	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+	ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
 
-	enumType = metaClass->getType(metapp::getMetaType<MyClass::MyEnum>());
-	ASSERT(enumType.getTarget() == metapp::getMetaType<MyClass::MyEnum>());
+	enumType = metaClass->getType(metapp::getMetaType<TmClass::MyEnum>());
+	ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
 	ASSERT(enumType.getName() == "MyEnum");
 
 	const metapp::MetaEnum * metaEnum = enumType.getTarget()->getMetaEnum();
@@ -424,8 +424,8 @@ void tutorialMetaClass_type()
 	ASSERT(metaEnum->getValue("two") == 2);
 
 	metapp::RegisteredType innerType = metaClass->getType("MyInner");
-	ASSERT(innerType.getTarget() == metapp::getMetaType<MyClass::MyInner>());
-	std::unique_ptr<MyClass::MyInner> inner(static_cast<MyClass::MyInner *>(innerType.getTarget()->construct()));
+	ASSERT(innerType.getTarget() == metapp::getMetaType<TmClass::MyInner>());
+	std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.getTarget()->construct()));
 	ASSERT(inner->n == 1999);
 	//code
 }
@@ -438,8 +438,8 @@ desc */
 void tutorialMetaClass_annotation()
 {
 	//code
-	// First let's get the MetaType of MyClass
-	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	// First let's get the MetaType of TmClass
+	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 
 	// Get the MetaClass from the MetaType.
 	// If the MetaType doesn't implement MetaClass, the return value is nullptr.

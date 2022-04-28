@@ -40,7 +40,7 @@ Cast to const char *.
 ```c++
 metapp::Variant casted = v.cast<const char *>();
 const char * s = casted.get<const char *>();
-ASSERT(strcmp(s, "world") == 0);
+ASSERT(strcmp(s, "hello") == 0);
 ```
 
 ### Use MetaType

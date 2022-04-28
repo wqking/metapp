@@ -203,3 +203,6 @@ ASSERT(result.get<int>() == 17);
     - [Overview](doc/metatypes/overview.md)
     - [List of all built-in meta types](doc/metatypes/list-all.md)
     - [Constructor](doc/metatypes/constructor.md)
+    - [Default arguments function](doc/metatypes/default_args_function.md)
+    - [Variadic function](doc/metatypes/variadic_function.md)
+    - [Accessor](doc/metatypes/accessor.md)

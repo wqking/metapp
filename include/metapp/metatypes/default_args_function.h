@@ -40,7 +40,7 @@ public:
 	DefaultArgsFunction() : func() {
 	}
 
-	DefaultArgsFunction(FT func, std::vector<Variant> defaultArgs)
+	DefaultArgsFunction(const Variant & func, std::vector<Variant> defaultArgs)
 		: func(func), defaultArgs(std::move(defaultArgs)) {
 	}
 
