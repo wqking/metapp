@@ -48,7 +48,7 @@ void tutorialStart_Variant()
 		//desc Cast to const char *.
 		metapp::Variant casted = v.cast<const char *>();
 		const char * s = casted.get<const char *>();
-		ASSERT(strcmp(s, "world") == 0);
+		ASSERT(strcmp(s, "hello") == 0);
 		//code
 	}
 }
