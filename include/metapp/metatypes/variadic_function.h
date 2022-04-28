@@ -31,7 +31,7 @@ public:
 	VariadicFunction() : func() {
 	}
 
-	explicit VariadicFunction(FT func)
+	explicit VariadicFunction(const Variant & func)
 		: func(func) {
 	}
 
