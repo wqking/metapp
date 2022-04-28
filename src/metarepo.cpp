@@ -394,14 +394,14 @@ const RegisteredTypeList & MetaRepoBase::doGetTypeList() const
 	}
 }
 
-static MetaRepo globalRepo;
-
 } // namespace internal_
 
 
 MetaRepo * getMetaRepo()
 {
-	return &internal_::globalRepo;
+	static MetaRepo globalRepo;
+
+	return &globalRepo;
 }
 
 MetaRepo::MetaRepo()
