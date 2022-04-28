@@ -177,17 +177,17 @@ ASSERT(result.get<int>() == 17);
 ## Documentations
 
 - Core components, classes, concepts
-    - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core-concepts.md)
+    - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core_concepts.md)
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
 
 - Build meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
     - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
-    - [Registered items (RegisteredCallable, etc)](doc/registered-items.md)
+    - [Registered items (RegisteredCallable, etc)](doc/registered_items.md)
 
 - Meta interfaces
-    - [Overview and implement meta interface](doc/meta-interface-overview.md)
+    - [Overview and implement meta interface](doc/meta_interface_overview.md)
     - [MetaClass](doc/interfaces/metaclass.md)
     - [MetaCallable](doc/interfaces/metacallable.md)
     - [MetaAccessible](doc/interfaces/metaaccessible.md)

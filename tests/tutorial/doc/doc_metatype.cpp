@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docMetaType_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # MetaType reference
 
 ## Overview
@@ -25,28 +48,43 @@ Return a MetaType pointer of type T.
 `getMetaType` can be used on any C++ type, the type doesn't need any registering or preprocessing.  
 
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
+desc*/
 
-```c++
-ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
-ASSERT(metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>());
-```
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
+	ASSERT(metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>());
+	//code
+}
 
+/*desc
 MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
+desc*/
 
-```c++
-ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
-ASSERT(metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>());
-```
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
+	ASSERT(metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>());
+	//code
+}
 
+/*desc
 To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.  
 
 **Example**
+desc*/
 
-```c++
-ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
-```
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
+	ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
+	//code
+}
 
+/*desc
 ### Use MetaRepo at runtime
 
 The class `metapp::MetaRepo` holds all registered meta types.
@@ -184,3 +222,4 @@ void destroy(void * instance) const;
 
 Free an object constructed by `construct` or `copyConstruct`.  
 
+desc*/

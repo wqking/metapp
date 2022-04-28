@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docVariant_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # Variant reference
 
 ## Overview
@@ -16,11 +39,13 @@ metapp::Variant v3 = MyClass();
 In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 is metapp::tkObject unless MyClass is registered with another type kind.
 
 ## Header
+desc*/
 
-```c++
+//code
 #include "metapp/variant.h"
-```
+//code
 
+/*desc
 ## Construct a Variant
 
 #### Default constructor
@@ -76,13 +101,18 @@ This is similar with the constructor `template <typename T> Variant(T value)`, t
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
 **Example**
+desc*/
 
-```c++
-int n = 5;
-// The type held by v is tkReference
-metapp::Variant v = metapp::Variant::create<int &>(n);
-```
+UFN(FN_PREFIX)
+{
+	//code
+	int n = 5;
+	// The type held by v is tkReference
+	metapp::Variant v = metapp::Variant::create<int &>(n);
+	//code
+}
 
+/*desc
 #### reference
 ```c++
 template <typename T>
@@ -93,13 +123,18 @@ Create a Variant of reference to `value`. `value` can be either lvalue or rvalue
 This is equivalent to `Variant::create<T &>(value);`, but in `reference` the template argument can be deduced.
 
 **Example**
+desc*/
 
-```c++
-int n = 5;
-// The type held by v is tkReference
-metapp::Variant v = metapp::Variant::reference(n);
-```
+UFN(FN_PREFIX)
+{
+	//code
+	int n = 5;
+	// The type held by v is tkReference
+	metapp::Variant v = metapp::Variant::reference(n);
+	//code
+}
 
+/*desc
 #### retype
 ```c++
 static Variant retype(const MetaType * metaType, const Variant & var);
@@ -118,13 +153,18 @@ Return a Variant which data is the object pointed by `instance`, type is `metaTy
 `metaType` should the type that `instance` points to, not the pointer type. The returned `Variant` is a value object, not a pointer.
 
 **Example**  
+desc*/
 
-```c++
-std::string * instance = new std::string();
-metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<std::string>(), instance);
-// Now v will free instance when v is destroyed
-```
+UFN(FN_PREFIX)
+{
+	//code
+	std::string * instance = new std::string();
+	metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<std::string>(), instance);
+	// Now v will free instance when v is destroyed
+	//code
+}
 
+/*desc
 #### takeFrom another Variant
 ```c++
 static Variant takeFrom(const Variant & var);
@@ -135,19 +175,24 @@ Return a Variant which data is the pointer in `var`, type is the type in `var`.
 This function is not useful in most cases. The only useful case is to use it on the return value when invoking a meta constructor.
 
 **Example**  
+desc*/
 
-```c++
-// This is wrong. In this case, var hold the ownership of MyClass
-// takeFrom can't take the ownership from var
-//metapp::Variant var(std::string());
+UFN(FN_PREFIX)
+{
+	//code
+	// This is wrong. In this case, var hold the ownership of MyClass
+	// takeFrom can't take the ownership from var
+	//metapp::Variant var(std::string());
 
-// This works, var hold the pointer, it doesn't hold the ownership of MyClass
-// Note: if we don't call takeFrom later, var will leak the object
-// because it doesn't hold the ownership.
-metapp::Variant var(new std::string());
-metapp::Variant v(metapp::Variant::takeFrom(var));
-```
+	// This works, var hold the pointer, it doesn't hold the ownership of MyClass
+	// Note: if we don't call takeFrom later, var will leak the object
+	// because it doesn't hold the ownership.
+	metapp::Variant var(new std::string());
+	metapp::Variant v(metapp::Variant::takeFrom(var));
+	//code
+}
 
+/*desc
 ## Member functions
 
 #### Assign from value
@@ -194,31 +239,36 @@ The rules to determine `canGet`, assume the underlying value has type V,
 If You need to get the underlying value as different type, use `canCast` and `cast`.  
 
 **Example**  
+desc*/
 
-```c++
-int n = 5;
-metapp::Variant v1(metapp::Variant::create<int &>(n)); // reference
-ASSERT(v1.canGet<int>()); // rule 3
-ASSERT(v1.canGet<int &>()); // rule 1
-ASSERT(v1.canGet<const int &>()); // rule 1
-ASSERT(v1.get<int>() == 5);
-ASSERT(v1.get<int &>() == 5);
-ASSERT(v1.get<const int &>() == 5);
-ASSERT(v1.canGet<long &>()); // rule 1
-v1.get<long &>(); // this may return wrong value, because long & is not int &
+UFN(FN_PREFIX)
+{
+	//code
+	int n = 5;
+	metapp::Variant v1(metapp::Variant::create<int &>(n)); // reference
+	ASSERT(v1.canGet<int>()); // rule 3
+	ASSERT(v1.canGet<int &>()); // rule 1
+	ASSERT(v1.canGet<const int &>()); // rule 1
+	ASSERT(v1.get<int>() == 5);
+	ASSERT(v1.get<int &>() == 5);
+	ASSERT(v1.get<const int &>() == 5);
+	ASSERT(v1.canGet<long &>()); // rule 1
+	v1.get<long &>(); // this may return wrong value, because long & is not int &
 
-metapp::Variant v2(38); // int
-ASSERT(v2.canGet<int>()); // rule 4
-ASSERT(v2.canGet<int &>()); // rule 3
-ASSERT(! v2.canGet<long>()); // rule 4
+	metapp::Variant v2(38); // int
+	ASSERT(v2.canGet<int>()); // rule 4
+	ASSERT(v2.canGet<int &>()); // rule 3
+	ASSERT(! v2.canGet<long>()); // rule 4
 
-int m = 9;
-metapp::Variant v3(&m); // pointer
-ASSERT(v3.canGet<int *>()); // rule 2
-ASSERT(v3.canGet<const int *>()); // rule 2
-ASSERT(! v3.canGet<int>()); // rule 2
-```
+	int m = 9;
+	metapp::Variant v3(&m); // pointer
+	ASSERT(v3.canGet<int *>()); // rule 2
+	ASSERT(v3.canGet<const int *>()); // rule 2
+	ASSERT(! v3.canGet<int>()); // rule 2
+	//code
+}
 
+/*desc
 #### get
 ```c++
 template <typename T>
@@ -241,32 +291,37 @@ If the Variant holds a reference, returns the address of the value it refers to.
 Otherwise, return the address of the underlying value.  
 
 **Example**  
+desc*/
 
-```c++
-metapp::Variant v1(5);
-ASSERT(v1.get<int>() == 5);
+UFN(FN_PREFIX)
+{
+	//code
+	metapp::Variant v1(5);
+	ASSERT(v1.get<int>() == 5);
 
-// equivalent native C++: *&v1 = 38;
-*(int *)v1.getAddress() = 38;
-ASSERT(v1.get<int>() == 38);
-int n1 = 8;
-int n2 = 9;
-// pointer, equivalent native C++: int * v2 = &n1;
-metapp::Variant v2(&n1);
-ASSERT(* v2.get<int *>() == 8);
-// equivalent native C++: *&v2 = &n2;
-*(int **)v2.getAddress() = &n2;
-ASSERT(* v2.get<int *>() == 9);
+	// equivalent native C++: *&v1 = 38;
+	*(int *)v1.getAddress() = 38;
+	ASSERT(v1.get<int>() == 38);
+	int n1 = 8;
+	int n2 = 9;
+	// pointer, equivalent native C++: int * v2 = &n1;
+	metapp::Variant v2(&n1);
+	ASSERT(* v2.get<int *>() == 8);
+	// equivalent native C++: *&v2 = &n2;
+	*(int **)v2.getAddress() = &n2;
+	ASSERT(* v2.get<int *>() == 9);
 
-int m = 10;
-// reference, equivalent native C++: int & v3 = m;
-metapp::Variant v3(metapp::Variant::create<int &>(m));
-ASSERT(m == 10);
-// equivalent native C++: *&v3 = 15;
-*(int *)v3.getAddress() = 15;
-ASSERT(m == 15);
-```
+	int m = 10;
+	// reference, equivalent native C++: int & v3 = m;
+	metapp::Variant v3(metapp::Variant::create<int &>(m));
+	ASSERT(m == 10);
+	// equivalent native C++: *&v3 = 15;
+	*(int *)v3.getAddress() = 15;
+	ASSERT(m == 15);
+	//code
+}
 
+/*desc
 #### canCast
 ```c++
 bool canCast(const MetaType * toMetaType) const;
@@ -346,42 +401,47 @@ If `this` Variant is a value, the returned reference refers to the value.
 `toReference` is useful to write generic code. Assume a function accepts an argument of Variant. Without `toReference`, the function either requires the Variant to be a value, or a reference, but not both, or the function uses extra code to detect whether the argument is a value or reference. With `toReference`, the argument can be value, reference, or even pointer, then the function calls `toReference` to normalize the argument to reference, and use a single logic for all three kinds of Variants (value, reference pointer).
 
 **Example**  
+desc*/
 
-```c++
-metapp::Variant v1(5); // value
-ASSERT(v1.get<int>() == 5);
-metapp::Variant r1(v1.toReference());
-ASSERT(r1.get<int &>() == 5);
-r1.get<int &>() = 38;
-ASSERT(v1.get<int>() == 38);
-ASSERT(r1.get<int &>() == 38);
+UFN(FN_PREFIX)
+{
+	//code
+	metapp::Variant v1(5); // value
+	ASSERT(v1.get<int>() == 5);
+	metapp::Variant r1(v1.toReference());
+	ASSERT(r1.get<int &>() == 5);
+	r1.get<int &>() = 38;
+	ASSERT(v1.get<int>() == 38);
+	ASSERT(r1.get<int &>() == 38);
 
-int n = 9;
-// pointer, points to n;
-metapp::Variant v2(&n);
-ASSERT(n == 9);
-ASSERT(*v2.get<int *>() == 9);
-// r2 refers to n
-metapp::Variant r2(v2.toReference()); 
-ASSERT(r2.get<int &>() == 9);
-r2.get<int &>() = 10;
-ASSERT(n == 10);
-ASSERT(*v2.get<int *>() == 10);
+	int n = 9;
+	// pointer, points to n;
+	metapp::Variant v2(&n);
+	ASSERT(n == 9);
+	ASSERT(*v2.get<int *>() == 9);
+	// r2 refers to n
+	metapp::Variant r2(v2.toReference()); 
+	ASSERT(r2.get<int &>() == 9);
+	r2.get<int &>() = 10;
+	ASSERT(n == 10);
+	ASSERT(*v2.get<int *>() == 10);
 
-int m = 10;
-// reference, refers to m;
-metapp::Variant v3(metapp::Variant::create<int &>(m));
-ASSERT(m == 10);
-ASSERT(v3.get<int &>() == 10);
-// r3 refers to m
-metapp::Variant r3(v3.toReference()); 
-ASSERT(r3.get<int &>() == 10);
-r3.get<int &>() = 15;
-ASSERT(m == 15);
-ASSERT(v3.get<int &>() == 15);
-ASSERT(r3.get<int &>() == 15);
-```
+	int m = 10;
+	// reference, refers to m;
+	metapp::Variant v3(metapp::Variant::create<int &>(m));
+	ASSERT(m == 10);
+	ASSERT(v3.get<int &>() == 10);
+	// r3 refers to m
+	metapp::Variant r3(v3.toReference()); 
+	ASSERT(r3.get<int &>() == 10);
+	r3.get<int &>() = 15;
+	ASSERT(m == 15);
+	ASSERT(v3.get<int &>() == 15);
+	ASSERT(r3.get<int &>() == 15);
+	//code
+}
 
+/*desc
 #### dereference
 ```c++
 Variant dereference() const;
@@ -440,3 +500,4 @@ For value which is fundamental types such as int, long, or pointer, or any POD s
 For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr` that's managed by Variant. That's to say, when the Variant is copied, the value is not copied. If you want the value be copied, use `Variant::clone`.  
 Copying Variant is always trivial, there is not any memory allocation.  
 
+desc*/

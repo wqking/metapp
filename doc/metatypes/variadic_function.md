@@ -51,7 +51,7 @@ int sum(const metapp::Variant * arguments, const size_t argumentCount)
 Create the VariadicFunction Variant
 
 ```c++
-metapp::Variant func = (metapp::VariadicFunction<decltype(&sum)>(&sum));
+metapp::Variant func = (metapp::createVariadicFunction(&sum));
 ```
 
 Invoke func without arguments

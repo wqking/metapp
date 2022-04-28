@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docCoreConcepts_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # Core concepts and mechanism
 
 ## Overview
@@ -29,17 +52,29 @@ const MetaType * getMetaType();
 ```
 
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
-```c++
-metapp::getMetaType<int>() == metapp::getMetaType<int>();
-metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>();
-```
+desc*/
 
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
+	ASSERT(metapp::getMetaType<std::string>() == metapp::getMetaType<std::string>());
+	//code
+}
+
+/*desc
 **Note**: MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
-```c++
-metapp::getMetaType<int>() != metapp::getMetaType<const int>();
-metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>();
-```
+desc*/
 
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
+	ASSERT(metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::string>());
+	//code
+}
+
+/*desc
 **Note**: `getMetaType()` can be used on any C++ type, the tye doesn't need to be registered to metapp.  
 
 ## UnifiedType -- CV-unaware meta type
@@ -52,10 +87,17 @@ const void * getUnifiedType() const noexcept;
 ```
 
 Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaType, except that UnifiedType is CV-unaware. That's to say, for the same T, no matter it's qualified with const or volatile, the UnifiedType is always the same. So,  
-```c++
-metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType();
-metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType();
-```
+desc*/
+
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
+	ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
+	//code
+}
+
+/*desc
 `UnifiedType` is an opaque type, so it's a `const void *`. Its only function is to identify or compare types.  
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
@@ -75,45 +117,42 @@ A MetaType only has one TypeKind, so it can represent only one type information,
 UpType is used to represent the lost type information.  
 
 Here are some examples,  
+desc*/
 
-MetaType `int *` has one UpType.    
-```c++
-metapp::getMetaType<int *>()->getTypeKind() == metapp::tkPointer;
-metapp::getMetaType<int *>()->getUpTypeCount() == 1;
-metapp::getMetaType<int *>()->getUpType()->getTypeKind() == metapp::tkInt;
-```
+UFN(FN_PREFIX)
+{
+	//code
+	//descMetaType `int *` has one UpType. 
+	ASSERT(metapp::getMetaType<int *>()->getTypeKind() == metapp::tkPointer);
+	ASSERT(metapp::getMetaType<int *>()->getUpTypeCount() == 1);
+	ASSERT(metapp::getMetaType<int *>()->getUpType()->getTypeKind() == metapp::tkInt);
 
-MetaType `int * &` has one UpType, and the UpType has one another UpType.    
-```c++
-metapp::getMetaType<int *>()->getTypeKind() == metapp::tkReference;
-metapp::getMetaType<int *>()->getUpTypeCount() == 1;
-metapp::getMetaType<int *>()->getUpType()->getTypeKind() == metapp::tkPointer;
-metapp::getMetaType<int *>()->getUpType()->getUpType()->getTypeKind() == metapp::tkInt;
-```
+	//desc MetaType `int * &` has one UpType, and the UpType has one another UpType.    
+	ASSERT(metapp::getMetaType<int * &>()->getTypeKind() == metapp::tkReference);
+	ASSERT(metapp::getMetaType<int * &>()->getUpTypeCount() == 1);
+	ASSERT(metapp::getMetaType<int * &>()->getUpType()->getTypeKind() == metapp::tkPointer);
+	ASSERT(metapp::getMetaType<int * &>()->getUpType()->getUpType()->getTypeKind() == metapp::tkInt);
 
-MetaType `std::vector<char>` has one UpType.    
-```c++
-metapp::getMetaType<std::vector<char> >()->getTypeKind() == metapp::tkStdVector;
-metapp::getMetaType<std::vector<char> >()->getUpTypeCount() == 1;
-metapp::getMetaType<std::vector<char> >()->getUpType()->getTypeKind() == metapp::tkChar;
-```
+	//desc MetaType `std::vector<char>` has one UpType.    
+	ASSERT(metapp::getMetaType<std::vector<char> >()->getTypeKind() == metapp::tkStdVector);
+	ASSERT(metapp::getMetaType<std::vector<char> >()->getUpTypeCount() == 1);
+	ASSERT(metapp::getMetaType<std::vector<char> >()->getUpType()->getTypeKind() == metapp::tkChar);
 
-MetaType `void (int *)` has two UpTypes, the first is the result type `void`, the second is the parameter `int *`. Since the parameter is a pointer, the parameter also has an UpType.    
-```c++
-metapp::getMetaType<void (int *)>()->getTypeKind() == metapp::tkFunction;
-metapp::getMetaType<void (int *)>()->getUpTypeCount() == 2;
-metapp::getMetaType<void (int *)>()->getUpType(0)->getTypeKind() == metapp::tkVoid;
-metapp::getMetaType<void (int *)>()->getUpType(1)->getTypeKind() == metapp::tkPointer;
-metapp::getMetaType<void (int *)>()->getUpType(1)->getUpType()->getTypeKind() == metapp::tkInt;
-```
+	//desc MetaType `void (int *)` has two UpTypes, the first is the result type `void`, the second is the parameter `int *`. Since the parameter is a pointer, the parameter also has an UpType.    
+	ASSERT(metapp::getMetaType<void (int *)>()->getTypeKind() == metapp::tkFunction);
+	ASSERT(metapp::getMetaType<void (int *)>()->getUpTypeCount() == 2);
+	ASSERT(metapp::getMetaType<void (int *)>()->getUpType(0)->getTypeKind() == metapp::tkVoid);
+	ASSERT(metapp::getMetaType<void (int *)>()->getUpType(1)->getTypeKind() == metapp::tkPointer);
+	ASSERT(metapp::getMetaType<void (int *)>()->getUpType(1)->getUpType()->getTypeKind() == metapp::tkInt);
 
-MetaType `int` doesn't have any UpType.    
-```c++
-metapp::getMetaType<int>()->getTypeKind() == metapp::tkInt;
-metapp::getMetaType<int>()->getUpTypeCount() == 0;
-metapp::getMetaType<int>()->getUpType() == nullptr;
-```
+	//desc MetaType `int` doesn't have any UpType.    
+	ASSERT(metapp::getMetaType<int>()->getTypeKind() == metapp::tkInt);
+	ASSERT(metapp::getMetaType<int>()->getUpTypeCount() == 0);
+	ASSERT(metapp::getMetaType<int>()->getUpType() == nullptr);
+	//code
+}
 
+/*desc
 UpType represents complicated C++ type recursively. With UpType, metapp can represent any C++ type.
 
 See [Built-in meta types document](built-in-meta-types.md) for the UpTypes for each TypeKind.
@@ -121,7 +160,9 @@ See [Built-in meta types document](built-in-meta-types.md) for the UpTypes for e
 ## DeclareMetaType
 
 Even though metapp works on any C++ type which are not known to metapp, it's useful to provide metapp more information on a certain type. The template `DeclareMetaType` is to provide such information. For example,  
-```c++
+desc*/
+
+//code
 class MyClass {};
 
 constexpr metapp::TypeKind tkMyClass = metapp::tkUser;
@@ -132,10 +173,16 @@ struct metapp::DeclareMetaType <MyClass> : public metapp::DeclareMetaTypeBase <M
 {
 	static constexpr metapp::TypeKind typeKind = tkMyClass;
 };
+//code
 
-assert(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
-```
+UFN(FN_PREFIX)
+{
+	//code
+	ASSERT(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
+	//code
+}
 
+/*desc
 ## Meta interface 
 
 The core class MetaType only has very few public functions, and provides very few functions. metapp obeys the principle "You don't pay (or pay very little) for what you don't use". We usually don't need many function from most meta types, so the core MetaType is quite small. The powerful features are extensions in MetaType, which called meta interface. For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods, fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass, we can not and don't need to get class information from it.  
@@ -162,3 +209,4 @@ const void * getMetaUser() const;
 
 "Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`. The term "callable" is used for "method" or "function" in other reflection system.
 
+desc*/

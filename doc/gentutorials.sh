@@ -30,3 +30,15 @@ do
 	${command} ${sourcePath}/doc/metatypes/doc_${file}.cpp ./metatypes/${file}.md
 done
 
+docFileList=(
+	variant
+	metatype
+	core_concepts
+	declaremetatype
+)
+
+for file in ${docFileList[@]}
+do
+	${command} ${sourcePath}/doc/doc_${file}.cpp ./${file}.md
+done
+
