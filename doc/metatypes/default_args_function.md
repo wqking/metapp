@@ -6,7 +6,7 @@ Template `metapp::DefaultArgsFunction` is used to create a defautl arguments fun
 template <typename FT>
 struct DefaultArgsFunction
 {
-DefaultArgsFunction(const Variant & func, std::vector<Variant> defaultArgs);
+  DefaultArgsFunction(const Variant & func, std::vector<Variant> defaultArgs);
 };
 ```
 `FT` is the function prototype.  

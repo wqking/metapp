@@ -23,7 +23,7 @@ def doTabToSpace(text) :
 	text = re.sub(r'^(\t+)', callback, text)
 	return text
 
-def doProcessCodeLines(lineList, beginIndex, endIndex, unindent) :
+def doFormatCodeLines(lineList, beginIndex, endIndex, unindent) :
 	# find out the redundant leading spaces to remove from (unindent)
 	leadingSpaceLength = None
 	if unindent :
@@ -44,6 +44,20 @@ def doProcessCodeLines(lineList, beginIndex, endIndex, unindent) :
 		line = lineList[index]
 		if leadingSpaceLength > 0 :
 			line = line[leadingSpaceLength:]
+		line = doTabToSpace(line)
+		lineList[index] = line
+		index += 1
+
+def doFormatDescLines(lineList, beginIndex, endIndex) :
+	index = beginIndex
+	inCodeBlock = False
+	while index <= endIndex :
+		line = lineList[index]
+		if line.startswith("```") :
+			inCodeBlock = not inCodeBlock
+		else :
+			if not inCodeBlock :
+				line = line.lstrip()
 		line = doTabToSpace(line)
 		lineList[index] = line
 		index += 1
@@ -147,8 +161,8 @@ def doConvertDescBlock(block) :
 	lineList = block['lineList']
 	resultList = []
 	for line in lineList :
-		line = line.lstrip()
 		resultList.append(line)
+	doFormatDescLines(resultList, 0, len(resultList) - 1)
 	resultList.append('')
 	return resultList
 
@@ -156,7 +170,7 @@ def doConvertCodeBlock(block) :
 	lineList = block['lineList']
 	resultList = [] + lineList
 	doRemoveBlankCodeLines(resultList, 0, len(resultList) - 1)
-	doProcessCodeLines(resultList, 0, len(resultList) - 1, not block['hasParent'])
+	doFormatCodeLines(resultList, 0, len(resultList) - 1, not block['hasParent'])
 	resultList = ([ "```c++" ] + resultList + [ "```", "" ])
 	return resultList
 

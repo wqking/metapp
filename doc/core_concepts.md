@@ -91,10 +91,10 @@ ASSERT(metapp::getMetaType<int *>()->getUpType()->getTypeKind() == metapp::tkInt
 MetaType `int * &` has one UpType, and the UpType has one another UpType.    
 
 ```c++
-ASSERT(metapp::getMetaType<int *>()->getTypeKind() == metapp::tkReference);
-ASSERT(metapp::getMetaType<int *>()->getUpTypeCount() == 1);
-ASSERT(metapp::getMetaType<int *>()->getUpType()->getTypeKind() == metapp::tkPointer);
-ASSERT(metapp::getMetaType<int *>()->getUpType()->getUpType()->getTypeKind() == metapp::tkInt);
+ASSERT(metapp::getMetaType<int * &>()->getTypeKind() == metapp::tkReference);
+ASSERT(metapp::getMetaType<int * &>()->getUpTypeCount() == 1);
+ASSERT(metapp::getMetaType<int * &>()->getUpType()->getTypeKind() == metapp::tkPointer);
+ASSERT(metapp::getMetaType<int * &>()->getUpType()->getUpType()->getTypeKind() == metapp::tkInt);
 ```
 
 MetaType `std::vector<char>` has one UpType.    

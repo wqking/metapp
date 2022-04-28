@@ -6,7 +6,7 @@ Template `metapp::VariadicFunction` is used to create a variadic function.
 template <typename FT>
 struct VariadicFunction
 {
-explicit VariadicFunction(const Variant & func);
+  explicit VariadicFunction(const Variant & func);
 };
 ```
 `FT` is the function prototype.  
