@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docRegisterItems_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # Registered items
 
 ## Overview
@@ -61,10 +84,10 @@ Returns true if the item is empty, that means the item doesn't contain any valid
 class RegisteredAccessible : public RegisteredAnnotation
 {
 public:
-  const std::string & getName() const;
-  const Variant & getTarget() const;
-  bool isEmpty() const;
-  operator const Variant & () const;
+	const std::string & getName() const;
+	const Variant & getTarget() const;
+	bool isEmpty() const;
+	operator const Variant & () const;
 };
 
 using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
@@ -86,10 +109,10 @@ using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
 class RegisteredCallable : public RegisteredAnnotation
 {
 public:
-  const std::string & getName() const;
-  const Variant & getTarget() const;
-  bool isEmpty() const;
-  operator const Variant & () const;
+	const std::string & getName() const;
+	const Variant & getTarget() const;
+	bool isEmpty() const;
+	operator const Variant & () const;
 };
 
 using RegisteredCallableList = std::deque<RegisteredCallable>;
@@ -111,9 +134,9 @@ using RegisteredCallableList = std::deque<RegisteredCallable>;
 class RegisteredConstructor : public RegisteredAnnotation
 {
 public:
-  const Variant & getTarget() const;
-  bool isEmpty() const;
-  operator const Variant & () const;
+	const Variant & getTarget() const;
+	bool isEmpty() const;
+	operator const Variant & () const;
 };
 
 using RegisteredConstructorList = std::deque<RegisteredConstructor>;
@@ -136,10 +159,10 @@ Note: `RegisteredConstructor` doesn't have `getName()` function.
 class RegisteredRepo : public RegisteredAnnotation
 {
 public:
-  const std::string & getName() const;
-  MetaRepo * getTarget() const;
-  bool isEmpty() const;
-  operator MetaRepo * () const;
+	const std::string & getName() const;
+	MetaRepo * getTarget() const;
+	bool isEmpty() const;
+	operator MetaRepo * () const;
 };
 
 using RegisteredRepoList = std::deque<RegisteredRepo>;
@@ -161,10 +184,10 @@ using RegisteredRepoList = std::deque<RegisteredRepo>;
 class RegisteredType : public RegisteredAnnotation
 {
 public:
-  const std::string & getName() const;
-  const MetaType * getTarget() const;
-  bool isEmpty() const;
-  operator const MetaType * () const;
+	const std::string & getName() const;
+	const MetaType * getTarget() const;
+	bool isEmpty() const;
+	operator const MetaType * () const;
 };
 
 using RegisteredTypeList = std::deque<RegisteredType>;
@@ -186,12 +209,12 @@ using RegisteredTypeList = std::deque<RegisteredType>;
 class RegisteredEnumValue : public RegisteredAnnotation
 {
 public:
-  using ValueType = long long;
+	using ValueType = long long;
 
-  const std::string & getName() const;
-  ValueType getTarget() const;
-  bool isEmpty() const;
-  operator ValueType () const;
+	const std::string & getName() const;
+	ValueType getTarget() const;
+	bool isEmpty() const;
+	operator ValueType () const;
 };
 
 using RegisteredEnumValueList = std::deque<RegisteredEnumValue>;
@@ -211,11 +234,12 @@ using RegisteredEnumValueList = std::deque<RegisteredEnumValue>;
 class RegisteredAnnotation
 {
 public:
-  void addAnnotation(const std::string & name, const Variant & value);
-  const Variant & getAnnotation(const std::string & name) const;
-  const std::map<std::string, Variant> & getAllAnnotations() const;
+	void addAnnotation(const std::string & name, const Variant & value);
+	const Variant & getAnnotation(const std::string & name) const;
+	const std::map<std::string, Variant> & getAllAnnotations() const;
 };
 ```
 
 For `getAnnotation`, if the annotation of `name` is not found, an empty Variant is returned (`Variant::isEmpty() is true`).
 
+desc*/

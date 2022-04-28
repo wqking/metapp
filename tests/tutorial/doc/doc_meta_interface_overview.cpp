@@ -1,3 +1,27 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docmeta_interface_overview_
+
+#include "metapp/allmetatypes.h"
+#include "metapp/interfaces/metaclass.h"
+
+/*desc
 # Meta interface overview 
 
 ## Overview
@@ -25,13 +49,18 @@ const void * getMetaUser() const;
 ```
 
 For example, assume meta type of `MyClass` implements the `MetaClass` interface, then we get the meta interface as,  
+desc*/
 
-```c++
-class MyClass {};
-const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
-const metapp::MetaClass * metaClass = metaType->getMetaClass();
-```
+UFN(FN_PREFIX)
+{
+	//code
+	class MyClass {};
+	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+	//code
+}
 
+/*desc
 ## Implement meta interface
 
 We can implement meta interface in the specialization of DeclareMetaType for the type we want to declare.  
@@ -40,28 +69,32 @@ The static function defines a static instance of the meta interface with proper 
 A meta type can implement more than one meta interfaces.  
 
 For example, to implement meta interface `MetaClass` for `MyClass`,  
+desc*/
 
-```c++
+//code
 class MyClass
 {
 public:
-  explicit MyClass(const std::string & message) {}
-  void sayHello() const {}
+	explicit MyClass(const std::string & message) {}
+	void sayHello() const {}
 };
 
 template <>
 struct metapp::DeclareMetaType <MyClass>
-  : metapp::DeclareMetaTypeBase <MyClass>
+	: metapp::DeclareMetaTypeBase <MyClass>
 {
-  static const metapp::MetaClass * getMetaClass() {
-    static const metapp::MetaClass metaClass(
-      metapp::getMetaType<MyClass>(),
-      [](metapp::MetaClass & mc) {
-        mc.registerConstructor(metapp::Constructor<MyClass (const std::string &)>());
-        mc.registerCallable("sayHello", &MyClass::sayHello);
-      }
-    );
-    return &metaClass;
-  }
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<MyClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerConstructor(metapp::Constructor<MyClass (const std::string &)>());
+				mc.registerCallable("sayHello", &MyClass::sayHello);
+			}
+		);
+		return &metaClass;
+	}
 };
-```
+//code
+
+/*desc
+desc*/

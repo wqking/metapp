@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docMetaIndexable_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # MetaIndexable interface
 
 ## Overview
@@ -33,11 +56,11 @@ const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 
 ```c++
 MetaIndexable(
-  size_t (*getSize)(const Variant & var),
-  const MetaType * (*getValueType)(const Variant & var, const size_t index),
-  void (*resize)(const Variant & var, const size_t size),
-  Variant (*get)(const Variant & var, const size_t index),
-  void (*set)(const Variant & var, const size_t index, const Variant & value)
+	size_t (*getSize)(const Variant & var),
+	const MetaType * (*getValueType)(const Variant & var, const size_t index),
+	void (*resize)(const Variant & var, const size_t size),
+	Variant (*get)(const Variant & var, const size_t index),
+	void (*set)(const Variant & var, const size_t index, const Variant & value)
 );
 ```
 
@@ -119,22 +142,23 @@ Usually you should prefer the utility functions to calling `MetaIndexable` membe
 ```c++
 inline size_t indexableGetSize(const Variant & var)
 {
-  return var.getMetaType()->getMetaIndexable()->getSize(var);
+	return var.getMetaType()->getMetaIndexable()->getSize(var);
 }
 
 inline void indexableResize(const Variant & var, const size_t size)
 {
-  var.getMetaType()->getMetaIndexable()->resize(var, size);
+	var.getMetaType()->getMetaIndexable()->resize(var, size);
 }
 
 inline Variant indexableGet(const Variant & var, const size_t index)
 {
-  return var.getMetaType()->getMetaIndexable()->get(var, index);
+	return var.getMetaType()->getMetaIndexable()->get(var, index);
 }
 
 inline void indexableSet(const Variant & var, const size_t index, const Variant & value)
 {
-  var.getMetaType()->getMetaIndexable()->set(var, index, value);
+	var.getMetaType()->getMetaIndexable()->set(var, index, value);
 }
 ```
 
+desc*/

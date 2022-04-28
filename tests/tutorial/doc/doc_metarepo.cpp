@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docMetaRepo_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # Use MetaRepo to register meta types at running time
 
 ## Overview
@@ -48,7 +71,7 @@ The returned `RegisteredCallable` can be used to add annotations to the meta dat
 ```c++
 template <typename T>
 RegisteredType & registerType(const std::string & name = ""); // #1
-  return registerType(name, getMetaType<T>());
+	return registerType(name, getMetaType<T>());
 }
 RegisteredType & registerType(std::string name, const MetaType * metaType); // #2
 ```
@@ -181,9 +204,9 @@ We can register and get class hierarchy information in `MetaRepo`.
 ```c++
 enum class Relationship
 {
-  none,
-  base,
-  derived
+	none,
+	base,
+	derived
 };
 ```
 
@@ -196,8 +219,8 @@ Given class A and B, `Relationship::none` means A and B are not derived from eac
 class TypesView
 {
 public:
-  size_t getCount() const;
-  const MetaType * get(const size_t index) const;
+	size_t getCount() const;
+	const MetaType * get(const size_t index) const;
 };
 ```
 
@@ -318,3 +341,4 @@ Traverses all base classes of `metaType`, and call `callback` on each meta type.
 It's guaranteed duplicated meta types are only passed to `callback` once.  
 `callback` prototype is `bool callback(const MetaType * metaType)`. If `callback` returns false, the traversing stops.
 
+desc*/

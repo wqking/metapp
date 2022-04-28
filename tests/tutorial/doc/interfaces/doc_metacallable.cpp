@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docMetaCallable_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # MetaCallable interface
 
 ## Overview
@@ -32,12 +55,12 @@ Variadic function (tkVariadicFunction)
 
 ```c++
 MetaCallable(
-  size_t (*getParameterCount)(const Variant & var),
-  const MetaType * (*getReturnType)(const Variant & var),
-  const MetaType * (*getParameterType)(const Variant & var, const size_t index),
-  unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
-  bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
-  Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
+	size_t (*getParameterCount)(const Variant & var),
+	const MetaType * (*getReturnType)(const Variant & var),
+	const MetaType * (*getParameterType)(const Variant & var, const size_t index),
+	unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
+	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
+	Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
 );
 ```
 
@@ -116,7 +139,7 @@ Usually you should prefer the utility functions to calling `MetaCallable` member
 ```c++
 inline size_t callableGetParameterCount(const Variant & var)
 {
-  return var.getMetaType()->getMetaCallable()->getParameterCount(var);
+	return var.getMetaType()->getMetaCallable()->getParameterCount(var);
 }
 ```
 
@@ -127,7 +150,7 @@ Shortcut for `MetaCallable::getParameterCount()`.
 ```c++
 inline const MetaType * callableGetReturnType(const Variant & var)
 {
-  return var.getMetaType()->getMetaCallable()->getReturnType(var);
+	return var.getMetaType()->getMetaCallable()->getReturnType(var);
 }
 ```
 
@@ -138,7 +161,7 @@ Shortcut for `MetaCallable::getReturnType()`.
 ```c++
 inline const MetaType * callableGetParameterType(const Variant & var, const size_t index)
 {
-  return var.getMetaType()->getMetaCallable()->getParameterType(var, index);
+	return var.getMetaType()->getMetaCallable()->getParameterType(var, index);
 }
 ```
 
@@ -188,10 +211,10 @@ If no matched callable, exception `metapp::IllegalArgumentException` is thrown.
 ```c++
 template <typename Iterator>
 Iterator findCallable(
-  Iterator first,
-  Iterator last,
-  const Variant * arguments,
-  const size_t argumentCount
+	Iterator first,
+	Iterator last,
+	const Variant * arguments,
+	const size_t argumentCount
 );
 ```
 
@@ -199,3 +222,4 @@ Returns an iterator to the element that's best matched to `arguments` in the ran
 If no matched callable, `last` is returned.  
 `Iterator` must be the iterator to `Variant`, `RegisteredConstructor`, or `RegisteredCallable`.
 
+desc*/

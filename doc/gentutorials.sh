@@ -30,11 +30,32 @@ do
 	${command} ${sourcePath}/doc/metatypes/doc_${file}.cpp ./metatypes/${file}.md
 done
 
+interfaceFileList=(
+	metaaccessible
+	metacallable
+	metaclass
+	metaenum
+	metaindexable
+	metaiterable
+	metamappable
+	metamember
+	metastreaming
+	metauser
+)
+
+for file in ${interfaceFileList[@]}
+do
+	${command} ${sourcePath}/doc/interfaces/doc_${file}.cpp ./interfaces/${file}.md
+done
+
 docFileList=(
+	core_concepts
+	meta_interface_overview
 	variant
 	metatype
-	core_concepts
 	declaremetatype
+	metarepo
+	registered_items
 )
 
 for file in ${docFileList[@]}

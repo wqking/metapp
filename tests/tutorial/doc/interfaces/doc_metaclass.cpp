@@ -1,3 +1,26 @@
+// metapp library
+// 
+// Copyright (C) 2022 Wang Qi (wqking)
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "tutorial.h"
+
+#define FN_PREFIX docMetaClass_
+
+#include "metapp/allmetatypes.h"
+
+/*desc
 # MetaClass interface
 
 ## Overview
@@ -55,23 +78,23 @@ The returned `RegisteredConstructor` can be used add annotations to the meta dat
 class MyClass
 {
 public:
-  MyClass();
-  MyClass(const std::string & a, const int b);
+	MyClass();
+	MyClass(const std::string & a, const int b);
 };
 
 template <>
 struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 {
-  static const metapp::MetaClass * getMetaClass() {
-    static const metapp::MetaClass metaClass(
-      metapp::getMetaType<MyClass>(),
-      [](metapp::MetaClass & mc) {
-        mc.registerConstructor(metapp::Constructor<MyClass()>());
-        mc.registerConstructor(metapp::Constructor<MyClass(const std::string &, const int)>());
-      }
-    );
-    return &metaClass;
-  }
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<MyClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerConstructor(metapp::Constructor<MyClass()>());
+				mc.registerConstructor(metapp::Constructor<MyClass(const std::string &, const int)>());
+			}
+		);
+		return &metaClass;
+	}
 };
 
 ```
@@ -102,7 +125,7 @@ The returned `RegisteredCallable` can be used to add annotations to the meta dat
 ```c++
 template <typename T>
 RegisteredType & registerType(const std::string & name = ""); // #1
-  return registerType(name, getMetaType<T>());
+	return registerType(name, getMetaType<T>());
 }
 RegisteredType & registerType(std::string name, const MetaType * metaType); // #2
 ```
@@ -209,3 +232,4 @@ using RegisteredTypeList = std::deque<RegisteredType>;
 
 Get a list of all registered types.  
 
+desc*/
