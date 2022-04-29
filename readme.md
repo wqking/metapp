@@ -164,6 +164,9 @@ metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 ASSERT(result.get<int>() == 17);
 ```
 
+Below are tutorials and documents.  
+If you want to contribute, be sure to read [How to generate documentations](doc/generate_document.md).  
+
 ## Tutorials
 
 - [Use Variant](doc/tutorial/tutorial_variant.md)
@@ -172,7 +175,6 @@ ASSERT(result.get<int>() == 17);
 - [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
 - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
 - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
-- [Afterword and notes](doc/tutorial/afterword.md)
 
 ## Documentations
 
