@@ -4,6 +4,7 @@ from cpp2md import extractMarkdownFromCpp
 import os
 import glob
 import re
+import shutil
 
 sourcePath = '../tests/docsrc'
 docPath = '../doc'
@@ -22,8 +23,12 @@ def doProcessFile(sourceFile) :
 	targetFileName = os.path.join(targetPath, fileName + '.md')
 	os.makedirs(targetPath, exist_ok = True)
 	print(sourceFile)
-	extractMarkdownFromCpp(sourceFile, targetFileName)
-	#print(fileName, extension, targetFileName)
+	if extension == 'cpp' :
+		extractMarkdownFromCpp(sourceFile, targetFileName)
+	elif extension in [ 'md' ] :
+		shutil.copy(sourceFile, targetFileName)
+	else :
+		print("Unknow file type: %s" % (extension))
 
 def doMain() :
 	global sourcePath, docPath

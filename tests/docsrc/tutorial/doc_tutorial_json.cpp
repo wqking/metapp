@@ -22,6 +22,10 @@
 
 #include <iostream>
 
+/*desc
+# Tutorial for simple JSON dumper
+desc*/
+
 class JsonDumper
 {
 public:

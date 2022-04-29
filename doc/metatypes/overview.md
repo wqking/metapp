@@ -15,4 +15,4 @@ The header includes all built-in meta types. You don't need include separate hea
 ## List of meta types
 
 In this section, only a few meta types are detailed documented, since most meta types are straightforward and easy to understand.  
-To see the basic information, please see [List of all built-in meta types](list-all.md)
+To see the basic information, please see [List of all built-in meta types](list_all.md)
