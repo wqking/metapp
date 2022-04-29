@@ -206,7 +206,7 @@ def doCombineSingleLineDescBlocks(blockList) :
 			previousSingleLineBlock['lineList'] += block['lineList']
 	return resultList
 
-def doProcessFile(inputFile, outputFile) :
+def extractMarkdownFromCpp(inputFile, outputFile) :
 	lineList = readFile(inputFile).splitlines()
 	outputLineList = []
 	blockList = doParseBlocks(lineList)
@@ -218,11 +218,12 @@ def doProcessFile(inputFile, outputFile) :
 
 def doMain() :
 	if len(sys.argv) != 3 :
-		print('Usage: python gentutorial.py INPUT_FILE OUTPUT_FILE')
+		print('Usage: python cpp2md.py INPUT_FILE OUTPUT_FILE')
 		return
 	inputFile = sys.argv[1]
 	outputFile = sys.argv[2]
 	print(inputFile)
-	doProcessFile(inputFile, outputFile)
+	extractMarkdownFromCpp(inputFile, outputFile)
 
-doMain()
+if __name__ == "__main__" :
+	doMain()
