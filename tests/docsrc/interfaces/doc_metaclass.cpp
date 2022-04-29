@@ -28,17 +28,19 @@
 `MetaClass` is a meta interface to provide meta information of a class, such as constructors, member functions, member fields, etc.  
 
 ## Header
+desc*/
 
-```c++
+//code
 #include "metapp/interfaces/metaclass.h"
-```
+//code
 
+/*desc
 ## Get MetaClass interface
 
 We can call `MetaType::getMetaClass()` to get the MetaClass interface. If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
-const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
+const metapp::MetaType * metaType = metapp::getMetaType<SomeClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
@@ -74,31 +76,36 @@ Register a constructor. The parameter `constructor` is a Variant of `metapp::Con
 The returned `RegisteredConstructor` can be used add annotations to the meta data.
 
 **Example**  
-```c++
-class MyClass
+desc*/
+
+//code
+class CtorClass
 {
 public:
-	MyClass();
-	MyClass(const std::string & a, const int b);
+	CtorClass() : s(), n() {}
+	CtorClass(const std::string & s, const int n) : s(s), n(n) {}
+
+	std::string s;
+	int n;
 };
 
 template <>
-struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
+struct metapp::DeclareMetaType<CtorClass> : metapp::DeclareMetaTypeBase<CtorClass>
 {
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyClass>(),
+			metapp::getMetaType<CtorClass>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerConstructor(metapp::Constructor<MyClass()>());
-				mc.registerConstructor(metapp::Constructor<MyClass(const std::string &, const int)>());
+				mc.registerConstructor(metapp::Constructor<CtorClass()>());
+				mc.registerConstructor(metapp::Constructor<CtorClass(const std::string &, const int)>());
 			}
 		);
 		return &metaClass;
 	}
 };
+//code
 
-```
-
+/*desc
 #### registerAccessible
 
 ```c++
@@ -110,6 +117,46 @@ The parameter `name` is the field name. The field can be got from the MetaClass 
 The parameter `field` is a Variant of MetaType that implements meta interface `MetaAccessible`. It can be pointer to member data, accessorpp::Accessor, or pointer to global data to simulate static member.  
 The returned `RegisteredAccessible` can be used to add annotations to the meta data.  
 
+**Example**  
+desc*/
+
+//code
+class AccClass
+{
+public:
+	AccClass() : text(), value() {}
+
+	std::string text;
+
+	int getValue() const {
+		return value;
+	}
+
+	void setValue(const int n) {
+		value = n;
+	}
+
+private:
+	int value;
+};
+
+template <>
+struct metapp::DeclareMetaType<AccClass> : metapp::DeclareMetaTypeBase<AccClass>
+{
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<AccClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerAccessible("text", &AccClass::text);
+				mc.registerAccessible("value", metapp::createAccessor(&AccClass::getValue, &AccClass::setValue));
+			}
+		);
+		return &metaClass;
+	}
+};
+//code
+
+/*desc
 #### registerCallable
 
 ```c++
@@ -120,6 +167,44 @@ The parameter `name` is the method name. metapp allows multiple methods be regis
 The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to non-member free method to simulate static member, or even `std::function`.  
 The returned `RegisteredCallable` can be used to add annotations to the meta data.  
 
+**Example**  
+desc*/
+
+//code
+class CaClass
+{
+public:
+	std::string greeting(const std::string & extra) const {
+		return "Hello, " + extra;
+	}
+
+	// overloaded functions
+	int add(int a, int b) {
+		return a + b;
+	}
+	int add(int a, int b, int c) {
+		return a + b + c;
+	}
+};
+
+template <>
+struct metapp::DeclareMetaType<CaClass> : metapp::DeclareMetaTypeBase<CaClass>
+{
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<CaClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerCallable("greeting", &CaClass::greeting);
+				mc.registerCallable("add", metapp::selectOverload<int(int, int)>(&CaClass::add));
+				mc.registerCallable("add", metapp::selectOverload<int(int, int, int)>(&CaClass::add));
+			}
+		);
+		return &metaClass;
+	}
+};
+//code
+
+/*desc
 #### registerType
 
 ```c++
@@ -136,7 +221,34 @@ If the parameter `name` is empty, the function tries to get the name from built-
 The returned `RegisteredType` can be used to add annotations to the meta data.  
 This function can be used to register nested classes, or enum in the class.  
 
+**Example**  
+desc*/
 
+//code
+class TyClass
+{
+public:
+	class NestedClass {};
+	enum class NestedEnum {};
+};
+
+template <>
+struct metapp::DeclareMetaType<TyClass> : metapp::DeclareMetaTypeBase<TyClass>
+{
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<TyClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerType<TyClass::NestedClass>("NestedClass");
+				mc.registerType("NestedEnum", metapp::getMetaType<TyClass::NestedEnum>());
+			}
+		);
+		return &metaClass;
+	}
+};
+//code
+
+/*desc
 ## MetaClass member functions for retrieving meta data
 
 Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags` with default value of `MetaClass::flagIncludeBase`. For functions that find a certain meta data, that means if the function can't find the meta data in current meta class, it will look up all base class recursively for the meta data. For functions that get all meta data, that means the function will return all meta data in current meta class, and all meta data in base classes, recursively. If you want only current meta class be checked, pass `MetaClass::flagNone`.  
@@ -151,6 +263,31 @@ using RegisteredConstructorList = std::deque<RegisteredConstructor>;
 
 Get a list of RegisteredConstructor.  
 
+**Example**  
+desc*/
+
+UFN(FN_PREFIX)
+{
+	//code
+	const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+	// constructorList[0] is CtorClass()
+	// constructorList[1] is CtorClass(const std::string & s, const int n)
+	const metapp::RegisteredConstructorList & constructorList = metaClass->getConstructorList();
+	// Call metapp::callableInvoke with a std::deque of callables can invoke the proper function
+	// that matches the arguments
+	metapp::Variant instance = metapp::callableInvoke(constructorList, nullptr, "abc", 5);
+	CtorClass * ptr = instance.get<CtorClass *>();
+	ASSERT(ptr->s == "abc");
+	ASSERT(ptr->n == 5);
+	// Don't forget to delete the instance.  
+	// A better approach is to use Variant::takeFrom() to convert the instance to a Variant managed object,
+	// then we don't need to delete the instance.
+	delete ptr;
+	//code
+}
+
+/*desc
 #### getAccessible
 
 ```c++
@@ -169,6 +306,26 @@ using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
 
 Get a list of all registered field.  
 
+**Example**  
+desc*/
+
+UFN(FN_PREFIX)
+{
+	//code
+	const metapp::MetaType * metaType = metapp::getMetaType<AccClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+	AccClass object;
+	object.text = "hello";
+	const metapp::RegisteredAccessible & text = metaClass->getAccessible("text");
+	ASSERT(metapp::accessibleGet(text, &object).get<const std::string &>() == "hello");
+
+	const metapp::RegisteredAccessibleList & accessibleList = metaClass->getAccessibleList();
+	ASSERT(accessibleList[0].getName() == "text");
+	ASSERT(accessibleList[1].getName() == "value");
+	//code
+}
+
+/*desc
 #### getCallable
 
 ```c++
@@ -197,6 +354,30 @@ using RegisteredCallableList = std::deque<RegisteredCallable>;
 
 Get a list of all registered methods.  
 
+**Example**  
+desc*/
+
+UFN(FN_PREFIX)
+{
+	//code
+	const metapp::MetaType * metaType = metapp::getMetaType<CaClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+	CaClass object;
+
+	const metapp::RegisteredCallable & greeting = metaClass->getCallable("greeting");
+	ASSERT(metapp::callableInvoke(greeting, &object, "world").get<const std::string &>() == "Hello, world");
+
+	const metapp::RegisteredCallableList add = metaClass->getCallableList("add");
+	ASSERT(metapp::callableInvoke(add, &object, 1, 5).get<int>() == 6);
+
+	const metapp::RegisteredCallableList callableList = metaClass->getCallableList();
+	ASSERT(callableList[0].getName() == "greeting");
+	ASSERT(callableList[1].getName() == "add");
+	ASSERT(callableList[2].getName() == "add");
+	//code
+}
+
+/*desc
 #### getType by name
 
 ```c++
