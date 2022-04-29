@@ -1,22 +1,22 @@
-set(TARGET_TUTORIAL tutorial)
+set(TARGET_DOCSRC docsrc)
 
-file(GLOB_RECURSE SRC_TUTORIAL "./*.cpp")
+file(GLOB_RECURSE SRC_DOCSRC "./*.cpp")
 file(GLOB_RECURSE SRC_LIB "../../src/*.cpp")
 
 add_executable(
-	${TARGET_TUTORIAL}
-	${SRC_TUTORIAL}
+	${TARGET_DOCSRC}
+	${SRC_DOCSRC}
 	${SRC_LIB}
 )
 
 target_include_directories(
-	${TARGET_TUTORIAL}
+	${TARGET_DOCSRC}
 	PUBLIC
 	./
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(${TARGET_TUTORIAL} Threads::Threads)
+target_link_libraries(${TARGET_DOCSRC} Threads::Threads)
 
 
