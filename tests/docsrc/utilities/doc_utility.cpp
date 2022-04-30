@@ -115,8 +115,9 @@ UFN(FN_PREFIX)
 void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepository = nullptr);
 ```
 
-Dump readable information of `metaType` to `stream`.
-Any meta data is obtained from `MetaRepo` `metaRepository`. If `metaRepository` is nullptr, the global `MetaRepo` is used.
+Dump readable information of `metaType` to `stream`.  
+The meta data is obtained from `MetaRepo` `metaRepository`. If `metaRepository` is nullptr, the global `MetaRepo` is used.  
+This function is for test and learning purpose, you should not use it in any production code.  
 
 #### getNameByTypeKind
 
