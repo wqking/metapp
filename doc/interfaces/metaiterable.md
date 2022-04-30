@@ -1,16 +1,29 @@
 # MetaIterable interface
+<!--begintoc-->
+* [Overview](#a2_1)
+* [Header](#a2_2)
+* [Get MetaIterable interface](#a2_3)
+* [Implemented built-in meta types](#a2_4)
+* [MetaIterable constructor](#a2_5)
+* [MetaIterable member functions](#a2_6)
+  * [forEach](#a4_1)
+* [Non-member utility functions](#a2_7)
+<!--endtoc-->
 
+<a id="a2_1"></a>
 ## Overview
 
 `MetaIterable` is a meta interface to loop through a container.  
 It's the metapp version of C++ "range-based for loop".  
 
+<a id="a2_2"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metaiterable.h"
 ```
 
+<a id="a2_3"></a>
 ## Get MetaIterable interface
 
 We can call `MetaType::getMetaIterable()` to get the `MetaIterable` interface. If the type doesn't implement the interface, `nullptr` is returned.
@@ -20,6 +33,7 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaIterable * metaIterable = metaType->getMetaIterable();
 ```
 
+<a id="a2_4"></a>
 ## Implemented built-in meta types
 
 `std::array` (tkStdArray)  
@@ -37,6 +51,7 @@ const metapp::MetaIterable * metaIterable = metaType->getMetaIterable();
 `std::unordered_multiset` (tkStdUnorderedMultiset)  
 `std::tuple` (tkStdTuple)  
 
+<a id="a2_5"></a>
 ## MetaIterable constructor
 
 ```c++
@@ -48,8 +63,10 @@ explicit MetaIterable(
 Parameter `forEach` is a function pointer. It must point to valid function.  
 The meaning of `forEach` is same as the member function listed below.
 
+<a id="a2_6"></a>
 ## MetaIterable member functions
 
+<a id="a4_1"></a>
 #### forEach
 
 ```c++
@@ -66,6 +83,7 @@ The second parameter `callback` is a callback function. Its prototype is `std::f
 When `forEach` is invoked, `callback` is called for every element in `var`, and the referent to the element is passed as the parameter of the `callback`. If `callback` returns true, `forEach` will continue on next element, until there is no more elements. If `callback` returns false, `forEach` will stop the loop and return.  
 Note: for STL containers, the element is the `value_type` in the container. That means for associative containers such as `std::map`, the element is a `std::pair` of the key and value.  
 
+<a id="a2_7"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIterable`.  
@@ -77,4 +95,3 @@ inline void iterableForEach(const Variant & var, MetaIterable::Callback callback
   var.getMetaType()->getMetaIterable()->forEach(var, callback);
 }
 ```
-

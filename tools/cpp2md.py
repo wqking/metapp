@@ -33,11 +33,22 @@ def readFile(fileName) :
 	with open(fileName, 'r') as file:
 		return file.read()
 
-def doTabToSpace(text) :
+def readLines(fileName) :
+	return readFile(fileName).splitlines()
+
+def writeLines(fileName, lineList) :
+	writeFile(fileName, "\n".join(lineList))
+
+def textLeadingTabToSpace(text) :
 	def callback(m) :
 		return '  ' * len(m.group(1))
 	text = re.sub(r'^(\t+)', callback, text)
 	return text
+
+def fileLeadingTabToSpace(fileName) :
+	lineList = readLines(fileName)
+	lineList[:] = [ textLeadingTabToSpace(line) for line in lineList ]
+	writeLines(fileName, lineList)
 
 def doFormatCodeLines(lineList, beginIndex, endIndex, unindent) :
 	# find out the redundant leading spaces to remove from (unindent)
@@ -60,7 +71,7 @@ def doFormatCodeLines(lineList, beginIndex, endIndex, unindent) :
 		line = lineList[index]
 		if leadingSpaceLength > 0 :
 			line = line[leadingSpaceLength:]
-		line = doTabToSpace(line)
+		#line = textLeadingTabToSpace(line)
 		lineList[index] = line
 		index += 1
 
@@ -74,7 +85,7 @@ def doFormatDescLines(lineList, beginIndex, endIndex) :
 		else :
 			if not inCodeBlock :
 				line = line.lstrip()
-		line = doTabToSpace(line)
+		#line = textLeadingTabToSpace(line)
 		lineList[index] = line
 		index += 1
 
@@ -223,14 +234,14 @@ def doCombineSingleLineDescBlocks(blockList) :
 	return resultList
 
 def extractMarkdownFromCpp(inputFile, outputFile) :
-	lineList = readFile(inputFile).splitlines()
+	lineList = readLines(inputFile)
 	outputLineList = []
 	blockList = doParseBlocks(lineList)
 	blockList = doRemoveEmptyBlocks(blockList)
 	blockList = doCombineSingleLineDescBlocks(blockList)
 	for block in blockList :
 		outputLineList += doConvertBlock(block)
-	writeFile(outputFile, "\n".join(outputLineList))
+	writeLines(outputFile, outputLineList)
 
 def doMain() :
 	if len(sys.argv) != 3 :

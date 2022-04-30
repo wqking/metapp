@@ -1,9 +1,23 @@
 # Core concepts and mechanism
+<!--begintoc-->
+* [Overview](#a2_1)
+* [TypeKind - type kind type](#a2_2)
+* [Variant - the core data](#a2_3)
+* [MetaType - the core meta type](#a2_4)
+* [UnifiedType -- CV-unaware meta type](#a2_5)
+* [UpType - the most powerful concept in the meta type system](#a2_6)
+* [DeclareMetaType](#a2_7)
+* [Meta interface](#a2_8)
+* [Accessible](#a2_9)
+* [Callable](#a2_10)
+<!--endtoc-->
 
+<a id="a2_1"></a>
 ## Overview
 
 This document gives an overview on the core concepts and core design in metapp. It's to give you a rough idea on how metapp works. There are separate document for each topics.  
 
+<a id="a2_2"></a>
 ## TypeKind - type kind type
 
 `metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind. For example, `metapp::tkInt` is the meta type for `int`.  
@@ -11,11 +25,13 @@ Each meta type has one and only one TypeKind, different meta types may have the 
 
 See [Built-in meta types document](metatypes/list_all.md) for a list of built-in type kinds.
 
+<a id="a2_3"></a>
 ## Variant - the core data
 
 `metapp::Variant` allows to store data of any type. `Variant` = `MetaType` + data instance.  
 `Variant` is used extensively in metapp library.  
 
+<a id="a2_4"></a>
 ## MetaType - the core meta type
 
 `metapp::MetaType` is the core class to represent the meta type. Unlike some other reflection libraries which are meta class based, everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions, constructors, containers, etc.  
@@ -44,6 +60,7 @@ ASSERT(metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::s
 
 **Note**: `getMetaType()` can be used on any C++ type, the tye doesn't need to be registered to metapp.  
 
+<a id="a2_5"></a>
 ## UnifiedType -- CV-unaware meta type
 
 MetaType member function `getUnifiedType()` can retrieve the underlying UnifiedType.  
@@ -64,6 +81,7 @@ ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaTy
 
 Both MetaType and UnifiedType can be used to identify C++ type, they are the C++ `typeid` in metapp.  
 
+<a id="a2_6"></a>
 ## UpType - the most powerful concept in the meta type system
 
 A MetaType has 0, 1, or multiple UpTypes. An UpType is a MetaType object.  
@@ -127,6 +145,7 @@ UpType represents complicated C++ type recursively. With UpType, metapp can repr
 
 See [Built-in meta types document](built-in-meta-types.md) for the UpTypes for each TypeKind.
 
+<a id="a2_7"></a>
 ## DeclareMetaType
 
 Even though metapp works on any C++ type which are not known to metapp, it's useful to provide metapp more information on a certain type. The template `DeclareMetaType` is to provide such information. For example,  
@@ -148,6 +167,7 @@ struct metapp::DeclareMetaType <MyClass> : public metapp::DeclareMetaTypeBase <M
 ASSERT(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
 ```
 
+<a id="a2_8"></a>
 ## Meta interface 
 
 The core class MetaType only has very few public functions, and provides very few functions. metapp obeys the principle "You don't pay (or pay very little) for what you don't use". We usually don't need many function from most meta types, so the core MetaType is quite small. The powerful features are extensions in MetaType, which called meta interface. For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods, fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass, we can not and don't need to get class information from it.  
@@ -166,11 +186,12 @@ const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```
 
+<a id="a2_9"></a>
 ## Accessible
 
 "Accessible" can be pointer to global variable, member data, the object created by metapp::createAccessor, or anything that implements meta interface `MetaAccessible`. The term "accessible" is used for "field" or "property" in other reflection system.  
 
+<a id="a2_10"></a>
 ## Callable
 
 "Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`. The term "callable" is used for "method" or "function" in other reflection system.
-

@@ -1,8 +1,21 @@
 # Tutorial for using MetaClass
+<!--begintoc-->
+* [Include headers](#a2_1)
+* [Define the C++ class to reflect for](#a2_2)
+* [Declare meta type for TmClass](#a2_3)
+* [Use member data](#a2_4)
+* [Use member function](#a2_5)
+* [Use overloaded member functions](#a2_6)
+* [Use static member function](#a2_7)
+* [Use constructor](#a2_8)
+* [Use nested types](#a2_9)
+* [Use annotations](#a2_10)
+<!--endtoc-->
 
 `MetaClass` is a meta interface to provide meta information of a class,
 such as constructors, member functions, member fields, etc.  
 
+<a id="a2_1"></a>
 ## Include headers
 Header for MetaClass
 
@@ -22,6 +35,7 @@ Header for MetaEnum
 #include "metapp/interfaces/metaenum.h"
 ```
 
+<a id="a2_2"></a>
 ## Define the C++ class to reflect for
 
 Here is the class we are going to reflect for.
@@ -96,6 +110,7 @@ private:
 };
 ```
 
+<a id="a2_3"></a>
 ## Declare meta type for TmClass
 
 ```c++
@@ -199,6 +214,7 @@ struct metapp::DeclareMetaType <TmClass::MyEnum> : metapp::DeclareMetaTypeBase <
 };
 ```
 
+<a id="a2_4"></a>
 ## Use member data
 
 Now let's see how to use field meta data.
@@ -240,6 +256,7 @@ ASSERT(obj.message == "This is a test");
 ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "This is a test");
 ```
 
+<a id="a2_5"></a>
 ## Use member function
 
 Now let's call the member method.
@@ -263,6 +280,7 @@ ASSERT(result.get<const std::string &>() == "Hello, world");
 ASSERT(metapp::callableInvoke(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
 ```
 
+<a id="a2_6"></a>
 ## Use overloaded member functions
 
 Now let's call the overloaded member method.
@@ -307,6 +325,7 @@ ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::st
 ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 ```
 
+<a id="a2_7"></a>
 ## Use static member function
 
 Now let's see how to use static method.
@@ -332,6 +351,7 @@ ASSERT(message == "Hello");
 ASSERT(value == 38);
 ```
 
+<a id="a2_8"></a>
 ## Use constructor
 
 Now let's play with contructors.
@@ -362,6 +382,7 @@ ASSERT(instance.get<const TmClass &>().message == "good");
 // instance will free the object when instance is freed
 ```
 
+<a id="a2_9"></a>
 ## Use nested types
 
 Now let's play with types.
@@ -392,6 +413,7 @@ std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerTyp
 ASSERT(inner->n == 1999);
 ```
 
+<a id="a2_10"></a>
 ## Use annotations
 
 Now let's play with annotations

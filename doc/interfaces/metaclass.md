@@ -408,4 +408,3 @@ using RegisteredTypeList = std::deque<RegisteredType>;
 ```
 
 Get a list of all registered types.  
-

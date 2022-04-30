@@ -1,5 +1,15 @@
 # Use DeclareMetaType to reflect meta types at compile time
+<!--begintoc-->
+* [Overview](#a2_1)
+* [Members in DeclareMetaType](#a2_2)
+  * [Constant typeKind](#a4_1)
+  * [Function cast](#a4_2)
+  * [Function setup](#a4_3)
+* [Members in DeclareMetaType, usually don't need to be re-implemented](#a2_3)
+  * [Type UpType](#a4_4)
+<!--endtoc-->
 
+<a id="a2_1"></a>
 ## Overview
 
 Even though metapp works on any C++ type that are not known to metapp, it's useful to provide metapp more information on a certain type. The template `DeclareMetaType` is used for providing such information.  
@@ -25,8 +35,10 @@ struct metapp::DeclareMetaType <MyClass>
 
 The members in DeclareMetaType that will be used by metapp are static constants, type definition, or static functions. All members are optional. If any member is missed, metapp will use default implementation.  
 
+<a id="a2_2"></a>
 ## Members in DeclareMetaType
 
+<a id="a4_1"></a>
 #### Constant typeKind
 
 ```c++
@@ -42,6 +54,7 @@ The default value of `typeKind` is `metapp::tkObject`.
 
 Each `MetaType` always has one `TypeKind`. TypeKind is a 16 bit integer that represents the meta type. For any user defined TypeKind, the value must be equal or greater than `metapp::tkUser`.  
 
+<a id="a4_2"></a>
 #### Function cast
 
 ```c++
@@ -68,6 +81,7 @@ struct metapp::DeclareMetaType <MyClass>
 };
 ```
 
+<a id="a4_3"></a>
 #### Function setup
 ```c++
 static void setup();
@@ -93,8 +107,10 @@ struct metapp::DeclareMetaType <C>
 };
 ```
 
+<a id="a2_3"></a>
 ## Members in DeclareMetaType, usually don't need to be re-implemented
 
+<a id="a4_4"></a>
 #### Type UpType
 
 ```c++

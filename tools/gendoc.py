@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cpp2md import extractMarkdownFromCpp
+import cpp2md
 import os
 import sys
 import glob
@@ -23,10 +23,13 @@ import shutil
 import subprocess
 import shlex
 
+forceGenerateAll = not False
 sourcePath = '../tests/docsrc'
 docPath = '../doc'
 
 def isFileUpToDate(sourceFile, targetFile) :
+	if forceGenerateAll :
+		return False
 	if not os.path.exists(targetFile) :
 		return False
 	if os.path.getmtime(sourceFile) > os.path.getmtime(targetFile) :
@@ -39,8 +42,10 @@ def isWindows() :
 def normalizeCommand(command) :
 	return shlex.split(command, posix = not isWindows())
 
-def doPostProcessMarkdown(file) :
-	command = 'perl addtoc2md.pl --max-level=4 "%s"' % (file)
+def doPostProcessMarkdown(fileName) :
+	cpp2md.fileLeadingTabToSpace(fileName)
+
+	command = 'perl addtoc2md.pl --max-level=4 "%s"' % (fileName)
 	command = normalizeCommand(command)
 	subprocess.run(command)
 
@@ -62,7 +67,7 @@ def doProcessFile(sourceFile) :
 		return
 	print("Generate %s" % (targetFileName))
 	if extension == 'cpp' :
-		extractMarkdownFromCpp(sourceFile, targetFileName)
+		cpp2md.extractMarkdownFromCpp(sourceFile, targetFileName)
 	elif extension in [ 'md' ] :
 		shutil.copy(sourceFile, targetFileName)
 	else :

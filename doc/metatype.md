@@ -1,18 +1,40 @@
 # MetaType reference
+<!--begintoc-->
+* [Overview](#a2_1)
+* [Header](#a2_2)
+* [Obtain the MetaType for given C++ type](#a2_3)
+  * [Use getMetaType at compile time](#a3_1)
+  * [Use MetaRepo at runtime](#a3_2)
+* [Member functions](#a2_4)
+  * [Not constructible](#a3_3)
+  * [getUnifiedType](#a3_4)
+  * [getUpType](#a3_5)
+  * [getUpTypeCount](#a3_6)
+  * [getTypeKind](#a3_7)
+  * [Get type attributes](#a3_8)
+  * [Get meta interfaces](#a3_9)
+  * [construct](#a3_10)
+  * [copyConstruct](#a3_11)
+  * [destroy](#a3_12)
+<!--endtoc-->
 
+<a id="a2_1"></a>
 ## Overview
 
 `metapp::MetaType` represents the meta information of arbitrary C++ type.  
 We can obtain almost all information on any C++ type through `metapp::MetaType`, such as, but not limited to, pointer, reference, const-volatile qualifier, array, function parameters, etc.  
 
+<a id="a2_2"></a>
 ## Header
 
 ```c++
 #include "metapp/metatype.h"
 ```
 
+<a id="a2_3"></a>
 ## Obtain the MetaType for given C++ type
 
+<a id="a3_1"></a>
 ### Use getMetaType at compile time
 
 ```c++
@@ -47,12 +69,15 @@ ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const
 ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
 ```
 
+<a id="a3_2"></a>
 ### Use MetaRepo at runtime
 
 The class `metapp::MetaRepo` holds all registered meta types.
 
+<a id="a2_4"></a>
 ## Member functions
 
+<a id="a3_3"></a>
 ### Not constructible
 
 ```c++
@@ -63,6 +88,7 @@ MetaType(MetaType &&) = delete;
 
 MetaType is not constructible. So the user can't construct a MetaType on the stack or heap.  
 
+<a id="a3_4"></a>
 ### getUnifiedType
 
 ```c++
@@ -77,6 +103,7 @@ metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<vola
 ```
 `UnifiedType` is an opaque type, so it's a `const void *`. Its only function is to identify or compare types.  
 
+<a id="a3_5"></a>
 ### getUpType
 
 ```c++
@@ -91,6 +118,7 @@ A MetaType only has one TypeKind, so it can represent only one type information,
 UpType is used to represent the missed type information.  
 The actual types of UpType depends on how the meta type defines them. For example, for pointer (tkPointer), it has only one UpType, which is the type it points to. Reference is similar to pointer.  
 
+<a id="a3_6"></a>
 ### getUpTypeCount
 
 ```c++
@@ -99,6 +127,7 @@ size_t getUpTypeCount() const noexcept;
 
 Returns the count of UpType. The result can be 0, 1, or more.  
 
+<a id="a3_7"></a>
 ### getTypeKind
 
 ```c++
@@ -107,6 +136,7 @@ TypeKind getTypeKind() const noexcept;
 
 Returns the TypeKind of the meta type.
 
+<a id="a3_8"></a>
 ### Get type attributes
 
 ```c++
@@ -137,6 +167,7 @@ constexpr bool isArithmetic() const noexcept;
 
 Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType. That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
 
+<a id="a3_9"></a>
 ### Get meta interfaces
 
 ```c++
@@ -156,6 +187,7 @@ The functions return the meta interfaces if they are implemented. If any interfa
 MetaType has very few public functions, most functions are in the meta interfaces.  
 Please see the document for each meta interface for more detailed information.  
 
+<a id="a3_10"></a>
 ### construct
 
 ```c++
@@ -166,6 +198,7 @@ Similar to C++ code `new T()`.
 Allocate and initialize an object on the heap, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
+<a id="a3_11"></a>
 ### copyConstruct
 
 ```c++
@@ -176,6 +209,7 @@ Similar to C++ code `new T(anotherObject)`.
 Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
+<a id="a3_12"></a>
 ### destroy
 
 ```c++
@@ -183,4 +217,3 @@ void destroy(void * instance) const;
 ```
 
 Free an object constructed by `construct` or `copyConstruct`.  
-

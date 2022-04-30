@@ -19,4 +19,3 @@ struct metapp::DeclareMetaType <MyClass> : metapp::MetaStreamingBase <MyClass>
 {
 };
 ```
-
