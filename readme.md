@@ -210,3 +210,6 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
     - [Default arguments function](doc/metatypes/default_args_function.md)
     - [Variadic function](doc/metatypes/variadic_function.md)
     - [Accessor](doc/metatypes/accessor.md)
+
+- Utilities
+    - [utility.h](doc/utilities/utility.md)
