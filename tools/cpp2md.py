@@ -83,7 +83,12 @@ def doFormatDescLines(lineList, beginIndex, endIndex) :
 		if line.startswith("```") :
 			inCodeBlock = not inCodeBlock
 		else :
-			if not inCodeBlock :
+			canRemoveLeadingSpaces = True
+			if inCodeBlock :
+				canRemoveLeadingSpaces = False
+			elif re.match(r'^\s*[\-\*].*', line) is not None :
+				canRemoveLeadingSpaces = False
+			if canRemoveLeadingSpaces :
 				line = line.lstrip()
 		#line = textLeadingTabToSpace(line)
 		lineList[index] = line

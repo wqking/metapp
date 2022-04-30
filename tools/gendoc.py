@@ -27,6 +27,13 @@ forceGenerateAll = not False
 sourcePath = '../tests/docsrc'
 docPath = '../doc'
 
+fileConfigs = {
+	'readme' : {
+		'targetFileName' : '../readme.md',
+		'generateToc' : False,
+	}
+}
+
 def isFileUpToDate(sourceFile, targetFile) :
 	if forceGenerateAll :
 		return False
@@ -36,45 +43,69 @@ def isFileUpToDate(sourceFile, targetFile) :
 		return False
 	return True
 
+def getDictValue(dict, key, default = None) :
+	if dict != None and key in dict :
+		return dict[key]
+	return default
+
 def isWindows() :
 	return sys.platform.startswith('win')
 
 def normalizeCommand(command) :
 	return shlex.split(command, posix = not isWindows())
 
-def doPostProcessMarkdown(fileName) :
+def doPostProcessMarkdown(fileName, config) :
 	cpp2md.fileLeadingTabToSpace(fileName)
 
-	command = 'perl addtoc2md.pl --max-level=4 "%s"' % (fileName)
-	command = normalizeCommand(command)
-	subprocess.run(command)
+	if config['generateToc'] :
+		command = 'perl addtoc2md.pl --max-level=4 "%s"' % (fileName)
+		command = normalizeCommand(command)
+		subprocess.run(command)
 
-def doProcessFile(sourceFile) :
+def doGetFileConfig(sourceFile) :
 	matches = re.search(r'doc_([^\\\/]+)\.(\w+)$', sourceFile)
 	if matches is None :
 		print("Internal error %s" % (sourceFile))
-		return
+		return None
 	fileName = matches.group(1)
-	extension = matches.group(2)
+	fileType = matches.group(2)
 	relativePath = os.path.abspath(sourceFile)[len(sourcePath) : ]
 	relativePath = re.sub(r'^[\\\/]', '', relativePath)
 	relativePath = os.path.dirname(relativePath)
-	targetPath = os.path.join(docPath, relativePath)
-	targetFileName = os.path.join(targetPath, fileName + '.md')
-	os.makedirs(targetPath, exist_ok = True)
+	targetFileName = os.path.join(docPath, relativePath, fileName + '.md')
+	specialConfig = getDictValue(fileConfigs, fileName)
+	targetFileName = getDictValue(specialConfig, 'targetFileName', targetFileName)
+	generateToc = getDictValue(specialConfig, 'generateToc', True)
+	os.makedirs(os.path.dirname(targetFileName), exist_ok = True)
+	config = {
+		'fileName' : fileName,
+		'fileType' : fileType,
+		'targetFileName' : targetFileName,
+		'generateToc' : generateToc,
+	}
+	return config
+
+def doProcessFile(sourceFile) :
+	config = doGetFileConfig(sourceFile)
+	if config is None :
+		return
+
+	targetFileName = config['targetFileName']
+	fileType = config['fileType']
+
 	if isFileUpToDate(sourceFile, targetFileName) :
 		print("%s is up to date, skip." % (targetFileName))
 		return
 	print("Generate %s" % (targetFileName))
-	if extension == 'cpp' :
+	if fileType == 'cpp' :
 		cpp2md.extractMarkdownFromCpp(sourceFile, targetFileName)
-	elif extension in [ 'md' ] :
+	elif fileType in [ 'md' ] :
 		shutil.copy(sourceFile, targetFileName)
 	else :
-		print("Unknow file type: %s" % (extension))
+		print("Unknow file type: %s" % (fileType))
 		return
 	if targetFileName.endswith('.md') :
-		doPostProcessMarkdown(targetFileName)
+		doPostProcessMarkdown(targetFileName, config)
 
 def doMain() :
 	global sourcePath, docPath
