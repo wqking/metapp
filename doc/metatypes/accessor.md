@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Meta type Accessor (tkAccessor)
 
 Template `metapp::Accessor` is used to create accessible (MetaAccessible) with getter/setter or other advanced feature.  

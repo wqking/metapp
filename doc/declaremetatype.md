@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Use DeclareMetaType to reflect meta types at compile time
 <!--begintoc-->
 * [Overview](#a2_1)

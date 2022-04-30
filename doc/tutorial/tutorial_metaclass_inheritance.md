@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Tutorial for using class inheritance
 
 ## Define the C++ classes to reflect for

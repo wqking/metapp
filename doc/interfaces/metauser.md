@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # User defined meta interface
 
 ## Overview

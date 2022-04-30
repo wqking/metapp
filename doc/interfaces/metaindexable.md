@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # MetaIndexable interface
 <!--begintoc-->
 * [Overview](#a2_1)

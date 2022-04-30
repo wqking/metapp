@@ -55,7 +55,16 @@ def normalizeCommand(command) :
 	return shlex.split(command, posix = not isWindows())
 
 def doPostProcessMarkdown(fileName, config) :
-	cpp2md.fileLeadingTabToSpace(fileName)
+	#header = [ "<!--Auto generated file, don't modify this file.-->", '' ]
+	# The invisible text trick is from here
+	# https://stackoverflow.com/questions/4823468/comments-in-markdown
+	# Ideally we should use the above commented format <!-- -->,
+	# but my markdown previewer doens't support it when it's the first line...
+	header = [ "[//]: # (Auto generated file, don't modify this file.)", '' ]
+	lineList = cpp2md.readLines(fileName)
+	lineList[:] = [ cpp2md.textLeadingTabToSpace(line) for line in lineList ]
+	lineList = header + lineList
+	cpp2md.writeLines(fileName, lineList)
 
 	if config['generateToc'] :
 		command = 'perl addtoc2md.pl --max-level=4 "%s"' % (fileName)

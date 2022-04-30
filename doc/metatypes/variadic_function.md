@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Meta type variadic function (tkVariadicFunction)
 
 Template `metapp::VariadicFunction` is used to create a variadic function.  

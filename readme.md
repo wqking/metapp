@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # metapp -- C++ library for runtime reflection and meta types
 
 metapp is a cross platform C++ library that adds powerful reflection feature to C++.  

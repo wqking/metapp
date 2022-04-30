@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Tutorial for using MetaType
 
 `metapp::MetaType` represents the meta information of arbitrary C++ type.  

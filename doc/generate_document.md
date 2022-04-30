@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # How to generate documentations
 
 All documentations are generated from the source code in folder `metapp/tests/docsrc`. The document .md file name is same to the .cpp source file name.  

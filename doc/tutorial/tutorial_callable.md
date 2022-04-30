@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Tutorial for invoking callables
 <!--begintoc-->
 * [Include headers](#a2_1)

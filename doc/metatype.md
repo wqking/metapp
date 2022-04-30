@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # MetaType reference
 <!--begintoc-->
 * [Overview](#a2_1)

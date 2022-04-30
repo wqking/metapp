@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Meta type default arguments function (tkDefaultArgsFunction)
 
 Template `metapp::DefaultArgsFunction` is used to create a defautl arguments function.  

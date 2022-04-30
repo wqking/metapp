@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Built-in meta types overview
 
 metapp supports a large amount of ready to use built-in meta types, from fundamental types `int` or `double` to STL containers `std::vector`, etc.  

@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Use MetaRepo to register meta types at running time
 <!--begintoc-->
 * [Overview](#a2_1)

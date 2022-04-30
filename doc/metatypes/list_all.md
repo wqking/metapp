@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # List of all built-in meta types
 
 ## List of type kinds and equivalent C++ types

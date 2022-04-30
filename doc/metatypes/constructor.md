@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Meta type constructor (tkConstructor)
 
 Template `metapp::Constructor` is used to create a constructor.  

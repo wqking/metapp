@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Tutorial for using Variant
 
 `metapp::Variant` allows to store data of any type and convert between types.  

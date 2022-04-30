@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Tutorial for using MetaRepo and runtime meta data
 <!--begintoc-->
 * [Include headers](#a2_1)

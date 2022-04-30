@@ -1,3 +1,5 @@
+[//]: # (Auto generated file, don't modify this file.)
+
 # Core concepts and mechanism
 <!--begintoc-->
 * [Overview](#a2_1)
