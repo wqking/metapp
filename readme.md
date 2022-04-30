@@ -202,7 +202,7 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
     - [User defined meta interface](doc/interfaces/metauser.md)
 
 - Built-in meta types
-    - [Overview](doc/metatypes/overview.md)
+    - [Overview](doc/metatypes/overview_metatypes.md)
     - [List of all built-in meta types](doc/metatypes/list_all.md)
     - [Constructor](doc/metatypes/constructor.md)
     - [Default arguments function](doc/metatypes/default_args_function.md)
