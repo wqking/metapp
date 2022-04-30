@@ -127,7 +127,7 @@ Cast to const char *.
 ```c++
 metapp::Variant casted = v.cast<const char *>();
 const char * s = casted.get<const char *>();
-ASSERT(strcmp(s, "world") == 0);
+ASSERT(strcmp(s, "hello") == 0);
 ```
 
 ### Use MetaType
@@ -150,11 +150,11 @@ ASSERT(metaType->isConst());
 
 ```c++
 struct MyClass {
-  int value;
+    int value;
 
-  int add(const int delta1, const int delta2) const {
-    return value + delta1 + delta2;
-  }
+    int add(const int delta1, const int delta2) const {
+        return value + delta1 + delta2;
+    }
 };
 
 metapp::Variant v(&MyClass::add);

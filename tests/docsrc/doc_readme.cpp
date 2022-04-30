@@ -107,86 +107,83 @@ In brief, MSVC, GCC, Clang that has well support for C++11, or released after 20
 ## Example code
 
 Here is simple code pieces. There are comprehensive tutorials documentations.
+desc*/
+//desc ### Use Variant
 
-### Use Variant
-Header for Variant
-
-```c++
+//code
+//desc Header for Variant
 #include "metapp/variant.h"
-```
-
-To use all declared meta types, include this header
-
-```c++
+//desc To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
-```
+//code
 
-v contains int.
+UFN(FN_PREFIX)
+{
+    {
+        //code
+        //desc v contains int.
+        metapp::Variant v(5);
+        //desc Get the value
+        ASSERT(v.get<int>() == 5);
+        //code
+    }
 
-```c++
-metapp::Variant v(5);
-```
+    {
+        //code
+        //desc Now v contains std::string.
+        metapp::Variant v = std::string("hello");
+        //desc Get as reference to avoid copy.
+        ASSERT(v.get<const std::string &>() == "hello");
+        //desc Cast to const char *.
+        metapp::Variant casted = v.cast<const char *>();
+        const char * s = casted.get<const char *>();
+        ASSERT(strcmp(s, "hello") == 0);
+        //code
+    }
+}
 
-Get the value
+//desc ### Use MetaType
+UFN(FN_PREFIX)
+{
+    {
+        //code
+        //desc int
+        const metapp::MetaType * metaType = metapp::getMetaType<int>();
+        ASSERT(metaType->getTypeKind() == metapp::tkInt);
+        //code
+    }
 
-```c++
-ASSERT(v.get<int>() == 5);
-```
+    {
+        //code
+        //desc constness
+        auto metaType = metapp::getMetaType<const int>();
+        ASSERT(metaType->getTypeKind() == metapp::tkInt);
+        ASSERT(metaType->isConst());
+        //code
+    }
+}
 
-Now v contains std::string.
+//desc ### Call function
+UFN(FN_PREFIX)
+{
+    //code
+    struct MyClass {
+        int value;
 
-```c++
-metapp::Variant v = std::string("hello");
-```
+        int add(const int delta1, const int delta2) const {
+            return value + delta1 + delta2;
+        }
+    };
 
-Get as reference to avoid copy.
+    metapp::Variant v(&MyClass::add);
+    MyClass obj { 5 };
+    // The second argument is the pointer to obj, it's required when invoking member function
+    metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
+    ASSERT(result.get<int>() == 17);
+    //code
+}
 
-```c++
-ASSERT(v.get<const std::string &>() == "hello");
-```
-
-Cast to const char *.
-
-```c++
-metapp::Variant casted = v.cast<const char *>();
-const char * s = casted.get<const char *>();
-ASSERT(strcmp(s, "world") == 0);
-```
-
-### Use MetaType
-int
-
-```c++
-const metapp::MetaType * metaType = metapp::getMetaType<int>();
-ASSERT(metaType->getTypeKind() == metapp::tkInt);
-```
-
-constness
-
-```c++
-auto metaType = metapp::getMetaType<const int>();
-ASSERT(metaType->getTypeKind() == metapp::tkInt);
-ASSERT(metaType->isConst());
-```
-
-### Call function
-
-```c++
-struct MyClass {
-  int value;
-
-  int add(const int delta1, const int delta2) const {
-    return value + delta1 + delta2;
-  }
-};
-
-metapp::Variant v(&MyClass::add);
-MyClass obj { 5 };
-// The second argument is the pointer to obj, it's required when invoking member function
-metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
-ASSERT(result.get<int>() == 17);
-```
-
+/*desc
 Below are tutorials and documents.  
 If you want to contribute, be sure to read [How to generate documentations](doc/generate_document.md).  
 
