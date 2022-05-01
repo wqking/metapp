@@ -24,10 +24,10 @@
 #include <iostream>
 #include <climits>
 
-struct MyClass {};
+struct ClassForMetaUser {};
 
 template <>
-struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
+struct metapp::DeclareMetaType<ClassForMetaUser> : metapp::DeclareMetaTypeBase<ClassForMetaUser>
 {
 	static void * getMetaUser() {
 		return (void *)0xbeef;
@@ -36,6 +36,6 @@ struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
 
 TEST_CASE("MetaUser")
 {
-	auto metaType = metapp::getMetaType<MyClass>();
+	auto metaType = metapp::getMetaType<ClassForMetaUser>();
 	REQUIRE(metaType->getMetaUser() == (void *)0xbeef);
 }

@@ -19,6 +19,9 @@
 
 #include "metapp/compiler.h"
 
+#include <stdexcept>
+#include <string>
+
 #ifndef METAPP_DISABLE_EXCEPTION
 
 #ifdef METAPP_COMPILER_VC
@@ -32,8 +35,6 @@
 #endif
 
 #endif
-
-#include <stdexcept>
 
 namespace metapp {
 

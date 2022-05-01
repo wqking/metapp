@@ -25,34 +25,8 @@
 #include <iostream>
 #include <climits>
 
-class MyClass
-{
-public:
-	MyClass() {}
-	MyClass(const std::string & a, const int b) {}
-};
-
-template <>
-struct metapp::DeclareMetaType<MyClass> : metapp::DeclareMetaTypeBase<MyClass>
-{
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyClass>(),
-			[](metapp::MetaClass & mc) {
-				mc.registerConstructor(metapp::Constructor<MyClass()>());
-				mc.registerConstructor(metapp::Constructor<MyClass(const std::string &, const int)>());
-			}
-		);
-		return &metaClass;
-	}
-};
-
 TEST_CASE("play camp")
 {
-	metapp::Variant ctor = metapp::Constructor<MyClass (const std::string &, const int)>();
-	metapp::Variant instance(metapp::callableInvoke(ctor, nullptr, "hello", 5));
-	delete instance.get<MyClass *>();
-
 	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
 }
 

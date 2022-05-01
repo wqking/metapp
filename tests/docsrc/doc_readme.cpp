@@ -18,6 +18,8 @@
 
 #include "metapp/allmetatypes.h"
 
+#include <cstring>
+
 /*desc
 # metapp -- C++ library for runtime reflection and meta types
 

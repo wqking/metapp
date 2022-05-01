@@ -54,7 +54,7 @@ TEST_CASE("metatypes, VariadicFunction, sum")
 	}
 }
 
-struct MyClass
+struct ClassForVariadicFunc
 {
 	std::string join(const metapp::Variant * arguments, const size_t argumentCount)
 	{
@@ -68,11 +68,11 @@ struct MyClass
 	std::string value;
 };
 
-TEST_CASE("metatypes, VariadicFunction, MyClass::join")
+TEST_CASE("metatypes, VariadicFunction, ClassForVariadicFunc::join")
 {
-	metapp::Variant v(metapp::createVariadicFunction(&MyClass::join));
+	metapp::Variant v(metapp::createVariadicFunction(&ClassForVariadicFunc::join));
 	SECTION("0 arguments") {
-		MyClass obj { "first" };
+		ClassForVariadicFunc obj { "first" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, 0));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, nullptr, 0).get<const std::string&>()
 			== 
@@ -80,7 +80,7 @@ TEST_CASE("metatypes, VariadicFunction, MyClass::join")
 		);
 	}
 	SECTION("2 arguments") {
-		MyClass obj { "first" };
+		ClassForVariadicFunc obj { "first" };
 		metapp::Variant arguments[] = { "abc", "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 2).get<const std::string&>()
