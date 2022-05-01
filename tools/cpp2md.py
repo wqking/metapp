@@ -125,6 +125,9 @@ class BlockParser :
 
 	def process(self, lineList) :
 		for line in lineList :
+			matches = re.search(r'\/\/\s*nocode\s*$', line)
+			if matches is not None :
+				continue
 			matches = re.match(r'\s*//\s*desc\s*(.*)\s*', line, re.I)
 			if matches is not None :
 				text = matches.group(1)

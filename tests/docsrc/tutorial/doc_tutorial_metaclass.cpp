@@ -221,35 +221,37 @@ desc */
 TEST_CASE("tutorialMetaClass_accessible")
 {
 	//code
-	// First let's get the MetaType of TmClass
+	//desc First let's get the MetaType of TmClass.
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	
-	// If we have a Variant that holds a TmClass, we can get the MetaType from the Variant as well
-	//metapp::Variant v = TmClass();
-	//const metapp::MetaType * metaType = v.getMetaType();
+	//desc If we have a Variant that holds a TmClass, we can get the MetaType from the Variant as well.
+	#if 0 //nocode
+	metapp::Variant v = TmClass();
+	const metapp::MetaType * metaType = v.getMetaType();
+	#endif //nocode
 
-	// Get the MetaClass from the MetaType.
-	// If the MetaType doesn't implement MetaClass, the return value is nullptr.
+	//desc Get the MetaClass from the MetaType.  
+	//desc If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	// Declare an instace of TmClass, we will use the field meta data to access it's member data
+	//desc Declare an instace of TmClass, we will use the field meta data to access its member data.
 	TmClass obj;
 
-	// Get the meta data of field "value"
+	//desc Get the meta data of field "value".
 	metapp::RegisteredAccessible fieldValue = metaClass->getAccessible("value");
 
-	// Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.
-	// Call getTarget() to get the underlying Variant.
+	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
+	//desc Call getTarget() to get the underlying Variant.
 	ASSERT(metapp::accessibleGet(fieldValue.getTarget(), &obj).get<int>() == 0);
 	// getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 
-	// Now let's set a new value
+	//desc Now let's set a new value.
 	metapp::accessibleSet(fieldValue, &obj, 5);
 	ASSERT(obj.getValue() == 5);
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 5);
 
-	// Now set 'message' with some new text
+	//desc Now set 'message' with some new text.
 	metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
 	ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "");
 	metapp::accessibleSet(fieldMessage, &obj, "This is a test");
@@ -272,15 +274,15 @@ TEST_CASE("tutorialMetaClass_method")
 	TmClass obj;
 	obj.message = "Hello";
 
-	// Get the meta data of method "greeting".
+	//desc Get the meta data of method "greeting".
 	metapp::RegisteredCallable methodGreeting = metaClass->getCallable("greeting");
 	
-	// Call metapp::callableInvoke to invoke the method, and pass the arguments.
-	// The return value is a metapp::Variant.
+	//desc Use metapp::callableInvoke to invoke the method, and pass the arguments.  
+	//desc The return value is a metapp::Variant.
 	metapp::Variant result = metapp::callableInvoke(methodGreeting, &obj, ", world");
 	ASSERT(result.get<const std::string &>() == "Hello, world");
 	
-	// Call the method again with different arguments.
+	//desc Call the method again with different arguments.
 	ASSERT(metapp::callableInvoke(methodGreeting, &obj, ", metapp").get<const std::string &>() == "Hello, metapp");
 	//code
 }
@@ -299,34 +301,34 @@ TEST_CASE("tutorialMetaClass_overloadedMethods")
 	TmClass obj;
 	obj.message = "Hello";
 
-	// Get all the overloaded methods of "makeMessage" by calling metaClass->getCallableList
-	// If we use metaClass->getCallable("makeMessage"), the only first method is returned.
+	//desc Get all the overloaded methods of "makeMessage" by calling metaClass->getCallableList().  
+	//desc If we use metaClass->getCallable("makeMessage"), the only first method is returned.
 	metapp::RegisteredCallableList callableList = metaClass->getCallableList("makeMessage");
 
-	// There are various ways to call the overload methods
+	//desc There are various ways to call the overload methods.  
 
-	// Approach 1
-	// Use metapp::findCallable to find the callable method.
-	// The last two arguments are the arguments and argument count, here they are nullptr and 0, indicate no arguments
-	// The return value is an iterator
+	//desc **Approach 1**  
+	//desc Use metapp::findCallable to find the callable method.  
+	//desc The last two arguments are the arguments and argument count, here they are nullptr and 0, indicate no arguments.  
+	//desc The return value is an iterator.
 	auto itNoArgs = metapp::findCallable(callableList.begin(), callableList.end(), nullptr, 0);
-	// Found the method "std::string makeMessage() const"
+	//desc Found the method "std::string makeMessage() const".
 	ASSERT(itNoArgs != callableList.end());
-	// Invoke the found method
+	//desc Invoke the found method.
 	metapp::Variant result = itNoArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
 		itNoArgs->getTarget(), &obj, nullptr, 0);
 	ASSERT(result.get<const std::string &>() == "Hello");
 
-	// Find another method, which should be "std::string makeMessage(const int a, const std::string & b) const"
+	//desc Find another method, which should be "std::string makeMessage(const int a, const std::string & b) const".
 	metapp::Variant arguments[] = { 38, ", world"};
 	auto itWithArgs = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 2);
 	ASSERT(itWithArgs!= callableList.end());
 	ASSERT(itWithArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
 		itWithArgs->getTarget(), &obj, arguments, 2).get<const std::string &>() == "Hello38, world");
 
-	// Approach 2
-	// We can use metapp::callableInvoke to "invoke" the method list directly.
-	// metapp::callableInvoke will try to find the proper method, then call it.
+	//desc **Approach 2**  
+	//desc We can use metapp::callableInvoke to "invoke" the method list directly.  
+	//desc metapp::callableInvoke will try to find the proper method, then call it.
 	ASSERT(metapp::callableInvoke(callableList, &obj).get<const std::string &>() == "Hello");
 	ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
 	ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
@@ -354,8 +356,8 @@ TEST_CASE("tutorialMetaClass_staticMethods")
 	ASSERT(value == 0);
 
 	metapp::RegisteredCallable methodObjtainValues = metaClass->getCallable("obtainValues");
-	// There is no much difference between member methods and static methods, the only difference
-	// is that the instance can be nullptr when invoking the method.
+	//desc There is no much difference between member methods and static methods, the only difference
+	//desc is that the instance can be nullptr when invoking the method.
 	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
 	ASSERT(message == "Hello");
 	ASSERT(value == 38);
@@ -373,26 +375,26 @@ TEST_CASE("tutorialMetaClass_constructor")
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	// Get all constructors from the meta class
+	//desc Get all constructors from the meta class.
 	metapp::RegisteredConstructorList constructorList = metaClass->getConstructorList();
 
-	// Invoke the default constructor which doesn't have any arguments.
-	// Invoking constructors is same as invoking overloaded methods.
-	// In metapp::callableInvoke, the second argument "nullptr" is the instance pointer, that's not
-	// used when invoking constructors.
-	// The constructor returns a Variant, which is a pointer to the constructed object.
-	// The caller must free the pointer. The returned Variant doesn't free it.
+	//desc Invoke the default constructor which doesn't have any arguments.  
+	//desc Invoking constructors is same as invoking overloaded methods.  
+	//desc In metapp::callableInvoke, the second argument "nullptr" is the instance pointer, that's not
+	//desc used when invoking constructors.  
+	//desc The constructor returns a Variant, which is a pointer to the constructed object.  
+	//desc The caller must free the pointer. The returned Variant doesn't free it.
 	std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructorList, nullptr).get<TmClass *>());
 	ASSERT(ptr->getValue() == 0);
 	ASSERT(ptr->message == "");
 
-	// If we want to convert the returned pointer to a Variant which manage the object lifetime,
-	// we can use metapp::Variant::takeFrom to create a new Variant that owns the object.
+	//desc If we want to convert the returned pointer to a Variant which manages the object lifetime,
+	//desc we can use metapp::Variant::takeFrom to create a new Variant that owns the object.
 	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorList, nullptr, 3, "good").get<TmClass *>());
 	ASSERT(instance.getMetaType() == metapp::getMetaType<TmClass>());
 	ASSERT(instance.get<const TmClass &>().getValue() == 3);
 	ASSERT(instance.get<const TmClass &>().message == "good");
-	// instance will free the object when instance is freed
+	//desc instance will free the object when instance is freed.
 	//code
 }
 
@@ -438,11 +440,11 @@ desc */
 TEST_CASE("tutorialMetaClass_annotation")
 {
 	//code
-	// First let's get the MetaType of TmClass
+	//desc First let's get the MetaType of TmClass.
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 
-	// Get the MetaClass from the MetaType.
-	// If the MetaType doesn't implement MetaClass, the return value is nullptr.
+	//desc Get the MetaClass from the MetaType.  
+	//desc If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
