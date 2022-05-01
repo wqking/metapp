@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -264,7 +264,7 @@ Get a list of RegisteredConstructor.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
@@ -307,7 +307,7 @@ Get a list of all registered field.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<AccClass>();
@@ -355,7 +355,7 @@ Get a list of all registered methods.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CaClass>();

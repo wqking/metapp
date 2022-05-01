@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -90,7 +90,7 @@ Helper function to select the overloaded function.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	struct MyClass {

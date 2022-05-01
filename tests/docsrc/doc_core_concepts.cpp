@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -52,7 +52,7 @@ const MetaType * getMetaType();
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
@@ -64,7 +64,7 @@ UFN
 **Note**: MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
@@ -87,7 +87,7 @@ const void * getUnifiedType() const noexcept;
 Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaType, except that UnifiedType is CV-unaware. That's to say, for the same T, no matter it's qualified with const or volatile, the UnifiedType is always the same. So,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
@@ -117,7 +117,7 @@ UpType is used to represent the lost type information.
 Here are some examples,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	//descMetaType `int *` has one UpType. 
@@ -173,7 +173,7 @@ struct metapp::DeclareMetaType <MyClass> : public metapp::DeclareMetaTypeBase <M
 };
 //code
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);

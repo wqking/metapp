@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -101,7 +101,7 @@ If T is metapp::Variant or reference to metapp::Variant, value is returned direc
 **Example**
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	int n = 5;
@@ -123,7 +123,7 @@ This is equivalent to `Variant::create<T &>(value);`, but in `reference` the tem
 **Example**
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	int n = 5;
@@ -153,7 +153,7 @@ Return a Variant which data is the object pointed by `instance`, type is `metaTy
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	std::string * instance = new std::string();
@@ -175,7 +175,7 @@ This function is not useful in most cases. The only useful case is to use it on 
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	// This is wrong. In this case, var hold the ownership of MyClass
@@ -239,7 +239,7 @@ If You need to get the underlying value as different type, use `canCast` and `ca
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	int n = 5;
@@ -291,7 +291,7 @@ Otherwise, return the address of the underlying value.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	metapp::Variant v1(5);
@@ -401,7 +401,7 @@ If `this` Variant is a value, the returned reference refers to the value.
 **Example**  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	metapp::Variant v1(5); // value

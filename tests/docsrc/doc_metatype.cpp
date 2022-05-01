@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -48,7 +48,7 @@ Return a MetaType pointer of type T.
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
@@ -60,7 +60,7 @@ UFN
 MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
@@ -74,7 +74,7 @@ To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.
 **Example**
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());

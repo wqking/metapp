@@ -14,21 +14,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TUTORIAL_H
-#define TUTORIAL_H
-
-#include "../catch.hpp"
-
-#include <iostream>
-
-// Alias REQUIRE to ASSERT for easy understanding
-// for users who are not familar with Catch2
-#define ASSERT REQUIRE
-
-#define I_UFN_STRINGIZE(s) #s
-#define UFN_STRINGIZE(s) I_UFN_STRINGIZE(s)
-#define I_UFN_CONCAT(a, b) a ## b
-#define UFN_CONCAT(a, b) I_UFN_CONCAT(a, b)
-#define UFN TEST_CASE(UFN_STRINGIZE(UFN_CONCAT(__FILE__, __LINE__)))
-
-#endif
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "testutil.h"

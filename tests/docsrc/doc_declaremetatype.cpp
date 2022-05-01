@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -276,7 +276,7 @@ struct metapp::DeclareMetaType<Integer>
 No matter which method we use, we can test as,
 desc*/
 
-UFN
+ExampleFunc
 {
 	{
 		//code

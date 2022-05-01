@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metaclass.h"
@@ -49,7 +49,7 @@ const void * getMetaUser() const;
 For example, assume meta type of `MyClass` implements the `MetaClass` interface, then we get the meta interface as,  
 desc*/
 
-UFN
+ExampleFunc
 {
 	//code
 	class MyClass {};

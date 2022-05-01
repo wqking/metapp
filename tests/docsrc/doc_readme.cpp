@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tutorial.h"
+#include "testutil.h"
 
 #include "metapp/allmetatypes.h"
 
@@ -112,7 +112,7 @@ desc*/
 #include "metapp/allmetatypes.h"
 //code
 
-UFN
+ExampleFunc
 {
     {
         //code
@@ -138,7 +138,7 @@ UFN
 }
 
 //desc ### Use MetaType
-UFN
+ExampleFunc
 {
     {
         //code
@@ -159,7 +159,7 @@ UFN
 }
 
 //desc ### Call function
-UFN
+ExampleFunc
 {
     //code
     struct MyClass {

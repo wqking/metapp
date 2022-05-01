@@ -29,19 +29,16 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - Cross platforms, cross compilers.
 
 - **Language features that can be reflected**
-    - Member and static fields with any data type.
-    - Global fields (global variable) with any data type.
-    - Properties (fields with getter and setter). Can be either member or global.
-    - Member and static functions with any parameters and return type.
-    - Non-member functions (free functions).
+    - Pointer, reference.
+    - Classes and nested inner classes.
+    - Accessibles (global variable, member data, property with getter/setter, etc).
+    - Callables (global function, member function, constructor, std::function, etc).
     - Overloaded function.
     - Default arguments of functions.
     - Functions with variadic parameters.
     - Enumerators.
     - Constants in any data type.
-    - Classes and nested inner classes.
     - Namespace simulation.
-    - Class constructors.
     - Array, multi-dimensional array.
 
 ## License
