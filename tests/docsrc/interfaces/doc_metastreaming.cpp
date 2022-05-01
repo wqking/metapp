@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docMetaStreaming_
-
 #include "metapp/allmetatypes.h"
 
 /*desc

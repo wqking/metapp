@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docUtility_
-
 #include "metapp/allmetatypes.h"
 
 /*desc
@@ -92,7 +90,7 @@ Helper function to select the overloaded function.
 **Example**  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	struct MyClass {

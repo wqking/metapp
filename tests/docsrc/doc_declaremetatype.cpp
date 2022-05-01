@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docDeclareMetaType_
-
 #include "metapp/allmetatypes.h"
 
 #include <string>
@@ -278,7 +276,7 @@ struct metapp::DeclareMetaType<Integer>
 No matter which method we use, we can test as,
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	{
 		//code

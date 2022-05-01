@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docmeta_interface_overview_
-
 #include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metaclass.h"
 
@@ -51,7 +49,7 @@ const void * getMetaUser() const;
 For example, assume meta type of `MyClass` implements the `MetaClass` interface, then we get the meta interface as,  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	class MyClass {};

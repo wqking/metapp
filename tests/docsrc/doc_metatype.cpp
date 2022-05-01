@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docMetaType_
-
 #include "metapp/allmetatypes.h"
 
 /*desc
@@ -50,7 +48,7 @@ Return a MetaType pointer of type T.
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
@@ -62,7 +60,7 @@ UFN(FN_PREFIX)
 MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
@@ -76,7 +74,7 @@ To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.
 **Example**
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());

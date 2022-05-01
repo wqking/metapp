@@ -169,16 +169,16 @@ ASSERT(result.get<int>() == 17);
 Below are tutorials and documents.  
 If you want to contribute, be sure to read [How to generate documentations](doc/generate_document.md).  
 
-## Tutorials
-
-- [Use Variant](doc/tutorial/tutorial_variant.md)
-- [Use MetaType](doc/tutorial/tutorial_metatype.md)
-- [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
-- [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
-- [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
-- [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
-
 ## Documentations
+
+- Tutorials
+
+    - [Use Variant](doc/tutorial/tutorial_variant.md)
+    - [Use MetaType](doc/tutorial/tutorial_metatype.md)
+    - [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
+    - [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+    - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
+    - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core_concepts.md)

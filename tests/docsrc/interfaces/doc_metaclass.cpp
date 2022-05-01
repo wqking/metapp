@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docMetaClass_
-
 #include "metapp/allmetatypes.h"
 
 /*desc
@@ -266,7 +264,7 @@ Get a list of RegisteredConstructor.
 **Example**  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
@@ -309,7 +307,7 @@ Get a list of all registered field.
 **Example**  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<AccClass>();
@@ -357,7 +355,7 @@ Get a list of all registered methods.
 **Example**  
 desc*/
 
-UFN(FN_PREFIX)
+UFN
 {
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CaClass>();

@@ -16,8 +16,6 @@
 
 #include "tutorial.h"
 
-#define FN_PREFIX docReadme_
-
 #include "metapp/allmetatypes.h"
 
 /*desc
@@ -50,19 +48,16 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - Cross platforms, cross compilers.
 
 - **Language features that can be reflected**
-    - Member and static fields with any data type.
-    - Global fields (global variable) with any data type.
-    - Properties (fields with getter and setter). Can be either member or global.
-    - Member and static functions with any parameters and return type.
-    - Non-member functions (free functions).
+    - Pointer, reference.
+    - Classes and nested inner classes.
+    - Accessibles (global variable, member data, property with getter/setter, etc).
+    - Callables (global function, member function, constructor, std::function, etc).
     - Overloaded function.
     - Default arguments of functions.
     - Functions with variadic parameters.
     - Enumerators.
     - Constants in any data type.
-    - Classes and nested inner classes.
     - Namespace simulation.
-    - Class constructors.
     - Array, multi-dimensional array.
 
 ## License
@@ -117,7 +112,7 @@ desc*/
 #include "metapp/allmetatypes.h"
 //code
 
-UFN(FN_PREFIX)
+UFN
 {
     {
         //code
@@ -143,7 +138,7 @@ UFN(FN_PREFIX)
 }
 
 //desc ### Use MetaType
-UFN(FN_PREFIX)
+UFN
 {
     {
         //code
@@ -164,7 +159,7 @@ UFN(FN_PREFIX)
 }
 
 //desc ### Call function
-UFN(FN_PREFIX)
+UFN
 {
     //code
     struct MyClass {
@@ -187,16 +182,16 @@ UFN(FN_PREFIX)
 Below are tutorials and documents.  
 If you want to contribute, be sure to read [How to generate documentations](doc/generate_document.md).  
 
-## Tutorials
-
-- [Use Variant](doc/tutorial/tutorial_variant.md)
-- [Use MetaType](doc/tutorial/tutorial_metatype.md)
-- [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
-- [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
-- [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
-- [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
-
 ## Documentations
+
+- Tutorials
+
+    - [Use Variant](doc/tutorial/tutorial_variant.md)
+    - [Use MetaType](doc/tutorial/tutorial_metatype.md)
+    - [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
+    - [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+    - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
+    - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core components, classes, concepts
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core_concepts.md)

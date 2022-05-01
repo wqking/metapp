@@ -29,6 +29,6 @@
 #define UFN_STRINGIZE(s) I_UFN_STRINGIZE(s)
 #define I_UFN_CONCAT(a, b) a ## b
 #define UFN_CONCAT(a, b) I_UFN_CONCAT(a, b)
-#define UFN(prefix) TEST_CASE(UFN_STRINGIZE(UFN_CONCAT(prefix, __LINE__)))
+#define UFN TEST_CASE(UFN_STRINGIZE(UFN_CONCAT(__FILE__, __LINE__)))
 
 #endif
