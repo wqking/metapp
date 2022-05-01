@@ -92,7 +92,8 @@ Since there is no way to specify the template parameter T explicitly when callin
 explicit Variant(const MetaType * metaType);
 ```
 
-Construct a Variant of type `metaType`, and initialize the default value using `metaType`.
+Construct a Variant of type `metaType`, and initialize the default value using `metaType`.  
+Note: this constructor can't create Variant of pointer to a MetaType, to create MetaType pointer, use `Variant::create`.
 
 <a id="a4_4"></a>
 #### Construct from a type and a value

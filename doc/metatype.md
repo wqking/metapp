@@ -136,7 +136,12 @@ Returns the count of UpType. The result can be 0, 1, or more.
 TypeKind getTypeKind() const noexcept;
 ```
 
-Returns the TypeKind of the meta type.
+Returns the TypeKind of the meta type.  
+
+Note: whenever possible, you should prefer the type attributes and meta interfaces to TypeKind
+when detecting the features of a MetaType.  
+For example, instead of `metaType->getTypeKind() == metapp::tkPointer`, you should use `metaType->isPointer()`.  
+Using type attributes and meta interfaces are more flexible and less error prone.  
 
 <a id="a3_8"></a>
 ### Get type attributes
@@ -162,12 +167,14 @@ constexpr bool isArithmetic() const noexcept;
 `isClass` returns true if the type is a C++ class or struct.  It uses `std::is_class` to detect it. 
 `isArray` returns true if the type is a raw array (int[3], std::string[2][3], etc). It uses `std::is_array` to detect it.  
 `isEnum` returns true if the type is a C++ enum. It uses `std::is_enum` to detect it.    
-`isMemberPointer` returns true if the type is a class member data or member function. It uses `std::is_member_pointer` to detect it.    
+`isMemberPointer` returns true if the type is a class member data or member function. It uses `std::is_member_pointer` to detect it.
+To check if a MetaType is static member, check `! isMemberPointer()`.  
 `isIntegral` returns true if the type is integral type. It uses `std::is_integral` to detect it.  
-`isFloat` returns true if the type is float point type. It uses `std::is_floating_point` to detect it.    
+`isFloat` returns true if the type is float point type. It uses `std::is_floating_point` to detect it.  
 `isArithmetic` returns true if the type is arithmetic type. It equals to `isIntegral() || isFloat()`.  
 
-Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType. That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
+Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType.
+That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
 
 <a id="a3_9"></a>
 ### Get meta interfaces

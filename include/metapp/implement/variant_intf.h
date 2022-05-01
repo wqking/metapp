@@ -91,12 +91,14 @@ public:
 	template <typename T>
 	auto get(
 		typename std::enable_if<! std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type * = nullptr
+			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
+		>::value>::type * = nullptr
 	) const -> typename internal_::VariantReturnType<T>::Type;
 	template <typename T>
 	auto get(
 		typename std::enable_if<std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type * = nullptr
+			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
+		>::value>::type * = nullptr
 	) const -> typename internal_::VariantReturnType<T>::Type;
 
 	void * getAddress() const;

@@ -78,7 +78,8 @@ inline bool Variant::canGet() const
 template <typename T>
 inline auto Variant::get(
 		typename std::enable_if<! std::is_same<
-		typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type *
+			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
+		>::value>::type *
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
 	if(! canGet<T>()) {
@@ -92,7 +93,8 @@ inline auto Variant::get(
 template <typename T>
 inline auto Variant::get(
 		typename std::enable_if<std::is_same<
-		typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant>::value>::type *
+			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
+		>::value>::type *
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
 	if(canGet<T>()) {

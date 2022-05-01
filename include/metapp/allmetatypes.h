@@ -29,6 +29,7 @@
 #include "metapp/metatypes/function.h"
 #include "metapp/metatypes/member_data.h"
 #include "metapp/metatypes/member_function.h"
+#include "metapp/metatypes/metatype_metatype.h"
 #include "metapp/metatypes/pointer.h"
 #include "metapp/metatypes/reference.h"
 #include "metapp/metatypes/std_deque.h"

@@ -43,7 +43,7 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 
 private:
 	static bool canCastToCharPtr(const MetaType * toMetaType) {
-		return (toMetaType->getTypeKind() == tkPointer && toMetaType->getUpType()->getTypeKind() == tkChar);
+		return (toMetaType->isPointer() && toMetaType->getUpType()->getTypeKind() == tkChar);
 	}
 };
 
@@ -66,7 +66,7 @@ struct DeclareMetaTypeBase <std::wstring>
 
 private:
 	static bool canCastToWideCharPtr(const MetaType * toMetaType) {
-		return (toMetaType->getTypeKind() == tkPointer && toMetaType->getUpType()->getTypeKind() == tkWideChar);
+		return (toMetaType->isPointer() && toMetaType->getUpType()->getTypeKind() == tkWideChar);
 	}
 };
 
