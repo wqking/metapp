@@ -18,7 +18,7 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE="${{ matrix.build-type }}" -B build -S tests
 
       - name: Build Tests
-        run: cmake --build build --config "${{ matrix.build-type }}" -j
+        run: cmake --build build --config "${{ matrix.build-type }}"
 
       - name: Run unit tests
         run: cd build && ctest --build-config "${{ matrix.build-type }}" --progress --verbose
