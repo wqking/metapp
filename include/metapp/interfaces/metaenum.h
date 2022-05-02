@@ -45,7 +45,7 @@ public:
 		if(it != nameValueMap.end()) {
 			return *it->second;
 		}
-		valueList.emplace_back(name, value);
+		valueList.emplace_back(RegisteredItem::Type::enumValue, name, value);
 		RegisteredItem & registeredEnumValue = valueList.back();
 		nameValueMap.insert(typename decltype(nameValueMap)::value_type(registeredEnumValue.getName(), &registeredEnumValue));
 		return registeredEnumValue;

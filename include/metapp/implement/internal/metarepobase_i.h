@@ -30,14 +30,26 @@ namespace metapp {
 
 class RegisteredItem
 {
+public:
+	enum class Type {
+		none,
+		accessible,
+		callable,
+		constructor,
+		metaRepo,
+		metaType,
+		enumValue
+	};
+
 private:
 	struct Data
 	{
-		Data(const std::string & name, const Variant & target)
-			: name(name), target(target)
+		Data(const Type type, const std::string & name, const Variant & target)
+			: type(type), name(name), target(target)
 		{
 		}
 
+		Type type;
 		std::string name;
 		Variant target;
 	};
@@ -48,26 +60,20 @@ public:
 	{
 	}
 
-	RegisteredItem(const Variant & target)
-		: data(std::make_shared<Data>("", target))
+	RegisteredItem(const Type type, const std::string & name, const Variant & target)
+		: data(std::make_shared<Data>(type, name, target))
 	{
 	}
-
-	RegisteredItem(const std::string & name, const Variant & target)
-		: data(std::make_shared<Data>(name, target))
-	{
-	}
-
-	const std::string & getName() const;
-	const Variant & getTarget() const;
 
 	bool isEmpty() const {
 		return ! data;
 	}
 
-	operator const Variant & () const {
-		return getTarget();
-	}
+	const std::string & getName() const;
+	const Variant & getTarget() const;
+	Type getType() const;
+
+	operator const Variant & () const;
 
 	void registerAnnotation(const std::string & name, const Variant & value);
 	const Variant & getAnnotation(const std::string & name) const;

@@ -32,7 +32,7 @@ RegisteredItem & MetaClass::registerConstructor(const Variant & constructor)
 	if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 		errorWrongMetaType();
 	}
-	constructorList.push_back(RegisteredItem(constructor));
+	constructorList.emplace_back(RegisteredItem::Type::constructor, "", constructor);
 	return constructorList.back();
 }
 

@@ -216,7 +216,7 @@ RegisteredItem & MetaRepoBase::registerAccessible(const std::string & name, cons
 	if(it != accessibleData->accessibleMap.end()) {
 		return *it->second;
 	}
-	accessibleData->accessibleList.emplace_back(name, accessible);
+	accessibleData->accessibleList.emplace_back(RegisteredItem::Type::accessible, name, accessible);
 	RegisteredItem & registeredAccessible = accessibleData->accessibleList.back();
 	accessibleData->accessibleMap.insert(typename decltype(accessibleData->accessibleMap)::value_type(
 		registeredAccessible.getName(), &registeredAccessible
@@ -249,7 +249,7 @@ RegisteredItem & MetaRepoBase::registerCallable(const std::string & name, const 
 		}
 		return *it->second;
 	}
-	callableData->callableList.emplace_back(name, callable);
+	callableData->callableList.emplace_back(RegisteredItem::Type::callable, name, callable);
 	RegisteredItem & registeredCallable = callableData->callableList.back();
 	callableData->callableMap.insert(typename decltype(callableData->callableMap)::value_type(
 		registeredCallable.getName(), &registeredCallable
@@ -271,7 +271,7 @@ RegisteredItem & MetaRepoBase::registerType(std::string name, const MetaType * m
 	if(it != typeData->typeTypeMap.end()) {
 		return *it->second;
 	}
-	typeData->typeList.emplace_back(name, metaType);
+	typeData->typeList.emplace_back(RegisteredItem::Type::metaType, name, metaType);
 	RegisteredItem & registeredType = typeData->typeList.back();
 	if(! registeredType.getName().empty()) {
 		typeData->nameTypeMap[registeredType.getName()] = &registeredType;
@@ -428,6 +428,16 @@ const Variant & RegisteredItem::getTarget() const
 	return data ? data->target : internal_::emptyVariant;
 }
 
+RegisteredItem::Type RegisteredItem::getType() const
+{
+	return data ? data->type : RegisteredItem::Type::none;
+}
+
+RegisteredItem::operator const Variant & () const
+{
+	return getTarget();
+}
+
 
 MetaRepo * getMetaRepo()
 {
@@ -491,7 +501,7 @@ RegisteredItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * rep
 	if(repo == nullptr) {
 		repo = new MetaRepo();
 	}
-	repoList.emplace_back(name, repo);
+	repoList.emplace_back(RegisteredItem::Type::metaRepo, name, repo);
 	RegisteredItem & registeredRepo = repoList.back();
 	repoMap[registeredRepo.getName()] = &registeredRepo;
 
