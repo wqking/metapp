@@ -71,6 +71,7 @@ constexpr TypeKind tkEnum = 40;
 constexpr TypeKind tkAccessor = 41;
 constexpr TypeKind tkVariant = 42; // metapp::Variant
 constexpr TypeKind tkMetaType = 43; // metapp::MetaType
+constexpr TypeKind tkMetaRepo = 44; // metapp::MetaRepo
 
 constexpr TypeKind tkStdString = 70; // std::string
 constexpr TypeKind tkStdWideString = 71; // std::wstring
