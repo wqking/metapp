@@ -126,7 +126,7 @@ void tutorialMetaRepo_accessible()
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 	//desc Call getTarget() to get the underlying Variant.
-	ASSERT(metapp::accessibleGet(fieldValue.getTarget(), nullptr).get<int>() == 0);
+	ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), nullptr).get<int>() == 0);
 	//desc getTarget() can also be omitted, the RegisteredItem can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 0);
 
@@ -173,7 +173,7 @@ void tutorialMetaRepo_type()
 	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
 	metapp::RegisteredItem myClassType = metaRepo->getType("MyClass");
-	ASSERT(myClassType.getTarget().get<const metapp::MetaType *>() == metapp::getMetaType<MyClass>());
+	ASSERT(myClassType.asMetaType() == metapp::getMetaType<MyClass>());
 	//code
 }
 

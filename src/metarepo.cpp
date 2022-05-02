@@ -236,7 +236,7 @@ RegisteredItem & MetaRepoBase::registerCallable(const std::string & name, const 
 
 	auto it = callableData->callableMap.find(name);
 	if(it != callableData->callableMap.end()) {
-		const Variant & target = it->second->getTarget();
+		const Variant & target = it->second->asCallable();
 		if(getNonReferenceMetaType(target)->getTypeKind() == tkOverloadedFunction) {
 			target.get<OverloadedFunction &>().addCallable(callable);
 		}
@@ -271,7 +271,7 @@ RegisteredItem & MetaRepoBase::registerType(std::string name, const MetaType * m
 	if(it != typeData->typeTypeMap.end()) {
 		return *it->second;
 	}
-	typeData->typeList.emplace_back(RegisteredItem::Type::metaType, name, metaType);
+	typeData->typeList.emplace_back(RegisteredItem::Type::metaType, name, Variant::create(metaType));
 	RegisteredItem & registeredType = typeData->typeList.back();
 	if(! registeredType.getName().empty()) {
 		typeData->nameTypeMap[registeredType.getName()] = &registeredType;
@@ -423,21 +423,63 @@ const std::string & RegisteredItem::getName() const
 	return data ? data->name : internal_::emptyString;
 }
 
-const Variant & RegisteredItem::getTarget() const
-{
-	return data ? data->target : internal_::emptyVariant;
-}
-
 RegisteredItem::Type RegisteredItem::getType() const
 {
 	return data ? data->type : RegisteredItem::Type::none;
 }
 
-RegisteredItem::operator const Variant & () const
+const Variant & RegisteredItem::asAccessible() const
 {
-	return getTarget();
+	doCheckType(Type::accessible);
+	return doGetVariant();
 }
 
+const Variant & RegisteredItem::asCallable() const
+{
+	doCheckType(Type::callable);
+	return doGetVariant();
+}
+
+const Variant & RegisteredItem::asConstructor() const
+{
+	doCheckType(Type::constructor);
+	return doGetVariant();
+}
+
+const MetaType * RegisteredItem::asMetaType() const
+{
+	doCheckType(Type::metaType);
+	return doGetVariant().get<const MetaType *>();
+}
+
+const MetaRepo * RegisteredItem::asMetaRepo() const
+{
+	doCheckType(Type::metaRepo);
+	return doGetVariant().get<const MetaRepo *>();
+}
+
+const Variant & RegisteredItem::asEnumValue() const
+{
+	doCheckType(Type::enumValue);
+	return doGetVariant();
+}
+
+RegisteredItem::operator const Variant & () const
+{
+	return doGetVariant();
+}
+
+const Variant & RegisteredItem::doGetVariant() const
+{
+	return data ? data->target : internal_::emptyVariant;
+}
+
+void RegisteredItem::doCheckType(const Type type) const
+{
+	if(getType() != type) {
+		errorIllegalArgument();
+	}
+}
 
 MetaRepo * getMetaRepo()
 {

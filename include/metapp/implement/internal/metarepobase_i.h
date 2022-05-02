@@ -70,14 +70,24 @@ public:
 	}
 
 	const std::string & getName() const;
-	const Variant & getTarget() const;
 	Type getType() const;
+
+	const Variant & asAccessible() const;
+	const Variant & asCallable() const;
+	const Variant & asConstructor() const;
+	const MetaType * asMetaType() const;
+	const MetaRepo * asMetaRepo() const;
+	const Variant & asEnumValue() const;
 
 	operator const Variant & () const;
 
 	void registerAnnotation(const std::string & name, const Variant & value);
 	const Variant & getAnnotation(const std::string & name) const;
 	const std::map<std::string, Variant> & getAllAnnotations() const;
+
+private:
+	const Variant & doGetVariant() const;
+	void doCheckType(const Type type) const;
 
 private:
 	std::shared_ptr<Data> data;

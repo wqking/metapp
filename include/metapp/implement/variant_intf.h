@@ -64,7 +64,7 @@ public:
 
 	// Disable construct from RegisteredItem to avoid pass the item
 	// to variant where the underlying variant in the item
-	// (such as RegisteredItem::getTarget()) should be used
+	// (such as RegisteredItem::asCallable()) should be used
 	Variant(const RegisteredItem &) = delete;
 
 	template <typename T>

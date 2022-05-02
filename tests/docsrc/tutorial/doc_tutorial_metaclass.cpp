@@ -242,7 +242,7 @@ TEST_CASE("tutorialMetaClass_accessible")
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 	//desc Call getTarget() to get the underlying Variant.
-	ASSERT(metapp::accessibleGet(fieldValue.getTarget(), &obj).get<int>() == 0);
+	ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), &obj).get<int>() == 0);
 	// getTarget() can also be omitted, the RegisteredItem can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 
@@ -388,22 +388,22 @@ TEST_CASE("tutorialMetaClass_type")
 	metapp::RegisteredItem enumType;
 
 	enumType = metaClass->getType("MyEnum");
-	ASSERT(enumType.getTarget().get<const metapp::MetaType *>() == metapp::getMetaType<TmClass::MyEnum>());
+	ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 
 	enumType = metaClass->getType(tkMyEnum);
-	ASSERT(enumType.getTarget().get<const metapp::MetaType *>() == metapp::getMetaType<TmClass::MyEnum>());
+	ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 
 	enumType = metaClass->getType(metapp::getMetaType<TmClass::MyEnum>());
-	ASSERT(enumType.getTarget().get<const metapp::MetaType *>() == metapp::getMetaType<TmClass::MyEnum>());
+	ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 	ASSERT(enumType.getName() == "MyEnum");
 
-	const metapp::MetaEnum * metaEnum = enumType.getTarget().get<const metapp::MetaType *>()->getMetaEnum();
-	ASSERT(metaEnum->getValue("one").getTarget().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
-	ASSERT(metaEnum->getValue("two").getTarget().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
+	const metapp::MetaEnum * metaEnum = enumType.asMetaType()->getMetaEnum();
+	ASSERT(metaEnum->getValue("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
+	ASSERT(metaEnum->getValue("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
 
 	metapp::RegisteredItem innerType = metaClass->getType("MyInner");
-	ASSERT(innerType.getTarget().get<const metapp::MetaType *>() == metapp::getMetaType<TmClass::MyInner>());
-	std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.getTarget().get<const metapp::MetaType *>()->construct()));
+	ASSERT(innerType.asMetaType() == metapp::getMetaType<TmClass::MyInner>());
+	std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.asMetaType()->construct()));
 	ASSERT(inner->n == 1999);
 	//code
 }
