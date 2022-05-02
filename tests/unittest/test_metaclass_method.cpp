@@ -106,7 +106,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
 				auto & item = mc.registerCallable("methodB", &B::methodB);
-				item.addAnnotation("hello", 5);
+				item.registerAnnotation("hello", 5);
 			}
 		);
 		return &metaClass;

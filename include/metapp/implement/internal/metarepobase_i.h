@@ -31,6 +31,56 @@
 
 namespace metapp {
 
+class RegisteredItem
+{
+private:
+	struct Data
+	{
+		Data(const std::string & name, const Variant & target)
+			: name(name), target(target)
+		{
+		}
+
+		std::string name;
+		Variant target;
+	};
+
+public:
+	RegisteredItem()
+		: data()
+	{
+	}
+
+	RegisteredItem(const std::string & name, const Variant & target)
+		: data(std::make_shared<Data>(name, target))
+	{
+	}
+
+	const std::string & getName() const {
+		return data ? data->name : internal_::emptyString;
+	}
+
+	const Variant & getTarget() const {
+		return data ? data->target : internal_::emptyVariant;
+	}
+
+	bool isEmpty() const {
+		return ! data;
+	}
+
+	operator const Variant & () const {
+		return getTarget();
+	}
+
+	void registerAnnotation(const std::string & name, const Variant & value);
+	const Variant & getAnnotation(const std::string & name) const;
+	const std::map<std::string, Variant> & getAllAnnotations() const;
+
+private:
+	std::shared_ptr<Data> data;
+	std::shared_ptr<std::map<std::string, Variant> > annotationMap;
+};
+
 namespace internal_ {
 
 class MetaRepoBase

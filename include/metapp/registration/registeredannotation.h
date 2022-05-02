@@ -39,7 +39,7 @@ public:
 	{
 	}
 
-	void addAnnotation(const std::string & name, const Variant & value) {
+	void registerAnnotation(const std::string & name, const Variant & value) {
 		nameValueMap.insert(std::make_pair(name, value));
 	}
 

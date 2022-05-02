@@ -232,7 +232,7 @@ using RegisteredEnumValueList = std::deque<RegisteredEnumValue>;
 class RegisteredAnnotation
 {
 public:
-	void addAnnotation(const std::string & name, const Variant & value);
+	void registerAnnotation(const std::string & name, const Variant & value);
 	const Variant & getAnnotation(const std::string & name) const;
 	const std::map<std::string, Variant> & getAllAnnotations() const;
 };

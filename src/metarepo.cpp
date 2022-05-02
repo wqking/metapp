@@ -35,6 +35,7 @@ RegisteredTypeList dummyRegisteredTypeList;
 
 Variant emptyVariant;
 std::string emptyString;
+std::map<std::string, Variant> emptyAnnotationMap;
 RegisteredAccessible emptyRegisteredAccessible;
 RegisteredCallable emptyRegisteredCallable;
 RegisteredType emptyRegisteredType;
@@ -396,6 +397,33 @@ const RegisteredTypeList & MetaRepoBase::doGetTypeList() const
 
 } // namespace internal_
 
+
+void RegisteredItem::registerAnnotation(const std::string & name, const Variant & value)
+{
+	if(! annotationMap) {
+		annotationMap = std::make_shared<std::map<std::string, Variant> >();
+	}
+	annotationMap->insert(std::make_pair(name, value));
+}
+
+const Variant & RegisteredItem::getAnnotation(const std::string & name) const
+{
+	if(annotationMap) {
+		auto it = annotationMap->find(name);
+		if(it != annotationMap->end()) {
+			return it->second;
+		}
+	}
+	return internal_::emptyVariant;
+}
+
+const std::map<std::string, Variant> & RegisteredItem::getAllAnnotations() const
+{
+	if(annotationMap) {
+		return *annotationMap;
+	}
+	return internal_::emptyAnnotationMap;
+}
 
 MetaRepo * getMetaRepo()
 {

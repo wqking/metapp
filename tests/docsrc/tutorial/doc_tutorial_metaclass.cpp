@@ -154,8 +154,8 @@ struct metapp::DeclareMetaType <TmClass> : metapp::DeclareMetaTypeBase <TmClass>
 				// Register member data as field
 				auto & item = mc.registerAccessible("message", &TmClass::message);
 				// Add some annotations to the accessible
-				item.addAnnotation("description", "This is a description");
-				item.addAnnotation("notes", std::vector<std::string> { "first", "second" });
+				item.registerAnnotation("description", "This is a description");
+				item.registerAnnotation("notes", std::vector<std::string> { "first", "second" });
 
 				// Register a member function
 				mc.registerCallable("greeting", &TmClass::greeting);
