@@ -32,12 +32,12 @@ public:
 		}
 	}
 
-	void dump(std::ostream & stream, const metapp::MetaType * metaType) {
+	void dump(std::ostream & stream, const MetaType * metaType) {
 		doDump(stream, metaType, 0);
 	}
 
 private:
-	void doDump(std::ostream & stream, const metapp::MetaType * metaType, const int level) {
+	void doDump(std::ostream & stream, const MetaType * metaType, const int level) {
 		if(metaType == nullptr) {
 			return;
 		}
@@ -45,7 +45,7 @@ private:
 		stream << "Type: " << metaType->getTypeKind();
 		std::string name = metaRepo->getType(metaType).getName();
 		if(name.empty()) {
-			name = metapp::getNameByTypeKind(metaType->getTypeKind());
+			name = getNameByTypeKind(metaType->getTypeKind());
 		}
 		if(! name.empty()) {
 			stream << "(" << name << ")";
@@ -62,7 +62,7 @@ private:
 		doDumpUpType(stream, metaType, level);
 	}
 
-	void doDumpUpType(std::ostream & stream, const metapp::MetaType * metaType, const int level) {
+	void doDumpUpType(std::ostream & stream, const MetaType * metaType, const int level) {
 		const size_t upCount = metaType->getUpTypeCount();
 		stream << ", UpCount: " << upCount;
 		stream << std::endl;
@@ -154,7 +154,7 @@ std::string getNameByTypeKind(const TypeKind typeKind)
 	return "";
 }
 
-void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepository)
+void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepository)
 {
 	MetaTypeDumper dumper(metaRepository);
 	dumper.dump(stream, metaType);

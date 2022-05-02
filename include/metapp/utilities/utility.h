@@ -70,7 +70,7 @@ auto selectOverload(Signature * func) -> decltype(func)
 
 class MetaRepo;
 
-void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepository = nullptr);
+void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepository = nullptr);
 
 
 } // namespace metapp

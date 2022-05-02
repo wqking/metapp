@@ -21,30 +21,30 @@ namespace metapp {
 
 namespace internal_ {
 
-extern RegisteredAccessible emptyRegisteredAccessible;
-extern RegisteredCallable emptyRegisteredCallable;
-extern RegisteredType emptyRegisteredType;
+extern RegisteredItem emptyRegisteredItem;
+extern RegisteredItem emptyRegisteredItem;
+extern RegisteredItem emptyRegisteredItem;
 
 } // namespace internal_
 
-RegisteredConstructor & MetaClass::registerConstructor(const Variant & constructor)
+RegisteredItem & MetaClass::registerConstructor(const Variant & constructor)
 {
 	if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 		errorWrongMetaType();
 	}
-	constructorList.push_back(RegisteredConstructor(constructor));
+	constructorList.push_back(RegisteredItem(constructor));
 	return constructorList.back();
 }
 
-const RegisteredConstructorList & MetaClass::getConstructorList() const
+const RegisteredItemList & MetaClass::getConstructorList() const
 {
 	return constructorList;
 }
 
-const RegisteredAccessible & MetaClass::getAccessible(const std::string & name, const Flags flags) const
+const RegisteredItem & MetaClass::getAccessible(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredAccessible * result = &internal_::emptyRegisteredAccessible;
+		const RegisteredItem * result = &internal_::emptyRegisteredItem;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -62,9 +62,9 @@ const RegisteredAccessible & MetaClass::getAccessible(const std::string & name, 
 	}
 }
 
-RegisteredAccessibleList MetaClass::getAccessibleList(const Flags flags) const
+RegisteredItemList MetaClass::getAccessibleList(const Flags flags) const
 {
-	RegisteredAccessibleList result;
+	RegisteredItemList result;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
@@ -80,10 +80,10 @@ RegisteredAccessibleList MetaClass::getAccessibleList(const Flags flags) const
 	return result;
 }
 
-const RegisteredCallable & MetaClass::getCallable(const std::string & name, const Flags flags) const
+const RegisteredItem & MetaClass::getCallable(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredCallable * result = &internal_::emptyRegisteredCallable;
+		const RegisteredItem * result = &internal_::emptyRegisteredItem;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -101,9 +101,9 @@ const RegisteredCallable & MetaClass::getCallable(const std::string & name, cons
 	}
 }
 
-RegisteredCallableList MetaClass::getCallableList(const Flags flags) const
+RegisteredItemList MetaClass::getCallableList(const Flags flags) const
 {
-	RegisteredCallableList result;
+	RegisteredItemList result;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
@@ -119,10 +119,10 @@ RegisteredCallableList MetaClass::getCallableList(const Flags flags) const
 	return result;
 }
 
-const RegisteredType & MetaClass::getType(const std::string & name, const Flags flags) const
+const RegisteredItem & MetaClass::getType(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &internal_::emptyRegisteredType;
+		const RegisteredItem * result = &internal_::emptyRegisteredItem;
 		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -140,10 +140,10 @@ const RegisteredType & MetaClass::getType(const std::string & name, const Flags 
 	}
 }
 
-const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags) const
+const RegisteredItem & MetaClass::getType(const TypeKind kind, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &internal_::emptyRegisteredType;
+		const RegisteredItem * result = &internal_::emptyRegisteredItem;
 		getMetaRepo()->traverseBases(classMetaType, [&result, kind](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
@@ -161,10 +161,10 @@ const RegisteredType & MetaClass::getType(const TypeKind kind, const Flags flags
 	}
 }
 
-const RegisteredType & MetaClass::getType(const MetaType * metaType, const Flags flags) const
+const RegisteredItem & MetaClass::getType(const MetaType * metaType, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		const RegisteredType * result = &internal_::emptyRegisteredType;
+		const RegisteredItem * result = &internal_::emptyRegisteredItem;
 		getMetaRepo()->traverseBases(classMetaType, [&result, metaType](const MetaType * mt) -> bool {
 			const MetaClass * metaClass = mt->getMetaClass();
 			if(metaClass != nullptr) {
@@ -182,10 +182,10 @@ const RegisteredType & MetaClass::getType(const MetaType * metaType, const Flags
 	}
 }
 
-RegisteredTypeList MetaClass::getTypeList(const Flags flags) const
+RegisteredItemList MetaClass::getTypeList(const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {
-		RegisteredTypeList result;
+		RegisteredItemList result;
 		getMetaRepo()->traverseBases(classMetaType, [&result](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {

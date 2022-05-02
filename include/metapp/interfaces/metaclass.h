@@ -19,7 +19,6 @@
 
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/metarepo.h"
-#include "metapp/registration/registeredconstructor.h"
 
 #include <vector>
 #include <memory>
@@ -44,20 +43,20 @@ public:
 		callback(*this);
 	}
 
-	RegisteredConstructor & registerConstructor(const Variant & constructor);
+	RegisteredItem & registerConstructor(const Variant & constructor);
 	
-	const RegisteredConstructorList & getConstructorList() const;
+	const RegisteredItemList & getConstructorList() const;
 
-	const RegisteredAccessible & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredAccessibleList getAccessibleList(const Flags flags = flagIncludeBase) const;
+	const RegisteredItem & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
+	RegisteredItemList getAccessibleList(const Flags flags = flagIncludeBase) const;
 
-	const RegisteredCallable & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredCallableList getCallableList(const Flags flags = flagIncludeBase) const;
+	const RegisteredItem & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
+	RegisteredItemList getCallableList(const Flags flags = flagIncludeBase) const;
 
-	const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
-	const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
-	const RegisteredType & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
-	RegisteredTypeList getTypeList(const Flags flags = flagIncludeBase) const;
+	const RegisteredItem & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
+	const RegisteredItem & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
+	const RegisteredItem & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
+	RegisteredItemList getTypeList(const Flags flags = flagIncludeBase) const;
 
 private:
 	bool hasFlag(const Flags flags, const Flags flag) const {
@@ -66,7 +65,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	RegisteredConstructorList constructorList;
+	RegisteredItemList constructorList;
 };
 
 

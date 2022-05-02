@@ -18,8 +18,8 @@
 #define METAPP_METAENUM_H_969872685611
 
 #include "metapp/variant.h"
-#include "metapp/registration/registeredenumvalue.h"
 #include "metapp/implement/internal/util_i.h"
+#include "metapp/metarepo.h"
 
 #include <vector>
 #include <map>
@@ -28,14 +28,11 @@
 namespace metapp {
 
 namespace internal_ {
-extern RegisteredEnumValue emptyRegisteredEnumValue;
+extern RegisteredItem emptyRegisteredItem;
 } // namespace internal_
 
 class MetaEnum
 {
-public:
-	using ValueType = RegisteredEnumValue::ValueType;
-
 public:
 	template <typename FT>
 	explicit MetaEnum(FT callback)
@@ -43,30 +40,29 @@ public:
 		callback(*this);
 	}
 
-	template <typename T>
-	RegisteredEnumValue & registerValue(const std::string & name, const T value) {
+	RegisteredItem & registerValue(const std::string & name, const Variant & value) {
 		auto it = nameValueMap.find(name);
 		if(it != nameValueMap.end()) {
 			return *it->second;
 		}
-		valueList.emplace_back(name, static_cast<ValueType>(value));
-		RegisteredEnumValue & registeredEnumValue = valueList.back();
+		valueList.emplace_back(name, value);
+		RegisteredItem & registeredEnumValue = valueList.back();
 		nameValueMap.insert(typename decltype(nameValueMap)::value_type(registeredEnumValue.getName(), &registeredEnumValue));
 		return registeredEnumValue;
 	}
 
-	const RegisteredEnumValue & getValue(const std::string & name) const {
+	const RegisteredItem & getValue(const std::string & name) const {
 		auto it = nameValueMap.find(name);
 		if(it != nameValueMap.end()) {
 			return *it->second;
 		}
-		return internal_::emptyRegisteredEnumValue;
+		return internal_::emptyRegisteredItem;
 	}
 
 	std::vector<std::string> getNameList() const {
 		std::vector<std::string> nameList;
 		std::transform(valueList.begin(), valueList.end(), std::back_inserter(nameList),
-			[](const RegisteredEnumValue & item) {
+			[](const RegisteredItem & item) {
 				return item.getName();
 			}
 		);
@@ -74,15 +70,15 @@ public:
 	}
 
 private:
-	RegisteredEnumValueList valueList;
+	RegisteredItemList valueList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredEnumValue *,
+		RegisteredItem *,
 		std::less<const std::string>
 	> nameValueMap;
 };
 
-inline const RegisteredEnumValue & enumGetValue(const Variant & var, const std::string & name)
+inline const RegisteredItem & enumGetValue(const Variant & var, const std::string & name)
 {
 	return var.getMetaType()->getMetaEnum()->getValue(name);
 }

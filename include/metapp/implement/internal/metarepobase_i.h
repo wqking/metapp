@@ -20,9 +20,6 @@
 #include "metapp/metatype.h"
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
-#include "metapp/registration/registeredtype.h"
-#include "metapp/registration/registeredaccessible.h"
-#include "metapp/registration/registeredcallable.h"
 
 #include <map>
 #include <deque>
@@ -51,18 +48,18 @@ public:
 	{
 	}
 
+	RegisteredItem(const Variant & target)
+		: data(std::make_shared<Data>("", target))
+	{
+	}
+
 	RegisteredItem(const std::string & name, const Variant & target)
 		: data(std::make_shared<Data>(name, target))
 	{
 	}
 
-	const std::string & getName() const {
-		return data ? data->name : internal_::emptyString;
-	}
-
-	const Variant & getTarget() const {
-		return data ? data->target : internal_::emptyVariant;
-	}
+	const std::string & getName() const;
+	const Variant & getTarget() const;
 
 	bool isEmpty() const {
 		return ! data;
@@ -81,6 +78,8 @@ private:
 	std::shared_ptr<std::map<std::string, Variant> > annotationMap;
 };
 
+using RegisteredItemList = std::deque<RegisteredItem>;
+
 namespace internal_ {
 
 class MetaRepoBase
@@ -88,51 +87,51 @@ class MetaRepoBase
 public:
 	MetaRepoBase();
 
-	RegisteredAccessible & registerAccessible(const std::string & name, const Variant & accessible);
+	RegisteredItem & registerAccessible(const std::string & name, const Variant & accessible);
 
-	RegisteredCallable & registerCallable(const std::string & name, const Variant & callable);
+	RegisteredItem & registerCallable(const std::string & name, const Variant & callable);
 
 	template <typename T>
-	RegisteredType & registerType(const std::string & name = "") {
+	RegisteredItem & registerType(const std::string & name = "") {
 		return registerType(name, getMetaType<T>());
 	}
-	RegisteredType & registerType(std::string name, const MetaType * metaType);
+	RegisteredItem & registerType(std::string name, const MetaType * metaType);
 
 protected:
-	void doGetAccessibleList(RegisteredAccessibleList * result) const;
-	const RegisteredAccessibleList & doGetAccessibleList() const;
-	const RegisteredAccessible & doGetAccessible(const std::string & name) const;
+	void doGetAccessibleList(RegisteredItemList * result) const;
+	const RegisteredItemList & doGetAccessibleList() const;
+	const RegisteredItem & doGetAccessible(const std::string & name) const;
 
-	const RegisteredCallable & doGetCallable(const std::string & name) const;
-	void doGetCallableList(RegisteredCallableList * result) const;
-	const RegisteredCallableList & doGetCallableList() const;
+	const RegisteredItem & doGetCallable(const std::string & name) const;
+	void doGetCallableList(RegisteredItemList * result) const;
+	const RegisteredItemList & doGetCallableList() const;
 
-	const RegisteredType & doGetType(const std::string & name) const;
-	const RegisteredType & doGetType(const TypeKind kind) const;
-	const RegisteredType & doGetType(const MetaType * metaType) const;
-	void doGetTypeList(RegisteredTypeList * result) const;
-	const RegisteredTypeList & doGetTypeList() const;
+	const RegisteredItem & doGetType(const std::string & name) const;
+	const RegisteredItem & doGetType(const TypeKind kind) const;
+	const RegisteredItem & doGetType(const MetaType * metaType) const;
+	void doGetTypeList(RegisteredItemList * result) const;
+	const RegisteredItemList & doGetTypeList() const;
 
 private:
 	struct TypeData
 	{
-		RegisteredTypeList typeList;
+		RegisteredItemList typeList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredType *,
+			RegisteredItem *,
 			std::less<const std::string>
 		> nameTypeMap;
-		std::map<TypeKind, RegisteredType *> kindTypeMap;
-		std::map<const MetaType *, RegisteredType *> typeTypeMap;
+		std::map<TypeKind, RegisteredItem *> kindTypeMap;
+		std::map<const MetaType *, RegisteredItem *> typeTypeMap;
 	};
 	std::shared_ptr<TypeData> typeData;
 
 	struct CallableData
 	{
-		RegisteredCallableList callableList;
+		RegisteredItemList callableList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredCallable *,
+			RegisteredItem *,
 			std::less<const std::string>
 		> callableMap;
 	};
@@ -140,10 +139,10 @@ private:
 
 	struct AccessibleData
 	{
-		RegisteredAccessibleList accessibleList;
+		RegisteredItemList accessibleList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredAccessible *,
+			RegisteredItem *,
 			std::less<const std::string>
 		> accessibleMap;
 	};

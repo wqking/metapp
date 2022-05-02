@@ -74,11 +74,11 @@ Represents the `enum` value type.
 
 ```c++
 template <typename T>
-RegisteredEnumValue & registerValue(const std::string & name, const T value);
+RegisteredItem & registerValue(const std::string & name, const T value);
 ```
 
 Register a enum `value` under `name`. `value` can be any type which can be casted to `ValueType`.  
-The returned `RegisteredEnumValue` can be used to add annotations to the meta data.  
+The returned `RegisteredItem` can be used to add annotations to the meta data.  
 
 
 ## MetaEnum member functions for retrieving meta data
@@ -86,10 +86,10 @@ The returned `RegisteredEnumValue` can be used to add annotations to the meta da
 #### getValue
 
 ```c++
-const RegisteredEnumValue & getValue(const std::string & name) const;
+const RegisteredItem & getValue(const std::string & name) const;
 ```
 
-Get a value of `name`. If the name is not registered, an empty RegisteredEnumValue is returned (RegisteredEnumValue::isEmpty() is true).  
+Get a value of `name`. If the name is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
 
 #### getNameList
 
@@ -101,10 +101,10 @@ Returns all registered names.
 
 ## Non-member utility functions
 
-Below free functions are shortcut functions to use the member functions in `RegisteredEnumValue`.  
+Below free functions are shortcut functions to use the member functions in `RegisteredItem`.  
 
 ```c++
-inline const RegisteredEnumValue & enumGetValue(const Variant & var, const std::string & name)
+inline const RegisteredItem & enumGetValue(const Variant & var, const std::string & name)
 {
 	return var.getMetaType()->getMetaEnum()->getValue(name);
 }

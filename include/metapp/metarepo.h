@@ -19,7 +19,6 @@
 
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
-#include "metapp/registration/registeredrepo.h"
 
 namespace metapp {
 
@@ -32,29 +31,29 @@ public:
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
 
-	const RegisteredAccessible & getAccessible(const std::string & name) const;
-	const RegisteredAccessibleList & getAccessibleList() const;
+	const RegisteredItem & getAccessible(const std::string & name) const;
+	const RegisteredItemList & getAccessibleList() const;
 
-	const RegisteredCallable & getCallable(const std::string & name) const;
-	const RegisteredCallableList & getCallableList() const;
+	const RegisteredItem & getCallable(const std::string & name) const;
+	const RegisteredItemList & getCallableList() const;
 
-	const RegisteredType & getType(const std::string & name) const;
-	const RegisteredType & getType(const TypeKind kind) const;
-	const RegisteredType & getType(const MetaType * metaType) const;
-	const RegisteredTypeList & getTypeList() const;
+	const RegisteredItem & getType(const std::string & name) const;
+	const RegisteredItem & getType(const TypeKind kind) const;
+	const RegisteredItem & getType(const MetaType * metaType) const;
+	const RegisteredItemList & getTypeList() const;
 
-	RegisteredRepo & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
-	const RegisteredRepo & getRepo(const std::string & name) const;
-	const RegisteredRepoList & getRepoList() const;
+	RegisteredItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+	const RegisteredItem & getRepo(const std::string & name) const;
+	const RegisteredItemList & getRepoList() const;
 
 private:
 	void registerBuiltinTypes();
 
 private:
-	RegisteredRepoList repoList;
+	RegisteredItemList repoList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredRepo *,
+		RegisteredItem *,
 		std::less<const std::string>
 	> repoMap;
 };
