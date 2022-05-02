@@ -49,10 +49,6 @@ auto createVariadicFunction(FT && func) -> VariadicFunction<FT>
 	return VariadicFunction<FT>(std::forward<FT>(func));
 }
 
-namespace internal_ {
-
-} // namespace internal_
-
 template <typename FT>
 struct DeclareMetaType <VariadicFunction<FT> >
 {
@@ -92,7 +88,7 @@ public:
 
 	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const size_t /*index*/)
 	{
-		return nullptr;
+		return getMetaType<void>();
 	}
 
 	static unsigned int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)

@@ -62,7 +62,8 @@ Iterator findCallable(
 	Iterator first,
 	Iterator last,
 	const Variant * arguments,
-	const size_t argumentCount
+	const size_t argumentCount,
+	unsigned int * resultMaxRank = nullptr
 )
 {
 	Iterator result = last;
@@ -76,6 +77,11 @@ Iterator findCallable(
 			result = first;
 		}
 	}
+	
+	if(resultMaxRank != nullptr) {
+		*resultMaxRank = maxRank;
+	}
+
 	return result;
 }
 
