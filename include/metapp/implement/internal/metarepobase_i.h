@@ -54,7 +54,6 @@ protected:
 	const RegisteredAccessible & doGetAccessible(const std::string & name) const;
 
 	const RegisteredCallable & doGetCallable(const std::string & name) const;
-	void doGetCallableList(const std::string & name, RegisteredCallableList * result) const;
 	void doGetCallableList(RegisteredCallableList * result) const;
 	const RegisteredCallableList & doGetCallableList() const;
 
@@ -81,10 +80,9 @@ private:
 	struct CallableData
 	{
 		RegisteredCallableList callableList;
-		using RegisteredCallablePointerList = std::vector<RegisteredCallable *>;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredCallablePointerList,
+			RegisteredCallable *,
 			std::less<const std::string>
 		> callableMap;
 	};

@@ -17,12 +17,11 @@
   * [getAccessible](#a4_6)
   * [getAccessibleList](#a4_7)
   * [getCallable](#a4_8)
-  * [getCallableList by name](#a4_9)
-  * [getCallableList](#a4_10)
-  * [getType by name](#a4_11)
-  * [getType by type kind](#a4_12)
-  * [getType by MetaType](#a4_13)
-  * [getTypeList](#a4_14)
+  * [getCallableList](#a4_9)
+  * [getType by name](#a4_10)
+  * [getType by type kind](#a4_11)
+  * [getType by MetaType](#a4_12)
+  * [getTypeList](#a4_13)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -332,17 +331,6 @@ const RegisteredCallable & getCallable(const std::string & name, const Flags fla
 Get a method of `name`. If the method is not registered, an empty RegisteredCallable is returned (RegisteredCallable::isEmpty() is true).  
 
 <a id="a4_9"></a>
-#### getCallableList by name
-
-```c++
-RegisteredCallableList getCallableList(const std::string & name, const Flags flags = flagIncludeBase) const;
-
-using RegisteredCallableList = std::deque<RegisteredCallable>;
-```
-
-Get a list of all registered methods which has `name`. This is useful to get the overload methods.  
-
-<a id="a4_10"></a>
 #### getCallableList
 
 ```c++
@@ -363,16 +351,16 @@ CaClass object;
 const metapp::RegisteredCallable & greeting = metaClass->getCallable("greeting");
 ASSERT(metapp::callableInvoke(greeting, &object, "world").get<const std::string &>() == "Hello, world");
 
-const metapp::RegisteredCallableList add = metaClass->getCallableList("add");
+const metapp::RegisteredCallable & add = metaClass->getCallable("add");
 ASSERT(metapp::callableInvoke(add, &object, 1, 5).get<int>() == 6);
 
 const metapp::RegisteredCallableList callableList = metaClass->getCallableList();
+ASSERT(callableList.size() == 2);
 ASSERT(callableList[0].getName() == "greeting");
 ASSERT(callableList[1].getName() == "add");
-ASSERT(callableList[2].getName() == "add");
 ```
 
-<a id="a4_11"></a>
+<a id="a4_10"></a>
 #### getType by name
 
 ```c++
@@ -381,7 +369,7 @@ const RegisteredType & getType(const std::string & name, const Flags flags = fla
 
 Get a RegisteredType of `name`. If the type name is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).  
 
-<a id="a4_12"></a>
+<a id="a4_11"></a>
 #### getType by type kind
 
 ```c++
@@ -390,7 +378,7 @@ const RegisteredType & getType(const TypeKind kind, const Flags flags = flagIncl
 
 Get a RegisteredType of `kind`. If the type kind is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).  
 
-<a id="a4_13"></a>
+<a id="a4_12"></a>
 #### getType by MetaType
 
 ```c++
@@ -400,7 +388,7 @@ const RegisteredType & getType(const MetaType * metaType, const Flags flags = fl
 Get a RegisteredType of `metaType`. If the meta type is not registered, an empty RegisteredType is returned (RegisteredType::isEmpty() is true).   
 This function is useful to get the name of a registered meta type.
 
-<a id="a4_14"></a>
+<a id="a4_13"></a>
 #### getTypeList
 
 ```c++

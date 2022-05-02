@@ -19,6 +19,7 @@
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/implement/internal/inheritancerepo_i.h"
 #include "metapp/registration/registeredenumvalue.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 
@@ -223,7 +224,9 @@ RegisteredAccessible & MetaRepoBase::registerAccessible(const std::string & name
 	}
 	accessibleData->accessibleList.emplace_back(name, accessible);
 	RegisteredAccessible & registeredAccessible = accessibleData->accessibleList.back();
-	accessibleData->accessibleMap.insert(typename decltype(accessibleData->accessibleMap)::value_type(registeredAccessible.getName(), &registeredAccessible));
+	accessibleData->accessibleMap.insert(typename decltype(accessibleData->accessibleMap)::value_type(
+		registeredAccessible.getName(), &registeredAccessible
+	));
 	return registeredAccessible;
 }
 
@@ -237,17 +240,26 @@ RegisteredCallable & MetaRepoBase::registerCallable(const std::string & name, co
 		callableData = std::make_shared<CallableData>();
 	}
 
+	auto it = callableData->callableMap.find(name);
+	if(it != callableData->callableMap.end()) {
+		const Variant & target = it->second->getTarget();
+		if(getNonReferenceMetaType(target)->getTypeKind() == tkOverloadedFunction) {
+			target.get<OverloadedFunction &>().addCallable(callable);
+		}
+		else {
+			Variant newTarget = OverloadedFunction();
+			OverloadedFunction & overloadedFunction = newTarget.get<OverloadedFunction &>();
+			overloadedFunction.addCallable(target);
+			overloadedFunction.addCallable(callable);
+			const_cast<Variant &>(target) = newTarget;
+		}
+		return *it->second;
+	}
 	callableData->callableList.emplace_back(name, callable);
 	RegisteredCallable & registeredCallable = callableData->callableList.back();
-	auto it = callableData->callableMap.find(name);
-	if(it == callableData->callableMap.end()) {
-		callableData->callableMap.insert(typename decltype(callableData->callableMap)::value_type(
-			registeredCallable.getName(), CallableData::RegisteredCallablePointerList {&registeredCallable}
-		));
-	}
-	else {
-		it->second.push_back(&registeredCallable);
-	}
+	callableData->callableMap.insert(typename decltype(callableData->callableMap)::value_type(
+		registeredCallable.getName(), &registeredCallable
+	));
 	return registeredCallable;
 }
 
@@ -309,22 +321,10 @@ const RegisteredCallable & MetaRepoBase::doGetCallable(const std::string & name)
 	if(callableData) {
 		auto it = callableData->callableMap.find(name);
 		if(it != callableData->callableMap.end()) {
-			return *it->second.at(0);
+			return *it->second;
 		}
 	}
 	return internal_::emptyRegisteredCallable;
-}
-
-void MetaRepoBase::doGetCallableList(const std::string & name, RegisteredCallableList * result) const
-{
-	if(callableData) {
-		auto it = callableData->callableMap.find(name);
-		if(it != callableData->callableMap.end()) {
-			for(auto i = it->second.begin(); i != it->second.end(); ++i) {
-				result->push_back(*(*i));
-			}
-		}
-	}
 }
 
 void MetaRepoBase::doGetCallableList(RegisteredCallableList * result) const
@@ -427,13 +427,6 @@ const RegisteredAccessibleList & MetaRepo::getAccessibleList() const
 const RegisteredCallable & MetaRepo::getCallable(const std::string & name) const
 {
 	return doGetCallable(name);
-}
-
-RegisteredCallableList MetaRepo::getCallableList(const std::string & name) const
-{
-	RegisteredCallableList result;
-	doGetCallableList(name, &result);
-	return result;
 }
 
 const RegisteredCallableList & MetaRepo::getCallableList() const

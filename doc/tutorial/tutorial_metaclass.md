@@ -326,55 +326,18 @@ TmClass obj;
 obj.message = "Hello";
 ```
 
-Get all the overloaded methods of "makeMessage" by calling metaClass->getCallableList().  
-If we use metaClass->getCallable("makeMessage"), the only first method is returned.
+Get all the overloaded methods of "makeMessage" by calling metaClass->getCallable().  
 
 ```c++
-metapp::RegisteredCallableList callableList = metaClass->getCallableList("makeMessage");
+metapp::RegisteredCallable callable = metaClass->getCallable("makeMessage");
 ```
 
-There are various ways to call the overload methods.  
-**Approach 1**  
-Use metapp::findCallable to find the callable method.  
-The last two arguments are the arguments and argument count, here they are nullptr and 0, indicate no arguments.  
-The return value is an iterator.
-
-```c++
-auto itNoArgs = metapp::findCallable(callableList.begin(), callableList.end(), nullptr, 0);
-```
-
-Found the method "std::string makeMessage() const".
-
-```c++
-ASSERT(itNoArgs != callableList.end());
-```
-
-Invoke the found method.
-
-```c++
-metapp::Variant result = itNoArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
-  itNoArgs->getTarget(), &obj, nullptr, 0);
-ASSERT(result.get<const std::string &>() == "Hello");
-```
-
-Find another method, which should be "std::string makeMessage(const int a, const std::string & b) const".
-
-```c++
-metapp::Variant arguments[] = { 38, ", world"};
-auto itWithArgs = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 2);
-ASSERT(itWithArgs!= callableList.end());
-ASSERT(itWithArgs->getTarget().getMetaType()->getMetaCallable()->invoke(
-  itWithArgs->getTarget(), &obj, arguments, 2).get<const std::string &>() == "Hello38, world");
-```
-
-**Approach 2**  
-We can use metapp::callableInvoke to "invoke" the method list directly.  
 metapp::callableInvoke will try to find the proper method, then call it.
 
 ```c++
-ASSERT(metapp::callableInvoke(callableList, &obj).get<const std::string &>() == "Hello");
-ASSERT(metapp::callableInvoke(callableList, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
-ASSERT(metapp::callableInvoke(callableList, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
+ASSERT(metapp::callableInvoke(callable, &obj).get<const std::string &>() == "Hello");
+ASSERT(metapp::callableInvoke(callable, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
+ASSERT(metapp::callableInvoke(callable, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
 ```
 
 <a id="a2_7"></a>

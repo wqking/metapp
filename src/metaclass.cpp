@@ -101,24 +101,6 @@ const RegisteredCallable & MetaClass::getCallable(const std::string & name, cons
 	}
 }
 
-RegisteredCallableList MetaClass::getCallableList(const std::string & name, const Flags flags) const
-{
-	RegisteredCallableList result;
-	if(hasFlag(flags, flagIncludeBase)) {
-		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
-			const MetaClass * metaClass = metaType->getMetaClass();
-			if(metaClass != nullptr) {
-				metaClass->doGetCallableList(name, &result);
-			}
-			return true;
-			});
-	}
-	else {
-		doGetCallableList(name, &result);
-	}
-	return result;
-}
-
 RegisteredCallableList MetaClass::getCallableList(const Flags flags) const
 {
 	RegisteredCallableList result;

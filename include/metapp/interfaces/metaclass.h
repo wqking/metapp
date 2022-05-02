@@ -52,7 +52,6 @@ public:
 	RegisteredAccessibleList getAccessibleList(const Flags flags = flagIncludeBase) const;
 
 	const RegisteredCallable & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredCallableList getCallableList(const std::string & name, const Flags flags = flagIncludeBase) const;
 	RegisteredCallableList getCallableList(const Flags flags = flagIncludeBase) const;
 
 	const RegisteredType & getType(const std::string & name, const Flags flags = flagIncludeBase) const;

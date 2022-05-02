@@ -36,7 +36,6 @@ public:
 	const RegisteredAccessibleList & getAccessibleList() const;
 
 	const RegisteredCallable & getCallable(const std::string & name) const;
-	RegisteredCallableList getCallableList(const std::string & name) const;
 	const RegisteredCallableList & getCallableList() const;
 
 	const RegisteredType & getType(const std::string & name) const;

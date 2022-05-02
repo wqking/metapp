@@ -332,16 +332,6 @@ const RegisteredCallable & getCallable(const std::string & name, const Flags fla
 
 Get a method of `name`. If the method is not registered, an empty RegisteredCallable is returned (RegisteredCallable::isEmpty() is true).  
 
-#### getCallableList by name
-
-```c++
-RegisteredCallableList getCallableList(const std::string & name, const Flags flags = flagIncludeBase) const;
-
-using RegisteredCallableList = std::deque<RegisteredCallable>;
-```
-
-Get a list of all registered methods which has `name`. This is useful to get the overload methods.  
-
 #### getCallableList
 
 ```c++
@@ -365,13 +355,13 @@ ExampleFunc
 	const metapp::RegisteredCallable & greeting = metaClass->getCallable("greeting");
 	ASSERT(metapp::callableInvoke(greeting, &object, "world").get<const std::string &>() == "Hello, world");
 
-	const metapp::RegisteredCallableList add = metaClass->getCallableList("add");
+	const metapp::RegisteredCallable & add = metaClass->getCallable("add");
 	ASSERT(metapp::callableInvoke(add, &object, 1, 5).get<int>() == 6);
 
 	const metapp::RegisteredCallableList callableList = metaClass->getCallableList();
+	ASSERT(callableList.size() == 2);
 	ASSERT(callableList[0].getName() == "greeting");
 	ASSERT(callableList[1].getName() == "add");
-	ASSERT(callableList[2].getName() == "add");
 	//code
 }
 

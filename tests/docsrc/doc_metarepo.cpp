@@ -120,16 +120,6 @@ const RegisteredCallable & getCallable(const std::string & name) const;
 
 Get a callable of `name`. If the callable is not registered, an empty RegisteredCallable is returned (RegisteredCallable::isEmpty() is true).  
 
-#### getCallableList by name
-
-```c++
-RegisteredCallableList getCallableList(const std::string & name) const;
-
-using RegisteredCallableList = std::deque<RegisteredCallable>;
-```
-
-Get a list of all registered callables which has `name`. This is useful to get the overload methods.  
-
 #### getCallableList
 
 ```c++
