@@ -35,23 +35,23 @@ namespace internal_ {
 
 struct BaseDerived
 {
-	const MetaType * metaType;
+	const MetaType * targetMetaType;
 	void * (*cast)(void * pointer);
+
+	operator const MetaType * const & () const {
+		return targetMetaType;
+	}
 };
+
+} // namespace internal_
+
+using BaseView = internal_::DisjointView<const MetaType *, std::deque<internal_::BaseDerived>, 1>;
+
+namespace internal_ {
 
 class InheritanceRepo
 {
 private:
-	struct BaseDerived
-	{
-		const MetaType * targetMetaType;
-		void * (*cast)(void * pointer);
-
-		operator const MetaType * const & () const {
-			return targetMetaType;
-		}
-	};
-
 	struct ClassInfo
 	{
 		std::deque<BaseDerived> baseList;
@@ -68,8 +68,6 @@ public:
 		derived
 	};
 
-	using TypesView = internal_::DisjointView<const MetaType *, std::deque<BaseDerived>, 1>;
-
 public:
 	template <typename Class, typename ...Bases>
 	void registerBase()
@@ -81,20 +79,20 @@ public:
 	}
 
 	template <typename Class>
-	TypesView getBases() const
+	BaseView getBases() const
 	{
 		return getBases(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getBases(const MetaType * classMetaType) const;
+	BaseView getBases(const MetaType * classMetaType) const;
 
 	template <typename Class>
-	TypesView getDerives() const
+	BaseView getDerives() const
 	{
 		return getDerives(doGetNormalizedMetaType<Class>());
 	}
 
-	TypesView getDerives(const MetaType * classMetaType) const;
+	BaseView getDerives(const MetaType * classMetaType) const;
 
 	template <typename Class>
 	void * castToBase(void * instance, const size_t baseIndex) const
@@ -260,7 +258,7 @@ private:
 		if(! callback(metaType)) {
 			return false;
 		}
-		const TypesView baseView = getBases(metaType);
+		const BaseView baseView = getBases(metaType);
 		for(auto baseMetaType : baseView) {
 			if(! doTraverseBases(baseMetaType, callback, metaTypeSet)) {
 				return false;

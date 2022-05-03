@@ -35,14 +35,14 @@ std::string emptyString;
 std::map<std::string, Variant> emptyAnnotationMap;
 MetaItem emptyMetaItem;
 
-InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
+BaseView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
-	return TypesView(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
+	return BaseView(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
 }
 
-InheritanceRepo::TypesView InheritanceRepo::getDerives(const MetaType * classMetaType) const
+BaseView InheritanceRepo::getDerives(const MetaType * classMetaType) const
 {
-	return TypesView(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
+	return BaseView(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
 }
 
 void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const

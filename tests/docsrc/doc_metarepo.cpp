@@ -201,10 +201,10 @@ enum class Relationship
 Enum for relationship between two classes. The relationship can be got via member function `getRelationship()`.    
 Given class A and B, `Relationship::none` means A and B are not derived from each other. `Relationship::base` means B is the base class of A, or to say, A derives from B. `Relationship::derived` means B derives from A, or to say, A is the base class of B.  
 
-#### class MetaRepo::TypesView
+#### class MetaRepo::BaseView
 
 ```c++
-class TypesView
+class BaseView
 {
 public:
 	size_t getCount() const;
@@ -230,9 +230,9 @@ Template parameter `Class` is the derived class, `Bases` are the base classes.
 
 ```c++
 template <typename Class>
-TypesView getBases() const;
+BaseView getBases() const;
 
-TypesView getBases(const MetaType * classMetaType) const;
+BaseView getBases(const MetaType * classMetaType) const;
 ```
 
 Returns meta types of all base class for `Class`, or for `classMetaType`.  
@@ -242,9 +242,9 @@ The first templated form is similar to `getBases(metapp::getMetaType<remove all 
 
 ```c++
 template <typename Class>
-TypesView getDerives() const;
+BaseView getDerives() const;
 
-TypesView getDerives(const MetaType * classMetaType) const;
+BaseView getDerives(const MetaType * classMetaType) const;
 ```
 
 Returns meta types of all derived class for `Class`, or for `classMetaType`.  

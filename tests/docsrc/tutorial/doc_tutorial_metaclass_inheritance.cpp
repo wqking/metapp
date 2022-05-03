@@ -90,14 +90,14 @@ TEST_CASE("tutorialMetaClass_inheritance")
 	metapp::getMetaRepo()->registerBase<Grandson1, Son1>();
 	metapp::getMetaRepo()->registerBase<Grandson2, Son1, Parent2>();
 
-	auto baseTypesViewSon1 = metapp::getMetaRepo()->getBases(metapp::getMetaType<Son1>());
-	ASSERT(baseTypesViewSon1.size() == 1);
-	ASSERT(baseTypesViewSon1.at(0) == metapp::getMetaType<Parent1>());
+	auto baseBaseViewSon1 = metapp::getMetaRepo()->getBases(metapp::getMetaType<Son1>());
+	ASSERT(baseBaseViewSon1.size() == 1);
+	ASSERT(baseBaseViewSon1.at(0) == metapp::getMetaType<Parent1>());
 
-	auto baseTypesViewGrandson2 = metapp::getMetaRepo()->getBases<Grandson2>();
-	ASSERT(baseTypesViewGrandson2.size() == 2);
-	ASSERT(baseTypesViewGrandson2.at(0) == metapp::getMetaType<Son1>());
-	ASSERT(baseTypesViewGrandson2.at(1) == metapp::getMetaType<Parent2>());
+	auto baseBaseViewGrandson2 = metapp::getMetaRepo()->getBases<Grandson2>();
+	ASSERT(baseBaseViewGrandson2.size() == 2);
+	ASSERT(baseBaseViewGrandson2.at(0) == metapp::getMetaType<Son1>());
+	ASSERT(baseBaseViewGrandson2.at(1) == metapp::getMetaType<Parent2>());
 
 	Son2 son2;
 	ASSERT(metapp::getMetaRepo()->castToBase<Son2>(&son2, 0) == static_cast<Parent1 *>(&son2));
