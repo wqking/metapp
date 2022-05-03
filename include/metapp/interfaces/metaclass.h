@@ -45,23 +45,29 @@ public:
 
 	MetaItem & registerConstructor(const Variant & constructor);
 	
-	const MetaItemList & getConstructorList() const;
+	MetaItemView getConstructorView() const;
 
 	const MetaItem & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
-	MetaItemList getAccessibleList(const Flags flags = flagIncludeBase) const;
+	MetaItemView getAccessibleView(const Flags flags = flagIncludeBase) const;
 
 	const MetaItem & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
-	MetaItemList getCallableList(const Flags flags = flagIncludeBase) const;
+	MetaItemView getCallableView(const Flags flags = flagIncludeBase) const;
 
 	const MetaItem & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
 	const MetaItem & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
 	const MetaItem & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
-	MetaItemList getTypeList(const Flags flags = flagIncludeBase) const;
+	MetaItemView getTypeView(const Flags flags = flagIncludeBase) const;
 
 private:
 	bool hasFlag(const Flags flags, const Flags flag) const {
 		return (flags & flag) != 0;
 	}
+
+	void doBuildMetaItemView(
+		MetaItemView * view,
+		const MetaItemList & (MetaClass::*listGetter)() const,
+		const Flags flags
+	) const;
 
 private:
 	const MetaType * classMetaType;

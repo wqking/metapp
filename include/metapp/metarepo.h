@@ -32,19 +32,19 @@ public:
 	MetaRepo(MetaRepo &&) = delete;
 
 	const MetaItem & getAccessible(const std::string & name) const;
-	const MetaItemList & getAccessibleList() const;
+	MetaItemView getAccessibleView() const;
 
 	const MetaItem & getCallable(const std::string & name) const;
-	const MetaItemList & getCallableList() const;
+	MetaItemView getCallableView() const;
 
 	const MetaItem & getType(const std::string & name) const;
 	const MetaItem & getType(const TypeKind kind) const;
 	const MetaItem & getType(const MetaType * metaType) const;
-	const MetaItemList & getTypeList() const;
+	MetaItemView getTypeView() const;
 
 	MetaItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
 	const MetaItem & getRepo(const std::string & name) const;
-	const MetaItemList & getRepoList() const;
+	MetaItemView getRepoView() const;
 
 private:
 	void registerBuiltinTypes();

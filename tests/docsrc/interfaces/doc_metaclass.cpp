@@ -269,12 +269,12 @@ ExampleFunc
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
-	// constructorList[0] is CtorClass()
-	// constructorList[1] is CtorClass(const std::string & s, const int n)
-	const metapp::MetaItemList & constructorList = metaClass->getConstructorList();
+	// constructorView[0] is CtorClass()
+	// constructorView[1] is CtorClass(const std::string & s, const int n)
+	metapp::MetaItemView constructorView = metaClass->getConstructorView();
 	// Call metapp::callableInvoke with a std::deque of callables can invoke the proper function
 	// that matches the arguments
-	metapp::Variant instance = metapp::callableInvoke(constructorList, nullptr, "abc", 5);
+	metapp::Variant instance = metapp::callableInvoke(constructorView, nullptr, "abc", 5);
 	CtorClass * ptr = instance.get<CtorClass *>();
 	ASSERT(ptr->s == "abc");
 	ASSERT(ptr->n == 5);
@@ -317,9 +317,9 @@ ExampleFunc
 	const metapp::MetaItem & text = metaClass->getAccessible("text");
 	ASSERT(metapp::accessibleGet(text, &object).get<const std::string &>() == "hello");
 
-	const metapp::MetaItemList & accessibleList = metaClass->getAccessibleList();
-	ASSERT(accessibleList[0].getName() == "text");
-	ASSERT(accessibleList[1].getName() == "value");
+	const metapp::MetaItemView accessibleView = metaClass->getAccessibleView();
+	ASSERT(accessibleView[0].getName() == "text");
+	ASSERT(accessibleView[1].getName() == "value");
 	//code
 }
 
@@ -358,10 +358,10 @@ ExampleFunc
 	const metapp::MetaItem & add = metaClass->getCallable("add");
 	ASSERT(metapp::callableInvoke(add, &object, 1, 5).get<int>() == 6);
 
-	const metapp::MetaItemList callableList = metaClass->getCallableList();
-	ASSERT(callableList.size() == 2);
-	ASSERT(callableList[0].getName() == "greeting");
-	ASSERT(callableList[1].getName() == "add");
+	const metapp::MetaItemView callableView = metaClass->getCallableView();
+	ASSERT(callableView.size() == 2);
+	ASSERT(callableView[0].getName() == "greeting");
+	ASSERT(callableView[1].getName() == "add");
 	//code
 }
 

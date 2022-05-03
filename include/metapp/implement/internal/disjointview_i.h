@@ -111,6 +111,12 @@ public:
 	{
 	}
 
+	explicit DisjointView(const Container * container)
+		: DisjointView()
+	{
+		addContainer(container);
+	}
+
 	DisjointView(const DisjointView & other)
 		:
 			smallList(other.smallList),

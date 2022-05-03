@@ -20,6 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/exception.h"
 #include "metapp/implement/internal/util_i.h"
+#include "metapp/implement/internal/disjointview_i.h"
 
 #include <map>
 #include <deque>
@@ -96,6 +97,8 @@ private:
 
 using MetaItemList = std::deque<MetaItem>;
 
+using MetaItemView = internal_::DisjointView<MetaItem, std::deque<MetaItem>, 4>;
+
 namespace internal_ {
 
 class MetaRepoBase
@@ -114,18 +117,15 @@ public:
 	MetaItem & registerType(std::string name, const MetaType * metaType);
 
 protected:
-	void doGetAccessibleList(MetaItemList * result) const;
-	const MetaItemList & doGetAccessibleList() const;
 	const MetaItem & doGetAccessible(const std::string & name) const;
+	const MetaItemList & doGetAccessibleList() const;
 
 	const MetaItem & doGetCallable(const std::string & name) const;
-	void doGetCallableList(MetaItemList * result) const;
 	const MetaItemList & doGetCallableList() const;
 
 	const MetaItem & doGetType(const std::string & name) const;
 	const MetaItem & doGetType(const TypeKind kind) const;
 	const MetaItem & doGetType(const MetaType * metaType) const;
-	void doGetTypeList(MetaItemList * result) const;
 	const MetaItemList & doGetTypeList() const;
 
 private:

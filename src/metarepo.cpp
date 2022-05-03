@@ -37,16 +37,12 @@ MetaItem emptyMetaItem;
 
 InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
-	TypesView view;
-	view.addContainer(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
-	return view;
+	return TypesView(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
 }
 
 InheritanceRepo::TypesView InheritanceRepo::getDerives(const MetaType * classMetaType) const
 {
-	TypesView view;
-	view.addContainer(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
-	return view;
+	return TypesView(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
 }
 
 void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const
@@ -286,11 +282,15 @@ MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaTyp
 	return registeredType;
 }
 
-void MetaRepoBase::doGetAccessibleList(MetaItemList * result) const
+const MetaItem & MetaRepoBase::doGetAccessible(const std::string & name) const
 {
 	if(accessibleData) {
-		result->insert(result->end(), accessibleData->accessibleList.begin(), accessibleData->accessibleList.end());
+		auto it = accessibleData->accessibleMap.find(name);
+		if(it != accessibleData->accessibleMap.end()) {
+			return *it->second;
+		}
 	}
+	return internal_::emptyMetaItem;
 }
 
 const MetaItemList & MetaRepoBase::doGetAccessibleList() const
@@ -303,17 +303,6 @@ const MetaItemList & MetaRepoBase::doGetAccessibleList() const
 	}
 }
 
-const MetaItem & MetaRepoBase::doGetAccessible(const std::string & name) const
-{
-	if(accessibleData) {
-		auto it = accessibleData->accessibleMap.find(name);
-		if(it != accessibleData->accessibleMap.end()) {
-			return *it->second;
-		}
-	}
-	return internal_::emptyMetaItem;
-}
-
 const MetaItem & MetaRepoBase::doGetCallable(const std::string & name) const
 {
 	if(callableData) {
@@ -323,13 +312,6 @@ const MetaItem & MetaRepoBase::doGetCallable(const std::string & name) const
 		}
 	}
 	return internal_::emptyMetaItem;
-}
-
-void MetaRepoBase::doGetCallableList(MetaItemList * result) const
-{
-	if(callableData) {
-		result->insert(result->end(), callableData->callableList.begin(), callableData->callableList.end());
-	}
 }
 
 const MetaItemList & MetaRepoBase::doGetCallableList() const
@@ -373,13 +355,6 @@ const MetaItem & MetaRepoBase::doGetType(const MetaType * metaType) const
 		}
 	}
 	return internal_::emptyMetaItem;
-}
-
-void MetaRepoBase::doGetTypeList(MetaItemList * result) const
-{
-	if(typeData) {
-		result->insert(result->end(), typeData->typeList.begin(), typeData->typeList.end());
-	}
 }
 
 const MetaItemList & MetaRepoBase::doGetTypeList() const
@@ -507,9 +482,9 @@ const MetaItem & MetaRepo::getAccessible(const std::string & name) const
 	return doGetAccessible(name);
 }
 
-const MetaItemList & MetaRepo::getAccessibleList() const
+MetaItemView MetaRepo::getAccessibleView() const
 {
-	return doGetAccessibleList();
+	return MetaItemView(&doGetAccessibleList());
 }
 
 const MetaItem & MetaRepo::getCallable(const std::string & name) const
@@ -517,9 +492,9 @@ const MetaItem & MetaRepo::getCallable(const std::string & name) const
 	return doGetCallable(name);
 }
 
-const MetaItemList & MetaRepo::getCallableList() const
+MetaItemView MetaRepo::getCallableView() const
 {
-	return doGetCallableList();
+	return MetaItemView(&doGetCallableList());
 }
 
 const MetaItem & MetaRepo::getType(const std::string & name) const
@@ -537,9 +512,9 @@ const MetaItem & MetaRepo::getType(const MetaType * metaType) const
 	return doGetType(metaType);
 }
 
-const MetaItemList & MetaRepo::getTypeList() const
+MetaItemView MetaRepo::getTypeView() const
 {
-	return doGetTypeList();
+	return MetaItemView(&doGetTypeList());
 }
 
 MetaItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
@@ -563,9 +538,9 @@ const MetaItem & MetaRepo::getRepo(const std::string & name) const
 	return internal_::emptyMetaItem;
 }
 
-const MetaItemList & MetaRepo::getRepoList() const
+MetaItemView MetaRepo::getRepoView() const
 {
-	return repoList;
+	return MetaItemView(&repoList);
 }
 
 void MetaRepo::registerBuiltinTypes()

@@ -170,8 +170,8 @@ TEST_CASE("MetaClass, field, struct C")
 	REQUIRE(metapp::accessibleGet(staticValue, nullptr).template get<bool>() == true);
 
 	std::map<std::string, int> fieldNameMap;
-	auto accessibleList = metaClassC->getAccessibleList();
-	for(auto it = accessibleList.begin(); it != accessibleList.end(); ++it) {
+	auto accessibleView = metaClassC->getAccessibleView();
+	for(auto it = accessibleView.begin(); it != accessibleView.end(); ++it) {
 		++fieldNameMap[it->getName()];
 	}
 	REQUIRE(fieldNameMap["value"] == 3);
