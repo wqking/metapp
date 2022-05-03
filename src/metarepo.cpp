@@ -237,16 +237,7 @@ MetaItem & MetaRepoBase::registerCallable(const std::string & name, const Varian
 	auto it = callableData->callableMap.find(name);
 	if(it != callableData->callableMap.end()) {
 		const Variant & target = it->second->asCallable();
-		if(getNonReferenceMetaType(target)->getTypeKind() == tkOverloadedFunction) {
-			target.get<OverloadedFunction &>().addCallable(callable);
-		}
-		else {
-			Variant newTarget = OverloadedFunction();
-			OverloadedFunction & overloadedFunction = newTarget.get<OverloadedFunction &>();
-			overloadedFunction.addCallable(target);
-			overloadedFunction.addCallable(callable);
-			const_cast<Variant &>(target) = newTarget;
-		}
+		it->second->setTarget(doCombineOverloadedCallable(target, callable));
 		return *it->second;
 	}
 	callableData->callableList.emplace_back(MetaItem::Type::callable, name, callable);
@@ -367,8 +358,38 @@ const MetaItemList & MetaRepoBase::doGetTypeList() const
 	}
 }
 
+Variant doCombineOverloadedCallable(const Variant & target, const Variant & callable)
+{
+	if(getNonReferenceMetaType(target)->getTypeKind() == tkOverloadedFunction) {
+		target.get<OverloadedFunction &>().addCallable(callable);
+		return target;
+	}
+	else {
+		Variant newTarget = OverloadedFunction();
+		OverloadedFunction & overloadedFunction = newTarget.get<OverloadedFunction &>();
+		overloadedFunction.addCallable(target);
+		overloadedFunction.addCallable(callable);
+		return newTarget;
+	}
+}
+
+
 } // namespace internal_
 
+
+MetaItem::MetaItem()
+	: data()
+{
+}
+
+MetaItem::MetaItem(const Type type, const std::string & name, const Variant & target)
+	: data(std::make_shared<Data>(type, name, target))
+{
+}
+
+MetaItem::~MetaItem()
+{
+}
 
 void MetaItem::registerAnnotation(const std::string & name, const Variant & value)
 {
@@ -446,6 +467,13 @@ const Variant & MetaItem::asEnumValue() const
 MetaItem::operator const Variant & () const
 {
 	return doGetVariant();
+}
+
+void MetaItem::setTarget(const Variant & target)
+{
+	if(data) {
+		data->target = target;
+	}
 }
 
 const Variant & MetaItem::doGetVariant() const

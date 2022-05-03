@@ -62,25 +62,17 @@ TEST_CASE("MetaClass, constructor")
 {
 	auto metaTypeA = metapp::getMetaType<A>();
 	auto metaClassA = metaTypeA->getMetaClass();
-	auto constructorView = metaClassA->getConstructorView();
+	auto constructor = metaClassA->getConstructor();
 	SECTION("()") {
-		auto it = metapp::findCallable(constructorView.begin(), constructorView.end(), nullptr, 0);
-		REQUIRE(it == constructorView.begin());
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(constructor, nullptr));
 		REQUIRE(obj.get<const A &>().text == "default");
 	}
 	SECTION("(std::string)") {
-		const metapp::Variant arguments[] = { "abc" };
-		auto it = metapp::findCallable(constructorView.begin(), constructorView.end(), arguments, 1);
-		//REQUIRE(it == constructorView.begin() + 1);
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr, "abc"));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(constructor, nullptr, "abc"));
 		REQUIRE(obj.get<const A &>().text == "abc");
 	}
 	SECTION("(std::string, int)") {
-		const metapp::Variant arguments[] = { "abc", 5 };
-		auto it = metapp::findCallable(constructorView.begin(), constructorView.end(), arguments, 2);
-		//REQUIRE(it == constructorView.begin() + 2);
-		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(*it, nullptr, "abc", 5));
+		const metapp::Variant obj = metapp::Variant::takeFrom(metapp::callableInvoke(constructor, nullptr, "abc", 5));
 		REQUIRE(obj.get<const A &>().text == "abc5");
 	}
 }

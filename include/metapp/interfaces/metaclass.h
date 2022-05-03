@@ -37,15 +37,13 @@ public:
 	MetaClass(const MetaType * classMetaType, FT callback)
 		:
 			internal_::MetaRepoBase(),
-			classMetaType(classMetaType),
-			constructorList()
+			classMetaType(classMetaType)
 	{
 		callback(*this);
 	}
 
 	MetaItem & registerConstructor(const Variant & constructor);
-	
-	MetaItemView getConstructorView() const;
+	const MetaItem & getConstructor() const;
 
 	const MetaItem & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
 	MetaItemView getAccessibleView(const Flags flags = flagIncludeBase) const;
@@ -71,7 +69,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	MetaItemList constructorList;
+	MetaItem constructorItem;
 };
 
 

@@ -56,15 +56,9 @@ private:
 	};
 
 public:
-	MetaItem()
-		: data()
-	{
-	}
-
-	MetaItem(const Type type, const std::string & name, const Variant & target)
-		: data(std::make_shared<Data>(type, name, target))
-	{
-	}
+	MetaItem();
+	MetaItem(const Type type, const std::string & name, const Variant & target);
+	~MetaItem();
 
 	bool isEmpty() const {
 		return ! data;
@@ -85,6 +79,8 @@ public:
 	void registerAnnotation(const std::string & name, const Variant & value);
 	const Variant & getAnnotation(const std::string & name) const;
 	const std::map<std::string, Variant> & getAllAnnotations() const;
+
+	void setTarget(const Variant & target);
 
 private:
 	const Variant & doGetVariant() const;
@@ -164,6 +160,8 @@ private:
 	};
 	std::shared_ptr<AccessibleData> accessibleData;
 };
+
+Variant doCombineOverloadedCallable(const Variant & target, const Variant & callable);
 
 
 } // namespace internal_

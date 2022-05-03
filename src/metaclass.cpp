@@ -32,13 +32,20 @@ MetaItem & MetaClass::registerConstructor(const Variant & constructor)
 	if(constructor.getMetaType()->getMetaCallable() == nullptr) {
 		errorWrongMetaType();
 	}
-	constructorList.emplace_back(MetaItem::Type::constructor, "", constructor);
-	return constructorList.back();
+
+	if(constructorItem.isEmpty()) {
+		constructorItem = MetaItem(MetaItem::Type::constructor, "", constructor);
+	}
+	else {
+		const Variant & target = constructorItem.asConstructor();
+		constructorItem.setTarget(internal_::doCombineOverloadedCallable(target, constructor));
+	}
+	return constructorItem;
 }
 
-MetaItemView MetaClass::getConstructorView() const
+const MetaItem & MetaClass::getConstructor() const
 {
-	return MetaItemView(&constructorList);
+	return constructorItem;
 }
 
 const MetaItem & MetaClass::getAccessible(const std::string & name, const Flags flags) const

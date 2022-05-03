@@ -271,10 +271,10 @@ ExampleFunc
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 	// constructorView[0] is CtorClass()
 	// constructorView[1] is CtorClass(const std::string & s, const int n)
-	metapp::MetaItemView constructorView = metaClass->getConstructorView();
+	const metapp::MetaItem & constructor = metaClass->getConstructor();
 	// Call metapp::callableInvoke with a std::deque of callables can invoke the proper function
 	// that matches the arguments
-	metapp::Variant instance = metapp::callableInvoke(constructorView, nullptr, "abc", 5);
+	metapp::Variant instance = metapp::callableInvoke(constructor, nullptr, "abc", 5);
 	CtorClass * ptr = instance.get<CtorClass *>();
 	ASSERT(ptr->s == "abc");
 	ASSERT(ptr->n == 5);

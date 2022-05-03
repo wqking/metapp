@@ -352,7 +352,7 @@ TEST_CASE("tutorialMetaClass_constructor")
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	//desc Get all constructors from the meta class.
-	metapp::MetaItemView constructorView = metaClass->getConstructorView();
+	const metapp::MetaItem & constructor = metaClass->getConstructor();
 
 	//desc Invoke the default constructor which doesn't have any arguments.  
 	//desc Invoking constructors is same as invoking overloaded methods.  
@@ -360,13 +360,13 @@ TEST_CASE("tutorialMetaClass_constructor")
 	//desc used when invoking constructors.  
 	//desc The constructor returns a Variant, which is a pointer to the constructed object.  
 	//desc The caller must free the pointer. The returned Variant doesn't free it.
-	std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructorView, nullptr).get<TmClass *>());
+	std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructor, nullptr).get<TmClass *>());
 	ASSERT(ptr->getValue() == 0);
 	ASSERT(ptr->message == "");
 
 	//desc If we want to convert the returned pointer to a Variant which manages the object lifetime,
 	//desc we can use metapp::Variant::takeFrom to create a new Variant that owns the object.
-	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorView, nullptr, 3, "good").get<TmClass *>());
+	metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructor, nullptr, 3, "good").get<TmClass *>());
 	ASSERT(instance.getMetaType() == metapp::getMetaType<TmClass>());
 	ASSERT(instance.get<const TmClass &>().getValue() == 3);
 	ASSERT(instance.get<const TmClass &>().message == "good");
