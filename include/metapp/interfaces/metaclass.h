@@ -43,20 +43,20 @@ public:
 		callback(*this);
 	}
 
-	RegisteredItem & registerConstructor(const Variant & constructor);
+	MetaItem & registerConstructor(const Variant & constructor);
 	
-	const RegisteredItemList & getConstructorList() const;
+	const MetaItemList & getConstructorList() const;
 
-	const RegisteredItem & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredItemList getAccessibleList(const Flags flags = flagIncludeBase) const;
+	const MetaItem & getAccessible(const std::string & name, const Flags flags = flagIncludeBase) const;
+	MetaItemList getAccessibleList(const Flags flags = flagIncludeBase) const;
 
-	const RegisteredItem & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
-	RegisteredItemList getCallableList(const Flags flags = flagIncludeBase) const;
+	const MetaItem & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
+	MetaItemList getCallableList(const Flags flags = flagIncludeBase) const;
 
-	const RegisteredItem & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
-	const RegisteredItem & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
-	const RegisteredItem & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
-	RegisteredItemList getTypeList(const Flags flags = flagIncludeBase) const;
+	const MetaItem & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
+	const MetaItem & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;
+	const MetaItem & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
+	MetaItemList getTypeList(const Flags flags = flagIncludeBase) const;
 
 private:
 	bool hasFlag(const Flags flags, const Flags flag) const {
@@ -65,7 +65,7 @@ private:
 
 private:
 	const MetaType * classMetaType;
-	RegisteredItemList constructorList;
+	MetaItemList constructorList;
 };
 
 

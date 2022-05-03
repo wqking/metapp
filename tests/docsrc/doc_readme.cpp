@@ -203,7 +203,7 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
 - Build meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
     - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
-    - [Registered items (RegisteredItem, etc)](doc/registered_items.md)
+    - [Registered items (MetaItem, etc)](doc/registered_items.md)
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta_interface_overview.md)

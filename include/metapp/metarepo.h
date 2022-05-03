@@ -31,29 +31,29 @@ public:
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
 
-	const RegisteredItem & getAccessible(const std::string & name) const;
-	const RegisteredItemList & getAccessibleList() const;
+	const MetaItem & getAccessible(const std::string & name) const;
+	const MetaItemList & getAccessibleList() const;
 
-	const RegisteredItem & getCallable(const std::string & name) const;
-	const RegisteredItemList & getCallableList() const;
+	const MetaItem & getCallable(const std::string & name) const;
+	const MetaItemList & getCallableList() const;
 
-	const RegisteredItem & getType(const std::string & name) const;
-	const RegisteredItem & getType(const TypeKind kind) const;
-	const RegisteredItem & getType(const MetaType * metaType) const;
-	const RegisteredItemList & getTypeList() const;
+	const MetaItem & getType(const std::string & name) const;
+	const MetaItem & getType(const TypeKind kind) const;
+	const MetaItem & getType(const MetaType * metaType) const;
+	const MetaItemList & getTypeList() const;
 
-	RegisteredItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
-	const RegisteredItem & getRepo(const std::string & name) const;
-	const RegisteredItemList & getRepoList() const;
+	MetaItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+	const MetaItem & getRepo(const std::string & name) const;
+	const MetaItemList & getRepoList() const;
 
 private:
 	void registerBuiltinTypes();
 
 private:
-	RegisteredItemList repoList;
+	MetaItemList repoList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredItem *,
+		MetaItem *,
 		std::less<const std::string>
 	> repoMap;
 };

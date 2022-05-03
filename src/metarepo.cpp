@@ -26,14 +26,14 @@ namespace internal_ {
 
 namespace {
 
-RegisteredItemList dummyRegisteredItemList;
+MetaItemList dummyMetaItemList;
 
 } // namespace
 
 Variant emptyVariant;
 std::string emptyString;
 std::map<std::string, Variant> emptyAnnotationMap;
-RegisteredItem emptyRegisteredItem;
+MetaItem emptyMetaItem;
 
 InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
@@ -206,7 +206,7 @@ MetaRepoBase::MetaRepoBase()
 {
 }
 
-RegisteredItem & MetaRepoBase::registerAccessible(const std::string & name, const Variant & accessible)
+MetaItem & MetaRepoBase::registerAccessible(const std::string & name, const Variant & accessible)
 {
 	if(accessible.getMetaType()->getMetaAccessible() == nullptr) {
 		errorWrongMetaType();
@@ -220,15 +220,15 @@ RegisteredItem & MetaRepoBase::registerAccessible(const std::string & name, cons
 	if(it != accessibleData->accessibleMap.end()) {
 		return *it->second;
 	}
-	accessibleData->accessibleList.emplace_back(RegisteredItem::Type::accessible, name, accessible);
-	RegisteredItem & registeredAccessible = accessibleData->accessibleList.back();
+	accessibleData->accessibleList.emplace_back(MetaItem::Type::accessible, name, accessible);
+	MetaItem & registeredAccessible = accessibleData->accessibleList.back();
 	accessibleData->accessibleMap.insert(typename decltype(accessibleData->accessibleMap)::value_type(
 		registeredAccessible.getName(), &registeredAccessible
 	));
 	return registeredAccessible;
 }
 
-RegisteredItem & MetaRepoBase::registerCallable(const std::string & name, const Variant & callable)
+MetaItem & MetaRepoBase::registerCallable(const std::string & name, const Variant & callable)
 {
 	if(callable.getMetaType()->getMetaCallable() == nullptr) {
 		errorWrongMetaType();
@@ -253,15 +253,15 @@ RegisteredItem & MetaRepoBase::registerCallable(const std::string & name, const 
 		}
 		return *it->second;
 	}
-	callableData->callableList.emplace_back(RegisteredItem::Type::callable, name, callable);
-	RegisteredItem & registeredCallable = callableData->callableList.back();
+	callableData->callableList.emplace_back(MetaItem::Type::callable, name, callable);
+	MetaItem & registeredCallable = callableData->callableList.back();
 	callableData->callableMap.insert(typename decltype(callableData->callableMap)::value_type(
 		registeredCallable.getName(), &registeredCallable
 	));
 	return registeredCallable;
 }
 
-RegisteredItem & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
+MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
 {
 	if(name.empty()) {
 		name = getNameByTypeKind(metaType->getTypeKind());
@@ -275,8 +275,8 @@ RegisteredItem & MetaRepoBase::registerType(std::string name, const MetaType * m
 	if(it != typeData->typeTypeMap.end()) {
 		return *it->second;
 	}
-	typeData->typeList.emplace_back(RegisteredItem::Type::metaType, name, Variant::create(metaType));
-	RegisteredItem & registeredType = typeData->typeList.back();
+	typeData->typeList.emplace_back(MetaItem::Type::metaType, name, Variant::create(metaType));
+	MetaItem & registeredType = typeData->typeList.back();
 	if(! registeredType.getName().empty()) {
 		typeData->nameTypeMap[registeredType.getName()] = &registeredType;
 	}
@@ -286,24 +286,24 @@ RegisteredItem & MetaRepoBase::registerType(std::string name, const MetaType * m
 	return registeredType;
 }
 
-void MetaRepoBase::doGetAccessibleList(RegisteredItemList * result) const
+void MetaRepoBase::doGetAccessibleList(MetaItemList * result) const
 {
 	if(accessibleData) {
 		result->insert(result->end(), accessibleData->accessibleList.begin(), accessibleData->accessibleList.end());
 	}
 }
 
-const RegisteredItemList & MetaRepoBase::doGetAccessibleList() const
+const MetaItemList & MetaRepoBase::doGetAccessibleList() const
 {
 	if(accessibleData) {
 		return accessibleData->accessibleList;
 	}
 	else {
-		return dummyRegisteredItemList;
+		return dummyMetaItemList;
 	}
 }
 
-const RegisteredItem & MetaRepoBase::doGetAccessible(const std::string & name) const
+const MetaItem & MetaRepoBase::doGetAccessible(const std::string & name) const
 {
 	if(accessibleData) {
 		auto it = accessibleData->accessibleMap.find(name);
@@ -311,10 +311,10 @@ const RegisteredItem & MetaRepoBase::doGetAccessible(const std::string & name) c
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-const RegisteredItem & MetaRepoBase::doGetCallable(const std::string & name) const
+const MetaItem & MetaRepoBase::doGetCallable(const std::string & name) const
 {
 	if(callableData) {
 		auto it = callableData->callableMap.find(name);
@@ -322,27 +322,27 @@ const RegisteredItem & MetaRepoBase::doGetCallable(const std::string & name) con
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-void MetaRepoBase::doGetCallableList(RegisteredItemList * result) const
+void MetaRepoBase::doGetCallableList(MetaItemList * result) const
 {
 	if(callableData) {
 		result->insert(result->end(), callableData->callableList.begin(), callableData->callableList.end());
 	}
 }
 
-const RegisteredItemList & MetaRepoBase::doGetCallableList() const
+const MetaItemList & MetaRepoBase::doGetCallableList() const
 {
 	if(callableData) {
 		return callableData->callableList;
 	}
 	else {
-		return dummyRegisteredItemList;
+		return dummyMetaItemList;
 	}
 }
 
-const RegisteredItem & MetaRepoBase::doGetType(const std::string & name) const
+const MetaItem & MetaRepoBase::doGetType(const std::string & name) const
 {
 	if(typeData) {
 		auto it = typeData->nameTypeMap.find(name);
@@ -350,10 +350,10 @@ const RegisteredItem & MetaRepoBase::doGetType(const std::string & name) const
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-const RegisteredItem & MetaRepoBase::doGetType(const TypeKind kind) const
+const MetaItem & MetaRepoBase::doGetType(const TypeKind kind) const
 {
 	if(typeData) {
 		auto it = typeData->kindTypeMap.find(kind);
@@ -361,10 +361,10 @@ const RegisteredItem & MetaRepoBase::doGetType(const TypeKind kind) const
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-const RegisteredItem & MetaRepoBase::doGetType(const MetaType * metaType) const
+const MetaItem & MetaRepoBase::doGetType(const MetaType * metaType) const
 {
 	if(typeData) {
 		auto it = typeData->typeTypeMap.find(metaType);
@@ -372,30 +372,30 @@ const RegisteredItem & MetaRepoBase::doGetType(const MetaType * metaType) const
 			return *it->second;
 		}
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-void MetaRepoBase::doGetTypeList(RegisteredItemList * result) const
+void MetaRepoBase::doGetTypeList(MetaItemList * result) const
 {
 	if(typeData) {
 		result->insert(result->end(), typeData->typeList.begin(), typeData->typeList.end());
 	}
 }
 
-const RegisteredItemList & MetaRepoBase::doGetTypeList() const
+const MetaItemList & MetaRepoBase::doGetTypeList() const
 {
 	if(typeData) {
 		return typeData->typeList;
 	}
 	else {
-		return dummyRegisteredItemList;
+		return dummyMetaItemList;
 	}
 }
 
 } // namespace internal_
 
 
-void RegisteredItem::registerAnnotation(const std::string & name, const Variant & value)
+void MetaItem::registerAnnotation(const std::string & name, const Variant & value)
 {
 	if(! annotationMap) {
 		annotationMap = std::make_shared<std::map<std::string, Variant> >();
@@ -403,7 +403,7 @@ void RegisteredItem::registerAnnotation(const std::string & name, const Variant 
 	annotationMap->insert(std::make_pair(name, value));
 }
 
-const Variant & RegisteredItem::getAnnotation(const std::string & name) const
+const Variant & MetaItem::getAnnotation(const std::string & name) const
 {
 	if(annotationMap) {
 		auto it = annotationMap->find(name);
@@ -414,7 +414,7 @@ const Variant & RegisteredItem::getAnnotation(const std::string & name) const
 	return internal_::emptyVariant;
 }
 
-const std::map<std::string, Variant> & RegisteredItem::getAllAnnotations() const
+const std::map<std::string, Variant> & MetaItem::getAllAnnotations() const
 {
 	if(annotationMap) {
 		return *annotationMap;
@@ -422,63 +422,63 @@ const std::map<std::string, Variant> & RegisteredItem::getAllAnnotations() const
 	return internal_::emptyAnnotationMap;
 }
 
-const std::string & RegisteredItem::getName() const
+const std::string & MetaItem::getName() const
 {
 	return data ? data->name : internal_::emptyString;
 }
 
-RegisteredItem::Type RegisteredItem::getType() const
+MetaItem::Type MetaItem::getType() const
 {
-	return data ? data->type : RegisteredItem::Type::none;
+	return data ? data->type : MetaItem::Type::none;
 }
 
-const Variant & RegisteredItem::asAccessible() const
+const Variant & MetaItem::asAccessible() const
 {
 	doCheckType(Type::accessible);
 	return doGetVariant();
 }
 
-const Variant & RegisteredItem::asCallable() const
+const Variant & MetaItem::asCallable() const
 {
 	doCheckType(Type::callable);
 	return doGetVariant();
 }
 
-const Variant & RegisteredItem::asConstructor() const
+const Variant & MetaItem::asConstructor() const
 {
 	doCheckType(Type::constructor);
 	return doGetVariant();
 }
 
-const MetaType * RegisteredItem::asMetaType() const
+const MetaType * MetaItem::asMetaType() const
 {
 	doCheckType(Type::metaType);
 	return doGetVariant().get<const MetaType *>();
 }
 
-const MetaRepo * RegisteredItem::asMetaRepo() const
+const MetaRepo * MetaItem::asMetaRepo() const
 {
 	doCheckType(Type::metaRepo);
 	return doGetVariant().get<const MetaRepo *>();
 }
 
-const Variant & RegisteredItem::asEnumValue() const
+const Variant & MetaItem::asEnumValue() const
 {
 	doCheckType(Type::enumValue);
 	return doGetVariant();
 }
 
-RegisteredItem::operator const Variant & () const
+MetaItem::operator const Variant & () const
 {
 	return doGetVariant();
 }
 
-const Variant & RegisteredItem::doGetVariant() const
+const Variant & MetaItem::doGetVariant() const
 {
 	return data ? data->target : internal_::emptyVariant;
 }
 
-void RegisteredItem::doCheckType(const Type type) const
+void MetaItem::doCheckType(const Type type) const
 {
 	if(getType() != type) {
 		errorIllegalArgument();
@@ -502,68 +502,68 @@ MetaRepo::MetaRepo()
 	registerBuiltinTypes();
 }
 
-const RegisteredItem & MetaRepo::getAccessible(const std::string & name) const
+const MetaItem & MetaRepo::getAccessible(const std::string & name) const
 {
 	return doGetAccessible(name);
 }
 
-const RegisteredItemList & MetaRepo::getAccessibleList() const
+const MetaItemList & MetaRepo::getAccessibleList() const
 {
 	return doGetAccessibleList();
 }
 
-const RegisteredItem & MetaRepo::getCallable(const std::string & name) const
+const MetaItem & MetaRepo::getCallable(const std::string & name) const
 {
 	return doGetCallable(name);
 }
 
-const RegisteredItemList & MetaRepo::getCallableList() const
+const MetaItemList & MetaRepo::getCallableList() const
 {
 	return doGetCallableList();
 }
 
-const RegisteredItem & MetaRepo::getType(const std::string & name) const
+const MetaItem & MetaRepo::getType(const std::string & name) const
 {
 	return doGetType(name);
 }
 
-const RegisteredItem & MetaRepo::getType(const TypeKind kind) const
+const MetaItem & MetaRepo::getType(const TypeKind kind) const
 {
 	return doGetType(kind);
 }
 
-const RegisteredItem & MetaRepo::getType(const MetaType * metaType) const
+const MetaItem & MetaRepo::getType(const MetaType * metaType) const
 {
 	return doGetType(metaType);
 }
 
-const RegisteredItemList & MetaRepo::getTypeList() const
+const MetaItemList & MetaRepo::getTypeList() const
 {
 	return doGetTypeList();
 }
 
-RegisteredItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
+MetaItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
 {
 	if(repo == nullptr) {
 		repo = new MetaRepo();
 	}
-	repoList.emplace_back(RegisteredItem::Type::metaRepo, name, repo);
-	RegisteredItem & registeredRepo = repoList.back();
+	repoList.emplace_back(MetaItem::Type::metaRepo, name, repo);
+	MetaItem & registeredRepo = repoList.back();
 	repoMap[registeredRepo.getName()] = &registeredRepo;
 
 	return registeredRepo;
 }
 
-const RegisteredItem & MetaRepo::getRepo(const std::string & name) const
+const MetaItem & MetaRepo::getRepo(const std::string & name) const
 {
 	auto it = repoMap.find(name);
 	if(it != repoMap.end()) {
 		return *it->second;
 	}
-	return internal_::emptyRegisteredItem;
+	return internal_::emptyMetaItem;
 }
 
-const RegisteredItemList & MetaRepo::getRepoList() const
+const MetaItemList & MetaRepo::getRepoList() const
 {
 	return repoList;
 }

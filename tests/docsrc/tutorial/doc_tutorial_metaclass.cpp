@@ -238,12 +238,12 @@ TEST_CASE("tutorialMetaClass_accessible")
 	TmClass obj;
 
 	//desc Get the meta data of field "value".
-	metapp::RegisteredItem fieldValue = metaClass->getAccessible("value");
+	metapp::MetaItem fieldValue = metaClass->getAccessible("value");
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 	//desc Call getTarget() to get the underlying Variant.
 	ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), &obj).get<int>() == 0);
-	// getTarget() can also be omitted, the RegisteredItem can convert to Variant automatically
+	// getTarget() can also be omitted, the MetaItem can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 
 	//desc Now let's set a new value.
@@ -252,7 +252,7 @@ TEST_CASE("tutorialMetaClass_accessible")
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 5);
 
 	//desc Now set 'message' with some new text.
-	metapp::RegisteredItem fieldMessage = metaClass->getAccessible("message");
+	metapp::MetaItem fieldMessage = metaClass->getAccessible("message");
 	ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "");
 	metapp::accessibleSet(fieldMessage, &obj, "This is a test");
 	ASSERT(obj.message == "This is a test");
@@ -275,7 +275,7 @@ TEST_CASE("tutorialMetaClass_method")
 	obj.message = "Hello";
 
 	//desc Get the meta data of method "greeting".
-	metapp::RegisteredItem methodGreeting = metaClass->getCallable("greeting");
+	metapp::MetaItem methodGreeting = metaClass->getCallable("greeting");
 	
 	//desc Use metapp::callableInvoke to invoke the method, and pass the arguments.  
 	//desc The return value is a metapp::Variant.
@@ -302,7 +302,7 @@ TEST_CASE("tutorialMetaClass_overloadedMethods")
 	obj.message = "Hello";
 
 	//desc Get all the overloaded methods of "makeMessage" by calling metaClass->getCallable().  
-	metapp::RegisteredItem callable = metaClass->getCallable("makeMessage");
+	metapp::MetaItem callable = metaClass->getCallable("makeMessage");
 
 	//desc metapp::callableInvoke will try to find the proper method, then call it.
 	ASSERT(metapp::callableInvoke(callable, &obj).get<const std::string &>() == "Hello");
@@ -331,7 +331,7 @@ TEST_CASE("tutorialMetaClass_staticMethods")
 	ASSERT(message == "");
 	ASSERT(value == 0);
 
-	metapp::RegisteredItem methodObjtainValues = metaClass->getCallable("obtainValues");
+	metapp::MetaItem methodObjtainValues = metaClass->getCallable("obtainValues");
 	//desc There is no much difference between member methods and static methods, the only difference
 	//desc is that the instance can be nullptr when invoking the method.
 	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
@@ -352,7 +352,7 @@ TEST_CASE("tutorialMetaClass_constructor")
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 	//desc Get all constructors from the meta class.
-	metapp::RegisteredItemList constructorList = metaClass->getConstructorList();
+	metapp::MetaItemList constructorList = metaClass->getConstructorList();
 
 	//desc Invoke the default constructor which doesn't have any arguments.  
 	//desc Invoking constructors is same as invoking overloaded methods.  
@@ -385,7 +385,7 @@ TEST_CASE("tutorialMetaClass_type")
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	metapp::RegisteredItem enumType;
+	metapp::MetaItem enumType;
 
 	enumType = metaClass->getType("MyEnum");
 	ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
@@ -401,7 +401,7 @@ TEST_CASE("tutorialMetaClass_type")
 	ASSERT(metaEnum->getValue("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
 	ASSERT(metaEnum->getValue("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
 
-	metapp::RegisteredItem innerType = metaClass->getType("MyInner");
+	metapp::MetaItem innerType = metaClass->getType("MyInner");
 	ASSERT(innerType.asMetaType() == metapp::getMetaType<TmClass::MyInner>());
 	std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.asMetaType()->construct()));
 	ASSERT(inner->n == 1999);
@@ -423,7 +423,7 @@ TEST_CASE("tutorialMetaClass_annotation")
 	//desc If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	metapp::RegisteredItem fieldMessage = metaClass->getAccessible("message");
+	metapp::MetaItem fieldMessage = metaClass->getAccessible("message");
 	const metapp::Variant & description = fieldMessage.getAnnotation("description");
 	ASSERT(description.cast<std::string>().get<const std::string &>() == "This is a description");
 	const metapp::Variant & notes = fieldMessage.getAnnotation("notes");

@@ -202,7 +202,7 @@ Variant callableInvoke(const Container<T, Allocator> & callableList, void * inst
 Finds a best matched callable in `callableList`, then invokes the matched callable and returns the result.  
 If no matched callable, exception `metapp::IllegalArgumentException` is thrown.  
 `callableList` can be STL iterable containers, such as `std::vector`, `std::deque`, or `std::list`. The value type T can be `metapp::Variant` that holds a callable.  
-`callableList` can also be `RegisteredItemList` or `RegisteredItemList` obtained from MetaClass or MetaRepo.
+`callableList` can also be `MetaItemList` or `MetaItemList` obtained from MetaClass or MetaRepo.
 
 #### findCallable
 
@@ -218,6 +218,6 @@ Iterator findCallable(
 
 Returns an iterator to the element that's best matched to `arguments` in the range [first, last).  
 If no matched callable, `last` is returned.  
-`Iterator` must be the iterator to `Variant`, `RegisteredItem`, or `RegisteredItem`.
+`Iterator` must be the iterator to `Variant`, `MetaItem`, or `MetaItem`.
 
 desc*/

@@ -28,7 +28,7 @@
 namespace metapp {
 
 namespace internal_ {
-extern RegisteredItem emptyRegisteredItem;
+extern MetaItem emptyMetaItem;
 } // namespace internal_
 
 class MetaEnum
@@ -40,29 +40,29 @@ public:
 		callback(*this);
 	}
 
-	RegisteredItem & registerValue(const std::string & name, const Variant & value) {
+	MetaItem & registerValue(const std::string & name, const Variant & value) {
 		auto it = nameValueMap.find(name);
 		if(it != nameValueMap.end()) {
 			return *it->second;
 		}
-		valueList.emplace_back(RegisteredItem::Type::enumValue, name, value);
-		RegisteredItem & registeredEnumValue = valueList.back();
+		valueList.emplace_back(MetaItem::Type::enumValue, name, value);
+		MetaItem & registeredEnumValue = valueList.back();
 		nameValueMap.insert(typename decltype(nameValueMap)::value_type(registeredEnumValue.getName(), &registeredEnumValue));
 		return registeredEnumValue;
 	}
 
-	const RegisteredItem & getValue(const std::string & name) const {
+	const MetaItem & getValue(const std::string & name) const {
 		auto it = nameValueMap.find(name);
 		if(it != nameValueMap.end()) {
 			return *it->second;
 		}
-		return internal_::emptyRegisteredItem;
+		return internal_::emptyMetaItem;
 	}
 
 	std::vector<std::string> getNameList() const {
 		std::vector<std::string> nameList;
 		std::transform(valueList.begin(), valueList.end(), std::back_inserter(nameList),
-			[](const RegisteredItem & item) {
+			[](const MetaItem & item) {
 				return item.getName();
 			}
 		);
@@ -70,15 +70,15 @@ public:
 	}
 
 private:
-	RegisteredItemList valueList;
+	MetaItemList valueList;
 	std::map<
 		std::reference_wrapper<const std::string>,
-		RegisteredItem *,
+		MetaItem *,
 		std::less<const std::string>
 	> nameValueMap;
 };
 
-inline const RegisteredItem & enumGetValue(const Variant & var, const std::string & name)
+inline const MetaItem & enumGetValue(const Variant & var, const std::string & name)
 {
 	return var.getMetaType()->getMetaEnum()->getValue(name);
 }

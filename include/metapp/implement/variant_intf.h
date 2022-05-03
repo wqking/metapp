@@ -29,7 +29,7 @@ namespace metapp {
 
 class MetaType;
 
-class RegisteredItem;
+class MetaItem;
 
 class Variant
 {
@@ -62,10 +62,10 @@ public:
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;
 
-	// Disable construct from RegisteredItem to avoid pass the item
+	// Disable construct from MetaItem to avoid pass the item
 	// to variant where the underlying variant in the item
-	// (such as RegisteredItem::asCallable()) should be used
-	Variant(const RegisteredItem &) = delete;
+	// (such as MetaItem::asCallable()) should be used
+	Variant(const MetaItem &) = delete;
 
 	template <typename T>
 	Variant & operator = (T value);

@@ -122,12 +122,12 @@ void tutorialMetaRepo_accessible()
 	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
 	//desc Get the meta data of field "value"
-	metapp::RegisteredItem fieldValue = metaRepo->getAccessible("value");
+	metapp::MetaItem fieldValue = metaRepo->getAccessible("value");
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 	//desc Call getTarget() to get the underlying Variant.
 	ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), nullptr).get<int>() == 0);
-	//desc getTarget() can also be omitted, the RegisteredItem can convert to Variant automatically
+	//desc getTarget() can also be omitted, the MetaItem can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 0);
 
 	//desc Now let's set a new value
@@ -136,7 +136,7 @@ void tutorialMetaRepo_accessible()
 	ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 5);
 
 	//desc Now append some new texts to textList
-	metapp::RegisteredItem fieldtextList = metaRepo->getAccessible("textList");
+	metapp::MetaItem fieldtextList = metaRepo->getAccessible("textList");
 	metapp::accessibleGet(fieldtextList, nullptr).get<std::vector<std::string> &>().push_back("good");
 	ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[0] == "hello");
 	ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[1] == "world");
@@ -154,7 +154,7 @@ void tutorialMetaRepo_method()
 	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
 	//desc Get the meta data of method "concat".
-	metapp::RegisteredItem methodConcat = metaRepo->getCallable("concat");
+	metapp::MetaItem methodConcat = metaRepo->getCallable("concat");
 	
 	//desc Call metapp::callableInvoke to invoke the method, and pass the arguments.  
 	//desc The return value is a metapp::Variant.
@@ -172,7 +172,7 @@ void tutorialMetaRepo_type()
 
 	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
-	metapp::RegisteredItem myClassType = metaRepo->getType("MyClass");
+	metapp::MetaItem myClassType = metaRepo->getType("MyClass");
 	ASSERT(myClassType.asMetaType() == metapp::getMetaType<MyClass>());
 	//code
 }

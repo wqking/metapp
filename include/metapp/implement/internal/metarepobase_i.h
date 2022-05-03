@@ -28,7 +28,7 @@
 
 namespace metapp {
 
-class RegisteredItem
+class MetaItem
 {
 public:
 	enum class Type {
@@ -55,12 +55,12 @@ private:
 	};
 
 public:
-	RegisteredItem()
+	MetaItem()
 		: data()
 	{
 	}
 
-	RegisteredItem(const Type type, const std::string & name, const Variant & target)
+	MetaItem(const Type type, const std::string & name, const Variant & target)
 		: data(std::make_shared<Data>(type, name, target))
 	{
 	}
@@ -94,7 +94,7 @@ private:
 	std::shared_ptr<std::map<std::string, Variant> > annotationMap;
 };
 
-using RegisteredItemList = std::deque<RegisteredItem>;
+using MetaItemList = std::deque<MetaItem>;
 
 namespace internal_ {
 
@@ -103,51 +103,51 @@ class MetaRepoBase
 public:
 	MetaRepoBase();
 
-	RegisteredItem & registerAccessible(const std::string & name, const Variant & accessible);
+	MetaItem & registerAccessible(const std::string & name, const Variant & accessible);
 
-	RegisteredItem & registerCallable(const std::string & name, const Variant & callable);
+	MetaItem & registerCallable(const std::string & name, const Variant & callable);
 
 	template <typename T>
-	RegisteredItem & registerType(const std::string & name = "") {
+	MetaItem & registerType(const std::string & name = "") {
 		return registerType(name, getMetaType<T>());
 	}
-	RegisteredItem & registerType(std::string name, const MetaType * metaType);
+	MetaItem & registerType(std::string name, const MetaType * metaType);
 
 protected:
-	void doGetAccessibleList(RegisteredItemList * result) const;
-	const RegisteredItemList & doGetAccessibleList() const;
-	const RegisteredItem & doGetAccessible(const std::string & name) const;
+	void doGetAccessibleList(MetaItemList * result) const;
+	const MetaItemList & doGetAccessibleList() const;
+	const MetaItem & doGetAccessible(const std::string & name) const;
 
-	const RegisteredItem & doGetCallable(const std::string & name) const;
-	void doGetCallableList(RegisteredItemList * result) const;
-	const RegisteredItemList & doGetCallableList() const;
+	const MetaItem & doGetCallable(const std::string & name) const;
+	void doGetCallableList(MetaItemList * result) const;
+	const MetaItemList & doGetCallableList() const;
 
-	const RegisteredItem & doGetType(const std::string & name) const;
-	const RegisteredItem & doGetType(const TypeKind kind) const;
-	const RegisteredItem & doGetType(const MetaType * metaType) const;
-	void doGetTypeList(RegisteredItemList * result) const;
-	const RegisteredItemList & doGetTypeList() const;
+	const MetaItem & doGetType(const std::string & name) const;
+	const MetaItem & doGetType(const TypeKind kind) const;
+	const MetaItem & doGetType(const MetaType * metaType) const;
+	void doGetTypeList(MetaItemList * result) const;
+	const MetaItemList & doGetTypeList() const;
 
 private:
 	struct TypeData
 	{
-		RegisteredItemList typeList;
+		MetaItemList typeList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredItem *,
+			MetaItem *,
 			std::less<const std::string>
 		> nameTypeMap;
-		std::map<TypeKind, RegisteredItem *> kindTypeMap;
-		std::map<const MetaType *, RegisteredItem *> typeTypeMap;
+		std::map<TypeKind, MetaItem *> kindTypeMap;
+		std::map<const MetaType *, MetaItem *> typeTypeMap;
 	};
 	std::shared_ptr<TypeData> typeData;
 
 	struct CallableData
 	{
-		RegisteredItemList callableList;
+		MetaItemList callableList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredItem *,
+			MetaItem *,
 			std::less<const std::string>
 		> callableMap;
 	};
@@ -155,10 +155,10 @@ private:
 
 	struct AccessibleData
 	{
-		RegisteredItemList accessibleList;
+		MetaItemList accessibleList;
 		std::map<
 			std::reference_wrapper<const std::string>,
-			RegisteredItem *,
+			MetaItem *,
 			std::less<const std::string>
 		> accessibleMap;
 	};

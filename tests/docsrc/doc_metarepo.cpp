@@ -46,49 +46,49 @@ Note: it's possible to use MetaRepo as local variable, instead of the global ins
 #### registerAccessible
 
 ```c++
-RegisteredItem & registerAccessible(const std::string & name, const Variant & field);
+MetaItem & registerAccessible(const std::string & name, const Variant & field);
 ```
 
 Register an accessible (global variable).
 The parameter `name` is the accessible name. The accessible can be got from the MetaRepo by the name later. If a accessible with the same name has already registered, `registerAccessible` doesn't register the new accessible and returns the previous registered field.  
 The parameter `accessible` is a Variant of MetaType that implements meta interface `MetaAccessible`.  
-The returned `RegisteredItem` can be used to add annotations to the meta data.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
 
 #### registerCallable
 
 ```c++
-RegisteredItem & registerCallable(const std::string & name, const Variant & callable);
+MetaItem & registerCallable(const std::string & name, const Variant & callable);
 ```
 Register a callable.  
 The parameter `name` is the callable name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
 The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to free function, or even `std::function`.  
-The returned `RegisteredItem` can be used to add annotations to the meta data.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
 
 #### registerType
 
 ```c++
 template <typename T>
-RegisteredItem & registerType(const std::string & name = ""); // #1
+MetaItem & registerType(const std::string & name = ""); // #1
 	return registerType(name, getMetaType<T>());
 }
-RegisteredItem & registerType(std::string name, const MetaType * metaType); // #2
+MetaItem & registerType(std::string name, const MetaType * metaType); // #2
 ```
 
 Register a MetaType.  
 The #1 form is equivalent to `registerType(name, getMetaType<T>())`;  
 If the parameter `name` is empty, the function tries to get the name from built-in types. If the name is not found, then the name is not used and the MetaType can't be got by name.  
-The returned `RegisteredItem` can be used to add annotations to the meta data.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
 
 #### registerRepo, simulate namespace
 
 ```c++
-RegisteredItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+MetaItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
 ```
 
 Register a sub MetaRepo.  
-If the parameter `repo` is nullptr, `registerRepo` creates a new MetaRepo and register it under the `name`. The created `MetaRepo` can be got via `RegisteredItem::getTarget()` in the returned value.  
+If the parameter `repo` is nullptr, `registerRepo` creates a new MetaRepo and register it under the `name`. The created `MetaRepo` can be got via `MetaItem::getTarget()` in the returned value.  
 If the parameter `repo` is not nullptr, `registerRepo` takes ownership of the `repo`. That to say, `repo` should not be freed by the program. `MetaRepo` will free it later.  
-The returned `RegisteredItem` can be used to add annotations to the meta data.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
 Note: registering a MetaRepo can simulate namespace. A MetaRepo can be treated as a namespace.  
 
 
@@ -97,17 +97,17 @@ Note: registering a MetaRepo can simulate namespace. A MetaRepo can be treated a
 #### getAccessible
 
 ```c++
-const RegisteredItem & getAccessible(const std::string & name) const;
+const MetaItem & getAccessible(const std::string & name) const;
 ```
 
-Get an accessible of `name`. If the accessible is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
+Get an accessible of `name`. If the accessible is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 #### getAccessibleList
 
 ```c++
-RegisteredItemList getAccessibleList() const;
+MetaItemList getAccessibleList() const;
 
-using RegisteredItemList = std::deque<RegisteredItem>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 Get a list of all registered accessibles.  
@@ -115,17 +115,17 @@ Get a list of all registered accessibles.
 #### getCallable
 
 ```c++
-const RegisteredItem & getCallable(const std::string & name) const;
+const MetaItem & getCallable(const std::string & name) const;
 ```
 
-Get a callable of `name`. If the callable is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
+Get a callable of `name`. If the callable is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 #### getCallableList
 
 ```c++
-RegisteredItemList getCallableList() const;
+MetaItemList getCallableList() const;
 
-using RegisteredItemList = std::deque<RegisteredItem>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 Get a list of all registered callables.  
@@ -133,34 +133,34 @@ Get a list of all registered callables.
 #### getType by name
 
 ```c++
-const RegisteredItem & getType(const std::string & name) const;
+const MetaItem & getType(const std::string & name) const;
 ```
 
-Get a RegisteredItem of `name`. If the type name is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
+Get a MetaItem of `name`. If the type name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 #### getType by type kind
 
 ```c++
-const RegisteredItem & getType(const TypeKind kind) const;
+const MetaItem & getType(const TypeKind kind) const;
 ```
 
-Get a RegisteredItem of `kind`. If the type kind is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
+Get a MetaItem of `kind`. If the type kind is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 #### getType by MetaType
 
 ```c++
-const RegisteredItem & getType(const MetaType * metaType) const;
+const MetaItem & getType(const MetaType * metaType) const;
 ```
 
-Get a RegisteredItem of `metaType`. If the meta type is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).   
+Get a MetaItem of `metaType`. If the meta type is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).   
 This function is useful to get the name of a registered meta type.
 
 #### getTypeList
 
 ```c++
-RegisteredItemList getTypeList() const;
+MetaItemList getTypeList() const;
 
-using RegisteredItemList = std::deque<RegisteredItem>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 Get a list of all registered types.  
@@ -168,15 +168,15 @@ Get a list of all registered types.
 #### getRepo
 
 ```c++
-const RegisteredItem & getRepo(const std::string & name) const;
+const MetaItem & getRepo(const std::string & name) const;
 ```
 
-Get a registered sub MetaRepo by `name`. If the repo name is not registered, an empty RegisteredItem is returned (RegisteredItem::isEmpty() is true).  
+Get a registered sub MetaRepo by `name`. If the repo name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 #### getRepoList
 
 ```c++
-const RegisteredItemList & getRepoList() const;
+const MetaItemList & getRepoList() const;
 ```
 
 Get a list of all registered sub repos.  
