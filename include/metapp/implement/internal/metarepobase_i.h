@@ -125,6 +125,18 @@ protected:
 		MetaItem & addItem(const MetaItem::Type type, const std::string & name, const Variant & target);
 		const MetaItem & findItem(const std::string & name) const;
 	};
+	template <typename T>
+	static bool doFindItemByName(const std::shared_ptr<T> & data, const std::string & name, const MetaItem * & result)
+	{
+		if(data) {
+			auto it = data->nameItemMap.find(name);
+			if(it != data->nameItemMap.end()) {
+				result = it->second;
+				return true;
+			}
+		}
+		return false;
+	}
 
 	const MetaItem & doGetAccessible(const std::string & name) const;
 	const MetaItemList & doGetAccessibleList() const;
@@ -136,6 +148,8 @@ protected:
 	const MetaItem & doGetType(const TypeKind kind) const;
 	const MetaItem & doGetType(const MetaType * metaType) const;
 	const MetaItemList & doGetTypeList() const;
+	
+	const MetaItem & doGetItem(const std::string & name) const;
 
 private:
 	struct TypeData : ItemData

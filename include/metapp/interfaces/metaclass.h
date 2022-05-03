@@ -56,6 +56,8 @@ public:
 	const MetaItem & getType(const MetaType * metaType, const Flags flags = flagIncludeBase) const;
 	MetaItemView getTypeView(const Flags flags = flagIncludeBase) const;
 
+	const MetaItem & getItem(const std::string & name) const;
+
 private:
 	bool hasFlag(const Flags flags, const Flags flag) const {
 		return (flags & flag) != 0;

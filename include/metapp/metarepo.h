@@ -46,6 +46,8 @@ public:
 	const MetaItem & getRepo(const std::string & name) const;
 	MetaItemView getRepoView() const;
 
+	const MetaItem & getItem(const std::string & name) const;
+
 private:
 	void registerBuiltinTypes();
 

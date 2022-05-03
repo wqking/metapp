@@ -357,6 +357,16 @@ const MetaItemList & MetaRepoBase::doGetTypeList() const
 	}
 }
 
+const MetaItem & MetaRepoBase::doGetItem(const std::string & name) const
+{
+	const MetaItem * result = &internal_::emptyMetaItem;
+	doFindItemByName(accessibleData, name, result)
+		|| doFindItemByName(callableData, name, result)
+		|| doFindItemByName(typeData, name, result)
+	;
+	return *result;
+}
+
 Variant doCombineOverloadedCallable(const Variant & target, const Variant & callable)
 {
 	if(getNonReferenceMetaType(target)->getTypeKind() == tkOverloadedFunction) {
@@ -565,6 +575,15 @@ const MetaItem & MetaRepo::getRepo(const std::string & name) const
 MetaItemView MetaRepo::getRepoView() const
 {
 	return repoData ? MetaItemView(&repoData->itemList) : MetaItemView();
+}
+
+const MetaItem & MetaRepo::getItem(const std::string & name) const
+{
+	const MetaItem * result = &doGetItem(name);
+	if(result->isEmpty()) {
+		doFindItemByName(repoData, name, result);
+	}
+	return *result;
 }
 
 void MetaRepo::registerBuiltinTypes()

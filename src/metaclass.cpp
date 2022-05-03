@@ -174,6 +174,11 @@ MetaItemView MetaClass::getTypeView(const Flags flags) const
 	return view;
 }
 
+const MetaItem & MetaClass::getItem(const std::string & name) const
+{
+	return doGetItem(name);
+}
+
 void MetaClass::doBuildMetaItemView(
 		MetaItemView * view,
 		const MetaItemList & (MetaClass::*listGetter)() const,
