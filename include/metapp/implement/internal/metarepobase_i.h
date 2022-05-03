@@ -113,6 +113,19 @@ public:
 	MetaItem & registerType(std::string name, const MetaType * metaType);
 
 protected:
+	struct ItemData
+	{
+		MetaItemList itemList;
+		std::map<
+			std::reference_wrapper<const std::string>,
+			MetaItem *,
+			std::less<const std::string>
+		> nameItemMap;
+
+		MetaItem & addItem(const MetaItem::Type type, const std::string & name, const Variant & target);
+		const MetaItem & findItem(const std::string & name) const;
+	};
+
 	const MetaItem & doGetAccessible(const std::string & name) const;
 	const MetaItemList & doGetAccessibleList() const;
 
@@ -125,40 +138,15 @@ protected:
 	const MetaItemList & doGetTypeList() const;
 
 private:
-	struct TypeData
+	struct TypeData : ItemData
 	{
-		MetaItemList typeList;
-		std::map<
-			std::reference_wrapper<const std::string>,
-			MetaItem *,
-			std::less<const std::string>
-		> nameTypeMap;
 		std::map<TypeKind, MetaItem *> kindTypeMap;
 		std::map<const MetaType *, MetaItem *> typeTypeMap;
 	};
 	std::shared_ptr<TypeData> typeData;
 
-	struct CallableData
-	{
-		MetaItemList callableList;
-		std::map<
-			std::reference_wrapper<const std::string>,
-			MetaItem *,
-			std::less<const std::string>
-		> callableMap;
-	};
-	std::shared_ptr<CallableData> callableData;
-
-	struct AccessibleData
-	{
-		MetaItemList accessibleList;
-		std::map<
-			std::reference_wrapper<const std::string>,
-			MetaItem *,
-			std::less<const std::string>
-		> accessibleMap;
-	};
-	std::shared_ptr<AccessibleData> accessibleData;
+	std::shared_ptr<ItemData> callableData;
+	std::shared_ptr<ItemData> accessibleData;
 };
 
 Variant doCombineOverloadedCallable(const Variant & target, const Variant & callable);

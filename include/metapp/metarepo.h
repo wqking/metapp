@@ -50,12 +50,7 @@ private:
 	void registerBuiltinTypes();
 
 private:
-	MetaItemList repoList;
-	std::map<
-		std::reference_wrapper<const std::string>,
-		MetaItem *,
-		std::less<const std::string>
-	> repoMap;
+	std::shared_ptr<ItemData> repoData;
 };
 
 MetaRepo * getMetaRepo();
