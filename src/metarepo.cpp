@@ -37,12 +37,16 @@ RegisteredItem emptyRegisteredItem;
 
 InheritanceRepo::TypesView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
-	return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->baseList);
+	TypesView view;
+	view.addContainer(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
+	return view;
 }
 
 InheritanceRepo::TypesView InheritanceRepo::getDerives(const MetaType * classMetaType) const
 {
-	return TypesView(doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
+	TypesView view;
+	view.addContainer(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
+	return view;
 }
 
 void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const

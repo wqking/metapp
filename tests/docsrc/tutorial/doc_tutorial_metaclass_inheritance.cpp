@@ -91,13 +91,13 @@ TEST_CASE("tutorialMetaClass_inheritance")
 	metapp::getMetaRepo()->registerBase<Grandson2, Son1, Parent2>();
 
 	auto baseTypesViewSon1 = metapp::getMetaRepo()->getBases(metapp::getMetaType<Son1>());
-	ASSERT(baseTypesViewSon1.getCount() == 1);
-	ASSERT(baseTypesViewSon1.get(0) == metapp::getMetaType<Parent1>());
+	ASSERT(baseTypesViewSon1.size() == 1);
+	ASSERT(baseTypesViewSon1.at(0) == metapp::getMetaType<Parent1>());
 
 	auto baseTypesViewGrandson2 = metapp::getMetaRepo()->getBases<Grandson2>();
-	ASSERT(baseTypesViewGrandson2.getCount() == 2);
-	ASSERT(baseTypesViewGrandson2.get(0) == metapp::getMetaType<Son1>());
-	ASSERT(baseTypesViewGrandson2.get(1) == metapp::getMetaType<Parent2>());
+	ASSERT(baseTypesViewGrandson2.size() == 2);
+	ASSERT(baseTypesViewGrandson2.at(0) == metapp::getMetaType<Son1>());
+	ASSERT(baseTypesViewGrandson2.at(1) == metapp::getMetaType<Parent2>());
 
 	Son2 son2;
 	ASSERT(metapp::getMetaRepo()->castToBase<Son2>(&son2, 0) == static_cast<Parent1 *>(&son2));

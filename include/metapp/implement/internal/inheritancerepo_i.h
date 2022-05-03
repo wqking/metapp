@@ -19,8 +19,10 @@
 
 #include "metapp/variant.h"
 #include "metapp/metatype.h"
+#include "metapp/implement/internal/disjointview_i.h"
 
 #include <vector>
+#include <deque>
 #include <set>
 #include <unordered_map>
 #include <type_traits>
@@ -44,12 +46,16 @@ private:
 	{
 		const MetaType * targetMetaType;
 		void * (*cast)(void * pointer);
+
+		operator const MetaType * const & () const {
+			return targetMetaType;
+		}
 	};
 
 	struct ClassInfo
 	{
-		std::vector<BaseDerived> baseList;
-		std::vector<BaseDerived> derivedList;
+		std::deque<BaseDerived> baseList;
+		std::deque<BaseDerived> derivedList;
 	};
 
 	static constexpr int maxInheritanceLevels = 256;
@@ -62,28 +68,7 @@ public:
 		derived
 	};
 
-	class TypesView
-	{
-	public:
-		size_t getCount() const {
-			return baseDerivedList.size();
-		}
-
-		const MetaType * get(const size_t index) const {
-			return baseDerivedList[index].targetMetaType;
-		}
-
-	private:
-		explicit TypesView(const std::vector<BaseDerived> & baseDerivedList)
-			: baseDerivedList(baseDerivedList)
-		{
-		}
-
-		friend class InheritanceRepo;
-
-	private:
-		const std::vector<BaseDerived> & baseDerivedList;
-	};
+	using TypesView = internal_::DisjointView<const MetaType *, std::deque<BaseDerived>, 1>;
 
 public:
 	template <typename Class, typename ...Bases>
@@ -275,10 +260,9 @@ private:
 		if(! callback(metaType)) {
 			return false;
 		}
-		auto baseView = getBases(metaType);
-		const size_t count = baseView.getCount();
-		for(size_t i = 0; i < count; ++i) {
-			if(! doTraverseBases(baseView.get(i), callback, metaTypeSet)) {
+		const TypesView baseView = getBases(metaType);
+		for(auto baseMetaType : baseView) {
+			if(! doTraverseBases(baseMetaType, callback, metaTypeSet)) {
 				return false;
 			}
 		}

@@ -25,11 +25,11 @@ namespace metapp {
 
 namespace internal_ {
 
-template <typename ValueType, typename Container>
+template <typename ValueType, typename Container, size_t smallListSize = 4>
 class DisjointView
 {
 private:
-	static constexpr size_t smallListSize = 4;
+	static_assert(smallListSize > 0, "Invalid smallListSize");
 
 	struct ContainerItem
 	{
@@ -103,8 +103,54 @@ public:
 
 public:
 	DisjointView()
-		: smallList(), largeList(), listPointer(smallList.data()), listCount(0)
+		:
+			smallList(),
+			largeList(),
+			listPointer(smallList.data()),
+			listCount(0)
 	{
+	}
+
+	DisjointView(const DisjointView & other)
+		:
+			smallList(other.smallList),
+			largeList(other.largeList),
+			listPointer(),
+			listCount(other.listCount)
+	{
+		resetListPointer();
+	}
+
+	DisjointView(DisjointView && other)
+		:
+			smallList(std::move(other.smallList)),
+			largeList(std::move(other.largeList)),
+			listPointer(),
+			listCount(std::move(other.listCount))
+	{
+		resetListPointer();
+	}
+
+	DisjointView & operator = (const DisjointView & other) {
+		if(this != &other) {
+			smallList = other.smallList;
+			largeList = other.largeList;
+			listCount = other.listCount;
+
+			resetListPointer();
+		}
+		return *this;
+	}
+
+	DisjointView & operator = (DisjointView && other) {
+		if(this != &other) {
+			smallList = std::move(other.smallList);
+			largeList = std::move(other.largeList);
+			listCount = std::move(other.listCount);
+
+			resetListPointer();
+		}
+		return *this;
 	}
 
 	iterator begin() const {
@@ -150,9 +196,9 @@ public:
 				largeList.insert(largeList.end(), smallList.begin(), smallList.end());
 			}
 			largeList.push_back({ container, totalSize });
-			listPointer = largeList.data();
 		}
 		++listCount;
+		resetListPointer(); // must be after ++listCount
 	}
 
 private:
@@ -169,6 +215,10 @@ private:
 			}
 			++*listIndex;
 		}
+	}
+
+	void resetListPointer() {
+		listPointer = listCount <= smallListSize ? smallList.data() : largeList.data();
 	}
 
 private:

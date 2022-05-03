@@ -38,19 +38,19 @@ TEST_CASE("MetaRepo, hierarchy, basic")
 	repo->registerBase<SonOfFirst, BaseFirst>();
 	repo->registerBase<SonOfFirstSecond, BaseFirst, BaseSecond>();
 
-	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).getCount() == 1);
-	REQUIRE(repo->getBases(metapp::getMetaType<const SonOfFirst>()).getCount() == 1);
-	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).get(0) == metapp::getMetaType<BaseFirst>());
-	REQUIRE(repo->getBases(metapp::getMetaType<const volatile SonOfFirst>()).get(0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).size() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<const SonOfFirst>()).size() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirst>()).at(0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<const volatile SonOfFirst>()).at(0) == metapp::getMetaType<BaseFirst>());
 
-	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).getCount() == 2);
-	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).get(0) == metapp::getMetaType<BaseFirst>());
-	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).get(1) == metapp::getMetaType<BaseSecond>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).size() == 2);
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).at(0) == metapp::getMetaType<BaseFirst>());
+	REQUIRE(repo->getBases(metapp::getMetaType<SonOfFirstSecond>()).at(1) == metapp::getMetaType<BaseSecond>());
 
-	REQUIRE(repo->getDerives(metapp::getMetaType<SonOfFirst>()).getCount() == 0);
-	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).getCount() == 2);
-	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(0) == metapp::getMetaType<SonOfFirst>());
-	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).get(1) == metapp::getMetaType<SonOfFirstSecond>());
+	REQUIRE(repo->getDerives(metapp::getMetaType<SonOfFirst>()).size() == 0);
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).size() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).at(0) == metapp::getMetaType<SonOfFirst>());
+	REQUIRE(repo->getDerives(metapp::getMetaType<BaseFirst>()).at(1) == metapp::getMetaType<SonOfFirstSecond>());
 }
 
 TEST_CASE("MetaRepo, hierarchy, add duplicated bases")
@@ -64,19 +64,19 @@ TEST_CASE("MetaRepo, hierarchy, add duplicated bases")
 	auto * repo = &metaRepo;
 
 	repo->registerBase<B1, A1>();
-	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
-	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).size() == 1);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).size() == 1);
 	repo->registerBase<B1, A1>();
-	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<B1>()).size() == 1);
 
 	repo->registerBase<B2, A1, A2>();
-	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
-	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
-	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).size() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).size() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).size() == 1);
 	repo->registerBase<B2, A1, A2>();
-	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).getCount() == 2);
-	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).getCount() == 2);
-	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).getCount() == 1);
+	REQUIRE(repo->getBases(metapp::getMetaType<B2>()).size() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A1>()).size() == 2);
+	REQUIRE(repo->getDerives(metapp::getMetaType<A2>()).size() == 1);
 }
 
 TEST_CASE("MetaRepo, hierarchy, castToBase and castToDerived")

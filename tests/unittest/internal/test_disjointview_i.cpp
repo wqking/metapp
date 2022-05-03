@@ -114,5 +114,52 @@ TEST_CASE("DisjointView, for loop")
 	}
 }
 
+TEST_CASE("DisjointView, empty view")
+{
+	using ListType = std::deque<int>;
+	using ViewType = metapp::internal_::DisjointView<int, ListType>;
+
+	std::array<ListType, 2> lists {
+		ListType {},
+		ListType {},
+	};
+	ViewType view;
+	for(auto it = lists.begin(); it != lists.end(); ++it) {
+		view.addContainer(&*it);
+	}
+
+	int count = 0;
+	for(auto it = view.begin(); it != view.end(); ++it) {
+		++count;
+	}
+	REQUIRE(count == 0);
+}
+
+TEST_CASE("DisjointView, copy view")
+{
+	using ListType = std::deque<int>;
+	using ViewType = metapp::internal_::DisjointView<int, ListType>;
+
+	std::array<ListType, 2> lists {
+		ListType { 1, 2 },
+		ListType { 3, 4, 5 },
+	};
+	ViewType view;
+	{
+		ViewType viewBeCopied;
+		for(auto it = lists.begin(); it != lists.end(); ++it) {
+			viewBeCopied.addContainer(&*it);
+		}
+		view = viewBeCopied;
+		viewBeCopied = ViewType();
+	}
+
+	int expected = 1;
+	for(auto it = view.begin(); it != view.end(); ++it) {
+		REQUIRE(*it == expected);
+		++expected;
+	}
+}
+
 
 } // namespace
