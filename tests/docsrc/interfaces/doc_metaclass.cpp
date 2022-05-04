@@ -145,7 +145,7 @@ struct metapp::DeclareMetaType<AccClass> : metapp::DeclareMetaTypeBase<AccClass>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<AccClass>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerAccessible("text", &AccClass::text);
+				mc.registerAccessible("text", metapp::createAccessor(&AccClass::text));
 				mc.registerAccessible("value", metapp::createAccessor(&AccClass::getValue, &AccClass::setValue));
 			}
 		);

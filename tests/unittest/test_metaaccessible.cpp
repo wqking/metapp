@@ -26,66 +26,6 @@
 
 namespace {
 
-TEST_CASE("MetaAccessible, pointer, int *")
-{
-	int n = 5;
-	metapp::Variant v(&n);
-	auto metaAccessible = v.getMetaType()->getMetaAccessible();
-	REQUIRE(metaAccessible != nullptr);
-	REQUIRE(! metaAccessible->isReadOnly(v));
-	REQUIRE(metaAccessible->getValueType(v) == metapp::getMetaType<int>());
-	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 5);
-
-	n = 10;
-	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 10);
-
-	metaAccessible->set(v, nullptr, 38);
-	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 38);
-}
-
-TEST_CASE("MetaAccessible, pointer, const int *")
-{
-	const int n = 5;
-	metapp::Variant v(&n);
-	auto metaAccessible = v.getMetaType()->getMetaAccessible();
-	REQUIRE(metaAccessible != nullptr);
-	REQUIRE(metaAccessible->isReadOnly(v));
-	REQUIRE(metaAccessible->getValueType(v) == metapp::getMetaType<const int>());
-	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 5);
-
-	REQUIRE_THROWS(metaAccessible->set(v, nullptr, 38));
-	REQUIRE(metaAccessible->get(v, nullptr).get<int>() == 5);
-}
-
-TEST_CASE("MetaAccessible, member pointer, std::string MyClass:: *")
-{
-	struct MyClass { std::string text; };
-	MyClass obj { "hello"};
-	metapp::Variant v(&obj.text);
-	REQUIRE(! metapp::accessibleIsReadOnly(v));
-	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());
-	REQUIRE(metapp::accessibleGet(v, &obj).get<const std::string &>() == "hello");
-
-	obj.text = "world";
-	REQUIRE(metapp::accessibleGet(v, &obj).get<const std::string &>() == "world");
-
-	metapp::accessibleSet(v, &obj, "good");
-	REQUIRE(metapp::accessibleGet(v, &obj).get<const std::string &>() == "good");
-}
-
-TEST_CASE("MetaAccessible, member pointer, const std::string MyClass:: *")
-{
-	struct MyClass { const std::string text; };
-	MyClass obj { "hello"};
-	metapp::Variant v(&obj.text);
-	REQUIRE(metapp::accessibleIsReadOnly(v));
-	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<const std::string>());
-	REQUIRE(metapp::accessibleGet(v, &obj).get<const std::string &>() == "hello");
-
-	REQUIRE_THROWS(metapp::accessibleSet(v, &obj, "good"));
-	REQUIRE(metapp::accessibleGet(v, &obj).get<const std::string &>() == "hello");
-}
-
 TEST_CASE("MetaAccessible, Accessor, int")
 {
 	int n = 5;

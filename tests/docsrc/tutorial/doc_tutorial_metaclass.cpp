@@ -152,7 +152,7 @@ struct metapp::DeclareMetaType <TmClass> : metapp::DeclareMetaTypeBase <TmClass>
 				mc.registerAccessible("value",
 					metapp::createAccessor(&TmClass::getValue, &TmClass::setValue));
 				// Register member data as field
-				auto & item = mc.registerAccessible("message", &TmClass::message);
+				auto & item = mc.registerAccessible("message", metapp::createAccessor(&TmClass::message));
 				// Add some annotations to the accessible
 				item.registerAnnotation("description", "This is a description");
 				item.registerAnnotation("notes", std::vector<std::string> { "first", "second" });

@@ -37,36 +37,6 @@ struct DeclareMetaTypePointerBase
 template <typename T>
 struct DeclareMetaTypeBase <T *> : DeclareMetaTypePointerBase<T *>
 {
-private:
-	static_assert(! std::is_void<T>::value, "T should not be void in T * specialization.");
-
-public:
-	static const MetaAccessible * getMetaAccessible() {
-		static MetaAccessible metaAccessible(
-			&accessibleGetValueType,
-			&accessibleIsReadOnly,
-			&accessibleGet,
-			&accessibleSet
-		);
-		return &metaAccessible;
-	}
-
-	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
-		return getMetaType<T>();
-	}
-
-	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
-		return std::is_const<T>::value;
-	}
-
-	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
-		return Variant::reference(*accessible.get<T *>());
-	}
-
-	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
-		internal_::assignValue(*(accessible.get<T *>()), value.cast<T>().template get<const T &>());
-	}
-
 };
 
 template <typename T>

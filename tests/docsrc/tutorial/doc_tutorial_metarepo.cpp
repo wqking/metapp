@@ -94,7 +94,7 @@ void tutorialMetaRepo_registerMetaData()
 	The second argument in `registerAccessible` is a `metapp::Variant`. Any data can be casted to `metapp::Variant`
 	implicitly, so we don't need to specify `metapp::Variant` explicitly.
 	desc*/
-	metaRepo->registerAccessible("textList", &textList);
+	metaRepo->registerAccessible("textList", metapp::createAccessor<std::vector<std::string> &>(&textList));
 	metaRepo->registerAccessible("value", metapp::createAccessor<int>(&getValue, &setValue));
 
 	/*desc

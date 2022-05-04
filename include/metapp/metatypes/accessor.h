@@ -42,11 +42,24 @@ Accessor<T> createAccessor(G && getter, S && setter)
 	return accessorpp::createAccessor<T>(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies());
 }
 
+template <typename T, typename GS>
+Accessor<T> createAccessor(GS && getterSetter)
+{
+	return accessorpp::createAccessor<T>(std::forward<GS>(getterSetter), std::forward<GS>(getterSetter), internal_::AccessorPolicies());
+}
+
 template <typename G, typename S>
 auto createAccessor(G && getter, S && setter)
 	-> decltype(accessorpp::createAccessor(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies()))
 {
 	return accessorpp::createAccessor(std::forward<G>(getter), std::forward<S>(setter), internal_::AccessorPolicies());
+}
+
+template <typename GS>
+auto createAccessor(GS && getterSetter)
+	-> decltype(accessorpp::createAccessor(std::forward<GS>(getterSetter), std::forward<GS>(getterSetter), internal_::AccessorPolicies()))
+{
+	return accessorpp::createAccessor(std::forward<GS>(getterSetter), std::forward<GS>(getterSetter), internal_::AccessorPolicies());
 }
 
 template <typename T, typename G>
