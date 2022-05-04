@@ -21,7 +21,6 @@
 #include "metapp/metatype.h"
 #include "metapp/implement/internal/disjointview_i.h"
 
-#include <vector>
 #include <deque>
 #include <set>
 #include <unordered_map>

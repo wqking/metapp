@@ -19,7 +19,6 @@
 
 #include "metapp/utilities/utility.h"
 
-#include <vector>
 #include <string>
 
 namespace metapp {

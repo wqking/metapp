@@ -20,7 +20,6 @@
 #include "metapp/implement/internal/metarepobase_i.h"
 #include "metapp/metarepo.h"
 
-#include <vector>
 #include <memory>
 
 namespace metapp {

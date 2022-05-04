@@ -20,7 +20,6 @@
 #include "metapp/variant.h"
 #include "metapp/metarepo.h"
 
-#include <vector>
 #include <map>
 #include <algorithm>
 
