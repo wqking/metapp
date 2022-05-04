@@ -104,6 +104,34 @@ MetaItemView MetaClass::getCallableView(const Flags flags) const
 	return view;
 }
 
+const MetaItem & MetaClass::getConstant(const std::string & name, const Flags flags) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		const MetaItem * result = &internal_::emptyMetaItem;
+		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
+			const MetaClass * metaClass = metaType->getMetaClass();
+			if(metaClass != nullptr) {
+				result = &metaClass->doGetConstant(name);
+				if(! result->isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+			});
+		return *result;
+	}
+	else {
+		return doGetConstant(name);
+	}
+}
+
+MetaItemView MetaClass::getConstantView(const Flags flags) const
+{
+	MetaItemView view;
+	doBuildMetaItemView(&view, &MetaClass::doGetConstantList, flags);
+	return view;
+}
+
 const MetaItem & MetaClass::getType(const std::string & name, const Flags flags) const
 {
 	if(hasFlag(flags, flagIncludeBase)) {

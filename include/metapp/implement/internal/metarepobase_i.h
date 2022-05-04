@@ -106,6 +106,8 @@ public:
 
 	MetaItem & registerCallable(const std::string & name, const Variant & callable);
 
+	MetaItem & registerConstant(const std::string & name, const Variant & constant);
+
 	template <typename T>
 	MetaItem & registerType(const std::string & name = "") {
 		return registerType(name, getMetaType<T>());
@@ -144,6 +146,9 @@ protected:
 	const MetaItem & doGetCallable(const std::string & name) const;
 	const MetaItemList & doGetCallableList() const;
 
+	const MetaItem & doGetConstant(const std::string & name) const;
+	const MetaItemList & doGetConstantList() const;
+
 	const MetaItem & doGetType(const std::string & name) const;
 	const MetaItem & doGetType(const TypeKind kind) const;
 	const MetaItem & doGetType(const MetaType * metaType) const;
@@ -152,6 +157,10 @@ protected:
 	const MetaItem & doGetItem(const std::string & name) const;
 
 private:
+	std::shared_ptr<ItemData> accessibleData;
+	std::shared_ptr<ItemData> callableData;
+	std::shared_ptr<ItemData> constantData;
+
 	struct TypeData : ItemData
 	{
 		std::map<TypeKind, MetaItem *> kindTypeMap;
@@ -159,8 +168,6 @@ private:
 	};
 	std::shared_ptr<TypeData> typeData;
 
-	std::shared_ptr<ItemData> callableData;
-	std::shared_ptr<ItemData> accessibleData;
 };
 
 Variant doCombineOverloadedCallable(const Variant & target, const Variant & callable);

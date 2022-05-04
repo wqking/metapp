@@ -218,9 +218,10 @@ const MetaItem & MetaRepoBase::ItemData::findItem(const std::string & name) cons
 
 MetaRepoBase::MetaRepoBase()
 	:
-		typeData(),
+		accessibleData(),
 		callableData(),
-		accessibleData()
+		constantData(),
+		typeData()
 {
 }
 
@@ -258,6 +259,19 @@ MetaItem & MetaRepoBase::registerCallable(const std::string & name, const Varian
 		return *it->second;
 	}
 	return callableData->addItem(MetaItem::Type::callable, name, callable);
+}
+
+MetaItem & MetaRepoBase::registerConstant(const std::string & name, const Variant & constant)
+{
+	if(! constantData) {
+		constantData = std::make_shared<ItemData>();
+	}
+
+	auto it = constantData->nameItemMap.find(name);
+	if(it != constantData->nameItemMap.end()) {
+		return *it->second;
+	}
+	return constantData->addItem(MetaItem::Type::accessible, name, constant);
 }
 
 MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
@@ -311,6 +325,24 @@ const MetaItemList & MetaRepoBase::doGetCallableList() const
 {
 	if(callableData) {
 		return callableData->itemList;
+	}
+	else {
+		return dummyMetaItemList;
+	}
+}
+
+const MetaItem & MetaRepoBase::doGetConstant(const std::string & name) const
+{
+	if(constantData) {
+		return constantData->findItem(name);
+	}
+	return internal_::emptyMetaItem;
+}
+
+const MetaItemList & MetaRepoBase::doGetConstantList() const
+{
+	if(constantData) {
+		return constantData->itemList;
 	}
 	else {
 		return dummyMetaItemList;
@@ -531,6 +563,16 @@ const MetaItem & MetaRepo::getCallable(const std::string & name) const
 MetaItemView MetaRepo::getCallableView() const
 {
 	return MetaItemView(&doGetCallableList());
+}
+
+const MetaItem & MetaRepo::getConstant(const std::string & name) const
+{
+	return doGetConstant(name);
+}
+
+MetaItemView MetaRepo::getConstantView() const
+{
+	return MetaItemView(&doGetConstantList());
 }
 
 const MetaItem & MetaRepo::getType(const std::string & name) const
