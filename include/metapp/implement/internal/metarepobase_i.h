@@ -97,6 +97,9 @@ using MetaItemView = internal_::DisjointView<MetaItem, std::deque<MetaItem>, 4>;
 
 namespace internal_ {
 
+extern MetaItem emptyMetaItem;
+extern MetaItemList emptyMetaItemList;
+
 class MetaRepoBase
 {
 public:
@@ -127,17 +130,30 @@ protected:
 		MetaItem & addItem(const MetaItem::Type type, const std::string & name, const Variant & target);
 		const MetaItem & findItem(const std::string & name) const;
 	};
+
+	template <typename T>
+	static const MetaItem & doFindItemByName(const std::shared_ptr<T> & data, const std::string & name)
+	{
+		if(data) {
+			return data->findItem(name);
+		}
+		return internal_::emptyMetaItem;
+	}
+
 	template <typename T>
 	static bool doFindItemByName(const std::shared_ptr<T> & data, const std::string & name, const MetaItem * & result)
 	{
+		result = &doFindItemByName(data, name);
+		return !result->isEmpty();
+	}
+
+	template <typename T>
+	static const MetaItemList & doGetItemList(const std::shared_ptr<T> & data)
+	{
 		if(data) {
-			auto it = data->nameItemMap.find(name);
-			if(it != data->nameItemMap.end()) {
-				result = it->second;
-				return true;
-			}
+			return data->itemList;
 		}
-		return false;
+		return internal_::emptyMetaItemList;
 	}
 
 	const MetaItem & doGetAccessible(const std::string & name) const;

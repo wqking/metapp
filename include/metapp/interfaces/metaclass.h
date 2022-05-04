@@ -66,9 +66,14 @@ private:
 		return (flags & flag) != 0;
 	}
 
-	void doBuildMetaItemView(
-		MetaItemView * view,
+	MetaItemView doBuildMetaItemView(
 		const MetaItemList & (MetaClass::*listGetter)() const,
+		const Flags flags
+	) const;
+
+	const MetaItem & doFindItemByName(
+		const MetaItem & (MetaClass::*itemGetter)(const std::string &) const,
+		const std::string & name,
 		const Flags flags
 	) const;
 

@@ -24,16 +24,11 @@ namespace metapp {
 
 namespace internal_ {
 
-namespace {
-
-MetaItemList dummyMetaItemList;
-
-} // namespace
-
 Variant emptyVariant;
 std::string emptyString;
 std::map<std::string, Variant> emptyAnnotationMap;
 MetaItem emptyMetaItem;
+MetaItemList emptyMetaItemList;
 
 BaseView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
@@ -297,64 +292,37 @@ MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaTyp
 
 const MetaItem & MetaRepoBase::doGetAccessible(const std::string & name) const
 {
-	if(accessibleData) {
-		return accessibleData->findItem(name);
-	}
-	return internal_::emptyMetaItem;
+	return doFindItemByName(accessibleData, name);
 }
 
 const MetaItemList & MetaRepoBase::doGetAccessibleList() const
 {
-	if(accessibleData) {
-		return accessibleData->itemList;
-	}
-	else {
-		return dummyMetaItemList;
-	}
+	return doGetItemList(accessibleData);
 }
 
 const MetaItem & MetaRepoBase::doGetCallable(const std::string & name) const
 {
-	if(callableData) {
-		return callableData->findItem(name);
-	}
-	return internal_::emptyMetaItem;
+	return doFindItemByName(callableData, name);
 }
 
 const MetaItemList & MetaRepoBase::doGetCallableList() const
 {
-	if(callableData) {
-		return callableData->itemList;
-	}
-	else {
-		return dummyMetaItemList;
-	}
+	return doGetItemList(callableData);
 }
 
 const MetaItem & MetaRepoBase::doGetConstant(const std::string & name) const
 {
-	if(constantData) {
-		return constantData->findItem(name);
-	}
-	return internal_::emptyMetaItem;
+	return doFindItemByName(constantData, name);
 }
 
 const MetaItemList & MetaRepoBase::doGetConstantList() const
 {
-	if(constantData) {
-		return constantData->itemList;
-	}
-	else {
-		return dummyMetaItemList;
-	}
+	return doGetItemList(constantData);
 }
 
 const MetaItem & MetaRepoBase::doGetType(const std::string & name) const
 {
-	if(typeData) {
-		return typeData->findItem(name);
-	}
-	return internal_::emptyMetaItem;
+	return doFindItemByName(typeData, name);
 }
 
 const MetaItem & MetaRepoBase::doGetType(const TypeKind kind) const
@@ -381,12 +349,7 @@ const MetaItem & MetaRepoBase::doGetType(const MetaType * metaType) const
 
 const MetaItemList & MetaRepoBase::doGetTypeList() const
 {
-	if(typeData) {
-		return typeData->itemList;
-	}
-	else {
-		return dummyMetaItemList;
-	}
+	return doGetItemList(typeData);
 }
 
 const MetaItem & MetaRepoBase::doGetItem(const std::string & name) const
@@ -608,10 +571,7 @@ MetaItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
 
 const MetaItem & MetaRepo::getRepo(const std::string & name) const
 {
-	if(repoData) {
-		return repoData->findItem(name);
-	}
-	return internal_::emptyMetaItem;
+	return doFindItemByName(repoData, name);
 }
 
 MetaItemView MetaRepo::getRepoView() const

@@ -50,107 +50,37 @@ const MetaItem & MetaClass::getConstructor() const
 
 const MetaItem & MetaClass::getAccessible(const std::string & name, const Flags flags) const
 {
-	if(hasFlag(flags, flagIncludeBase)) {
-		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
-			const MetaClass * metaClass = metaType->getMetaClass();
-			if(metaClass != nullptr) {
-				result = &metaClass->doGetAccessible(name);
-				if(! result->isEmpty()) {
-					return false;
-				}
-			}
-			return true;
-			});
-		return *result;
-	}
-	else {
-		return doGetAccessible(name);
-	}
+	return doFindItemByName(&MetaClass::doGetAccessible, name, flags);
 }
 
 MetaItemView MetaClass::getAccessibleView(const Flags flags) const
 {
-	MetaItemView view;
-	doBuildMetaItemView(&view, &MetaClass::doGetAccessibleList, flags);
-	return view;
+	return doBuildMetaItemView(&MetaClass::doGetAccessibleList, flags);
 }
 
 const MetaItem & MetaClass::getCallable(const std::string & name, const Flags flags) const
 {
-	if(hasFlag(flags, flagIncludeBase)) {
-		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
-			const MetaClass * metaClass = metaType->getMetaClass();
-			if(metaClass != nullptr) {
-				result = &metaClass->doGetCallable(name);
-				if(! result->isEmpty()) {
-					return false;
-				}
-			}
-			return true;
-			});
-		return *result;
-	}
-	else {
-		return doGetCallable(name);
-	}
+	return doFindItemByName(&MetaClass::doGetCallable, name, flags);
 }
 
 MetaItemView MetaClass::getCallableView(const Flags flags) const
 {
-	MetaItemView view;
-	doBuildMetaItemView(&view, &MetaClass::doGetCallableList, flags);
-	return view;
+	return doBuildMetaItemView(&MetaClass::doGetCallableList, flags);
 }
 
 const MetaItem & MetaClass::getConstant(const std::string & name, const Flags flags) const
 {
-	if(hasFlag(flags, flagIncludeBase)) {
-		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
-			const MetaClass * metaClass = metaType->getMetaClass();
-			if(metaClass != nullptr) {
-				result = &metaClass->doGetConstant(name);
-				if(! result->isEmpty()) {
-					return false;
-				}
-			}
-			return true;
-			});
-		return *result;
-	}
-	else {
-		return doGetConstant(name);
-	}
+	return doFindItemByName(&MetaClass::doGetConstant, name, flags);
 }
 
 MetaItemView MetaClass::getConstantView(const Flags flags) const
 {
-	MetaItemView view;
-	doBuildMetaItemView(&view, &MetaClass::doGetConstantList, flags);
-	return view;
+	return doBuildMetaItemView(&MetaClass::doGetConstantList, flags);
 }
 
 const MetaItem & MetaClass::getType(const std::string & name, const Flags flags) const
 {
-	if(hasFlag(flags, flagIncludeBase)) {
-		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, &name](const MetaType * metaType) -> bool {
-			const MetaClass * metaClass = metaType->getMetaClass();
-			if(metaClass != nullptr) {
-				result = &metaClass->doGetType(name);
-				if(! result->isEmpty()) {
-					return false;
-				}
-			}
-			return true;
-			});
-		return *result;
-	}
-	else {
-		return doGetType(name);
-	}
+	return doFindItemByName(&MetaClass::doGetType, name, flags);
 }
 
 const MetaItem & MetaClass::getType(const TypeKind kind, const Flags flags) const
@@ -197,9 +127,7 @@ const MetaItem & MetaClass::getType(const MetaType * metaType, const Flags flags
 
 MetaItemView MetaClass::getTypeView(const Flags flags) const
 {
-	MetaItemView view;
-	doBuildMetaItemView(&view, &MetaClass::doGetTypeList, flags);
-	return view;
+	return doBuildMetaItemView(&MetaClass::doGetTypeList, flags);
 }
 
 const MetaItem & MetaClass::getItem(const std::string & name) const
@@ -207,23 +135,49 @@ const MetaItem & MetaClass::getItem(const std::string & name) const
 	return doGetItem(name);
 }
 
-void MetaClass::doBuildMetaItemView(
-		MetaItemView * view,
+MetaItemView MetaClass::doBuildMetaItemView(
 		const MetaItemList & (MetaClass::*listGetter)() const,
 		const Flags flags
 	) const
 {
+	MetaItemView view;
 	if(hasFlag(flags, flagIncludeBase)) {
 		getMetaRepo()->traverseBases(classMetaType, [&view, &listGetter](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
-				view->addContainer(&(metaClass->*listGetter)());
+				view.addContainer(&(metaClass->*listGetter)());
 			}
 			return true;
 			});
 	}
 	else {
-		view->addContainer(&(this->*listGetter)());
+		view.addContainer(&(this->*listGetter)());
+	}
+	return view;
+}
+
+const MetaItem & MetaClass::doFindItemByName(
+		const MetaItem & (MetaClass::*itemGetter)(const std::string &) const,
+		const std::string & name,
+		const Flags flags
+	) const
+{
+	if(hasFlag(flags, flagIncludeBase)) {
+		const MetaItem * result = &internal_::emptyMetaItem;
+		getMetaRepo()->traverseBases(classMetaType, [&result, &itemGetter, &name](const MetaType * metaType) -> bool {
+			const MetaClass * metaClass = metaType->getMetaClass();
+			if(metaClass != nullptr) {
+				result = &(metaClass->*itemGetter)(name);
+				if(! result->isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+			});
+		return *result;
+	}
+	else {
+		return (this->*itemGetter)(name);
 	}
 }
 
