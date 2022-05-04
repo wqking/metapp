@@ -115,21 +115,6 @@ constexpr TypeFlags tfMemberPointer = 1 << 7;
 constexpr TypeFlags tfIntegral = 1 << 8;
 constexpr TypeFlags tfFloat = 1 << 9;
 
-inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
-{
-	return typeKind >= tkArithmeticBegin && typeKind <= tkArithmeticEnd;
-}
-
-inline constexpr bool typeKindIsInteger(const TypeKind typeKind)
-{
-	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;
-}
-
-inline constexpr bool typeKindIsReal(const TypeKind typeKind)
-{
-	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
-}
-
 
 } // namespace metapp
 

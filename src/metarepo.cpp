@@ -266,7 +266,7 @@ MetaItem & MetaRepoBase::registerConstant(const std::string & name, const Varian
 	if(it != constantData->nameItemMap.end()) {
 		return *it->second;
 	}
-	return constantData->addItem(MetaItem::Type::accessible, name, constant);
+	return constantData->addItem(MetaItem::Type::constant, name, constant);
 }
 
 MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
@@ -441,6 +441,12 @@ const Variant & MetaItem::asAccessible() const
 const Variant & MetaItem::asCallable() const
 {
 	doCheckType(Type::callable);
+	return doGetVariant();
+}
+
+const Variant & MetaItem::asConstant() const
+{
+	doCheckType(Type::constant);
 	return doGetVariant();
 }
 

@@ -56,6 +56,33 @@ inline const MetaType * getReferredMetaType(const Variant & value)
 	return getReferredMetaType(value.getMetaType());
 }
 
+inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
+{
+	return typeKind >= tkArithmeticBegin && typeKind <= tkArithmeticEnd;
+}
+
+inline constexpr bool typeKindIsInteger(const TypeKind typeKind)
+{
+	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;
+}
+
+inline constexpr bool typeKindIsReal(const TypeKind typeKind)
+{
+	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
+}
+
+inline bool typeIsString(const MetaType * type)
+{
+	return type->getTypeKind() == tkStdString
+		|| (type->isPointer() && type->getUpType() != nullptr && type->getUpType()->getTypeKind() == tkChar);
+}
+
+inline bool typeIsWideString(const MetaType * type)
+{
+	return type->getTypeKind() == tkStdWideString
+		|| (type->isPointer() && type->getUpType() != nullptr && type->getUpType()->getTypeKind() == tkWideChar);
+}
+
 template <typename Signature, typename Class>
 auto selectOverload(Signature (Class::*func)) -> decltype(func)
 {
@@ -70,7 +97,7 @@ auto selectOverload(Signature * func) -> decltype(func)
 
 class MetaRepo;
 
-void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepository = nullptr);
+void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepo = nullptr);
 
 
 } // namespace metapp

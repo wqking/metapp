@@ -36,6 +36,7 @@ public:
 		none,
 		accessible,
 		callable,
+		constant,
 		constructor,
 		metaRepo,
 		metaType,
@@ -69,6 +70,7 @@ public:
 
 	const Variant & asAccessible() const;
 	const Variant & asCallable() const;
+	const Variant & asConstant() const;
 	const Variant & asConstructor() const;
 	const MetaType * asMetaType() const;
 	const MetaRepo * asMetaRepo() const;

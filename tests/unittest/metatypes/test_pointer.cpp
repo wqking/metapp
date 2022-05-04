@@ -50,6 +50,11 @@ TEST_CASE("metatypes, tkPointer, const volatile void *")
 	REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 }
 
+TEST_CASE("metatypes, tkPointer, const char *")
+{
+	REQUIRE(metapp::getMetaType<const char *>()->getTypeKind() == metapp::tkPointer);
+}
+
 TEST_CASE("metatypes, tkPointer, int **")
 {
 	metapp::Variant v((int **)0);

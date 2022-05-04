@@ -25,8 +25,8 @@ namespace {
 class MetaTypeDumper
 {
 public:
-	explicit MetaTypeDumper(const MetaRepo * metaRepository_)
-		: metaRepo(metaRepository_) {
+	explicit MetaTypeDumper(const MetaRepo * metaRepo_)
+		: metaRepo(metaRepo_) {
 		if(metaRepo == nullptr) {
 			metaRepo = getMetaRepo();
 		}
@@ -154,9 +154,9 @@ std::string getNameByTypeKind(const TypeKind typeKind)
 	return "";
 }
 
-void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepository)
+void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepo)
 {
-	MetaTypeDumper dumper(metaRepository);
+	MetaTypeDumper dumper(metaRepo);
 	dumper.dump(stream, metaType);
 }
 
