@@ -18,7 +18,6 @@
 #define METAPP_METAENUM_H_969872685611
 
 #include "metapp/variant.h"
-#include "metapp/implement/internal/util_i.h"
 #include "metapp/metarepo.h"
 
 #include <vector>
@@ -59,14 +58,8 @@ public:
 		return internal_::emptyMetaItem;
 	}
 
-	std::vector<std::string> getNameList() const {
-		std::vector<std::string> nameList;
-		std::transform(valueList.begin(), valueList.end(), std::back_inserter(nameList),
-			[](const MetaItem & item) {
-				return item.getName();
-			}
-		);
-		return nameList;
+	MetaItemView getValueView() const {
+		return MetaItemView(&valueList);
 	}
 
 private:
@@ -83,9 +76,9 @@ inline const MetaItem & enumGetValue(const Variant & var, const std::string & na
 	return var.getMetaType()->getMetaEnum()->getValue(name);
 }
 
-inline std::vector<std::string> enumGetNameList(const Variant & var)
+inline MetaItemView enumGetValueView(const Variant & var)
 {
-	return var.getMetaType()->getMetaEnum()->getNameList();
+	return var.getMetaType()->getMetaEnum()->getValueView();
 }
 
 
