@@ -7,22 +7,22 @@
   * [getTarget](#a4_2)
   * [Implicitly type convert](#a4_3)
   * [isEmpty](#a4_4)
-* [Class RegisteredAccessible](#a2_2)
+* [Class MetaItem](#a2_2)
   * [Header](#a4_5)
   * [API](#a4_6)
-* [Class RegisteredCallable](#a2_3)
+* [Class MetaItem](#a2_3)
   * [Header](#a4_7)
   * [API](#a4_8)
-* [Class RegisteredConstructor](#a2_4)
+* [Class MetaItem](#a2_4)
   * [Header](#a4_9)
   * [API](#a4_10)
-* [Class RegisteredRepo](#a2_5)
+* [Class MetaItem](#a2_5)
   * [Header](#a4_11)
   * [API](#a4_12)
-* [Class RegisteredType](#a2_6)
+* [Class MetaItem](#a2_6)
   * [Header](#a4_13)
   * [API](#a4_14)
-* [Class RegisteredEnumValue](#a2_7)
+* [Class MetaItem](#a2_7)
   * [Header](#a4_15)
   * [API](#a4_16)
 * [Base class RegisteredAnnotation](#a2_8)
@@ -32,11 +32,11 @@
 <a id="a2_1"></a>
 ## Overview
 
-When getting meta information from MetaRepo such as calling `MetaRep::getCallable()`, the returned value is a registered item, such as `RegisteredCallable`, or a `std::deque` of the registered items, such as `RegisteredCallableList`.  
+When getting meta information from MetaRepo such as calling `MetaRep::getCallable()`, the returned value is a registered item, such as `MetaItem`, or a `std::deque` of the registered items, such as `MetaItemList`.  
 
 The registered items allow to,  
 1. Get the meta data name.
-2. Get the underlying target (for `RegisteredCallable`, the target is the callable Variant).
+2. Get the underlying target (for `MetaItem`, the target is the callable Variant).
 3. Register and retrieve annotations.
 
 All registered items inherit from `RegisteredAnnotation`. `RegisteredAnnotation` allow to register and retrieve annotations.  
@@ -51,7 +51,7 @@ const std::string & getName() const
 ```
 
 Returns the name. If the item doesn't have name, returns empty string.  
-`RegisteredConstructor` doesn't have the `getName` function.  
+`MetaItem` doesn't have the `getName` function.  
 
 <a id="a4_2"></a>
 #### getTarget
@@ -60,7 +60,7 @@ Returns the name. If the item doesn't have name, returns empty string.
 TargetType getTarget() const;
 ```
 
-Returns the underlying data. `TargetType` is a placeholder here, it's different in different classes. For example, `TargetType` is `const Variant &` in `RegisteredCallable`, which is the `callable`.  
+Returns the underlying data. `TargetType` is a placeholder here, it's different in different classes. For example, `TargetType` is `const Variant &` in `MetaItem`, which is the `callable`.  
 
 <a id="a4_3"></a>
 #### Implicitly type convert
@@ -82,7 +82,7 @@ Returns true if the item is empty, that means the item doesn't contain any valid
 `MetaRepo` may return empty item if the meta data is not found in the repo.  
 
 <a id="a2_2"></a>
-## Class RegisteredAccessible
+## Class MetaItem
 
 <a id="a4_5"></a>
 #### Header
@@ -95,7 +95,7 @@ Returns true if the item is empty, that means the item doesn't contain any valid
 #### API
 
 ```c++
-class RegisteredAccessible : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   const std::string & getName() const;
@@ -104,13 +104,13 @@ public:
   operator const Variant & () const;
 };
 
-using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the accessible Variant.
 
 <a id="a2_3"></a>
-## Class RegisteredCallable
+## Class MetaItem
 
 <a id="a4_7"></a>
 #### Header
@@ -123,7 +123,7 @@ using RegisteredAccessibleList = std::deque<RegisteredAccessible>;
 #### API
 
 ```c++
-class RegisteredCallable : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   const std::string & getName() const;
@@ -132,13 +132,13 @@ public:
   operator const Variant & () const;
 };
 
-using RegisteredCallableList = std::deque<RegisteredCallable>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the callable Variant.
 
 <a id="a2_4"></a>
-## Class RegisteredConstructor
+## Class MetaItem
 
 <a id="a4_9"></a>
 #### Header
@@ -151,7 +151,7 @@ using RegisteredCallableList = std::deque<RegisteredCallable>;
 #### API
 
 ```c++
-class RegisteredConstructor : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   const Variant & getTarget() const;
@@ -159,14 +159,14 @@ public:
   operator const Variant & () const;
 };
 
-using RegisteredConstructorList = std::deque<RegisteredConstructor>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the callable (tkConstructor) Variant.  
-Note: `RegisteredConstructor` doesn't have `getName()` function.  
+Note: `MetaItem` doesn't have `getName()` function.  
 
 <a id="a2_5"></a>
-## Class RegisteredRepo
+## Class MetaItem
 
 <a id="a4_11"></a>
 #### Header
@@ -179,7 +179,7 @@ Note: `RegisteredConstructor` doesn't have `getName()` function.
 #### API
 
 ```c++
-class RegisteredRepo : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   const std::string & getName() const;
@@ -188,13 +188,13 @@ public:
   operator MetaRepo * () const;
 };
 
-using RegisteredRepoList = std::deque<RegisteredRepo>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the pointer to registered `MetaRepo`.  
 
 <a id="a2_6"></a>
-## Class RegisteredType
+## Class MetaItem
 
 <a id="a4_13"></a>
 #### Header
@@ -207,7 +207,7 @@ using RegisteredRepoList = std::deque<RegisteredRepo>;
 #### API
 
 ```c++
-class RegisteredType : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   const std::string & getName() const;
@@ -216,13 +216,13 @@ public:
   operator const MetaType * () const;
 };
 
-using RegisteredTypeList = std::deque<RegisteredType>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the pointer to registered `MetaType`.  
 
 <a id="a2_7"></a>
-## Class RegisteredEnumValue
+## Class MetaItem
 
 <a id="a4_15"></a>
 #### Header
@@ -235,7 +235,7 @@ using RegisteredTypeList = std::deque<RegisteredType>;
 #### API
 
 ```c++
-class RegisteredEnumValue : public RegisteredAnnotation
+class MetaItem : public RegisteredAnnotation
 {
 public:
   using ValueType = long long;
@@ -246,11 +246,11 @@ public:
   operator ValueType () const;
 };
 
-using RegisteredEnumValueList = std::deque<RegisteredEnumValue>;
+using MetaItemList = std::deque<MetaItem>;
 ```
 
 `getTarget()` returns the pointer to registered enum value as `ValueType (long long)`.  
-`RegisteredEnumValue` is not returned by `MetaRepo`, it's returned by `MetaEnum`.  
+`MetaItem` is not returned by `MetaRepo`, it's returned by `MetaEnum`.  
 
 <a id="a2_8"></a>
 ## Base class RegisteredAnnotation
@@ -265,7 +265,7 @@ using RegisteredEnumValueList = std::deque<RegisteredEnumValue>;
 class RegisteredAnnotation
 {
 public:
-  void addAnnotation(const std::string & name, const Variant & value);
+  void registerAnnotation(const std::string & name, const Variant & value);
   const Variant & getAnnotation(const std::string & name) const;
   const std::map<std::string, Variant> & getAllAnnotations() const;
 };

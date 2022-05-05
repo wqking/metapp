@@ -102,15 +102,13 @@ const MetaItem & getAccessible(const std::string & name) const;
 
 Get an accessible of `name`. If the accessible is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getAccessibleList
+#### getAccessibleView
 
 ```c++
-MetaItemList getAccessibleList() const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getAccessibleView() const;
 ```
 
-Get a list of all registered accessibles.  
+Returns a MetaItemView for all registered accessibles.  
 
 #### getCallable
 
@@ -120,15 +118,29 @@ const MetaItem & getCallable(const std::string & name) const;
 
 Get a callable of `name`. If the callable is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getCallableList
+#### getCallableView
 
 ```c++
-MetaItemList getCallableList() const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getCallableView() const;
 ```
 
-Get a list of all registered callables.  
+Returns a MetaItemView for all registered callables.  
+
+#### getConstant
+
+```c++
+const MetaItem & getConstant(const std::string & name) const;
+```
+
+Get a constant of `name`. If the constant is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+
+#### getConstantView
+
+```c++
+MetaItemView getConstantView() const;
+```
+
+Returns a MetaItemView for all registered constants.  
 
 #### getType by name
 
@@ -155,15 +167,13 @@ const MetaItem & getType(const MetaType * metaType) const;
 Get a MetaItem of `metaType`. If the meta type is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).   
 This function is useful to get the name of a registered meta type.
 
-#### getTypeList
+#### getTypeView
 
 ```c++
-MetaItemList getTypeList() const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getTypeView() const;
 ```
 
-Get a list of all registered types.  
+Returns a MetaItemView for all registered types.  
 
 #### getRepo
 
@@ -173,13 +183,13 @@ const MetaItem & getRepo(const std::string & name) const;
 
 Get a registered sub MetaRepo by `name`. If the repo name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getRepoList
+#### getRepoView
 
 ```c++
-const MetaItemList & getRepoList() const;
+MetaItemView getRepoView() const;
 ```
 
-Get a list of all registered sub repos.  
+Returns a MetaItemView for all registered repos.  
 
 
 ## MetaRepo member functions for class hierarchy
@@ -200,21 +210,6 @@ enum class Relationship
 
 Enum for relationship between two classes. The relationship can be got via member function `getRelationship()`.    
 Given class A and B, `Relationship::none` means A and B are not derived from each other. `Relationship::base` means B is the base class of A, or to say, A derives from B. `Relationship::derived` means B derives from A, or to say, A is the base class of B.  
-
-#### class MetaRepo::BaseView
-
-```c++
-class BaseView
-{
-public:
-	size_t getCount() const;
-	const MetaType * get(const size_t index) const;
-};
-```
-
-A class to wrap the MetaType list for base classes or derived classes.  
-Function `getCount` returns the number of meta types.  
-Function `get` returns the meta type at `index`.  
 
 #### registerBase
 

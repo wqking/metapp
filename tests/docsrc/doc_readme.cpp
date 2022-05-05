@@ -195,15 +195,17 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
     - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
     - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
-- Core components, classes, concepts
+- Core concepts and classes
     - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core_concepts.md)
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
 
-- Build meta data
+- Build and use meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
     - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
     - [Registered items (MetaItem, etc)](doc/registered_items.md)
+    - MetaItem
+    - BaseView and MetaItemView
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta_interface_overview.md)

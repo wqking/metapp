@@ -23,7 +23,7 @@
 #include <string>
 
 
-TEST_CASE("Overloaded methods, (), (int), (long)")
+TEST_CASE("Callable list, (), (int), (long)")
 {
 	std::vector<metapp::Variant> callableList;
 	callableList.push_back(std::function<int ()>([]() {
@@ -55,7 +55,7 @@ TEST_CASE("Overloaded methods, (), (int), (long)")
 	REQUIRE(it == callableList.end());
 }
 
-TEST_CASE("Overloaded methods, (const char *), (std::string)")
+TEST_CASE("Callable list, (const char *), (std::string)")
 {
 	std::vector<metapp::Variant> callableList;
 	callableList.push_back(std::function<std::string (const char *)>([](const char * s) {

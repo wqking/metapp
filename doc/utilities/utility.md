@@ -104,11 +104,11 @@ metapp::Variant v2(static_cast<int (MyClass::*)(int)>(&MyClass::func));
 #### dumpMetaType
 
 ```c++
-void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepository = nullptr);
+void dumpMetaType(std::ostream & stream, const metapp::MetaType * metaType, const MetaRepo * metaRepo = nullptr);
 ```
 
 Dump readable information of `metaType` to `stream`.  
-The meta data is obtained from `MetaRepo` `metaRepository`. If `metaRepository` is nullptr, the global `MetaRepo` is used.  
+The meta data is obtained from `MetaRepo` `metaRepo`. If `metaRepo` is nullptr, the global `MetaRepo` is used.  
 This function is for test and learning purpose, you should not use it in any production code.  
 
 <a id="a4_5"></a>

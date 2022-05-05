@@ -203,6 +203,45 @@ struct metapp::DeclareMetaType<CaClass> : metapp::DeclareMetaTypeBase<CaClass>
 //code
 
 /*desc
+#### registerConstant
+
+```c++
+MetaItem & registerConstant(const std::string & name, const Variant & constant);
+```
+
+Register a constant.  
+The parameter `name` is the constant name.  
+The parameter `constant` is a Variant of any value.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
+
+**Example**  
+desc*/
+
+//code
+class ConClass
+{
+public:
+	static const int one = 1;
+};
+
+template <>
+struct metapp::DeclareMetaType<ConClass> : metapp::DeclareMetaTypeBase<ConClass>
+{
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<ConClass>(),
+			[](metapp::MetaClass & mc) {
+				mc.registerConstant("one", ConClass::one);
+				// Any value can be registered as constant, not limited to members in the class
+				mc.registerConstant("name", std::string("metapp"));
+			}
+		);
+		return &metaClass;
+	}
+};
+//code
+
+/*desc
 #### registerType
 
 ```c++
@@ -251,15 +290,14 @@ struct metapp::DeclareMetaType<TyClass> : metapp::DeclareMetaTypeBase<TyClass>
 
 Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags` with default value of `MetaClass::flagIncludeBase`. For functions that find a certain meta data, that means if the function can't find the meta data in current meta class, it will look up all base class recursively for the meta data. For functions that get all meta data, that means the function will return all meta data in current meta class, and all meta data in base classes, recursively. If you want only current meta class be checked, pass `MetaClass::flagNone`.  
 
-#### getConstructorList
+#### getConstructor
 
 ```c++
-const MetaItemList & getConstructorList() const;
-
-using MetaItemList = std::deque<MetaItem>;
+const MetaItem & getConstructor() const;
 ```
 
-Get a list of MetaItem.  
+Returns MetaItem of a callable of the constructors.  
+If there are more than one constructors, the callable Variant is tkOverloadedFunction.  
 
 **Example**  
 desc*/
@@ -269,11 +307,8 @@ ExampleFunc
 	//code
 	const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
-	// constructorView[0] is CtorClass()
-	// constructorView[1] is CtorClass(const std::string & s, const int n)
 	const metapp::MetaItem & constructor = metaClass->getConstructor();
-	// Call metapp::callableInvoke with a std::deque of callables can invoke the proper function
-	// that matches the arguments
+	// Calling metapp::callableInvoke can invoke the proper function that matches the arguments
 	metapp::Variant instance = metapp::callableInvoke(constructor, nullptr, "abc", 5);
 	CtorClass * ptr = instance.get<CtorClass *>();
 	ASSERT(ptr->s == "abc");
@@ -294,15 +329,13 @@ const MetaItem & getAccessible(const std::string & name, const MetaClass::Flags 
 
 Get a field of `name`. If the field is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getAccessibleList
+#### getAccessibleView
 
 ```c++
-MetaItemList getAccessibleList(const Flags flags = flagIncludeBase) const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getAccessibleView(const Flags flags = flagIncludeBase) const;
 ```
 
-Get a list of all registered field.  
+Returns a MetaItemView for all registered accessibles.  
 
 **Example**  
 desc*/
@@ -332,15 +365,13 @@ const MetaItem & getCallable(const std::string & name, const Flags flags = flagI
 
 Get a method of `name`. If the method is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getCallableList
+#### getCallableView
 
 ```c++
-MetaItemList getCallableList(const Flags flags = flagIncludeBase) const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getCallableView(const Flags flags = flagIncludeBase) const;
 ```
 
-Get a list of all registered methods.  
+Returns a MetaItemView for all registered callables.  
 
 **Example**  
 desc*/
@@ -362,6 +393,40 @@ ExampleFunc
 	ASSERT(callableView.size() == 2);
 	ASSERT(callableView[0].getName() == "greeting");
 	ASSERT(callableView[1].getName() == "add");
+	//code
+}
+
+/*desc
+#### getConstant
+
+```c++
+const MetaItem & getConstant(const std::string & name, const Flags flags = flagIncludeBase) const;
+```
+
+Get a constant of `name`. If the constant is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+
+#### getConstantView
+
+```c++
+MetaItemView getConstantView(const Flags flags = flagIncludeBase) const;
+```
+
+Returns a MetaItemView for all registered constants.  
+
+**Example**  
+desc*/
+
+ExampleFunc
+{
+	//code
+	const metapp::MetaType * metaType = metapp::getMetaType<ConClass>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
+
+	const metapp::MetaItem & one = metaClass->getConstant("one");
+	ASSERT(one.asConstant().get<int>() == 1);
+
+	const metapp::MetaItem & name = metaClass->getConstant("name");
+	ASSERT(name.asConstant().get<const std::string &>() == "metapp");
 	//code
 }
 
@@ -391,14 +456,12 @@ const MetaItem & getType(const MetaType * metaType, const Flags flags = flagIncl
 Get a MetaItem of `metaType`. If the meta type is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).   
 This function is useful to get the name of a registered meta type.
 
-#### getTypeList
+#### getTypeView
 
 ```c++
-MetaItemList getTypeList(const Flags flags = flagIncludeBase) const;
-
-using MetaItemList = std::deque<MetaItem>;
+MetaItemView getTypeView(const Flags flags = flagIncludeBase) const;
 ```
 
-Get a list of all registered types.  
+Returns a MetaItemView for all registered types.  
 
 desc*/

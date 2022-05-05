@@ -23,7 +23,7 @@ import shutil
 import subprocess
 import shlex
 
-forceGenerateAll = not False
+forceGenerateAll = False
 sourcePath = '../tests/docsrc'
 docPath = '../doc'
 

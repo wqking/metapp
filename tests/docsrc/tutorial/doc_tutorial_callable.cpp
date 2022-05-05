@@ -117,7 +117,34 @@ TEST_CASE("tutorialCallable_stdFunction")
 }
 
 /*desc
-## Use default argument
+## Use overloaded functions
+desc*/
+
+TEST_CASE("tutorialCallable_overloaded")
+{
+	//code
+	metapp::Variant callable = metapp::OverloadedFunction();
+	metapp::OverloadedFunction & overloadedFunction = callable.get<metapp::OverloadedFunction &>();
+	overloadedFunction.addCallable(std::function<int ()>([]() {
+		return 1;
+		}));
+	overloadedFunction.addCallable(std::function<int (int)>([](const int n) {
+		return n * 2;
+		}));
+	overloadedFunction.addCallable(std::function<int (long)>([](const long n) {
+		return (int)n * 3;
+		}));
+
+	ASSERT(metapp::callableInvoke(callable, nullptr).get<int>() == 1);
+
+	ASSERT(metapp::callableInvoke(callable, nullptr, 5).get<int>() == 10);
+
+	ASSERT(metapp::callableInvoke(callable, nullptr, 5L).get<int>() == 15);
+	//code
+}
+
+/*desc
+## Use default arguments
 
 We also support default arguments.  
 `myDefaultArgsFunc` is the function we are going to invoke with default arguments.  

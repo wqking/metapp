@@ -10,8 +10,9 @@
 * [UpType - the most powerful concept in the meta type system](#a2_6)
 * [DeclareMetaType](#a2_7)
 * [Meta interface](#a2_8)
-* [Accessible](#a2_9)
-* [Callable](#a2_10)
+* [MetaRepo](#a2_9)
+* [Accessible](#a2_10)
+* [Callable](#a2_11)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -189,11 +190,19 @@ const void * getMetaUser() const;
 ```
 
 <a id="a2_9"></a>
+## MetaRepo
+
+`MetaRepo` class is used to register and retrieve meta information at running time.  
+We can use function `MetaRepo * getMetaRepo();` to get the global `MetaRepo`, or we can create arbitrary `MetaRepo` instances.  
+A `MetaRepo` can contain meta types (classes, enums, etc), accessibles, callables, and other `MetaRepo` (nested repos).  
+We can use nested repos to simulate C++ `namespace`, that's to say, a repo is a namespace.  
+
+<a id="a2_10"></a>
 ## Accessible
 
 "Accessible" can be pointer to global variable, member data, the object created by metapp::createAccessor, or anything that implements meta interface `MetaAccessible`. The term "accessible" is used for "field" or "property" in other reflection system.  
 
-<a id="a2_10"></a>
+<a id="a2_11"></a>
 ## Callable
 
 "Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`. The term "callable" is used for "method" or "function" in other reflection system.

@@ -6,8 +6,9 @@
 * [Invoke non-member function](#a2_2)
 * [Invoke class member function](#a2_3)
 * [Invoke std::function](#a2_4)
-* [Use default argument](#a2_5)
-* [Use variadic function](#a2_6)
+* [Use overloaded functions](#a2_5)
+* [Use default arguments](#a2_6)
+* [Use variadic function](#a2_7)
 <!--endtoc-->
 
 `MetaCallable` is the core meta interface for invoking callables
@@ -107,7 +108,30 @@ ASSERT(result.get<const std::string &>() == "Hello world");
 ```
 
 <a id="a2_5"></a>
-## Use default argument
+## Use overloaded functions
+
+```c++
+metapp::Variant callable = metapp::OverloadedFunction();
+metapp::OverloadedFunction & overloadedFunction = callable.get<metapp::OverloadedFunction &>();
+overloadedFunction.addCallable(std::function<int ()>([]() {
+  return 1;
+  }));
+overloadedFunction.addCallable(std::function<int (int)>([](const int n) {
+  return n * 2;
+  }));
+overloadedFunction.addCallable(std::function<int (long)>([](const long n) {
+  return (int)n * 3;
+  }));
+
+ASSERT(metapp::callableInvoke(callable, nullptr).get<int>() == 1);
+
+ASSERT(metapp::callableInvoke(callable, nullptr, 5).get<int>() == 10);
+
+ASSERT(metapp::callableInvoke(callable, nullptr, 5L).get<int>() == 15);
+```
+
+<a id="a2_6"></a>
+## Use default arguments
 
 We also support default arguments.  
 `myDefaultArgsFunc` is the function we are going to invoke with default arguments.  
@@ -140,7 +164,7 @@ ASSERT(metapp::callableInvoke(v, nullptr, 38, false).get<const std::string &>() 
 ASSERT(metapp::callableInvoke(v, nullptr, 19, false, "GOOD").get<const std::string &>() == "19falseGOOD");
 ```
 
-<a id="a2_6"></a>
+<a id="a2_7"></a>
 ## Use variadic function
 
 We can also use variadic function.  

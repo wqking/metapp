@@ -157,10 +157,10 @@ Note the code is inside the specialization `struct metapp::DeclareMetaType <TmCl
         mc.registerAccessible("value",
           metapp::createAccessor(&TmClass::getValue, &TmClass::setValue));
         // Register member data as field
-        auto & item = mc.registerAccessible("message", &TmClass::message);
+        auto & item = mc.registerAccessible("message", metapp::createAccessor(&TmClass::message));
         // Add some annotations to the accessible
-        item.addAnnotation("description", "This is a description");
-        item.addAnnotation("notes", std::vector<std::string> { "first", "second" });
+        item.registerAnnotation("description", "This is a description");
+        item.registerAnnotation("notes", std::vector<std::string> { "first", "second" });
 
         // Register a member function
         mc.registerCallable("greeting", &TmClass::greeting);
@@ -250,15 +250,19 @@ TmClass obj;
 Get the meta data of field "value".
 
 ```c++
-metapp::RegisteredAccessible fieldValue = metaClass->getAccessible("value");
+const metapp::MetaItem & fieldValue = metaClass->getAccessible("value");
 ```
 
 Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
-Call getTarget() to get the underlying Variant.
+Call asAccessible() to get the underlying accessible Variant.
 
 ```c++
-ASSERT(metapp::accessibleGet(fieldValue.getTarget(), &obj).get<int>() == 0);
-// getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
+ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), &obj).get<int>() == 0);
+```
+
+getTarget() can also be omitted, the MetaItem can convert to Variant automatically
+
+```c++
 ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 ```
 
@@ -273,7 +277,7 @@ ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 5);
 Now set 'message' with some new text.
 
 ```c++
-metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
+const metapp::MetaItem & fieldMessage = metaClass->getAccessible("message");
 ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "");
 metapp::accessibleSet(fieldMessage, &obj, "This is a test");
 ASSERT(obj.message == "This is a test");
@@ -296,7 +300,7 @@ obj.message = "Hello";
 Get the meta data of method "greeting".
 
 ```c++
-metapp::RegisteredCallable methodGreeting = metaClass->getCallable("greeting");
+const metapp::MetaItem & methodGreeting = metaClass->getCallable("greeting");
 ```
 
 Use metapp::callableInvoke to invoke the method, and pass the arguments.  
@@ -327,12 +331,15 @@ obj.message = "Hello";
 ```
 
 Get all the overloaded methods of "makeMessage" by calling metaClass->getCallable().  
+All overloaded methods are combined to a single Variant of type kind `tkOverloadedFunction`.  
+We can obtain the overloaded methods as if it's a single method.
 
 ```c++
-metapp::RegisteredCallable callable = metaClass->getCallable("makeMessage");
+const metapp::MetaItem & callable = metaClass->getCallable("makeMessage");
 ```
 
-metapp::callableInvoke will try to find the proper method, then call it.
+metapp::callableInvoke will try to find the proper method, then call it.  
+If no method can be invoked with the arguments, exception `metapp::IllegalArgumentException` is raised.  
 
 ```c++
 ASSERT(metapp::callableInvoke(callable, &obj).get<const std::string &>() == "Hello");
@@ -358,14 +365,14 @@ int value = 0;
 ASSERT(message == "");
 ASSERT(value == 0);
 
-metapp::RegisteredCallable methodObjtainValues = metaClass->getCallable("obtainValues");
+const metapp::MetaItem & obtainValues = metaClass->getCallable("obtainValues");
 ```
 
 There is no much difference between member methods and static methods, the only difference
-is that the instance can be nullptr when invoking the method.
+is that the instance can be `nullptr` when invoking the method.
 
 ```c++
-metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
+metapp::callableInvoke(obtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
 ASSERT(message == "Hello");
 ASSERT(value == 38);
 ```
@@ -380,10 +387,11 @@ const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
-Get all constructors from the meta class.
+The constructors. All overloaded constructors are combined to
+a single Variant of type kind `tkOverloadedFunction`.  
 
 ```c++
-metapp::RegisteredConstructorList constructorList = metaClass->getConstructorList();
+const metapp::MetaItem & constructor = metaClass->getConstructor();
 ```
 
 Invoke the default constructor which doesn't have any arguments.  
@@ -394,7 +402,7 @@ The constructor returns a Variant, which is a pointer to the constructed object.
 The caller must free the pointer. The returned Variant doesn't free it.
 
 ```c++
-std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructorList, nullptr).get<TmClass *>());
+std::unique_ptr<TmClass> ptr(metapp::callableInvoke(constructor, nullptr).get<TmClass *>());
 ASSERT(ptr->getValue() == 0);
 ASSERT(ptr->message == "");
 ```
@@ -403,7 +411,7 @@ If we want to convert the returned pointer to a Variant which manages the object
 we can use metapp::Variant::takeFrom to create a new Variant that owns the object.
 
 ```c++
-metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructorList, nullptr, 3, "good").get<TmClass *>());
+metapp::Variant instance = metapp::Variant::takeFrom(metapp::callableInvoke(constructor, nullptr, 3, "good").get<TmClass *>());
 ASSERT(instance.getMetaType() == metapp::getMetaType<TmClass>());
 ASSERT(instance.get<const TmClass &>().getValue() == 3);
 ASSERT(instance.get<const TmClass &>().message == "good");
@@ -420,25 +428,25 @@ Now let's play with types.
 const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-metapp::RegisteredType enumType;
+metapp::MetaItem enumType;
 
 enumType = metaClass->getType("MyEnum");
-ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
+ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 
 enumType = metaClass->getType(tkMyEnum);
-ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
+ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 
 enumType = metaClass->getType(metapp::getMetaType<TmClass::MyEnum>());
-ASSERT(enumType.getTarget() == metapp::getMetaType<TmClass::MyEnum>());
+ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 ASSERT(enumType.getName() == "MyEnum");
 
-const metapp::MetaEnum * metaEnum = enumType.getTarget()->getMetaEnum();
-ASSERT(metaEnum->getValue("one") == 1);
-ASSERT(metaEnum->getValue("two") == 2);
+const metapp::MetaEnum * metaEnum = enumType.asMetaType()->getMetaEnum();
+ASSERT(metaEnum->getValue("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
+ASSERT(metaEnum->getValue("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
 
-metapp::RegisteredType innerType = metaClass->getType("MyInner");
-ASSERT(innerType.getTarget() == metapp::getMetaType<TmClass::MyInner>());
-std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.getTarget()->construct()));
+const metapp::MetaItem & innerType = metaClass->getType("MyInner");
+ASSERT(innerType.asMetaType() == metapp::getMetaType<TmClass::MyInner>());
+std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.asMetaType()->construct()));
 ASSERT(inner->n == 1999);
 ```
 
@@ -459,7 +467,7 @@ If the MetaType doesn't implement MetaClass, the return value is nullptr.
 ```c++
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-metapp::RegisteredAccessible fieldMessage = metaClass->getAccessible("message");
+const metapp::MetaItem & fieldMessage = metaClass->getAccessible("message");
 const metapp::Variant & description = fieldMessage.getAnnotation("description");
 ASSERT(description.cast<std::string>().get<const std::string &>() == "This is a description");
 const metapp::Variant & notes = fieldMessage.getAnnotation("notes");

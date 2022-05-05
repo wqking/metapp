@@ -82,12 +82,12 @@ Usually the global meta data should be registered to the global MetaRepo getting
 ```
 
 Register an accessible. An accessible is any meta type that implements meta interface `MetaAccessible`.  
-An accessible can be a pointer to data, pointer to member data, or Accessor.  
+Currently the built-in meta type `metapp::Accessor` implements `MetaAccessible`.  
 The second argument in `registerAccessible` is a `metapp::Variant`. Any data can be casted to `metapp::Variant`
 implicitly, so we don't need to specify `metapp::Variant` explicitly.
 
 ```c++
-  metaRepo->registerAccessible("textList", &textList);
+  metaRepo->registerAccessible("textList", metapp::createAccessor<std::vector<std::string> &>(&textList));
   metaRepo->registerAccessible("value", metapp::createAccessor<int>(&getValue, &setValue));
 ```
 
@@ -117,17 +117,17 @@ Get the `MetaRepo` to which we registered the meta data
 Get the meta data of field "value"
 
 ```c++
-metapp::RegisteredAccessible fieldValue = metaRepo->getAccessible("value");
+metapp::MetaItem fieldValue = metaRepo->getAccessible("value");
 ```
 
 Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 Call getTarget() to get the underlying Variant.
 
 ```c++
-ASSERT(metapp::accessibleGet(fieldValue.getTarget(), nullptr).get<int>() == 0);
+ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), nullptr).get<int>() == 0);
 ```
 
-getTarget() can also be omitted, the RegisteredAccessible can convert to Variant automatically
+getTarget() can also be omitted, the MetaItem can convert to Variant automatically
 
 ```c++
 ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 0);
@@ -144,7 +144,7 @@ ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 5);
 Now append some new texts to textList
 
 ```c++
-metapp::RegisteredAccessible fieldtextList = metaRepo->getAccessible("textList");
+metapp::MetaItem fieldtextList = metaRepo->getAccessible("textList");
 metapp::accessibleGet(fieldtextList, nullptr).get<std::vector<std::string> &>().push_back("good");
 ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[0] == "hello");
 ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[1] == "world");
@@ -161,7 +161,7 @@ ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::
 Get the meta data of method "concat".
 
 ```c++
-metapp::RegisteredCallable methodConcat = metaRepo->getCallable("concat");
+metapp::MetaItem methodConcat = metaRepo->getCallable("concat");
 ```
 
 Call metapp::callableInvoke to invoke the method, and pass the arguments.  
@@ -178,6 +178,6 @@ ASSERT(result.get<const std::string &>() == "38trueGreat");
 ```c++
   metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
-  metapp::RegisteredType myClassType = metaRepo->getType("MyClass");
-  ASSERT(myClassType.getTarget() == metapp::getMetaType<MyClass>());
+  metapp::MetaItem myClassType = metaRepo->getType("MyClass");
+  ASSERT(myClassType.asMetaType() == metapp::getMetaType<MyClass>());
 ```

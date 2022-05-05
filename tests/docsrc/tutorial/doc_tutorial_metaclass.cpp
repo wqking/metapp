@@ -238,12 +238,12 @@ TEST_CASE("tutorialMetaClass_accessible")
 	TmClass obj;
 
 	//desc Get the meta data of field "value".
-	metapp::MetaItem fieldValue = metaClass->getAccessible("value");
+	const metapp::MetaItem & fieldValue = metaClass->getAccessible("value");
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
-	//desc Call getTarget() to get the underlying Variant.
+	//desc Call asAccessible() to get the underlying accessible Variant.
 	ASSERT(metapp::accessibleGet(fieldValue.asAccessible(), &obj).get<int>() == 0);
-	// getTarget() can also be omitted, the MetaItem can convert to Variant automatically
+	//desc getTarget() can also be omitted, the MetaItem can convert to Variant automatically
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 0);
 
 	//desc Now let's set a new value.
@@ -252,7 +252,7 @@ TEST_CASE("tutorialMetaClass_accessible")
 	ASSERT(metapp::accessibleGet(fieldValue, &obj).get<int>() == 5);
 
 	//desc Now set 'message' with some new text.
-	metapp::MetaItem fieldMessage = metaClass->getAccessible("message");
+	const metapp::MetaItem & fieldMessage = metaClass->getAccessible("message");
 	ASSERT(metapp::accessibleGet(fieldMessage, &obj).get<const std::string &>() == "");
 	metapp::accessibleSet(fieldMessage, &obj, "This is a test");
 	ASSERT(obj.message == "This is a test");
@@ -275,7 +275,7 @@ TEST_CASE("tutorialMetaClass_method")
 	obj.message = "Hello";
 
 	//desc Get the meta data of method "greeting".
-	metapp::MetaItem methodGreeting = metaClass->getCallable("greeting");
+	const metapp::MetaItem & methodGreeting = metaClass->getCallable("greeting");
 	
 	//desc Use metapp::callableInvoke to invoke the method, and pass the arguments.  
 	//desc The return value is a metapp::Variant.
@@ -302,9 +302,12 @@ TEST_CASE("tutorialMetaClass_overloadedMethods")
 	obj.message = "Hello";
 
 	//desc Get all the overloaded methods of "makeMessage" by calling metaClass->getCallable().  
-	metapp::MetaItem callable = metaClass->getCallable("makeMessage");
+	//desc All overloaded methods are combined to a single Variant of type kind `tkOverloadedFunction`.  
+	//desc We can obtain the overloaded methods as if it's a single method.
+	const metapp::MetaItem & callable = metaClass->getCallable("makeMessage");
 
-	//desc metapp::callableInvoke will try to find the proper method, then call it.
+	//desc metapp::callableInvoke will try to find the proper method, then call it.  
+	//desc If no method can be invoked with the arguments, exception `metapp::IllegalArgumentException` is raised.  
 	ASSERT(metapp::callableInvoke(callable, &obj).get<const std::string &>() == "Hello");
 	ASSERT(metapp::callableInvoke(callable, &obj, 19, "Hello").get<const std::string &>() == "Hello19Hello");
 	ASSERT(metapp::callableInvoke(callable, &obj, ", this is ", 8.1).get<const std::string &>() == "Hello, this is 8");
@@ -331,10 +334,10 @@ TEST_CASE("tutorialMetaClass_staticMethods")
 	ASSERT(message == "");
 	ASSERT(value == 0);
 
-	metapp::MetaItem methodObjtainValues = metaClass->getCallable("obtainValues");
+	const metapp::MetaItem & obtainValues = metaClass->getCallable("obtainValues");
 	//desc There is no much difference between member methods and static methods, the only difference
-	//desc is that the instance can be nullptr when invoking the method.
-	metapp::callableInvoke(methodObjtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
+	//desc is that the instance can be `nullptr` when invoking the method.
+	metapp::callableInvoke(obtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
 	ASSERT(message == "Hello");
 	ASSERT(value == 38);
 	//code
@@ -351,7 +354,8 @@ TEST_CASE("tutorialMetaClass_constructor")
 	const metapp::MetaType * metaType = metapp::getMetaType<TmClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	//desc Get all constructors from the meta class.
+	//desc The constructors. All overloaded constructors are combined to
+	//desc a single Variant of type kind `tkOverloadedFunction`.  
 	const metapp::MetaItem & constructor = metaClass->getConstructor();
 
 	//desc Invoke the default constructor which doesn't have any arguments.  
@@ -401,7 +405,7 @@ TEST_CASE("tutorialMetaClass_type")
 	ASSERT(metaEnum->getValue("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
 	ASSERT(metaEnum->getValue("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
 
-	metapp::MetaItem innerType = metaClass->getType("MyInner");
+	const metapp::MetaItem & innerType = metaClass->getType("MyInner");
 	ASSERT(innerType.asMetaType() == metapp::getMetaType<TmClass::MyInner>());
 	std::unique_ptr<TmClass::MyInner> inner(static_cast<TmClass::MyInner *>(innerType.asMetaType()->construct()));
 	ASSERT(inner->n == 1999);
@@ -423,7 +427,7 @@ TEST_CASE("tutorialMetaClass_annotation")
 	//desc If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	metapp::MetaItem fieldMessage = metaClass->getAccessible("message");
+	const metapp::MetaItem & fieldMessage = metaClass->getAccessible("message");
 	const metapp::Variant & description = fieldMessage.getAnnotation("description");
 	ASSERT(description.cast<std::string>().get<const std::string &>() == "This is a description");
 	const metapp::Variant & notes = fieldMessage.getAnnotation("notes");

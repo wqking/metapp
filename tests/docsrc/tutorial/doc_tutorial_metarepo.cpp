@@ -90,7 +90,7 @@ void tutorialMetaRepo_registerMetaData()
 
 	/*desc
 	Register an accessible. An accessible is any meta type that implements meta interface `MetaAccessible`.  
-	An accessible can be a pointer to data, pointer to member data, or Accessor.  
+	Currently the built-in meta type `metapp::Accessor` implements `MetaAccessible`.  
 	The second argument in `registerAccessible` is a `metapp::Variant`. Any data can be casted to `metapp::Variant`
 	implicitly, so we don't need to specify `metapp::Variant` explicitly.
 	desc*/
