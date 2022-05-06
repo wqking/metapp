@@ -30,7 +30,7 @@ docPath = '../doc'
 fileConfigs = {
 	'readme' : {
 		'targetFileName' : '../readme.md',
-		'generateToc' : False,
+		#'generateToc' : False,
 	}
 }
 

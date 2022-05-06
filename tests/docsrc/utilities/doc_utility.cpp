@@ -38,18 +38,8 @@ desc*/
 #### getNonReferenceMetaType
 
 ```c++
-inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
-{
-	if(metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getNonReferenceMetaType(const Variant & value)
-{
-	return getNonReferenceMetaType(value.getMetaType());
-}
+const MetaType * getNonReferenceMetaType(const MetaType * metaType);
+const MetaType * getNonReferenceMetaType(const Variant & value);
 ```
 
 If the `metaType`, or meta type in the Variant `value`, is a reference, returns the meta type the reference refers to.  
@@ -58,22 +48,71 @@ If the meta type is not a reference, returns the meta type.
 #### getReferredMetaType
 
 ```c++
-inline const MetaType * getReferredMetaType(const MetaType * metaType)
-{
-	if(metaType->isPointer() || metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getReferredMetaType(const Variant & value)
-{
-	return getReferredMetaType(value.getMetaType());
-}
+const MetaType * getReferredMetaType(const MetaType * metaType);
+const MetaType * getReferredMetaType(const Variant & value);
 ```
 
 If the `metaType`, or meta type in the Variant `value`, is a reference or pointer, returns the meta type the reference refers to, or the pointer points to.  
 If the meta type is not a reference nor pointer, returns the meta type.
+
+#### typeKindIsIntegral
+
+```c++
+constexpr bool typeKindIsIntegral(const TypeKind typeKind);
+```
+
+Returns true if the type kind is integral type.  
+Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `signed char`, `unsigned char`,
+`short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
+
+#### typeKindIsArithmetic
+
+```c++
+constexpr bool typeKindIsReal(const TypeKind typeKind);
+```
+
+Returns true if the type kind is real (float point) type.  
+Real type is `float`, `double`, `long double`.
+
+#### typeKindIsArithmetic
+
+```c++
+constexpr bool typeKindIsArithmetic(const TypeKind typeKind);
+```
+
+Returns true if the type kind is either integral or real type.  
+
+#### typeIsCharPtr
+
+```c++
+bool typeIsCharPtr(const MetaType * type);
+```
+
+Returns true if the type is a pointer to char, such as `char *`, `const char *`, etc.  
+
+#### typeIsWideCharPtr
+
+```c++
+bool typeIsWideCharPtr(const MetaType * type);
+```
+
+Returns true if the type is a pointer to wchar_t, such as `wchar_t *`, `const wchar_t *`, etc.  
+
+#### typeIsString
+
+```c++
+bool typeIsString(const MetaType * type);
+```
+
+Returns true if the type is either `std::string` or a pointer to char.  
+
+#### typeIsWideString
+
+```c++
+bool typeIsWideString(const MetaType * type);
+```
+
+Returns true if the type is either `std::wstring` or a pointer to wchar_t.  
 
 #### selectOverload
 

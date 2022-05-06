@@ -51,7 +51,7 @@ private:
 			doDump(ref.get<metapp::Variant &>(), level);
 			return;
 		}
-		if(metapp::typeKindIsInteger(typeKind)) {
+		if(metapp::typeKindIsIntegral(typeKind)) {
 			stream << ref.cast<long long>();
 		}
 		else if(metapp::typeKindIsReal(typeKind)) {

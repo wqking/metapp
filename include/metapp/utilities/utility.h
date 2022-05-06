@@ -61,7 +61,7 @@ inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
 	return typeKind >= tkArithmeticBegin && typeKind <= tkArithmeticEnd;
 }
 
-inline constexpr bool typeKindIsInteger(const TypeKind typeKind)
+inline constexpr bool typeKindIsIntegral(const TypeKind typeKind)
 {
 	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;
 }
@@ -71,16 +71,24 @@ inline constexpr bool typeKindIsReal(const TypeKind typeKind)
 	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
 }
 
+inline bool typeIsCharPtr(const MetaType * type)
+{
+	return type->isPointer() && type->getUpType()->getTypeKind() == tkChar;
+}
+
+inline bool typeIsWideCharPtr(const MetaType * type)
+{
+	return type->isPointer() && type->getUpType()->getTypeKind() == tkWideChar;
+}
+
 inline bool typeIsString(const MetaType * type)
 {
-	return type->getTypeKind() == tkStdString
-		|| (type->isPointer() && type->getUpType() != nullptr && type->getUpType()->getTypeKind() == tkChar);
+	return type->getTypeKind() == tkStdString || typeIsCharPtr(type);
 }
 
 inline bool typeIsWideString(const MetaType * type)
 {
-	return type->getTypeKind() == tkStdWideString
-		|| (type->isPointer() && type->getUpType() != nullptr && type->getUpType()->getTypeKind() == tkWideChar);
+	return type->getTypeKind() == tkStdWideString || typeIsWideCharPtr(type);
 }
 
 template <typename Signature, typename Class>

@@ -19,6 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
+#include "metapp/utilities/utility.h"
 
 #include <string>
 
@@ -30,7 +31,7 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(canCastToCharPtr(toMetaType)) {
+		if(typeIsCharPtr(toMetaType)) {
 			if(result != nullptr) {
 				*result = value.get<const std::string &>().c_str();
 			}
@@ -40,11 +41,6 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 			return commonCast(result, value, getMetaType<std::string>(), toMetaType);
 		}
 	}
-
-private:
-	static bool canCastToCharPtr(const MetaType * toMetaType) {
-		return (toMetaType->isPointer() && toMetaType->getUpType()->getTypeKind() == tkChar);
-	}
 };
 
 template <>
@@ -53,7 +49,7 @@ struct DeclareMetaTypeBase <std::wstring>
 	static constexpr TypeKind typeKind = tkStdWideString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(canCastToWideCharPtr(toMetaType)) {
+		if(typeIsWideCharPtr(toMetaType)) {
 			if(result != nullptr) {
 				*result = value.get<const std::wstring &>().c_str();
 			}
@@ -62,11 +58,6 @@ struct DeclareMetaTypeBase <std::wstring>
 		else {
 			return commonCast(result, value, getMetaType<std::wstring>(), toMetaType);
 		}
-	}
-
-private:
-	static bool canCastToWideCharPtr(const MetaType * toMetaType) {
-		return (toMetaType->isPointer() && toMetaType->getUpType()->getTypeKind() == tkWideChar);
 	}
 };
 

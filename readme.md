@@ -1,14 +1,36 @@
 [//]: # (Auto generated file, don't modify this file.)
 
 # metapp -- C++ library for runtime reflection and meta types
+<!--begintoc-->
+* [Highlight features](#a2_1)
+* [Facts and features](#a2_2)
+* [Basic information](#a2_3)
+  * [License](#a3_1)
+  * [Version 0.1 and status](#a3_2)
+  * [Source code](#a3_3)
+  * [Supported compilers](#a3_4)
+  * [C++ standard requirements](#a3_5)
+* [Quick start](#a2_4)
+  * [Namespace](#a3_6)
+  * [Build and install, use metapp in your project](#a3_7)
+* [Example code](#a2_5)
+  * [Use Variant](#a3_8)
+  * [Use MetaType](#a3_9)
+  * [Call function](#a3_10)
+* [Documentations](#a2_6)
+* [Build the test code](#a2_7)
+* [Motivations](#a2_8)
+<!--endtoc-->
 
 metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
 
+<a id="a2_1"></a>
 ## Highlight features
 
 - Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more. Can you understand the type `char *(*(* * [][8])())[]` in 20 seconds? metapp can understand it in no time!   
 - Allow runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.  
 
+<a id="a2_2"></a>
 ## Facts and features
 
 - **Powerful**
@@ -41,11 +63,16 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - Namespace simulation.
     - Array, multi-dimensional array.
 
-## License
+<a id="a2_3"></a>
+## Basic information
+
+<a id="a3_1"></a>
+### License
 
 Apache License, Version 2.0  
 
-## Version 0.1 WIP
+<a id="a3_2"></a>
+### Version 0.1 and status
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
@@ -56,34 +83,78 @@ To put the library to first release, we need to,
 1. Add more test.
 2. Complete the documentations.
 
-## Source code
+<a id="a3_3"></a>
+### Source code
 
 [https://github.com/wqking/metapp](https://github.com/wqking/metapp)
 
-## Supported compilers
+<a id="a3_4"></a>
+### Supported compilers
 
 Tested with MSVC 2022, MinGW (Msys) GCC 8.3, Ubuntu GCC 5.4.
 In brief, MSVC, GCC, Clang that has well support for C++11, or released after 2019, should be able to compile the library.
 
-## C++ standard requirements
+<a id="a3_5"></a>
+### C++ standard requirements
 * To Use the library  
     * The library: C++11.  
 * To develop the library
     * Unit tests: C++17.
-    * Tutorials: C++11.
+    * docsrc: C++11.
 
+<a id="a2_4"></a>
 ## Quick start
 
+<a id="a3_6"></a>
 ### Namespace
 
 `metapp`
 
-### Use metapp in your project
+<a id="a3_7"></a>
+### Build and install, use metapp in your project
 
+There are various methods to use metapp
+
+1, Include the source code in your project directly.
+
+Clone the source code, then add the 'include' folder inside metapp to your project include directory,
+then add the source files int the 'src' folder to your project, then you can use the library.  
+`metapp` doesn't need any configuration.
+
+2, Or install using CMake and use it in CMake
+
+If you are going to use metapp in CMake managed project, you can install metapp then use it in CMake.  
+In metapp root folder, run the commands,  
+```
+mkdir build
+cd build
+cmake ..
+sudo make install
+```
+
+Then in the project CMakeLists.txt,   
+```
+# the project target is mytest, just for example
+add_executable(mytest test.cpp)
+
+find_package(metapp)
+if(eventpp_FOUND)
+target_link_libraries(mytest metapp::metapp)
+else(eventpp_FOUND)
+message(FATAL_ERROR "metapp library is not found")
+endif(eventpp_FOUND)
+```
+
+Note: when using the method 3 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
+You should specify another folder to install.
+To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
+
+<a id="a2_5"></a>
 ## Example code
 
 Here is simple code pieces. There are comprehensive tutorials documentations.
 
+<a id="a3_8"></a>
 ### Use Variant
 Header for Variant
 
@@ -129,6 +200,7 @@ const char * s = casted.get<const char *>();
 ASSERT(strcmp(s, "hello") == 0);
 ```
 
+<a id="a3_9"></a>
 ### Use MetaType
 int
 
@@ -145,6 +217,7 @@ ASSERT(metaType->getTypeKind() == metapp::tkInt);
 ASSERT(metaType->isConst());
 ```
 
+<a id="a3_10"></a>
 ### Call function
 
 ```c++
@@ -164,8 +237,9 @@ ASSERT(result.get<int>() == 17);
 ```
 
 Below are tutorials and documents.  
-If you want to contribute, be sure to read [How to generate documentations](doc/generate_document.md).  
+If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
 
+<a id="a2_6"></a>
 ## Documentations
 
 - Tutorials
@@ -185,9 +259,8 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
 - Build and use meta data
     - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
     - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
-    - [Registered items (MetaItem, etc)](doc/registered_items.md)
-    - MetaItem
-    - BaseView and MetaItemView
+    - [MetaItem](doc/metaitem.md)
+    - [MetaItemView and BaseView](doc/views.md)
 
 - Meta interfaces
     - [Overview and implement meta interface](doc/meta_interface_overview.md)
@@ -212,3 +285,31 @@ If you want to contribute, be sure to read [How to generate documentations](doc/
 
 - Utilities
     - [utility.h](doc/utilities/utility.md)
+
+<a id="a2_7"></a>
+## Build the test code
+
+There are two parts of code to test the library,
+
+- unittests: tests the library.
+- docsrc: documentation source code, and sample code to demonstrate how to use the library. 
+
+All parts are in the `tests` folder.
+
+All parts require CMake to build, and there is a makefile to ease the building.  
+Go to folder `tests/build`, then run `make` with different target.
+- `make vc19` #generate solution files for Microsoft Visual Studio 2019, then open eventpptest.sln in folder project_vc19
+- `make vc17` #generate solution files for Microsoft Visual Studio 2017, then open eventpptest.sln in folder project_vc17
+- `make vc15` #generate solution files for Microsoft Visual Studio 2015, then open eventpptest.sln in folder project_vc15
+- `make mingw` #build using MinGW
+- `make linux` #build on Linux
+- `make mingw_coverage` #build using MinGW and generate code coverage report
+
+<a id="a2_8"></a>
+## Motivations
+
+I (wqking) developed `cpgf` library in more than 12 years ago. `cpgf` works, but it has several serious problems.
+The first problem is it was written in C++03, the code is verbose and difficult to write. The second problem is that
+it includes too many features in a single library -- reflection, serialization, script binding (Lua, Python, JavaScript).  
+`metapp` is a modern version of `cpgf`, and it will only include reflection feature. Other features, such as serialization,
+script binding, will be in separated projects, if they are developed.

@@ -89,12 +89,12 @@ public:
 		size_t itemIndex;
 	};
 
-	using value_type = typename Iterator::value_type;
+	using value_type = const ValueType;
 	using size_type = size_t;
 	using difference_type = typename Iterator::difference_type;
-	using reference = typename Iterator::reference;
+	using reference = const value_type &;
 	using const_reference = const value_type &;
-	using pointer = typename Iterator::pointer;
+	using pointer = const value_type *;
 	using const_pointer = const value_type *;
 	using iterator = Iterator;
 	using const_iterator = Iterator;

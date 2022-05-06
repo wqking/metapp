@@ -1,6 +1,13 @@
 [//]: # (Auto generated file, don't modify this file.)
 
-# How to generate documentations
+# About documentations
+
+## How the documentations are written
+
+The documentations are written in a novel way. The documentations are written in C++ source, in form of C++ comment. The sample code is real C++ code which is compilable and runnable. When converting the C++ source file to document file, the comments are converted to markdown description, and the sample code is also converted to markdown code block.  
+That's to say, most sample code in the documents are compilable and runnable.
+
+## How to generate documentations
 
 All documentations and the readme are generated from the source code in folder `metapp/tests/docsrc`. The document .md file name is same to the .cpp source file name.  
 

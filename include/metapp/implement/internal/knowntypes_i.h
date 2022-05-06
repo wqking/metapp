@@ -36,6 +36,7 @@ using IntegralTypeList = TypeList<
 #ifdef METAPP_SUPPORT_CHAR8_T
 	char8_t,
 #endif
+	char16_t, char32_t,
 	signed char, unsigned char,
 	short, unsigned short,
 	int, unsigned int,
