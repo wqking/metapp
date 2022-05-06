@@ -30,12 +30,16 @@ namespace metapp {
 
 namespace internal_ {
 
+#ifdef METAPP_SUPPORT_CHAR8_T
+using metappChar8_t = char8_t;
+#else
+struct metappChar8_t {};
+#endif
+
 using IntegralTypeList = TypeList<
 	bool,
 	char, wchar_t,
-#ifdef METAPP_SUPPORT_CHAR8_T
-	char8_t,
-#endif
+	metappChar8_t,
 	char16_t, char32_t,
 	signed char, unsigned char,
 	short, unsigned short,
