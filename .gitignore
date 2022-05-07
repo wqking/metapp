@@ -4,5 +4,6 @@ tests/build/project*
 tests/coverage
 temp
 build
+bin
 __pycache__
 *.pyc
