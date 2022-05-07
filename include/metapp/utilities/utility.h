@@ -71,6 +71,18 @@ inline constexpr bool typeKindIsReal(const TypeKind typeKind)
 	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
 }
 
+template <typename To>
+inline bool typeIsSameTo(const MetaType * type)
+{
+	return type->getUnifiedType() == metapp::getMetaType<To>()->getUnifiedType();
+}
+
+template <typename Pointed>
+inline bool typeIsPointerTo(const MetaType * type)
+{
+	return type->isPointer() && type->getUpType()->getUnifiedType() == metapp::getMetaType<Pointed>()->getUnifiedType();
+}
+
 inline bool typeIsCharPtr(const MetaType * type)
 {
 	return type->isPointer() && type->getUpType()->getTypeKind() == tkChar;
