@@ -35,12 +35,12 @@ TEST_CASE("MetaType, CV and MetaType equivalence")
 	REQUIRE(metapp::getMetaType<const volatile int>() != metapp::getMetaType<const int>());
 }
 
-TEST_CASE("MetaType, getUnifiedType")
+TEST_CASE("MetaType, equal")
 {
-	REQUIRE(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<int>()->getUnifiedType());
-	REQUIRE(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-	REQUIRE(metapp::getMetaType<volatile int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-	REQUIRE(metapp::getMetaType<const volatile int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
+	REQUIRE(metapp::getMetaType<int>()->equal(metapp::getMetaType<int>()));
+	REQUIRE(metapp::getMetaType<int>()->equal(metapp::getMetaType<const int>()));
+	REQUIRE(metapp::getMetaType<volatile int>()->equal(metapp::getMetaType<const int>()));
+	REQUIRE(metapp::getMetaType<const volatile int>()->equal(metapp::getMetaType<const int>()));
 }
 
 TEST_CASE("MetaType, getUpType")

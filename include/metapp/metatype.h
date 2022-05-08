@@ -72,7 +72,6 @@ public:
 
 	~MetaType() = default;
 
-	const void * getUnifiedType() const noexcept;
 	const void * getModule() const noexcept;
 
 	bool equal(const MetaType * other) const;
@@ -159,6 +158,7 @@ private:
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
+	const void * getUnifiedType() const noexcept;
 	const internal_::UnifiedType * doGetUnifiedTypePointer() const noexcept;
 
 	template <typename T>
