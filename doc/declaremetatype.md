@@ -222,7 +222,7 @@ struct metapp::DeclareMetaType<Integer>
 {
   static bool cast(metapp::Variant * result, const metapp::Variant & value, const metapp::MetaType * toMetaType) {
     // Check if toMetaType is Text
-    if(toMetaType->getUnifiedType() == metapp::getMetaType<Text>()->getUnifiedType()) {
+    if(toMetaType->equal(metapp::getMetaType<Text>())) {
       if(result != nullptr) {
         *result = static_cast<Text>(value.get<const Integer &>());
       }
@@ -234,7 +234,7 @@ struct metapp::DeclareMetaType<Integer>
 
   static bool castFrom(metapp::Variant * result, const metapp::Variant & value, const metapp::MetaType * fromMetaType)
   {
-    if(fromMetaType->getUnifiedType() == metapp::getMetaType<Text>()->getUnifiedType()) {
+    if(fromMetaType->equal(metapp::getMetaType<Text>())) {
       if(result != nullptr) {
         *result = static_cast<Integer>(value.get<const Text &>());
       }

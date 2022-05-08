@@ -24,7 +24,8 @@
 ## Overview
 
 `metapp::MetaType` represents the meta information of arbitrary C++ type.  
-We can obtain almost all information on any C++ type through `metapp::MetaType`, such as, but not limited to, pointer, reference, const-volatile qualifier, array, function parameters, etc.  
+We can obtain almost all information on any C++ type through `metapp::MetaType`, such as,
+but not limited to, pointer, reference, const-volatile qualifier, array, function parameters, etc.  
 
 ## Header
 
@@ -57,7 +58,8 @@ ExampleFunc
 }
 
 /*desc
-MetaType is CV-aware (CV means const-volatile). That's to say, for the same T, different CV qualified types will result different MetaType. For example,  
+MetaType is CV-aware (CV means const-volatile). That's to say, for the same T,
+different CV qualified types will result different MetaType. For example,  
 desc*/
 
 ExampleFunc
@@ -69,28 +71,15 @@ ExampleFunc
 }
 
 /*desc
-To identify CV-unaware meta type, use `MetaType::getUnifiedType()`.  
+To identify CV-unaware meta type, use `MetaType::equal()` or `MetaType::compare()`.  
 
-**Example**
-desc*/
-
-ExampleFunc
-{
-	//code
-	//TBF
-	//ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-	//ASSERT(metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
-	//code
-}
-
-/*desc
 ### Use MetaRepo at runtime
 
 The class `metapp::MetaRepo` holds all registered meta types.
 
 ## Member functions
 
-### Not constructible
+#### Not constructible
 
 ```c++
 MetaType() = delete;
@@ -100,21 +89,57 @@ MetaType(MetaType &&) = delete;
 
 MetaType is not constructible. So the user can't construct a MetaType on the stack or heap.  
 
-### getUnifiedType
+#### equal
 
 ```c++
-const void * getUnifiedType() const noexcept;
+bool equal(const MetaType * other) const;
 ```
 
-Returns the pointer to unified type.  
-Each MetaType has one and only one UnifiedType. UnifiedType is similar to MetaType, except that UnifiedType is CV-unaware. That's to say, for the same T, no matter it's qualified with const or volatile, the UnifiedType is always the same. So,  
+Returns true if `this` equals to `other`.  
+The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
+desc*/
+
+ExampleFunc
+{
+	//code
+	// A type equals to itself.
+	ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<int>()));
+	// Any top level CV qualifiers are ignored.
+	ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<const int>()));
+
+	// Any top level CV qualifiers are ignored.
+	ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<int * const>()));
+	// CV inside pointers or references are ignored.
+	ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<const int *>()));
+	ASSERT(metapp::getMetaType<int const * volatile *>()->equal(metapp::getMetaType<int volatile * const *>()));
+	ASSERT(metapp::getMetaType<int &>()->equal(metapp::getMetaType<const int &>()));
+	ASSERT(metapp::getMetaType<int &&>()->equal(metapp::getMetaType<const int &&>()));
+
+	// Any top level CV qualifiers are ignored.
+	ASSERT(metapp::getMetaType<int[]>()->equal(metapp::getMetaType<const int[]>()));
+
+	// Different types don't equal.
+	ASSERT(! metapp::getMetaType<int>()->equal(metapp::getMetaType<long>()));
+	// Different pointers are different types.
+	ASSERT(! metapp::getMetaType<int *>()->equal(metapp::getMetaType<int **>()));
+	//code
+}
+
+/*desc
+#### compare
+
 ```c++
-metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType();
-metapp::getMetaType<std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType();
+int compare(const MetaType * other) const;
 ```
-`UnifiedType` is an opaque type, so it's a `const void *`. Its only function is to identify or compare types.  
 
-### getUpType
+Compares `this` with `other`.  
+The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
+Returns negative value if `this` is before `other`.  
+Returns zero if `this` equals to `other`.  
+Returns positive value if `this` is after `other`.  
+This function is useful when putting `MetaType` in ordered containers, such as `std::map`, `std::set`, etc.
+
+#### getUpType
 
 ```c++
 const MetaType * getUpType() const; // #1
@@ -124,11 +149,14 @@ const MetaType * getUpType(const size_t i) const; // #2
 Returns the pointer to UpType.  
 The first form is same to `getUpType(0)`.  
 A MetaType has 0, 1, or multiple UpTypes. An UpType is a pointer to MetaType object.  
-A MetaType only has one TypeKind, so it can represent only one type information, it can't represent compound information. For example, for type `int *`, the TypeKind of the MetaType is `tkPointer`, the `int` type is missed. For `std::vector<char>`, the TypeKind of the MetaType is `tkStdVector`, the `char` type is missed.  
+A MetaType only has one TypeKind, so it can represent only one type information,
+it can't represent compound information. For example, for type `int *`, the TypeKind of the MetaType is `tkPointer`,
+the `int` type is missed. For `std::vector<char>`, the TypeKind of the MetaType is `tkStdVector`, the `char` type is missed.  
 UpType is used to represent the missed type information.  
-The actual types of UpType depends on how the meta type defines them. For example, for pointer (tkPointer), it has only one UpType, which is the type it points to. Reference is similar to pointer.  
+The actual types of UpType depends on how the meta type defines them. For example, for pointer (tkPointer),
+it has only one UpType, which is the type it points to. Reference is similar to pointer.  
 
-### getUpTypeCount
+#### getUpTypeCount
 
 ```c++
 size_t getUpTypeCount() const noexcept;
@@ -136,7 +164,7 @@ size_t getUpTypeCount() const noexcept;
 
 Returns the count of UpType. The result can be 0, 1, or more.  
 
-### getTypeKind
+#### getTypeKind
 
 ```c++
 TypeKind getTypeKind() const noexcept;
@@ -149,7 +177,7 @@ when detecting the features of a MetaType.
 For example, instead of `metaType->getTypeKind() == metapp::tkPointer`, you should use `metaType->isPointer()`.  
 Using type attributes and meta interfaces are more flexible and less error prone.  
 
-### Get type attributes
+#### Get type attributes
 
 ```c++
 constexpr bool isConst() const noexcept;
@@ -181,7 +209,7 @@ To check if a MetaType is static member, check `! isMemberPointer()`.
 Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType.
 That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
 
-### Get meta interfaces
+#### Get meta interfaces
 
 ```c++
 const MetaClass * getMetaClass() const;
@@ -196,11 +224,12 @@ const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```
 
-The functions return the meta interfaces if they are implemented. If any interface is not implemented by the meta type, `nullptr` is returned.  
+The functions return the meta interfaces if they are implemented.
+If any interface is not implemented by the meta type, `nullptr` is returned.  
 MetaType has very few public functions, most functions are in the meta interfaces.  
 Please see the document for each meta interface for more detailed information.  
 
-### construct
+#### construct
 
 ```c++
 void * construct() const;
@@ -210,7 +239,7 @@ Similar to C++ code `new T()`.
 Allocate and initialize an object on the heap, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-### copyConstruct
+#### copyConstruct
 
 ```c++
 void * copyConstruct(const void * copyFrom) const;
@@ -220,12 +249,24 @@ Similar to C++ code `new T(anotherObject)`.
 Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-### destroy
+#### destroy
 
 ```c++
 void destroy(void * instance) const;
 ```
 
 Free an object constructed by `construct` or `copyConstruct`.  
+
+#### getModule
+
+```c++
+const void * getModule() const noexcept;
+```
+
+Returns a pointer to represent which module the `MetaType` is from.  
+Usually you don't need to use this function.  
+"Module" means a dynamic library, or the main program.  
+For the same module, the function always returns the same pointer for all meta types.  
+For different modules, the pointers are different.  
 
 desc*/

@@ -39,6 +39,7 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior, no template parameters are needed. All parameters and return values are passed via metapp::Variant.
     - Automatically type conversion when getting/setting fields, invoking methods, etc.
     - Support multiple inheritance and hierarchy.
+    - Support using in dynamic library (plugins).
 
 - **Flexible and easy to use**
     - Building meta data doesn't require preprocessor or any external tool. Only use native C++ code, no need macros.
@@ -252,7 +253,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
     - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core concepts and classes
-    - [Core concepts - type kind, meta type, unified type, up type, meta interface](doc/core_concepts.md)
+    - [Core concepts - type kind, meta type, up type, meta interface](doc/core_concepts.md)
     - [Class Variant reference](doc/variant.md)
     - [Class MetaType reference](doc/metatype.md)
 

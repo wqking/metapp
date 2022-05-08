@@ -40,21 +40,18 @@ TEST_CASE("tutorialMetaType_identify_MetaType")
 {
 	//code
 	//desc We can use metapp::getMetaType<T>() to get the MetaType for T at compile time.  
-	//desc For the same type with same constness, metapp::getMetaType is always the same.
-	ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
-	ASSERT(metapp::getMetaType<const std::string>() == metapp::getMetaType<const std::string>());
-	ASSERT(metapp::getMetaType<const volatile double>() == metapp::getMetaType<const volatile double>());
+	//desc A type equals to itself.
+	ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<int>()));
+	//desc Any top level CV qualifiers are ignored.
+	ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<const int>()));
 
-	//desc Different constness give different MetaType.
-	ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
-	ASSERT(metapp::getMetaType<const std::string>() != metapp::getMetaType<volatile std::string>());
-	ASSERT(metapp::getMetaType<const volatile double>() != metapp::getMetaType<volatile double>());
-
-	//desc Different constness give same UnifiedType.
-	//TBF
-	//ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-	//ASSERT(metapp::getMetaType<const std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
-	//ASSERT(metapp::getMetaType<const volatile double>()->getUnifiedType() == metapp::getMetaType<volatile double>()->getUnifiedType());
+	//desc Any top level CV qualifiers are ignored.
+	ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<int * const>()));
+	//desc CV inside pointers or references are ignored.
+	ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<const int *>()));
+	ASSERT(metapp::getMetaType<int const * volatile *>()->equal(metapp::getMetaType<int volatile * const *>()));
+	ASSERT(metapp::getMetaType<int &>()->equal(metapp::getMetaType<const int &>()));
+	ASSERT(metapp::getMetaType<int &&>()->equal(metapp::getMetaType<const int &&>()));
 	//code
 }
 

@@ -46,8 +46,26 @@ TEST_CASE("MetaType, equal")
 	REQUIRE(metapp::getMetaType<int *>()->equal(metapp::getMetaType<const int *>()));
 	REQUIRE(metapp::getMetaType<int const * volatile *>()->equal(metapp::getMetaType<int volatile * const *>()));
 
+	REQUIRE(metapp::getMetaType<int &>()->equal(metapp::getMetaType<const int &>()));
+	REQUIRE(metapp::getMetaType<int &&>()->equal(metapp::getMetaType<const int &&>()));
+
 	REQUIRE(metapp::getMetaType<int[]>()->equal(metapp::getMetaType<int[]>()));
 	REQUIRE(metapp::getMetaType<int[]>()->equal(metapp::getMetaType<const int[]>()));
+}
+
+TEST_CASE("MetaType, compare")
+{
+	REQUIRE(metapp::getMetaType<int>()->compare(metapp::getMetaType<int>()) == 0);
+	REQUIRE(metapp::getMetaType<int>()->compare(metapp::getMetaType<const int>()) == 0);
+	
+	REQUIRE(metapp::getMetaType<int *>()->compare(metapp::getMetaType<int * const>()) == 0);
+	REQUIRE(metapp::getMetaType<int *>()->compare(metapp::getMetaType<const int *>()) == 0);
+	REQUIRE(metapp::getMetaType<int const * volatile *>()->compare(metapp::getMetaType<int volatile * const *>()) == 0);
+
+	REQUIRE(metapp::getMetaType<int *>()->compare(metapp::getMetaType<int ** const>()) != 0);
+	REQUIRE(metapp::getMetaType<int *>()->compare(metapp::getMetaType<int ** const>())
+		== -metapp::getMetaType<int ** const>()->compare(metapp::getMetaType<int *>())
+	);
 }
 
 TEST_CASE("MetaType, getUpType")

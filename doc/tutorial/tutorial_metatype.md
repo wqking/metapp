@@ -16,28 +16,31 @@ To use all declared meta types, include this header
 ## Identify and compare MetaType
 
 We can use metapp::getMetaType<T>() to get the MetaType for T at compile time.  
-For the same type with same constness, metapp::getMetaType is always the same.
+A type equals to itself.
 
 ```c++
-ASSERT(metapp::getMetaType<int>() == metapp::getMetaType<int>());
-ASSERT(metapp::getMetaType<const std::string>() == metapp::getMetaType<const std::string>());
-ASSERT(metapp::getMetaType<const volatile double>() == metapp::getMetaType<const volatile double>());
+ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<int>()));
 ```
 
-Different constness give different MetaType.
+Any top level CV qualifiers are ignored.
 
 ```c++
-ASSERT(metapp::getMetaType<int>() != metapp::getMetaType<const int>());
-ASSERT(metapp::getMetaType<const std::string>() != metapp::getMetaType<volatile std::string>());
-ASSERT(metapp::getMetaType<const volatile double>() != metapp::getMetaType<volatile double>());
+ASSERT(metapp::getMetaType<int>()->equal(metapp::getMetaType<const int>()));
 ```
 
-Different constness give same UnifiedType.
+Any top level CV qualifiers are ignored.
 
 ```c++
-ASSERT(metapp::getMetaType<int>()->getUnifiedType() == metapp::getMetaType<const int>()->getUnifiedType());
-ASSERT(metapp::getMetaType<const std::string>()->getUnifiedType() == metapp::getMetaType<volatile std::string>()->getUnifiedType());
-ASSERT(metapp::getMetaType<const volatile double>()->getUnifiedType() == metapp::getMetaType<volatile double>()->getUnifiedType());
+ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<int * const>()));
+```
+
+CV inside pointers or references are ignored.
+
+```c++
+ASSERT(metapp::getMetaType<int *>()->equal(metapp::getMetaType<const int *>()));
+ASSERT(metapp::getMetaType<int const * volatile *>()->equal(metapp::getMetaType<int volatile * const *>()));
+ASSERT(metapp::getMetaType<int &>()->equal(metapp::getMetaType<const int &>()));
+ASSERT(metapp::getMetaType<int &&>()->equal(metapp::getMetaType<const int &&>()));
 ```
 
 ## Inspect MetaType attributes
