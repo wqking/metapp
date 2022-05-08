@@ -32,12 +32,12 @@ MetaItemList emptyMetaItemList;
 
 BaseView InheritanceRepo::getBases(const MetaType * classMetaType) const
 {
-	return BaseView(&doGetClassInfo(classMetaType->getUnifiedType())->baseList);
+	return BaseView(&doGetClassInfo(classMetaType)->baseList);
 }
 
 BaseView InheritanceRepo::getDerives(const MetaType * classMetaType) const
 {
-	return BaseView(&doGetClassInfo(classMetaType->getUnifiedType())->derivedList);
+	return BaseView(&doGetClassInfo(classMetaType)->derivedList);
 }
 
 void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const
@@ -45,7 +45,7 @@ void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaTy
 	if(instance == nullptr) {
 		return nullptr;
 	}
-	return doGetClassInfo(classMetaType->getUnifiedType())->baseList[baseIndex].cast(instance);
+	return doGetClassInfo(classMetaType)->baseList[baseIndex].cast(instance);
 }
 
 void * InheritanceRepo::castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const
@@ -53,7 +53,7 @@ void * InheritanceRepo::castToDerived(void * instance, const MetaType * classMet
 	if(instance == nullptr) {
 		return nullptr;
 	}
-	return doGetClassInfo(classMetaType->getUnifiedType())->derivedList[derivedIndex].cast(instance);
+	return doGetClassInfo(classMetaType)->derivedList[derivedIndex].cast(instance);
 }
 
 void * InheritanceRepo::cast(void * instance, const MetaType * classMetaType, const MetaType * toMetaType) const
@@ -87,10 +87,10 @@ InheritanceRepo::Relationship InheritanceRepo::getRelationship(const MetaType * 
 
 bool InheritanceRepo::isClassInHierarchy(const MetaType * classMetaType) const
 {
-	return doFindClassInfo(classMetaType->getUnifiedType()) != nullptr;
+	return doFindClassInfo(classMetaType) != nullptr;
 }
 
-const InheritanceRepo::ClassInfo * InheritanceRepo::doFindClassInfo(const void * type) const
+const InheritanceRepo::ClassInfo * InheritanceRepo::doFindClassInfo(const MetaType * type) const
 {
 	auto it = classInfoMap.find(type);
 	if(it != classInfoMap.end()) {
@@ -99,7 +99,7 @@ const InheritanceRepo::ClassInfo * InheritanceRepo::doFindClassInfo(const void *
 	return nullptr;
 }
 
-const InheritanceRepo::ClassInfo * InheritanceRepo::doGetClassInfo(const void * type) const
+const InheritanceRepo::ClassInfo * InheritanceRepo::doGetClassInfo(const MetaType * type) const
 {
 	const ClassInfo * result = doFindClassInfo(type);
 	if(result == nullptr) {
@@ -119,27 +119,25 @@ int InheritanceRepo::doFindRelationship(
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType) const
 {
-	const void * fromUnifiedType = fromMetaType->getUnifiedType();
-	const ClassInfo * currentClassInfo = doFindClassInfo(fromUnifiedType);
+	const ClassInfo * currentClassInfo = doFindClassInfo(fromMetaType);
 	if(currentClassInfo == nullptr) {
 		return 0;
 	}
-	const void * toUnifiedType = toMetaType->getUnifiedType();
-	if(doFindClassInfo(toUnifiedType) == nullptr) {
+	if(doFindClassInfo(toMetaType) == nullptr) {
 		return 0;
 	}
-	int levels = doFindBaseClass(entryList, currentClassInfo, toUnifiedType, 0);
+	int levels = doFindBaseClass(entryList, currentClassInfo, toMetaType, 0);
 	if(levels > 0) {
 		return levels;
 	}
-	levels = doFindDerivedClass(entryList, currentClassInfo, toUnifiedType, 0);
+	levels = doFindDerivedClass(entryList, currentClassInfo, toMetaType, 0);
 	return -levels;
 }
 
 int InheritanceRepo::doFindBaseClass(
 	BaseDerived * entryList,
 	const ClassInfo * currentClassInfo,
-	const void * targetBaseUnifiedType,
+	const MetaType * targetBaseMetaType,
 	const int level) const
 {
 	assert(level < maxInheritanceLevels);
@@ -150,11 +148,11 @@ int InheritanceRepo::doFindBaseClass(
 	}
 	for(size_t i = 0; i < count; ++i) {
 		entryList[level] = currentClassInfo->baseList[i];
-		if(currentClassInfo->baseList[i].targetMetaType->getUnifiedType() == targetBaseUnifiedType) {
+		if(currentClassInfo->baseList[i].targetMetaType->equal(targetBaseMetaType)) {
 			return level + 1;
 		}
-		const ClassInfo * baseClassInfo = doGetClassInfo(currentClassInfo->baseList[i].targetMetaType->getUnifiedType());
-		const int nextLevel = doFindBaseClass(entryList, baseClassInfo, targetBaseUnifiedType, level + 1);
+		const ClassInfo * baseClassInfo = doGetClassInfo(currentClassInfo->baseList[i].targetMetaType);
+		const int nextLevel = doFindBaseClass(entryList, baseClassInfo, targetBaseMetaType, level + 1);
 		if(nextLevel > 0) {
 			return nextLevel;
 		}
@@ -165,7 +163,7 @@ int InheritanceRepo::doFindBaseClass(
 int InheritanceRepo::doFindDerivedClass(
 	BaseDerived * entryList,
 	const ClassInfo * currentClassInfo,
-	const void * targetDerivedUnifiedType,
+	const MetaType * targetDerivedMetaType,
 	const int level) const
 {
 	assert(level < maxInheritanceLevels);
@@ -176,18 +174,17 @@ int InheritanceRepo::doFindDerivedClass(
 	}
 	for(size_t i = 0; i < count; ++i) {
 		entryList[level] = currentClassInfo->derivedList[i];
-		if(currentClassInfo->derivedList[i].targetMetaType->getUnifiedType() == targetDerivedUnifiedType) {
+		if(currentClassInfo->derivedList[i].targetMetaType->equal(targetDerivedMetaType)) {
 			return level + 1;
 		}
-		const ClassInfo * derivedClassInfo = doGetClassInfo(currentClassInfo->derivedList[i].targetMetaType->getUnifiedType());
-		const int nextLevel = doFindDerivedClass(entryList, derivedClassInfo, targetDerivedUnifiedType, level + 1);
+		const ClassInfo * derivedClassInfo = doGetClassInfo(currentClassInfo->derivedList[i].targetMetaType);
+		const int nextLevel = doFindDerivedClass(entryList, derivedClassInfo, targetDerivedMetaType, level + 1);
 		if(nextLevel > 0) {
 			return nextLevel;
 		}
 	}
 	return 0;
 }
-
 
 MetaItem & MetaRepoBase::ItemData::addItem(const MetaItem::Type type, const std::string & name, const Variant & target)
 {

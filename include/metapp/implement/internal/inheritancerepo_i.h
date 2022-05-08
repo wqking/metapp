@@ -23,7 +23,7 @@
 
 #include <deque>
 #include <set>
-#include <unordered_map>
+#include <map>
 #include <type_traits>
 #include <cmath>
 #include <algorithm>
@@ -47,6 +47,13 @@ struct BaseDerived
 using BaseView = internal_::DisjointView<const MetaType *, std::deque<internal_::BaseDerived>, 1>;
 
 namespace internal_ {
+
+struct MetaTypeLess
+{
+	bool operator() (const MetaType * a, const MetaType * b) const {
+		return a->compare(b) < 0;
+	}
+};
 
 class InheritanceRepo
 {
@@ -158,25 +165,23 @@ private:
 		using B = typename std::remove_cv<typename std::remove_reference<Base>::type>::type;
 		const MetaType * classMetaType = getMetaType<C>();
 		const MetaType * baseMetaType = getMetaType<B>();
-		const void * classUnifiedType = classMetaType->getUnifiedType();
-		const void * baseUnifiedType = baseMetaType->getUnifiedType();
 
-		auto & thisClassInfo = classInfoMap[classUnifiedType];
+		auto & thisClassInfo = classInfoMap[classMetaType];
 		if(std::find_if(
 			thisClassInfo.baseList.begin(),
 			thisClassInfo.baseList.end(),
 			[baseMetaType](const BaseDerived & item) {
-				return item.targetMetaType == baseMetaType;
+				return item.targetMetaType->equal(baseMetaType);
 			}) == thisClassInfo.baseList.end()) {
 			thisClassInfo.baseList.push_back({ baseMetaType, &castObject<C, B> });
 		}
 		
-		auto & baseClassInfo = classInfoMap[baseUnifiedType];
+		auto & baseClassInfo = classInfoMap[baseMetaType];
 		if(std::find_if(
 			baseClassInfo.derivedList.begin(),
 			baseClassInfo.derivedList.end(),
 			[classMetaType](const BaseDerived & item) {
-				return item.targetMetaType == classMetaType;
+				return item.targetMetaType->equal(classMetaType);
 			}) == baseClassInfo.derivedList.end()) {
 			baseClassInfo.derivedList.push_back({ classMetaType, &castObject<B, C> });
 		}
@@ -189,8 +194,8 @@ private:
 		return getMetaType<U>();
 	}
 
-	const ClassInfo * doFindClassInfo(const void * type) const;
-	const ClassInfo * doGetClassInfo(const void * type) const;
+	const ClassInfo * doFindClassInfo(const MetaType * type) const;
+	const ClassInfo * doGetClassInfo(const MetaType * type) const;
 
 	static const ClassInfo * doGetDummyClassInfo();
 
@@ -202,13 +207,13 @@ private:
 	int doFindBaseClass(
 		BaseDerived * entryList,
 		const ClassInfo * currentClassInfo,
-		const void * targetBaseUnifiedType,
+		const MetaType * targetBaseMetaType,
 		const int level) const;
 
 	int doFindDerivedClass(
 		BaseDerived * entryList,
 		const ClassInfo * currentClassInfo,
-		const void * targetDerivedUnifiedType,
+		const MetaType * targetDerivedMetaType,
 		const int level) const;
 
 	template <typename From, typename To>
@@ -267,7 +272,7 @@ private:
 	}
 
 private:
-	std::unordered_map<const void *, ClassInfo> classInfoMap;
+	std::map<const MetaType *, ClassInfo, MetaTypeLess> classInfoMap;
 };
 
 } // namespace internal_
