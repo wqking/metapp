@@ -94,7 +94,7 @@ TristateBool doCastPointerReference(
 		const MetaType * toUpType = toMetaType->getUpType();
 		bool matched = false;
 		while(fromUpType != nullptr && toUpType != nullptr) {
-			if(fromUpType->getUnifiedType() == toUpType->getUnifiedType()) {
+			if(fromUpType->equal(toUpType)) {
 				matched = true;
 				break;
 			}
@@ -139,7 +139,7 @@ TristateBool doCastPointerReference(
 		}
 	}
 
-	if(getNonReferenceMetaType(fromMetaType)->getUnifiedType() == getNonReferenceMetaType(toMetaType)->getUnifiedType()) {
+	if(getNonReferenceMetaType(fromMetaType)->equal(getNonReferenceMetaType(toMetaType))) {
 		if(result != nullptr) {
 			*result = Variant::retype(toMetaType, value);
 		}

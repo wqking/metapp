@@ -30,6 +30,6 @@ TEST_CASE("dlib")
 	REQUIRE(libData->var5.getMetaType()->getTypeKind() == metapp::tkInt);
 	libData->var5.get<int>();
 	REQUIRE(libData->var5.get<int>() == 5);
-	//REQUIRE(libData->var5.cast<unsigned int>().get<unsigned int>() == 5u);
+	REQUIRE(libData->var5.cast<unsigned int>().get<unsigned int>() == 5u);
 }
 

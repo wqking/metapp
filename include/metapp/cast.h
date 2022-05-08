@@ -23,7 +23,7 @@ namespace metapp {
 
 struct CastFromItem
 {
-	const void * fromUnifiedType;
+	const MetaType * fromMetaType;
 	Variant (*castFrom)(const Variant & value);
 };
 
@@ -34,7 +34,7 @@ public:
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
 		auto castFromItem = findCastFromItem(fromMetaType);
-		if(castFromItem.fromUnifiedType != nullptr) {
+		if(castFromItem.fromMetaType != nullptr) {
 			if(result != nullptr) {
 				*result = castFromItem.castFrom(value);
 			}
@@ -49,7 +49,7 @@ private:
 	{
 		static CastFromItem getCastFromItem() {
 			return CastFromItem {
-				getMetaType<FromType>()->getUnifiedType(),
+				getMetaType<FromType>(),
 				&castFrom
 			};
 		}
@@ -72,13 +72,12 @@ private:
 	template <typename ...Types>
 	static CastFromItem doFindCastFromItemHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		const void * fromUnifiedType = fromMetaType->getUnifiedType();
 		const CastFromItem itemList[] = {
 			HelperCastFrom<Types>::getCastFromItem()...,
 			CastFromItem {}
 		};
-		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]); ++i) {
-			if(itemList[i].fromUnifiedType == fromUnifiedType) {
+		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
+			if(itemList[i].fromMetaType->equal(fromMetaType)) {
 				return itemList[i];
 			}
 		}
@@ -104,7 +103,7 @@ private:
 
 struct CastToItem
 {
-	const void * toUnifiedType;
+	const MetaType * toMetaType;
 	Variant (*castTo)(const Variant & value);
 };
 
@@ -115,7 +114,7 @@ public:
 	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
 		auto castToItem = findCastToItem(toMetaType);
-		if(castToItem.toUnifiedType != nullptr) {
+		if(castToItem.toMetaType != nullptr) {
 			if(result != nullptr) {
 				*result = castToItem.castTo(value);
 			}
@@ -130,7 +129,7 @@ private:
 	{
 		static CastToItem getCastToItem() {
 			return CastToItem {
-				getMetaType<ToType>()->getUnifiedType(),
+				getMetaType<ToType>(),
 				&castTo
 			};
 		}
@@ -146,13 +145,12 @@ private:
 	template <typename ...Types>
 	static CastToItem doFindCastToItemHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		const void * toUnifiedType = toMetaType->getUnifiedType();
 		const CastToItem itemList[] = {
 			HelperCastTo<Types>::getCastToItem()...,
 			CastToItem {}
 		};
-		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]); ++i) {
-			if(itemList[i].toUnifiedType == toUnifiedType) {
+		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
+			if(itemList[i].toMetaType->equal(toMetaType)) {
 				return itemList[i];
 			}
 		}
