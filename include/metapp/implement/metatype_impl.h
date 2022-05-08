@@ -111,8 +111,11 @@ auto doGetMetaType()
 }
 
 template <typename T>
-const UnifiedType * unifiedTypeGetter()
+const UnifiedType * unifiedTypeGetter(bool isModule)
 {
+	if(isModule) {
+		return (const UnifiedType *)&commonCast;
+	}
 	using M = DeclareMetaType<T>;
 
 	static const UnifiedType unifiedType(

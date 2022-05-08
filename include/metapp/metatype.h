@@ -59,6 +59,8 @@ namespace internal_ {
 template <typename T>
 const MetaType * doGetMetaTypeStorage();
 
+class UnifiedType;
+
 } // namespace internal_
 
 class MetaType
@@ -149,13 +151,15 @@ public:
 
 private:
 	MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(),
+		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
+	
+	const internal_::UnifiedType * doGetUnifiedTypePointer() const noexcept;
 
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();
@@ -164,7 +168,7 @@ private:
 	friend class Variant;
 
 private:
-	const internal_::UnifiedType * (*doGetUnifiedType)();
+	const internal_::UnifiedType * (*doGetUnifiedType)(bool);
 
 #ifdef METAPP_DEBUG_ENABLED
 	// need this in debug window to ease debugging

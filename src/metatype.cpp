@@ -154,11 +154,6 @@ TypeKind UnifiedType::getTypeKind() const noexcept
 	return typeKind;
 }
 
-const void * UnifiedType::getModule() const noexcept
-{
-	return ownerModule;
-}
-
 const MetaClass * UnifiedType::getMetaClass() const
 {
 	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
@@ -291,7 +286,7 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(),
+		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
 		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
@@ -299,7 +294,7 @@ MetaType::MetaType(
 	:
 		doGetUnifiedType(doGetUnifiedType),
 		#ifdef METAPP_DEBUG_ENABLED
-		debugUnifiedType(doGetUnifiedType()),
+		debugUnifiedType(doGetUnifiedTypePointer()),
 		#endif
 		metaTable(metaTable),
 		upTypeData(upTypeData),
@@ -309,17 +304,33 @@ MetaType::MetaType(
 
 const void * MetaType::getUnifiedType() const noexcept
 {
-	return doGetUnifiedType();
+	return doGetUnifiedTypePointer();
+}
+
+const internal_::UnifiedType * MetaType::doGetUnifiedTypePointer() const noexcept
+{
+	return doGetUnifiedType(false);
 }
 
 const void * MetaType::getModule() const noexcept
 {
-	return doGetUnifiedType()->getModule();
+	//doGetUnifiedType takes two roles. If the argument is false, it returns the unified type.
+	//If the argument is true, it returns a pointer to identify the module (executable or dynamic library).
+	//Such design is ugly, but it's the most efficient method I can come up. Since it's private design,
+	// that should be fine.
+	//There are two more elegant methods,
+	//Method 1, getModule returns a pointer a static variable, but that doesn't work, because if so,
+	//when executable A uses dynamic library B, both getModule will returns the same pointers
+	//because getModule is always the code inside A.
+	//Method 2, put the module pointer in to UnifiedType member data, and assign it in UnifiedType constructor.
+	//That works, but that will bloat the UnifiedType size significantly.
+
+	return doGetUnifiedType(true);
 }
 
 bool MetaType::equal(const MetaType * other) const
 {
-	if(doGetUnifiedType() == other->doGetUnifiedType()) {
+	if(getUnifiedType() == other->getUnifiedType()) {
 		return true;
 	}
 	if(getModule() == other->getModule()) {
@@ -329,7 +340,7 @@ bool MetaType::equal(const MetaType * other) const
 		return false;
 	}
 	const size_t upTypeCount = getUpTypeCount();
-	for(int i = 0; i < upTypeCount; ++i) {
+	for(size_t i = 0; i < upTypeCount; ++i) {
 		if(! getUpType(i)->equal(other->getUpType(i))) {
 			return false;
 		}
@@ -340,7 +351,7 @@ bool MetaType::equal(const MetaType * other) const
 int MetaType::compare(const MetaType * other) const
 {
 	if(getModule() == other->getModule()) {
-		return internal_::compareTwoValues(doGetUnifiedType(), other->doGetUnifiedType());
+		return internal_::compareTwoValues(getUnifiedType(), other->getUnifiedType());
 	}
 	const size_t upTypeCount = getUpTypeCount();
 	int result = internal_::compareTwoValues(upTypeCount, other->getUpTypeCount());
@@ -382,57 +393,57 @@ size_t MetaType::getUpTypeCount() const noexcept
 
 TypeKind MetaType::getTypeKind() const noexcept
 {
-	return doGetUnifiedType()->getTypeKind();
+	return doGetUnifiedTypePointer()->getTypeKind();
 }
 
 const MetaClass * MetaType::getMetaClass() const
 {
-	return doGetUnifiedType()->getMetaClass();
+	return doGetUnifiedTypePointer()->getMetaClass();
 }
 
 const MetaCallable * MetaType::getMetaCallable() const
 {
-	return doGetUnifiedType()->getMetaCallable();
+	return doGetUnifiedTypePointer()->getMetaCallable();
 }
 
 const MetaAccessible * MetaType::getMetaAccessible() const
 {
-	return doGetUnifiedType()->getMetaAccessible();
+	return doGetUnifiedTypePointer()->getMetaAccessible();
 }
 
 const MetaEnum * MetaType::getMetaEnum() const
 {
-	return doGetUnifiedType()->getMetaEnum();
+	return doGetUnifiedTypePointer()->getMetaEnum();
 }
 
 const MetaIndexable * MetaType::getMetaIndexable() const
 {
-	return doGetUnifiedType()->getMetaIndexable();
+	return doGetUnifiedTypePointer()->getMetaIndexable();
 }
 
 const MetaIterable * MetaType::getMetaIterable() const
 {
-	return doGetUnifiedType()->getMetaIterable();
+	return doGetUnifiedTypePointer()->getMetaIterable();
 }
 
 const MetaStreaming * MetaType::getMetaStreaming() const
 {
-	return doGetUnifiedType()->getMetaStreaming();
+	return doGetUnifiedTypePointer()->getMetaStreaming();
 }
 
 const MetaMappable * MetaType::getMetaMappable() const
 {
-	return doGetUnifiedType()->getMetaMappable();
+	return doGetUnifiedTypePointer()->getMetaMappable();
 }
 
 const MetaMember * MetaType::getMetaMember() const
 {
-	return doGetUnifiedType()->getMetaMember();
+	return doGetUnifiedTypePointer()->getMetaMember();
 }
 
 const void * MetaType::getMetaUser() const
 {
-	return doGetUnifiedType()->getMetaUser();
+	return doGetUnifiedTypePointer()->getMetaUser();
 }
 
 void * MetaType::construct() const
@@ -447,12 +458,12 @@ void * MetaType::copyConstruct(const void * copyFrom) const
 
 void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
 {
-	return doGetUnifiedType()->constructData(data, copyFrom);
+	return doGetUnifiedTypePointer()->constructData(data, copyFrom);
 }
 
 void MetaType::destroy(void * instance) const
 {
-	doGetUnifiedType()->destroy(instance);
+	doGetUnifiedTypePointer()->destroy(instance);
 }
 
 const MetaType * MetaType::addReference() const
@@ -462,12 +473,12 @@ const MetaType * MetaType::addReference() const
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
 {
-	return doGetUnifiedType()->cast(result, value, toMetaType);
+	return doGetUnifiedTypePointer()->cast(result, value, toMetaType);
 }
 
 bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
-	return doGetUnifiedType()->castFrom(result, value, fromMetaType);
+	return doGetUnifiedTypePointer()->castFrom(result, value, fromMetaType);
 }
 
 bool commonCast(
