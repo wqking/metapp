@@ -73,13 +73,21 @@ using SelectDeclareClass = typename std::conditional<
 	CommonDeclareMetaType<T>
 >::type;
 
+template <typename T> struct DeepRemoveCv { using Type = T; };
+template <typename T> struct DeepRemoveCv <T const> : DeepRemoveCv<T> {};
+template <typename T> struct DeepRemoveCv <T volatile> : DeepRemoveCv<T> {};
+template <typename T> struct DeepRemoveCv <T const volatile> : DeepRemoveCv<T> {};
+template <typename T> struct DeepRemoveCv <T *> { using Type = typename DeepRemoveCv<T>::Type *; };
+template <typename T> struct DeepRemoveCv <T &> { using Type = typename DeepRemoveCv<T>::Type &; };
+template <typename T> struct DeepRemoveCv <T &&> { using Type = typename DeepRemoveCv<T>::Type &&; };
+
 template <typename T>
 const MetaType * doGetMetaTypeStorage()
 {
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType(
-		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
+		&unifiedTypeGetter<typename DeepRemoveCv<T>::Type>,
 		MetaTable {
 			&SelectDeclareClass<T, HasMember_addReference<M>::value>::addReference,
 		},
