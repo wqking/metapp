@@ -17,7 +17,7 @@ target_include_directories(
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(${TARGET_TEST} Threads::Threads)
+target_link_libraries(${TARGET_TEST} Threads::Threads ${CMAKE_DL_LIBS})
 
 set_target_properties(${TARGET_TEST} PROPERTIES CXX_STANDARD 11)
 

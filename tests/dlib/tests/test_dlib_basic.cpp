@@ -18,30 +18,18 @@
 
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
-#include "metapp/interfaces/metaclass.h"
-#include "metapp/utilities/utility.h"
-
-#include "dlibloader.h"
 
 #include <string>
 #include <iostream>
-#include <climits>
-
-void loadLibrary(DlibLoader & dlibLoader)
-{
-	dlibLoader.load("dlib");
-	if(! dlibLoader.hasLoaded()) {
-		dlibLoader.load("libdlib");
-	}
-}
 
 TEST_CASE("dlib")
 {
-	DlibLoader dlibLoader;
-	loadLibrary(dlibLoader);
-	using FN = const LibData * ();
-	FN * func = (FN *)dlibLoader.getSymbol("getLibData");
-	const LibData * libData = func();
-	REQUIRE(libData->name == "hello");
+	DlibLoaderWrapper dlibLoaderWrapper;
+	const LibData * libData = dlibLoaderWrapper.getLibData();
+	REQUIRE(libData->strHello == "hello");
+	REQUIRE(libData->var5.getMetaType()->getTypeKind() == metapp::tkInt);
+	libData->var5.get<int>();
+	REQUIRE(libData->var5.get<int>() == 5);
+	//REQUIRE(libData->var5.cast<unsigned int>().get<unsigned int>() == 5u);
 }
 

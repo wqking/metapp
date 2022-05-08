@@ -40,6 +40,13 @@ struct DeclareMetaType;
 template <typename T>
 struct CommonDeclareMetaType;
 
+bool commonCast(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+);
+
 namespace internal_ {
 
 class UnifiedType;
@@ -325,6 +332,8 @@ private:
 
 	TypeKind getTypeKind() const noexcept;
 
+	const void * getModule() const noexcept;
+
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;
@@ -349,7 +358,10 @@ private:
 		const TypeKind typeKind,
 		const internal_::UnifiedMetaTable & metaMethodTable
 	) noexcept
-		: typeKind(typeKind), metaMethodTable(metaMethodTable)
+		:
+		typeKind(typeKind),
+		metaMethodTable(metaMethodTable),
+		ownerModule((void *)&commonCast)
 	{
 	}
 
@@ -362,6 +374,7 @@ private:
 private:
 	TypeKind typeKind;
 	internal_::UnifiedMetaTable metaMethodTable;
+	const void * ownerModule;
 };
 
 template <typename P>

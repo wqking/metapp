@@ -71,6 +71,10 @@ public:
 	~MetaType() = default;
 
 	const void * getUnifiedType() const noexcept;
+	const void * getModule() const noexcept;
+
+	bool equal(const MetaType * other) const;
+	int compare(const MetaType * other) const;
 
 	const MetaType * getUpType() const;
 	const MetaType * getUpType(const size_t i) const;

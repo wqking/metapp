@@ -116,7 +116,7 @@ bool Variant::canGet(const MetaType * toMetaType) const
 	if(fromMetaType->isArray() && toMetaType->isArray()) {
 		return true;
 	}
-	return fromMetaType->getUnifiedType() == toMetaType->getUnifiedType();
+	return fromMetaType->equal(toMetaType);
 }
 
 void * Variant::getAddress() const

@@ -18,6 +18,7 @@
 #define DLIBTEST_H
 
 #include "../lib/dlibdata.h"
+#include "dlibloader.h"
 
 #include "metapp/metatype.h"
 #include "metapp/typekind.h"
@@ -25,11 +26,26 @@
 
 #include "../../catch.hpp"
 
-#include <vector>
-#include <unordered_set>
-#include <tuple>
-#include <initializer_list>
+class DlibLoaderWrapper
+{
+private:
+	using FN = const LibData * ();
+public:
+	DlibLoaderWrapper()
+		: getLibData(), dlibLoader()
+	{
+		dlibLoader.load("dlib");
+		if(! dlibLoader.hasLoaded()) {
+			dlibLoader.load("libdlib");
+		}
+		getLibData = (FN *)dlibLoader.getSymbol("getLibData");
+	}
 
+	FN * getLibData;
+
+private:
+	DlibLoader dlibLoader;
+};
 
 
 #endif

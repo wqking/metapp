@@ -1,4 +1,5 @@
 #include "dlib.h"
+#include "metapp/allmetatypes.h"
 
 namespace {
 LibData libData;
@@ -10,7 +11,8 @@ void initLibData()
 		return;
 	}
 	hasInitedLibData = true;
-	libData.name = "hello";
+	libData.strHello = "hello";
+	libData.var5 = 5;
 }
 
 } // namespace

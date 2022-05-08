@@ -17,13 +17,14 @@
 #ifndef DLIBDATA_H_969872685611
 #define DLIBDATA_H_969872685611
 
-#include "metapp/compiler.h"
+#include "metapp/variant.h"
 
 #include <string>
 
 struct LibData
 {
-	std::string name;
+	std::string strHello;
+	metapp::Variant var5;
 };
 
 #endif

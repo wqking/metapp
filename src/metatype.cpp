@@ -154,6 +154,11 @@ TypeKind UnifiedType::getTypeKind() const noexcept
 	return typeKind;
 }
 
+const void * UnifiedType::getModule() const noexcept
+{
+	return ownerModule;
+}
+
 const MetaClass * UnifiedType::getMetaClass() const
 {
 	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
@@ -245,6 +250,17 @@ bool UnifiedType::castFrom(Variant * result, const Variant & value, const MetaTy
 	return metaMethodTable.castFrom(result, value, fromMetaType);
 }
 
+template <typename T>
+int compareTwoValues(T a, T b)
+{
+	if(a < b) {
+		return -1;
+	}
+	if(a > b) {
+		return 1;
+	}
+	return 0;
+}
 
 } // namespace internal_
 
@@ -275,24 +291,69 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-	const internal_::UnifiedType * (*doGetUnifiedType)(),
-	const internal_::MetaTable & metaTable,
-	const internal_::UpTypeData & upTypeData,
-	const TypeFlags typeFlags
-) noexcept :
-	doGetUnifiedType(doGetUnifiedType),
-#ifdef METAPP_DEBUG_ENABLED
-	debugUnifiedType(doGetUnifiedType()),
-#endif
-	metaTable(metaTable),
-	upTypeData(upTypeData),
-	typeFlags(typeFlags)
+		const internal_::UnifiedType * (*doGetUnifiedType)(),
+		const internal_::MetaTable & metaTable,
+		const internal_::UpTypeData & upTypeData,
+		const TypeFlags typeFlags
+	) noexcept
+	:
+		doGetUnifiedType(doGetUnifiedType),
+		#ifdef METAPP_DEBUG_ENABLED
+		debugUnifiedType(doGetUnifiedType()),
+		#endif
+		metaTable(metaTable),
+		upTypeData(upTypeData),
+		typeFlags(typeFlags)
 {
 }
 
 const void * MetaType::getUnifiedType() const noexcept
 {
 	return doGetUnifiedType();
+}
+
+const void * MetaType::getModule() const noexcept
+{
+	return doGetUnifiedType()->getModule();
+}
+
+bool MetaType::equal(const MetaType * other) const
+{
+	if(doGetUnifiedType() == other->doGetUnifiedType()) {
+		return true;
+	}
+	if(getModule() == other->getModule()) {
+		return 0;
+	}
+	if(getTypeKind() != other->getTypeKind() || getUpTypeCount() != other->getUpTypeCount()) {
+		return false;
+	}
+	const size_t upTypeCount = getUpTypeCount();
+	for(int i = 0; i < upTypeCount; ++i) {
+		if(! getUpType(i)->equal(other->getUpType(i))) {
+			return false;
+		}
+	}
+	return true;
+}
+
+int MetaType::compare(const MetaType * other) const
+{
+	if(getModule() == other->getModule()) {
+		return internal_::compareTwoValues(doGetUnifiedType(), other->doGetUnifiedType());
+	}
+	const size_t upTypeCount = getUpTypeCount();
+	int result = internal_::compareTwoValues(upTypeCount, other->getUpTypeCount());
+	if(result != 0) {
+		return result;
+	}
+	for(int i = 0; i < upTypeCount; ++i) {
+		result = getUpType(i)->compare(other->getUpType(i));
+		if(result != 0) {
+			return result;
+		}
+	}
+	return 0;
 }
 
 const MetaType * MetaType::getUpType() const
