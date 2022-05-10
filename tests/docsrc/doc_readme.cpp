@@ -269,6 +269,10 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 - Utilities
     - [utility.h](doc/utilities/utility.md)
 
+- Miscellaneous
+    - [About documentations](doc/about_document.md)
+    - Use metapp in dynamic library
+
 ## Build the test code
 
 There are two parts of code to test the library,

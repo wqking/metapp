@@ -149,7 +149,7 @@ TEST_CASE("MetaType, getTypeKind")
 	REQUIRE(metapp::getMetaType<EnumA>()->getTypeKind() == metapp::tkEnum);
 	REQUIRE(metapp::getMetaType<EnumB>()->getTypeKind() == metapp::tkEnum);
 
-	REQUIRE(metapp::getMetaType<accessorpp::Accessor<int> >()->getTypeKind() == metapp::tkAccessor);
+	REQUIRE(metapp::getMetaType<metapp::Accessor<int> >()->getTypeKind() == metapp::tkAccessor);
 	REQUIRE(metapp::getMetaType<metapp::Variant>()->getTypeKind() == metapp::tkVariant);
 	
 	REQUIRE(metapp::getMetaType<std::string>()->getTypeKind() == metapp::tkStdString);

@@ -82,6 +82,7 @@ public:
 	size_t getUpTypeCount() const noexcept;
 
 	TypeKind getTypeKind() const noexcept;
+	bool isVoid() const noexcept;
 
 	constexpr bool isConst() const noexcept {
 		return typeFlags & tfConst;
@@ -250,6 +251,8 @@ template<> struct CommonDeclareMetaType<void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<volatile void> : DeclareMetaTypeVoidBase {};
 template<> struct CommonDeclareMetaType<const volatile void> : DeclareMetaTypeVoidBase {};
+
+extern const MetaType * voidMetaType;
 
 } // namespace metapp
 

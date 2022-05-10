@@ -51,6 +51,7 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
+			&metaCallableGetClassType,
 			&metaCallableGetParameterCount,
 			&metaCallableGetReturnType,
 			&metaCallableGetParameterType,
@@ -61,6 +62,16 @@ public:
 		return &metaCallable;
 	}
 
+	static const MetaType * metaCallableGetClassType(const Variant & func)
+	{
+		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
+		if(! callableList.empty()) {
+			const auto & callable = callableList.front();
+			return callable.getMetaType()->getMetaCallable()->getClassType(callable);
+		}
+		return voidMetaType;
+	}
+
 	static size_t metaCallableGetParameterCount(const Variant & /*func*/)
 	{
 		return 0;
@@ -68,12 +79,12 @@ public:
 
 	static const MetaType * metaCallableGetReturnType(const Variant & /*func*/)
 	{
-		return getMetaType<void>();
+		return voidMetaType;
 	}
 
 	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const size_t /*index*/)
 	{
-		return getMetaType<void>();
+		return voidMetaType;
 	}
 
 	static unsigned int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)

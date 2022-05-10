@@ -15,6 +15,7 @@
 #define ACCESSORPP_GETTER_H_578722158669
 
 #include "internal/typeutil_i.h"
+#include "metapp/thirdparty/accessorpp/common.h"
 
 #include <functional>
 #include <type_traits>
@@ -22,8 +23,21 @@
 
 namespace accessorpp {
 
-template <typename Type_>
-class Getter
+namespace private_ {
+
+class DefaultClassTypeSetter
+{
+protected:
+	template <typename C>
+	void setClassType() {
+	}
+};
+
+} // namespace private_
+
+template <typename Type_, typename PoliciesType = DefaultPolicies>
+class Getter :
+	public private_::SelectClassTypeSetter<PoliciesType, private_::HasTypeClassTypeSetter<PoliciesType>::value, private_::DefaultClassTypeSetter>::Type
 {
 public:
 	using Type = Type_;
@@ -47,6 +61,7 @@ public:
 		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr)
 		: getterFunc([address, instance](const void *)->Type { return (Type)(instance->*address); })
 	{
+		this->template setClassType<C>();
 	}
 
 	template <typename U, typename C>
@@ -54,6 +69,7 @@ public:
 		typename std::enable_if<std::is_convertible<U, ValueType>::value>::type * = nullptr)
 		: getterFunc([address](const void * instance)->Type { return (Type)(static_cast<const C *>(instance)->*address); })
 	{
+		this->template setClassType<C>();
 	}
 
 	explicit Getter(const Type & value)
@@ -76,6 +92,7 @@ public:
 		>::type * = nullptr)
 		: getterFunc([func, instance](const void *)->Type { return (Type)((instance->*func)()); })
 	{
+		this->template setClassType<typename private_::CallableTypeChecker<F>::ClassType>();
 	}
 
 	template <typename F>
@@ -88,6 +105,7 @@ public:
 			return (Type)((static_cast<const typename private_::CallableTypeChecker<F>::ClassType *>(instance)->*func)());
 		})
 	{
+		this->template setClassType<typename private_::CallableTypeChecker<F>::ClassType>();
 	}
 
 	Getter(const Getter & other)

@@ -181,11 +181,11 @@ class OnChangedCallback <void, CallbackDataType> : public DummyChangeCallback
 {
 };
 
-template <typename Type_>
+template <typename Type_, typename PoliciesType>
 class AccessorRoot
 {
 protected:
-	using GetterType = Getter<Type_>;
+	using GetterType = Getter<Type_, PoliciesType>;
 	using SetterType = Setter<Type_>;
 
 public:
@@ -247,6 +247,14 @@ public:
 		return readOnly;
 	}
 
+	const GetterType & getGetter() const {
+		return getter;
+	}
+
+	SetterType & getSetter() const {
+		return setter;
+	}
+
 protected:
 	void doCheckWritable() const {
 		if(readOnly) {
@@ -260,14 +268,14 @@ protected:
 	const bool readOnly;
 };
 
-template <typename Type_, typename Storage>
+template <typename Type_, typename Storage, typename PoliciesType>
 class AccessorBase;
 
-template <typename Type_>
-class AccessorBase <Type_, InternalStorage> : public AccessorRoot<Type_>
+template <typename Type_, typename PoliciesType>
+class AccessorBase <Type_, InternalStorage, PoliciesType> : public AccessorRoot<Type_, PoliciesType>
 {
 private:
-	using super = AccessorRoot<Type_>;
+	using super = AccessorRoot<Type_, PoliciesType>;
 	using ValueType = typename std::remove_cv<typename std::remove_reference<Type_>::type>::type;
 
 public:
@@ -363,11 +371,11 @@ private:
 	ValueType value;
 };
 
-template <typename Type_>
-class AccessorBase <Type_, ExternalStorage> : public AccessorRoot<Type_>
+template <typename Type_, typename PoliciesType>
+class AccessorBase <Type_, ExternalStorage, PoliciesType> : public AccessorRoot<Type_, PoliciesType>
 {
 private:
-	using super = AccessorRoot<Type_>;
+	using super = AccessorRoot<Type_, PoliciesType>;
 
 public:
 	using GetterType = typename super::GetterType;

@@ -31,5 +31,9 @@ TEST_CASE("dlib")
 	libData->var5.get<int>();
 	REQUIRE(libData->var5.get<int>() == 5);
 	REQUIRE(libData->var5.cast<unsigned int>().get<unsigned int>() == 5u);
+
+	// equal should work for both cross-module and same-module
+	REQUIRE(libData->mtStrConstPtrVolatilePtr->equal(metapp::getMetaType<std::string **>()));
+	REQUIRE(metapp::getMetaType<std::string const * volatile *>()->equal(metapp::getMetaType<std::string **>()));
 }
 

@@ -26,21 +26,28 @@ class MetaAccessible
 public:
 	MetaAccessible(
 		const MetaType * (*getValueType)(const Variant & var),
+		const MetaType * (*getClassType)(const Variant & var),
 		bool (*isReadOnly)(const Variant & var),
 		Variant (*get)(const Variant & var, const void * instance),
 		void (*set)(const Variant & var, void * instance, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
+			getClassType(getClassType),
 			isReadOnly(isReadOnly),
 			get(get),
 			set(set)
 	{}
 
 	const MetaType * (*getValueType)(const Variant & var);
+	const MetaType * (*getClassType)(const Variant & var);
 	bool (*isReadOnly)(const Variant & var);
 	Variant (*get)(const Variant & var, const void * instance);
 	void (*set)(const Variant & var, void * instance, const Variant & value);
+
+	bool isStatic(const Variant & var) const {
+		return getClassType(var)->isVoid();
+	}
 };
 
 inline const MetaType * accessibleGetValueType(const Variant & var)
@@ -48,9 +55,19 @@ inline const MetaType * accessibleGetValueType(const Variant & var)
 	return var.getMetaType()->getMetaAccessible()->getValueType(var);
 }
 
+inline const MetaType * accessibleGetClassType(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->getClassType(var);
+}
+
 inline bool accessibleIsReadOnly(const Variant & var)
 {
 	return var.getMetaType()->getMetaAccessible()->isReadOnly(var);
+}
+
+inline bool accessibleIsStatic(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->isStatic(var);
 }
 
 inline Variant accessibleGet(const Variant & var, const void * instance)

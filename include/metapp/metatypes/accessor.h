@@ -26,9 +26,32 @@ namespace metapp {
 
 namespace internal_ {
 
+class AccessorClassTypeSetter
+{
+public:
+	AccessorClassTypeSetter()
+		: classMetaType(voidMetaType)
+	{
+	}
+
+	const MetaType * getClassMetaType() const {
+		return classMetaType;
+	}
+
+protected:
+	template <typename C>
+	void setClassType() {
+		classMetaType = getMetaType<C>();
+	}
+
+private:
+	const MetaType * classMetaType;
+};
+
 struct AccessorPolicies
 {
 	using Storage = accessorpp::ExternalStorage;
+	using ClassTypeSetter = AccessorClassTypeSetter;
 };
 
 } // namespace internal_
@@ -75,11 +98,11 @@ auto createReadOnlyAccessor(G && getter)
 	return accessorpp::createReadOnlyAccessor(std::forward<G>(getter), internal_::AccessorPolicies());
 }
 
-template <typename T, typename Policies>
-struct DeclareMetaTypeBase <accessorpp::Accessor<T, Policies> >
+template <typename T>
+struct DeclareMetaTypeBase <Accessor<T> >
 {
 private:
-	using AccessorType = accessorpp::Accessor<T, Policies>;
+	using AccessorType = Accessor<T>;
 
 public:
 	using UpType = T;
@@ -88,6 +111,7 @@ public:
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(
 			&accessibleGetValueType,
+			&accessibleGetClassType,
 			&accessibleIsReadOnly,
 			&accessibleGet,
 			&accessibleSet
@@ -97,6 +121,11 @@ public:
 
 	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
+	}
+
+	static const MetaType * accessibleGetClassType(const Variant & accessible) {
+		AccessorType & accessor = accessible.get<AccessorType &>();
+		return accessor.getGetter().getClassMetaType();
 	}
 
 	static bool accessibleIsReadOnly(const Variant & accessible) {

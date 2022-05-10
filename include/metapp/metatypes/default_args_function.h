@@ -86,6 +86,7 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
+			&metaCallableGetClassType,
 			&metaCallableGetParameterCount,
 			&metaCallableGetReturnType,
 			&metaCallableGetParameterType,
@@ -101,6 +102,13 @@ public:
 		return (argumentCount >= argsCount - func.get<FunctionType &>().getDefaultArgsCount())
 			&& (argumentCount <= argsCount)
 		;
+	}
+
+	static const MetaType * metaCallableGetClassType(const Variant & func)
+	{
+		const FunctionType & defaultArgsFunc = func.get<FunctionType &>();
+		const Variant & underlyingFunc = defaultArgsFunc.getFunc();
+		return underlyingFunc.getMetaType()->getMetaCallable()->getClassType(underlyingFunc);
 	}
 
 	static size_t metaCallableGetParameterCount(const Variant & /*func*/)

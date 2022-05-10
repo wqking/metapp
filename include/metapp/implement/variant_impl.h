@@ -47,7 +47,7 @@ inline Variant Variant::reference(T && value)
 
 inline Variant::Variant() noexcept
 	: 
-	metaType(metapp::getMetaType<void>()),
+	metaType(voidMetaType),
 	data()
 {
 }

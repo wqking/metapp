@@ -27,6 +27,7 @@ class MetaCallable
 {
 public:
 	MetaCallable(
+		const MetaType * (*getClassType)(const Variant & var),
 		size_t (*getParameterCount)(const Variant & var),
 		const MetaType * (*getReturnType)(const Variant & var),
 		const MetaType * (*getParameterType)(const Variant & var, const size_t index),
@@ -35,6 +36,7 @@ public:
 		Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
 	)
 		:
+			getClassType(getClassType),
 			getParameterCount(getParameterCount),
 			getReturnType(getReturnType),
 			getParameterType(getParameterType),
@@ -44,10 +46,7 @@ public:
 	{
 	}
 
-	// The var parameter is not used in almost all functions except invoke, in C++ meta types.
-	// But it should be useful when var contains dynamic information, such as script method, or std::variant.
-	// Also adding the var parameter makes DefaultArgsFunction interface better
-
+	const MetaType * (*getClassType)(const Variant & var);
 	size_t (*getParameterCount)(const Variant & var);
 	const MetaType * (*getReturnType)(const Variant & var);
 	const MetaType * (*getParameterType)(const Variant & var, const size_t index);
@@ -55,6 +54,10 @@ public:
 	unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
 	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount);
 	Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount);
+
+	bool isStatic(const Variant & var) const {
+		return getClassType(var)->isVoid();
+	}
 };
 
 template <typename Iterator>
@@ -172,6 +175,11 @@ struct CallableInvoker <>
 
 };
 
+inline const MetaType * callableGetClassType(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getClassType(var);
+}
+
 inline size_t callableGetParameterCount(const Variant & var)
 {
 	return var.getMetaType()->getMetaCallable()->getParameterCount(var);
@@ -209,6 +217,11 @@ template <template <typename, typename> class Container, typename T, typename Al
 inline Variant callableInvoke(const Container<T, Allocator> & callableList, void * instance, Args ...args)
 {
 	return CallableInvoker<Args...>::invokeCallableList(callableList.begin(), callableList.end(), instance, args...);
+}
+
+inline bool callableIsStatic(const Variant & callable)
+{
+	return callable.getMetaType()->getMetaCallable()->isStatic(callable);
 }
 
 

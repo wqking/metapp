@@ -13,6 +13,7 @@ void initLibData()
 	hasInitedLibData = true;
 	libData.strHello = "hello";
 	libData.var5 = 5;
+	libData.mtStrConstPtrVolatilePtr = metapp::getMetaType<std::string const * volatile *>();
 }
 
 } // namespace

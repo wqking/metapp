@@ -593,6 +593,7 @@ const MetaItem & MetaRepo::getItem(const std::string & name) const
 
 void MetaRepo::registerBuiltinTypes()
 {
+return;
 	registerType<void>();
 	registerType<bool>();
 	registerType<char>();

@@ -16,6 +16,7 @@
 
 #include "metapp/thirdparty/accessorpp/getter.h"
 #include "metapp/thirdparty/accessorpp/setter.h"
+#include "metapp/thirdparty/accessorpp/common.h"
 
 #include <functional>
 #include <type_traits>
@@ -33,8 +34,6 @@ struct NoSetter {};
 
 } // namespace private_
 
-struct DefaultPolicies {};
-
 constexpr private_::DefaultGetter defaultGetter;
 constexpr private_::DefaultSetter defaultSetter;
 constexpr private_::NoSetter noSetter;
@@ -50,7 +49,9 @@ template <
 >
 class Accessor :
 	public private_::AccessorBase<
-			Type, typename private_::SelectStorage<PoliciesType, private_::HasTypeStorage<PoliciesType>::value, InternalStorage>::Type
+			Type,
+			typename private_::SelectStorage<PoliciesType, private_::HasTypeStorage<PoliciesType>::value, InternalStorage>::Type,
+			PoliciesType
 		>,
 	public private_::OnChangingCallback<
 			typename private_::SelectOnChangingCallback<PoliciesType, private_::HasTypeOnChangingCallback<PoliciesType>::value>::Type,
@@ -63,7 +64,9 @@ class Accessor :
 {
 private:
 	using BaseType = private_::AccessorBase<
-			Type, typename private_::SelectStorage<PoliciesType, private_::HasTypeStorage<PoliciesType>::value, InternalStorage>::Type
+			Type,
+			typename private_::SelectStorage<PoliciesType, private_::HasTypeStorage<PoliciesType>::value, InternalStorage>::Type,
+			PoliciesType
 		>;
 	using OnChangingCallbackType = private_::OnChangingCallback<
 			typename private_::SelectOnChangingCallback<PoliciesType, private_::HasTypeOnChangingCallback<PoliciesType>::value>::Type,

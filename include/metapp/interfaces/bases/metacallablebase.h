@@ -36,6 +36,7 @@ public:
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
+			&metaCallableGetClassType,
 			&metaCallableGetParameterCount,
 			&metaCallableGetReturnType,
 			&metaCallableGetParameterType,
@@ -44,6 +45,11 @@ public:
 			&metaCallableInvoke
 		);
 		return &metaCallable;
+	}
+
+	static const MetaType * metaCallableGetClassType(const Variant & /*var*/)
+	{
+		return getMetaType<ClassType>();
 	}
 
 	static size_t metaCallableGetParameterCount(const Variant & /*var*/)

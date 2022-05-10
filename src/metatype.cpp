@@ -212,7 +212,7 @@ const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind 
 		}
 		const uint32_t count = (metaMethodTable.metaInterfaceData.kinds & metaInterfaceCountMask);
 		if(count > 1) {
-			for(uint16_t i = 1; i < count; ++i) {
+			for(uint32_t i = 1; i < count; ++i) {
 				if(metaMethodTable.metaInterfaceData.items[i].kind == kind) {
 					return metaMethodTable.metaInterfaceData.items[i].getter();
 				}
@@ -358,7 +358,7 @@ int MetaType::compare(const MetaType * other) const
 	if(result != 0) {
 		return result;
 	}
-	for(int i = 0; i < upTypeCount; ++i) {
+	for(size_t i = 0; i < upTypeCount; ++i) {
 		result = getUpType(i)->compare(other->getUpType(i));
 		if(result != 0) {
 			return result;
@@ -394,6 +394,11 @@ size_t MetaType::getUpTypeCount() const noexcept
 TypeKind MetaType::getTypeKind() const noexcept
 {
 	return doGetUnifiedTypePointer()->getTypeKind();
+}
+
+bool MetaType::isVoid() const noexcept
+{
+	return getTypeKind() == tkVoid;
 }
 
 const MetaClass * MetaType::getMetaClass() const
@@ -500,5 +505,6 @@ bool commonCast(
 	return false;
 }
 
+const MetaType * voidMetaType = getMetaType<void>();
 
 } // namespace metapp

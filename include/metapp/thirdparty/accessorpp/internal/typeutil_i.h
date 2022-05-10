@@ -182,6 +182,17 @@ struct HasTypeStorage
 template <typename T, bool, typename Default> struct SelectStorage { using Type = typename T::Storage; };
 template <typename T, typename Default> struct SelectStorage <T, false, Default> { using Type = Default; };
 
+template <typename T>
+struct HasTypeClassTypeSetter
+{
+	template <typename C> static std::true_type test(typename C::ClassTypeSetter *) ;
+	template <typename C> static std::false_type test(...);    
+
+	enum { value = !! decltype(test<T>(0))() };
+};
+template <typename T, bool, typename Default> struct SelectClassTypeSetter { using Type = typename T::ClassTypeSetter; };
+template <typename T, typename Default> struct SelectClassTypeSetter <T, false, Default> { using Type = Default; };
+
 
 } // namespace private_
 
