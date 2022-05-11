@@ -27,7 +27,7 @@ TEST_CASE("Variant, input stream")
 {
 	std::stringstream ss;
 	SECTION("bool") {
-		metapp::Variant v(metapp::getMetaRepo()->getType(metapp::tkBool).asMetaType());
+		metapp::Variant v(metapp::getMetaType<bool>());
 		REQUIRE(v.get<bool>() == false);
 		ss >> std::boolalpha;
 		ss.str("true");

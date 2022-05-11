@@ -26,7 +26,7 @@ class MetaRepo : public internal_::MetaRepoBase, public internal_::InheritanceRe
 {
 public:
 	MetaRepo();
-	~MetaRepo() = default;
+	~MetaRepo();
 
 	MetaRepo(const MetaRepo &) = delete;
 	MetaRepo(MetaRepo &&) = delete;
@@ -52,11 +52,115 @@ public:
 	const MetaItem & getItem(const std::string & name) const;
 
 private:
-	void registerBuiltinTypes();
+	std::shared_ptr<ItemData> repoData;
+	MetaRepo * previous;
+	MetaRepo * next;
+
+	friend class MetaRepoList;
+};
+
+class MetaRepoList
+{
+public:
+	class Iterator
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using value_type = const MetaRepo *;
+		using pointer = const value_type *;
+		using reference = const value_type &;
+
+	public:
+		Iterator(const MetaRepo * repo)
+			: repo(repo)
+		{}
+
+		reference operator * () const {
+			return repo;
+		}
+
+		pointer operator -> () const {
+			return &repo;
+		}
+
+		Iterator & operator ++ () {
+			repo = repo->next;
+			return *this;
+		}  
+
+		Iterator operator ++ (int) {
+			Iterator temp = *this;
+			++(*this);
+			return temp;
+		}
+
+		friend bool operator == (const Iterator & a, const Iterator & b) {
+			return a.repo == b.repo;
+		};
+
+		friend bool operator != (const Iterator & a, const Iterator & b) {
+			return ! operator == (a, b);
+		};  
+
+	private:
+		const MetaRepo * repo;
+	};
+
+	using value_type = const MetaRepo *;
+	using size_type = size_t;
+	using difference_type = typename Iterator::difference_type;
+	using reference = const value_type &;
+	using const_reference = const value_type &;
+	using pointer = const value_type *;
+	using const_pointer = const value_type *;
+	using iterator = Iterator;
+	using const_iterator = Iterator;
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+public:
+	MetaRepoList();
+	~MetaRepoList();
+
+	iterator begin() const {
+		return Iterator(head);
+	}
+
+	iterator end() const {
+		return Iterator(nullptr);
+	}
+
+	bool empty() const {
+		return head == nullptr;
+	}
+
+	const MetaRepo * findMetaRepo(const MetaType * classMetaType) const;
+
+	template <typename FT>
+	bool traverseBases(
+		const MetaType * metaType,
+		FT && callback) const
+	{
+		const MetaRepo * repo = findMetaRepo(metaType);
+		if(repo != nullptr) {
+			return repo->traverseBases(metaType, std::forward<FT>(callback));
+		}
+		return true;
+	}
 
 private:
-	std::shared_ptr<ItemData> repoData;
+	void addMetaRepo(MetaRepo * repo);
+	void removeMetaRepo(MetaRepo * repo);
+
+private:
+	MetaRepo * head;
+	MetaRepo * tail;
+
+	friend class MetaRepo;
 };
+
+MetaRepoList * getMetaRepoList();
 
 MetaRepo * getMetaRepo();
 

@@ -506,9 +506,16 @@ MetaRepo::MetaRepo()
 	:
 		internal_::MetaRepoBase(),
 		internal_::InheritanceRepo(),
-		repoData()
+		repoData(),
+		previous(nullptr),
+		next(nullptr)
 {
-	registerBuiltinTypes();
+	getMetaRepoList()->addMetaRepo(this);
+}
+
+MetaRepo::~MetaRepo()
+{
+	getMetaRepoList()->removeMetaRepo(this);
 }
 
 const MetaItem & MetaRepo::getAccessible(const std::string & name) const
@@ -591,28 +598,64 @@ const MetaItem & MetaRepo::getItem(const std::string & name) const
 	return *result;
 }
 
-void MetaRepo::registerBuiltinTypes()
+
+MetaRepoList * getMetaRepoList()
 {
-return;
-	registerType<void>();
-	registerType<bool>();
-	registerType<char>();
-	registerType<wchar_t>();
-	registerType<signed char>();
-	registerType<unsigned char>();
-	registerType<short>();
-	registerType<unsigned short>();
-	registerType<int>();
-	registerType<unsigned int>();
-	registerType<long>();
-	registerType<unsigned long>();
-	registerType<long long>();
-	registerType<unsigned long long>();
-	registerType<float>();
-	registerType<double>();
-	registerType<long double>();
-	registerType<std::string>();
-	registerType<std::wstring>();
+	static MetaRepoList metaRepoList;
+
+	return &metaRepoList;
+}
+
+MetaRepoList::MetaRepoList()
+	:
+		head(nullptr),
+		tail(nullptr)
+{
+}
+
+MetaRepoList::~MetaRepoList()
+{
+}
+
+void MetaRepoList::addMetaRepo(MetaRepo * repo)
+{
+	if(head == nullptr) {
+		head = repo;
+		tail = repo;
+	}
+	else {
+		repo->previous = tail;
+		tail->next = repo;
+		tail = repo;
+	}
+}
+
+void MetaRepoList::removeMetaRepo(MetaRepo * repo)
+{
+	if(repo->next != nullptr) {
+		repo->next->previous = repo->previous;
+	}
+	if(repo->previous != nullptr) {
+		repo->previous->next = repo->next;
+	}
+	if(head == repo) {
+		head = repo->next;
+	}
+	if(tail == repo) {
+		tail = repo->previous;
+	}
+}
+
+const MetaRepo * MetaRepoList::findMetaRepo(const MetaType * classMetaType) const
+{
+	const MetaRepo * repo = head;
+	while(repo != nullptr) {
+		if(repo->isClassInHierarchy(classMetaType)) {
+			return repo;
+		}
+		repo = repo->next;
+	}
+	return nullptr;
 }
 
 

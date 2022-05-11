@@ -87,7 +87,7 @@ const MetaItem & MetaClass::getType(const TypeKind kind, const Flags flags) cons
 {
 	if(hasFlag(flags, flagIncludeBase)) {
 		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, kind](const MetaType * metaType) -> bool {
+		getMetaRepoList()->traverseBases(classMetaType, [&result, kind](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
 				result = &metaClass->doGetType(kind);
@@ -108,7 +108,7 @@ const MetaItem & MetaClass::getType(const MetaType * metaType, const Flags flags
 {
 	if(hasFlag(flags, flagIncludeBase)) {
 		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, metaType](const MetaType * mt) -> bool {
+		getMetaRepoList()->traverseBases(classMetaType, [&result, metaType](const MetaType * mt) -> bool {
 			const MetaClass * metaClass = mt->getMetaClass();
 			if(metaClass != nullptr) {
 				result = &metaClass->doGetType(metaType);
@@ -142,7 +142,7 @@ MetaItemView MetaClass::doBuildMetaItemView(
 {
 	MetaItemView view;
 	if(hasFlag(flags, flagIncludeBase)) {
-		getMetaRepo()->traverseBases(classMetaType, [&view, &listGetter](const MetaType * metaType) -> bool {
+		getMetaRepoList()->traverseBases(classMetaType, [&view, &listGetter](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
 				view.addContainer(&(metaClass->*listGetter)());
@@ -164,7 +164,7 @@ const MetaItem & MetaClass::doFindItemByName(
 {
 	if(hasFlag(flags, flagIncludeBase)) {
 		const MetaItem * result = &internal_::emptyMetaItem;
-		getMetaRepo()->traverseBases(classMetaType, [&result, &itemGetter, &name](const MetaType * metaType) -> bool {
+		getMetaRepoList()->traverseBases(classMetaType, [&result, &itemGetter, &name](const MetaType * metaType) -> bool {
 			const MetaClass * metaClass = metaType->getMetaClass();
 			if(metaClass != nullptr) {
 				result = &(metaClass->*itemGetter)(name);
