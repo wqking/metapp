@@ -42,7 +42,6 @@ class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
 class MetaMappable;
-class MetaMember;
 
 template <typename T>
 constexpr const MetaType * getMetaType();
@@ -136,7 +135,6 @@ public:
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
 	const MetaMappable * getMetaMappable() const;
-	const MetaMember * getMetaMember() const;
 	const void * getMetaUser() const;
 
 	void * construct() const;

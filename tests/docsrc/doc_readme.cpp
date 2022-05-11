@@ -255,7 +255,6 @@ If you want to contribute to the documents, be sure to read [How to generate doc
     - [MetaIterable](doc/interfaces/metaiterable.md)
     - [MetaStreaming](doc/interfaces/metastreaming.md)
     - [MetaMappable](doc/interfaces/metamappable.md)
-    - [MetaMember](doc/interfaces/metamember.md)
     - [User defined meta interface](doc/interfaces/metauser.md)
 
 - Built-in meta types

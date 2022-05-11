@@ -20,7 +20,6 @@
 #include "metapp/metatype.h"
 #include "metapp/variant.h"
 #include "metapp/interfaces/bases/metacallablebase.h"
-#include "metapp/interfaces/bases/metamemberbase.h"
 
 namespace metapp {
 
@@ -44,8 +43,7 @@ struct Constructor<C (Args...)>
 
 template <typename Class, typename ...Args>
 struct DeclareMetaTypeBase <Constructor<Class (Args...)> >
-	: MetaCallableBase<Constructor<Class (Args...)>, void, typename Constructor<Class (Args...)>::Class *, Args...>,
-		MetaMemberBase<Class>
+	: MetaCallableBase<Constructor<Class (Args...)>, void, typename Constructor<Class (Args...)>::Class *, Args...>
 {
 private:
 	using ConstructorType = Constructor<Class (Args...)>;

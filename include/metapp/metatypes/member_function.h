@@ -18,15 +18,12 @@
 #define METAPP_MEMBER_FUNCTION_H_969872685611
 
 #include "metapp/interfaces/bases/metacallablebase.h"
-#include "metapp/interfaces/bases/metamemberbase.h"
 #include "metapp/compiler.h"
 
 namespace metapp {
 
 template <typename FullType, typename Class, typename RT, typename ...Args>
-struct DeclareMetaTypeMemberFunctionBase
-	: MetaCallableBase<FullType, Class, RT, Args...>,
-		MetaMemberBase<Class>
+struct DeclareMetaTypeMemberFunctionBase : MetaCallableBase<FullType, Class, RT, Args...>
 {
 public:
 	using UpType = TypeList <Class, RT, Args...>;

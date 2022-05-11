@@ -33,7 +33,6 @@ class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
 class MetaMappable;
-class MetaMember;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -59,8 +58,7 @@ static constexpr MetaInterfaceKind mikMetaIndexable = (mikStart << 4);
 static constexpr MetaInterfaceKind mikMetaIterable = (mikStart << 5);
 static constexpr MetaInterfaceKind mikMetaStreaming = (mikStart << 6);
 static constexpr MetaInterfaceKind mikMetaMap = (mikStart << 7);
-static constexpr MetaInterfaceKind mikMetaMember = (mikStart << 8);
-static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 9);
+static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 8);
 
 static constexpr uint32_t metaInterfaceCountMask = 0xff;
 
@@ -196,21 +194,6 @@ struct MakeMetaInterfaceItem_MetaMap
 	}
 };
 
-struct MakeMetaInterfaceItem_MetaMember
-{
-	static constexpr MetaInterfaceKind kind = mikMetaMember;
-
-	template <typename T>
-	static constexpr MetaInterfaceItem make() {
-		using M = DeclareMetaType<T>;
-
-		return {
-			kind,
-			(MetaInterfaceGetter)&M::getMetaMember
-		};
-	}
-};
-
 struct MakeMetaInterfaceItem_MetaUser
 {
 	static constexpr MetaInterfaceKind kind = mikMetaUser;
@@ -241,7 +224,6 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem_MetaIterable,
 		MakeMetaInterfaceItem_MetaStreaming,
 		MakeMetaInterfaceItem_MetaMap,
-		MakeMetaInterfaceItem_MetaMember,
 		MakeMetaInterfaceItem_MetaUser
 		>,
 		BoolConstantList<
@@ -253,7 +235,6 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaIterable<M>::value,
 		HasMember_getMetaStreaming<M>::value,
 		HasMember_getMetaMappable<M>::value,
-		HasMember_getMetaMember<M>::value,
 		HasMember_getMetaUser<M>::value
 		>
 	>::Type;
@@ -333,7 +314,6 @@ private:
 	const MetaIterable * getMetaIterable() const;
 	const MetaStreaming * getMetaStreaming() const;
 	const MetaMappable * getMetaMappable() const;
-	const MetaMember * getMetaMember() const;
 	const void * getMetaUser() const;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;

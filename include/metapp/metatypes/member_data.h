@@ -19,14 +19,12 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
-#include "metapp/interfaces/bases/metamemberbase.h"
 #include "metapp/utilities/utility.h"
 
 namespace metapp {
 
 template <typename Class, typename T>
 struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_function<T>::value>::type>
-	: MetaMemberBase<Class>
 {
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
