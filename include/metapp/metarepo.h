@@ -146,7 +146,10 @@ public:
 		if(repo != nullptr) {
 			return repo->traverseBases(metaType, std::forward<FT>(callback));
 		}
-		return true;
+		else {
+			// callback is always called with metaType, even there is no base classes.
+			return callback(metaType);
+		}
 	}
 
 private:

@@ -49,6 +49,13 @@ Variant Variant::takeFrom(const Variant & var)
 	return takeFrom(metaType, var.get<void *>());
 }
 
+Variant::Variant() noexcept
+	: 
+		metaType(metapp::getMetaType<void>()),
+		data()
+{
+}
+
 Variant::Variant(const MetaType * metaType)
 	:
 		metaType(metaType)

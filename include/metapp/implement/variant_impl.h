@@ -45,13 +45,6 @@ inline Variant Variant::reference(T && value)
 	return create<T &>((T &)value);
 }
 
-inline Variant::Variant() noexcept
-	: 
-	metaType(voidMetaType),
-	data()
-{
-}
-
 template <typename T>
 inline Variant::Variant(T value)
 	:
