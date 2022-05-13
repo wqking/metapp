@@ -102,6 +102,18 @@ template <typename T> struct DetectValueType <T * const> : DetectValueType <T *>
 template <typename T> struct DetectValueType <T * volatile> : DetectValueType <T *> {};
 template <typename T> struct DetectValueType <T * const volatile> : DetectValueType <T *> {};
 
+template <typename T, typename ...Args>
+struct DetectValueType <T (Args...)>
+{
+	using Type = T;
+};
+
+template <typename T, typename ...Args>
+struct DetectValueType <T (*)(Args...)>
+{
+	using Type = T;
+};
+
 template <typename T, typename C>
 struct DetectValueType <T C::*>
 {
