@@ -26,22 +26,22 @@ class MetaAccessible
 public:
 	MetaAccessible(
 		const MetaType * (*getValueType)(const Variant & var),
-		const MetaType * (*getClassType)(const Variant & var),
 		bool (*isReadOnly)(const Variant & var),
+		const MetaType * (*getClassType)(const Variant & var),
 		Variant (*get)(const Variant & var, const void * instance),
 		void (*set)(const Variant & var, void * instance, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
-			getClassType(getClassType),
 			isReadOnly(isReadOnly),
+			getClassType(getClassType),
 			get(get),
 			set(set)
 	{}
 
 	const MetaType * (*getValueType)(const Variant & var);
-	const MetaType * (*getClassType)(const Variant & var);
 	bool (*isReadOnly)(const Variant & var);
+	const MetaType * (*getClassType)(const Variant & var);
 	Variant (*get)(const Variant & var, const void * instance);
 	void (*set)(const Variant & var, void * instance, const Variant & value);
 
