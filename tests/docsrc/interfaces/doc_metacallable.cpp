@@ -53,6 +53,7 @@ Variadic function (tkVariadicFunction)
 
 ```c++
 MetaCallable(
+	const MetaType * (*getClassType)(const Variant & var),
 	size_t (*getParameterCount)(const Variant & var),
 	const MetaType * (*getReturnType)(const Variant & var),
 	const MetaType * (*getParameterType)(const Variant & var, const size_t index),
@@ -70,6 +71,18 @@ The meaning of each functions are same as the member functions listed below.
 The first parameter in all of the member functions is `const Variant & var`. It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer. The member functions operate on the data.  
 We can treat `var` as the C++ object instance which class implements an interface called `MetaCallable`.  
 `var` can be a value, a reference, or a pointer.  
+
+#### getClassType
+
+```c++
+const MetaType * getClassType(const Variant & var);
+```
+
+Returns the meta type of the class that the callable belongs to, or to say, the class declares the callable. 
+If the function returns meta type of `void` (MetaType::isVoid() is true), the callable doesn't belong to any class,
+or the callable is a static member function. When invoking the callable, the `instance` can be nullptr.  
+If the function returns non-void meta type, the callable belongs to the class of the meta type.
+When invoking the callable, the `instance` must be pointer to a valid object.  
 
 #### getParameterCount
 
@@ -127,10 +140,30 @@ Variant invoke(const Variant & var, void * instance, const Variant * arguments, 
 
 Invokes the callable, returns the result of the callable. If the callable doesn't return any value (the result type is void), then empty Variant is returned (Variant::isEmpty() is true).  
 
+#### isStatic
+
+```c++
+bool isStatic(const Variant & var) const;
+```
+
+Returns true if the accessible is static or non-member, false if the accessbile is class member.  
+The function is equivalent to `return getClassType(var)->isVoid();`.  
+
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
 Usually you should prefer the utility functions to calling `MetaCallable` member function directly. However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application, you may store `var.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions. This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
+
+#### callableGetClassType
+
+```c++
+inline const MetaType * callableGetClassType(const Variant & var)
+{
+	return var.getMetaType()->getMetaCallable()->getClassType(var);
+}
+```
+
+Shortcut for `MetaCallable::getClassType()`.
 
 #### callableGetParameterCount
 
@@ -219,5 +252,16 @@ Iterator findCallable(
 Returns an iterator to the element that's best matched to `arguments` in the range [first, last).  
 If no matched callable, `last` is returned.  
 `Iterator` must be the iterator to `Variant`, `MetaItem`, or `MetaItem`.
+
+#### callableIsStatic
+
+```c++
+inline bool callableIsStatic(const Variant & callable)
+{
+	return callable.getMetaType()->getMetaCallable()->isStatic(callable);
+}
+```
+
+Shortcut for `MetaCallable::isStatic()`.
 
 desc*/

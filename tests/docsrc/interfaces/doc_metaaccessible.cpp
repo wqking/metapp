@@ -52,6 +52,7 @@ Accessor (tkAccessor)
 MetaAccessible(
 	const MetaType * (*getValueType)(const Variant & var),
 	bool (*isReadOnly)(const Variant & var),
+	const MetaType * (*getClassType)(const Variant & var),
 	Variant (*get)(const Variant & var, const void * instance),
 	void (*set)(const Variant & var, void * instance, const Variant & value)
 );
@@ -73,7 +74,6 @@ const MetaType * getValueType(const Variant & var);
 ```
 
 Returns the meta type of the value.  
-For pointer `T *` and member data pointer `T C::*`, returns the meta type of T.  
 For Accessor, returns the meta type of `Accessor::ValueType`.  
 
 #### isReadOnly
@@ -85,6 +85,18 @@ bool isReadOnly(const Variant & var);
 Returns `true` if the value is read only.  
 For pointer `T *` and member data pointer `T C::*`, returns `true` if T is const.  
 For Accessor, returns `Accessor::isReadOnly()`.  
+
+#### getClassType
+
+```c++
+const MetaType * getClassType(const Variant & var);
+```
+
+Returns the meta type of the class that the accessible belongs to, or to say, the class declares the accessible. 
+If the function returns meta type of `void` (MetaType::isVoid() is true), the accessible doesn't belong to any class,
+or the accessible is a static member. When getting/setting value in the accessble, the `instance` can be nullptr.  
+If the function returns non-void meta type, the accessible belongs to the class of the meta type.
+When getting/setting value in the accessble, the `instance` must be pointer to a valid object.  
 
 #### get
 
@@ -106,6 +118,15 @@ void set(const Variant & var, void * instance, const Variant & value);
 
 Set a new value.  
 
+#### isStatic
+
+```c++
+bool isStatic(const Variant & var) const;
+```
+
+Returns true if the accessible is static or non-member, false if the accessbile is class member.  
+The function is equivalent to `return getClassType(var)->isVoid();`.  
+
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaAccessible`.  
@@ -122,6 +143,11 @@ inline bool accessibleIsReadOnly(const Variant & var)
 	return var.getMetaType()->getMetaAccessible()->isReadOnly(var);
 }
 
+inline const MetaType * accessibleGetClassType(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->getClassType(var);
+}
+
 inline Variant accessibleGet(const Variant & var, const void * instance)
 {
 	return var.getMetaType()->getMetaAccessible()->get(var, instance);
@@ -130,6 +156,11 @@ inline Variant accessibleGet(const Variant & var, const void * instance)
 inline void accessibleSet(const Variant & var, void * instance, const Variant & value)
 {
 	var.getMetaType()->getMetaAccessible()->set(var, instance, value);
+}
+
+inline bool accessibleIsStatic(const Variant & var)
+{
+	return var.getMetaType()->getMetaAccessible()->isStatic(var);
 }
 ```
 

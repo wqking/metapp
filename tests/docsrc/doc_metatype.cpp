@@ -177,6 +177,16 @@ when detecting the features of a MetaType.
 For example, instead of `metaType->getTypeKind() == metapp::tkPointer`, you should use `metaType->isPointer()`.  
 Using type attributes and meta interfaces are more flexible and less error prone.  
 
+#### isVoid
+
+```c++
+bool isVoid() const noexcept;
+```
+
+Returns true if the meta type is for `void` (tkVoid).  
+`metapp` doesn't use nullptr meta type. When there is no appropriate underlying type, `void` is used.  
+For example, the default constructed `Variant` (i.e, `Variant v`), has meta type of void.  
+
 #### Get type attributes
 
 ```c++

@@ -324,4 +324,6 @@ Traverses all base classes of `metaType`, and call `callback` on each meta type.
 It's guaranteed duplicated meta types are only passed to `callback` once.  
 `callback` prototype is `bool callback(const MetaType * metaType)`. If `callback` returns false, the traversing stops.
 
+## TODO MetaRepoList
+
 desc*/
