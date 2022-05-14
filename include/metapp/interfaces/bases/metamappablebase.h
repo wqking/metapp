@@ -38,14 +38,14 @@ private:
 	using KeyType = typename ContainerType::key_type;
 	using MappedType = typename ContainerType::mapped_type;
 
-	static std::pair<const MetaType *, const MetaType *> metaMapGetValueType(const Variant & /*var*/)
+	static std::pair<const MetaType *, const MetaType *> metaMapGetValueType(const Variant & /*mappable*/)
 	{
 		return std::make_pair(getMetaType<KeyType>(), getMetaType<MappedType>());
 	}
 
-	static Variant metaMapGet(const Variant & var, const Variant & key)
+	static Variant metaMapGet(const Variant & mappable, const Variant & key)
 	{
-		const auto & container = var.get<const ContainerType &>();
+		const auto & container = mappable.get<const ContainerType &>();
 		auto it = container.find(key.get<const KeyType &>());
 		if(it != container.end()) {
 			return Variant::create<const MappedType &>(it->second);
@@ -53,9 +53,9 @@ private:
 		return Variant();
 	}
 
-	static void metaMapSet(const Variant & var, const Variant & key, const Variant & value)
+	static void metaMapSet(const Variant & mappable, const Variant & key, const Variant & value)
 	{
-		auto & container = var.get<ContainerType &>();
+		auto & container = mappable.get<ContainerType &>();
 		auto it = container.find(key.get<const KeyType &>());
 		if(it != container.end()) {
 			internal_::assignValue(it->second, value.get<const MappedType &>());

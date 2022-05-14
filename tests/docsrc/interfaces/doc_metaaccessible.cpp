@@ -50,11 +50,11 @@ Accessor (tkAccessor)
 
 ```c++
 MetaAccessible(
-	const MetaType * (*getValueType)(const Variant & var),
-	bool (*isReadOnly)(const Variant & var),
-	const MetaType * (*getClassType)(const Variant & var),
-	Variant (*get)(const Variant & var, const void * instance),
-	void (*set)(const Variant & var, void * instance, const Variant & value)
+	const MetaType * (*getValueType)(const Variant & accessible),
+	bool (*isReadOnly)(const Variant & accessible),
+	const MetaType * (*getClassType)(const Variant & accessible),
+	Variant (*get)(const Variant & accessible, const void * instance),
+	void (*set)(const Variant & accessible, void * instance, const Variant & value)
 );
 ```
 
@@ -63,14 +63,14 @@ The meaning of each functions are same as the member functions listed below.
 
 ## MetaIterable member functions
 
-The first parameter in all of the member functions is `const Variant & var`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
-We can treat `var` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`var` can be a value, a reference, or a pointer.  
+The first parameter in all of the member functions is `const Variant & accessible`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+We can treat `accessible` as the C++ object instance which class implements an interface called `MetaIndexable`.  
+`accessible` can be a value, a reference, or a pointer.  
 
 #### getValueType
 
 ```c++
-const MetaType * getValueType(const Variant & var);
+const MetaType * getValueType(const Variant & accessible);
 ```
 
 Returns the meta type of the value.  
@@ -79,7 +79,7 @@ For Accessor, returns the meta type of `Accessor::ValueType`.
 #### isReadOnly
 
 ```c++
-bool isReadOnly(const Variant & var);
+bool isReadOnly(const Variant & accessible);
 ```
 
 Returns `true` if the value is read only.  
@@ -89,7 +89,7 @@ For Accessor, returns `Accessor::isReadOnly()`.
 #### getClassType
 
 ```c++
-const MetaType * getClassType(const Variant & var);
+const MetaType * getClassType(const Variant & accessible);
 ```
 
 Returns the meta type of the class that the accessible belongs to, or to say, the class declares the accessible. 
@@ -101,7 +101,7 @@ When getting/setting value in the accessble, the `instance` must be pointer to a
 #### get
 
 ```c++
-Variant get(const Variant & var, const void * instance);
+Variant get(const Variant & accessible, const void * instance);
 ```
 
 Returns the value.  
@@ -113,7 +113,7 @@ For Accessor, `instance` is passed to the accessor. The returned Variant is the 
 #### set
 
 ```c++
-void set(const Variant & var, void * instance, const Variant & value);
+void set(const Variant & accessible, void * instance, const Variant & value);
 ```
 
 Set a new value.  
@@ -121,46 +121,46 @@ Set a new value.
 #### isStatic
 
 ```c++
-bool isStatic(const Variant & var) const;
+bool isStatic(const Variant & accessible) const;
 ```
 
 Returns true if the accessible is static or non-member, false if the accessbile is class member.  
-The function is equivalent to `return getClassType(var)->isVoid();`.  
+The function is equivalent to `return getClassType(accessible)->isVoid();`.  
 
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaAccessible`.  
-Usually you should prefer the utility functions to calling `MetaAccessible` member function directly. However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance application, you may store `var.getMetaType()->getMetaAccessible()` to a local variable, then use the variable to call the member functions. This is because `getMetaAccessible()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaAccessible` member function directly. However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance application, you may store `accessible.getMetaType()->getMetaAccessible()` to a local variable, then use the variable to call the member functions. This is because `getMetaAccessible()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
-inline const MetaType * accessibleGetValueType(const Variant & var)
+inline const MetaType * accessibleGetValueType(const Variant & accessible)
 {
-	return var.getMetaType()->getMetaAccessible()->getValueType(var);
+	return accessible.getMetaType()->getMetaAccessible()->getValueType(accessible);
 }
 
-inline bool accessibleIsReadOnly(const Variant & var)
+inline bool accessibleIsReadOnly(const Variant & accessible)
 {
-	return var.getMetaType()->getMetaAccessible()->isReadOnly(var);
+	return accessible.getMetaType()->getMetaAccessible()->isReadOnly(accessible);
 }
 
-inline const MetaType * accessibleGetClassType(const Variant & var)
+inline const MetaType * accessibleGetClassType(const Variant & accessible)
 {
-	return var.getMetaType()->getMetaAccessible()->getClassType(var);
+	return accessible.getMetaType()->getMetaAccessible()->getClassType(accessible);
 }
 
-inline Variant accessibleGet(const Variant & var, const void * instance)
+inline Variant accessibleGet(const Variant & accessible, const void * instance)
 {
-	return var.getMetaType()->getMetaAccessible()->get(var, instance);
+	return accessible.getMetaType()->getMetaAccessible()->get(accessible, instance);
 }
 
-inline void accessibleSet(const Variant & var, void * instance, const Variant & value)
+inline void accessibleSet(const Variant & accessible, void * instance, const Variant & value)
 {
-	var.getMetaType()->getMetaAccessible()->set(var, instance, value);
+	accessible.getMetaType()->getMetaAccessible()->set(accessible, instance, value);
 }
 
-inline bool accessibleIsStatic(const Variant & var)
+inline bool accessibleIsStatic(const Variant & accessible)
 {
-	return var.getMetaType()->getMetaAccessible()->isStatic(var);
+	return accessible.getMetaType()->getMetaAccessible()->isStatic(accessible);
 }
 ```
 

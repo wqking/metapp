@@ -25,9 +25,9 @@ class MetaMappable
 {
 public:
 	MetaMappable(
-		std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & var),
-		Variant (*get)(const Variant & var, const Variant & key),
-		void (*set)(const Variant & var, const Variant & key, const Variant & value)
+		std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & mappable),
+		Variant (*get)(const Variant & mappable, const Variant & key),
+		void (*set)(const Variant & mappable, const Variant & key, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
@@ -36,24 +36,24 @@ public:
 	{
 	}
 
-	std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & var);
-	Variant (*get)(const Variant & var, const Variant & key);
-	void (*set)(const Variant & var, const Variant & key, const Variant & value);
+	std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & mappable);
+	Variant (*get)(const Variant & mappable, const Variant & key);
+	void (*set)(const Variant & mappable, const Variant & key, const Variant & value);
 };
 
-inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & var)
+inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
 {
-	return var.getMetaType()->getMetaMappable()->getValueType(var);
+	return mappable.getMetaType()->getMetaMappable()->getValueType(mappable);
 }
 
-inline Variant mappableGet(const Variant & var, const Variant & key)
+inline Variant mappableGet(const Variant & mappable, const Variant & key)
 {
-	return var.getMetaType()->getMetaMappable()->get(var, key);
+	return mappable.getMetaType()->getMetaMappable()->get(mappable, key);
 }
 
-inline void mappableSet(const Variant & var, const Variant & key, const Variant & value)
+inline void mappableSet(const Variant & mappable, const Variant & key, const Variant & value)
 {
-	var.getMetaType()->getMetaMappable()->set(var, key, value);
+	mappable.getMetaType()->getMetaMappable()->set(mappable, key, value);
 }
 
 

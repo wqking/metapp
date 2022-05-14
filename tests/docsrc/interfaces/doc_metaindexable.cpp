@@ -54,11 +54,11 @@ const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 
 ```c++
 MetaIndexable(
-	size_t (*getSize)(const Variant & var),
-	const MetaType * (*getValueType)(const Variant & var, const size_t index),
-	void (*resize)(const Variant & var, const size_t size),
-	Variant (*get)(const Variant & var, const size_t index),
-	void (*set)(const Variant & var, const size_t index, const Variant & value)
+	size_t (*getSize)(const Variant & indexable),
+	const MetaType * (*getValueType)(const Variant & indexable, const size_t index),
+	void (*resize)(const Variant & indexable, const size_t size),
+	Variant (*get)(const Variant & indexable, const size_t index),
+	void (*set)(const Variant & indexable, const size_t index, const Variant & value)
 );
 ```
 
@@ -67,16 +67,16 @@ The meaning of each functions are same as the member functions listed below.
 
 ## MetaIndexable member functions
 
-The first parameter in all of the member functions is `const Variant & var`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
-We can treat `var` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`var` can be a value, a reference, or a pointer.  
+The first parameter in all of the member functions is `const Variant & indexable`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+We can treat `indexable` as the C++ object instance which class implements an interface called `MetaIndexable`.  
+`indexable` can be a value, a reference, or a pointer.  
 
 For the functions that have parameter `index`, the functions don't do bound checking on `index`. It's the caller's responsibility to be sure the `index` is valid.
 
 #### getSize
 
 ```c++
-size_t getSize(const Variant & var);
+size_t getSize(const Variant & indexable);
 ```
 
 Returns the number of elements in the Variant.  
@@ -90,7 +90,7 @@ For other containers such as `std::vector`, the function returns the size of the
 #### getValueType
 
 ```c++
-const MetaType * getValueType(const Variant & var, const size_t index);
+const MetaType * getValueType(const Variant & indexable, const size_t index);
 ```
 
 Returns the meta type of the element at `index`.  
@@ -103,7 +103,7 @@ For other containers, the result is the meta type of the `value_type` in the con
 #### resize
 
 ```c++
-void resize(const Variant & var, const size_t size);
+void resize(const Variant & indexable, const size_t size);
 ```
 
 Resizes the container in the Variant to contain `size` elements.  
@@ -114,7 +114,7 @@ If the `resize` argument in MetaIndexable constructor is nullptr, the function `
 #### get
 
 ```c++
-Variant get(const Variant & var, const size_t index);
+Variant get(const Variant & indexable, const size_t index);
 ```
 
 Returns a reference to the element at `index`.  
@@ -127,7 +127,7 @@ Note, for non-random access container such as `std::list`, the function uses `st
 #### set
 
 ```c++
-void (*set)(const Variant & var, const size_t index, const Variant & value);
+void (*set)(const Variant & indexable, const size_t index, const Variant & value);
 ```
 
 Sets the element at `index` with `value`. The `value` will be casted to the element type, if the cast fails, exception `metapp::BadCastException` is thrown.  
@@ -135,27 +135,27 @@ Sets the element at `index` with `value`. The `value` will be casted to the elem
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIndexable`.  
-Usually you should prefer the utility functions to calling `MetaIndexable` member function directly. However, if you need to call functions on a single `MetaIndexable` more than one times in a high performance application, you may store `var.getMetaType()->getMetaIndexable()` to a local variable, then use the variable to call the member functions. This is because `getMetaIndexable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaIndexable` member function directly. However, if you need to call functions on a single `MetaIndexable` more than one times in a high performance application, you may store `indexable.getMetaType()->getMetaIndexable()` to a local variable, then use the variable to call the member functions. This is because `getMetaIndexable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
-inline size_t indexableGetSize(const Variant & var)
+inline size_t indexableGetSize(const Variant & indexable)
 {
-	return var.getMetaType()->getMetaIndexable()->getSize(var);
+	return indexable.getMetaType()->getMetaIndexable()->getSize(indexable);
 }
 
-inline void indexableResize(const Variant & var, const size_t size)
+inline void indexableResize(const Variant & indexable, const size_t size)
 {
-	var.getMetaType()->getMetaIndexable()->resize(var, size);
+	indexable.getMetaType()->getMetaIndexable()->resize(indexable, size);
 }
 
-inline Variant indexableGet(const Variant & var, const size_t index)
+inline Variant indexableGet(const Variant & indexable, const size_t index)
 {
-	return var.getMetaType()->getMetaIndexable()->get(var, index);
+	return indexable.getMetaType()->getMetaIndexable()->get(indexable, index);
 }
 
-inline void indexableSet(const Variant & var, const size_t index, const Variant & value)
+inline void indexableSet(const Variant & indexable, const size_t index, const Variant & value)
 {
-	var.getMetaType()->getMetaIndexable()->set(var, index, value);
+	indexable.getMetaType()->getMetaIndexable()->set(indexable, index, value);
 }
 ```
 

@@ -66,24 +66,24 @@ struct MetaIndexableBase
 private:
 	using ValueType = decltype(std::declval<ContainerType &>()[0]);
 
-	static size_t metaIndexableGetSize(const Variant & var)
+	static size_t metaIndexableGetSize(const Variant & indexable)
 	{
-		return var.toReference().get<ContainerType &>().size();
+		return indexable.toReference().get<ContainerType &>().size();
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const size_t /*index*/)
 	{
 		return getMetaType<ValueType>();
 	}
 
-	static void metaIndexableResize(const Variant & var, const size_t size)
+	static void metaIndexableResize(const Variant & indexable, const size_t size)
 	{
-		internal_::doResize(var.toReference().get<ContainerType &>(), size);
+		internal_::doResize(indexable.toReference().get<ContainerType &>(), size);
 	}
 
-	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	static Variant metaIndexableGet(const Variant & indexable, const size_t index)
 	{
-		const Variant ref = var.toReference();
+		const Variant ref = indexable.toReference();
 
 		if(index >= metaIndexableGetSize(ref)) {
 			errorInvalidIndex();
@@ -91,9 +91,9 @@ private:
 		return Variant::create<ValueType>(ref.get<ContainerType &>()[index]);
 	}
 
-	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & indexable, const size_t index, const Variant & value)
 	{
-		const Variant ref = var.toReference();
+		const Variant ref = indexable.toReference();
 
 		internal_::verifyVariantWritable(ref);
 

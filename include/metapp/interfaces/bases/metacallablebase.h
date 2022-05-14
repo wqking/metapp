@@ -47,27 +47,27 @@ public:
 		return &metaCallable;
 	}
 
-	static const MetaType * metaCallableGetClassType(const Variant & /*var*/)
+	static const MetaType * metaCallableGetClassType(const Variant & /*callable*/)
 	{
 		return getMetaType<ClassType>();
 	}
 
-	static size_t metaCallableGetParameterCount(const Variant & /*var*/)
+	static size_t metaCallableGetParameterCount(const Variant & /*callable*/)
 	{
 		return argsCount;
 	}
 
-	static const MetaType * metaCallableGetReturnType(const Variant & /*var*/)
+	static const MetaType * metaCallableGetReturnType(const Variant & /*callable*/)
 	{
 		return getMetaType<RT>();
 	}
 
-	static const MetaType * metaCallableGetParameterType(const Variant & /*var*/, const size_t index)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*callable*/, const size_t index)
 	{
 		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
-	static unsigned int metaCallableRankInvoke(const Variant & /*var*/, const Variant * arguments, const size_t argumentCount)
+	static unsigned int metaCallableRankInvoke(const Variant & /*callable*/, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return 0;
@@ -75,7 +75,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*var*/, const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant & /*callable*/, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return false;
@@ -83,14 +83,14 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant metaCallableInvoke(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			errorIllegalArgument();
 			return Variant();
 		}
 
-		FunctionType f = var.get<FunctionType &>();
+		FunctionType f = callable.get<FunctionType &>();
 		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments, argumentCount);
 	}
 

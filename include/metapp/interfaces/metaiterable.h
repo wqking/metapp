@@ -31,17 +31,17 @@ public:
 	using Callback = std::function<bool (const Variant &)>;
 
 	explicit MetaIterable(
-			void (*forEach)(const Variant & var, Callback callback)
+			void (*forEach)(const Variant & iterable, Callback callback)
 		) : forEach(forEach)
 	{
 	}
 
-	void (*forEach)(const Variant & var, Callback callback);
+	void (*forEach)(const Variant & iterable, Callback callback);
 };
 
-inline void iterableForEach(const Variant & var, MetaIterable::Callback callback)
+inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)
 {
-	var.getMetaType()->getMetaIterable()->forEach(var, callback);
+	iterable.getMetaType()->getMetaIterable()->forEach(iterable, callback);
 }
 
 

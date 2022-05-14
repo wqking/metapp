@@ -53,13 +53,13 @@ Variadic function (tkVariadicFunction)
 
 ```c++
 MetaCallable(
-	const MetaType * (*getClassType)(const Variant & var),
-	size_t (*getParameterCount)(const Variant & var),
-	const MetaType * (*getReturnType)(const Variant & var),
-	const MetaType * (*getParameterType)(const Variant & var, const size_t index),
-	unsigned int (*rankInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
-	bool (*canInvoke)(const Variant & var, const Variant * arguments, const size_t argumentCount),
-	Variant (*invoke)(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount)
+	const MetaType * (*getClassType)(const Variant & callable),
+	size_t (*getParameterCount)(const Variant & callable),
+	const MetaType * (*getReturnType)(const Variant & callable),
+	const MetaType * (*getParameterType)(const Variant & callable, const size_t index),
+	unsigned int (*rankInvoke)(const Variant & callable, const Variant * arguments, const size_t argumentCount),
+	bool (*canInvoke)(const Variant & callable, const Variant * arguments, const size_t argumentCount),
+	Variant (*invoke)(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount)
 );
 ```
 
@@ -68,14 +68,14 @@ The meaning of each functions are same as the member functions listed below.
 
 ## MetaCallable member functions
 
-The first parameter in all of the member functions is `const Variant & var`. It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer. The member functions operate on the data.  
-We can treat `var` as the C++ object instance which class implements an interface called `MetaCallable`.  
-`var` can be a value, a reference, or a pointer.  
+The first parameter in all of the member functions is `const Variant & callable`. It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer. The member functions operate on the data.  
+We can treat `callable` as the C++ object instance which class implements an interface called `MetaCallable`.  
+`callable` can be a value, a reference, or a pointer.  
 
 #### getClassType
 
 ```c++
-const MetaType * getClassType(const Variant & var);
+const MetaType * getClassType(const Variant & callable);
 ```
 
 Returns the meta type of the class that the callable belongs to, or to say, the class declares the callable. 
@@ -87,7 +87,7 @@ When invoking the callable, the `instance` must be pointer to a valid object.
 #### getParameterCount
 
 ```c++
-size_t getParameterCount(const Variant & var);
+size_t getParameterCount(const Variant & callable);
 ```
 
 Returns the parameter count.  
@@ -96,7 +96,7 @@ For variadic function (tkVariadicFunction), returns 0.
 #### getReturnType
 
 ```c++
-const MetaType * getReturnType(const Variant & var);
+const MetaType * getReturnType(const Variant & callable);
 ```
 
 Returns meta type of the callable return type.  
@@ -105,7 +105,7 @@ For constructor (tkConstructor), the return type is pointer to the class.
 #### getParameterType
 
 ```c++
-const MetaType * getParameterType(const Variant & var, const size_t index);
+const MetaType * getParameterType(const Variant & callable, const size_t index);
 ```
 
 Returns the meta type of parameter at `index`.  
@@ -114,7 +114,7 @@ For variadic function (tkVariadicFunction), the function always returns nullptr.
 #### rankInvoke
 
 ```c++
-unsigned int rankInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount);
+unsigned int rankInvoke(const Variant & callable, const Variant * arguments, const size_t argumentCount);
 ```
 
 Returns the rank value of whether each argument in array `arguments` matches the parameter in the callable.  
@@ -126,7 +126,7 @@ Parameter `argumentCount` is the number of argument in `arguments`.
 #### canInvoke
 
 ```c++
-bool canInvoke(const Variant & var, const Variant * arguments, const size_t argumentCount);
+bool canInvoke(const Variant & callable, const Variant * arguments, const size_t argumentCount);
 ```
 
 Returns true if the `arguments` can be used to invoke the callable, false if not.  
@@ -135,7 +135,7 @@ This is similar to check if the result of `rankInvoke` is larger than 0, but it'
 #### invoke
 
 ```c++
-Variant invoke(const Variant & var, void * instance, const Variant * arguments, const size_t argumentCount);
+Variant invoke(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount);
 ```
 
 Invokes the callable, returns the result of the callable. If the callable doesn't return any value (the result type is void), then empty Variant is returned (Variant::isEmpty() is true).  
@@ -143,23 +143,23 @@ Invokes the callable, returns the result of the callable. If the callable doesn'
 #### isStatic
 
 ```c++
-bool isStatic(const Variant & var) const;
+bool isStatic(const Variant & callable) const;
 ```
 
 Returns true if the accessible is static or non-member, false if the accessbile is class member.  
-The function is equivalent to `return getClassType(var)->isVoid();`.  
+The function is equivalent to `return getClassType(callable)->isVoid();`.  
 
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
-Usually you should prefer the utility functions to calling `MetaCallable` member function directly. However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application, you may store `var.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions. This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaCallable` member function directly. However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application, you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions. This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
 
 #### callableGetClassType
 
 ```c++
-inline const MetaType * callableGetClassType(const Variant & var)
+inline const MetaType * callableGetClassType(const Variant & callable)
 {
-	return var.getMetaType()->getMetaCallable()->getClassType(var);
+	return callable.getMetaType()->getMetaCallable()->getClassType(callable);
 }
 ```
 
@@ -168,9 +168,9 @@ Shortcut for `MetaCallable::getClassType()`.
 #### callableGetParameterCount
 
 ```c++
-inline size_t callableGetParameterCount(const Variant & var)
+inline size_t callableGetParameterCount(const Variant & callable)
 {
-	return var.getMetaType()->getMetaCallable()->getParameterCount(var);
+	return callable.getMetaType()->getMetaCallable()->getParameterCount(callable);
 }
 ```
 
@@ -179,9 +179,9 @@ Shortcut for `MetaCallable::getParameterCount()`.
 #### callableGetReturnType
 
 ```c++
-inline const MetaType * callableGetReturnType(const Variant & var)
+inline const MetaType * callableGetReturnType(const Variant & callable)
 {
-	return var.getMetaType()->getMetaCallable()->getReturnType(var);
+	return callable.getMetaType()->getMetaCallable()->getReturnType(callable);
 }
 ```
 
@@ -190,9 +190,9 @@ Shortcut for `MetaCallable::getReturnType()`.
 #### callableGetParameterType
 
 ```c++
-inline const MetaType * callableGetParameterType(const Variant & var, const size_t index)
+inline const MetaType * callableGetParameterType(const Variant & callable, const size_t index)
 {
-	return var.getMetaType()->getMetaCallable()->getParameterType(var, index);
+	return callable.getMetaType()->getMetaCallable()->getParameterType(callable, index);
 }
 ```
 
@@ -202,7 +202,7 @@ Shortcut for `MetaCallable::getParameterType()`.
 
 ```c++
 template <typename ...Args>
-unsigned int callableRankInvoke(const Variant & var, Args ...args);
+unsigned int callableRankInvoke(const Variant & callable, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and returns the result.
@@ -211,7 +211,7 @@ Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and ret
 
 ```c++
 template <typename ...Args>
-bool callableCanInvoke(const Variant & var, Args ...args);
+bool callableCanInvoke(const Variant & callable, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and returns the result.
@@ -220,7 +220,7 @@ Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and retu
 
 ```c++
 template <typename ...Args>
-Variant callableInvoke(const Variant & var, void * instance, Args ...args);
+Variant callableInvoke(const Variant & callable, void * instance, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::invoke()` and returns the result.

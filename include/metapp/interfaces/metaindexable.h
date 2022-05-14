@@ -31,11 +31,11 @@ public:
 	MetaIndexable() = delete;
 
 	MetaIndexable(
-		size_t (*getSize)(const Variant & var),
-		const MetaType * (*getValueType)(const Variant & var, const size_t index),
-		void (*resize)(const Variant & var, const size_t size),
-		Variant (*get)(const Variant & var, const size_t index),
-		void (*set)(const Variant & var, const size_t index, const Variant & value)
+		size_t (*getSize)(const Variant & indexable),
+		const MetaType * (*getValueType)(const Variant & indexable, const size_t index),
+		void (*resize)(const Variant & indexable, const size_t size),
+		Variant (*get)(const Variant & indexable, const size_t index),
+		void (*set)(const Variant & indexable, const size_t index, const Variant & value)
 	)
 		:
 			getSize(getSize),
@@ -46,38 +46,38 @@ public:
 	{
 	}
 
-	size_t (*getSize)(const Variant & var);
-	const MetaType * (*getValueType)(const Variant & var, const size_t index);
-	void resize(const Variant & var, const size_t size) const {
+	size_t (*getSize)(const Variant & indexable);
+	const MetaType * (*getValueType)(const Variant & indexable, const size_t index);
+	void resize(const Variant & indexable, const size_t size) const {
 		if(resize_ != nullptr) {
-			resize_(var, size);
+			resize_(indexable, size);
 		}
 	}
-	Variant (*get)(const Variant & var, const size_t index);
-	void (*set)(const Variant & var, const size_t index, const Variant & value);
+	Variant (*get)(const Variant & indexable, const size_t index);
+	void (*set)(const Variant & indexable, const size_t index, const Variant & value);
 
 private:
-	void (*resize_)(const Variant & var, const size_t size);
+	void (*resize_)(const Variant & indexable, const size_t size);
 };
 
-inline size_t indexableGetSize(const Variant & var)
+inline size_t indexableGetSize(const Variant & indexable)
 {
-	return var.getMetaType()->getMetaIndexable()->getSize(var);
+	return indexable.getMetaType()->getMetaIndexable()->getSize(indexable);
 }
 
-inline void indexableResize(const Variant & var, const size_t size)
+inline void indexableResize(const Variant & indexable, const size_t size)
 {
-	var.getMetaType()->getMetaIndexable()->resize(var, size);
+	indexable.getMetaType()->getMetaIndexable()->resize(indexable, size);
 }
 
-inline Variant indexableGet(const Variant & var, const size_t index)
+inline Variant indexableGet(const Variant & indexable, const size_t index)
 {
-	return var.getMetaType()->getMetaIndexable()->get(var, index);
+	return indexable.getMetaType()->getMetaIndexable()->get(indexable, index);
 }
 
-inline void indexableSet(const Variant & var, const size_t index, const Variant & value)
+inline void indexableSet(const Variant & indexable, const size_t index, const Variant & value)
 {
-	var.getMetaType()->getMetaIndexable()->set(var, index, value);
+	indexable.getMetaType()->getMetaIndexable()->set(indexable, index, value);
 }
 
 
