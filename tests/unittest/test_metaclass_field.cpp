@@ -62,8 +62,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerAccessible("a", metapp::createAccessor(&A::a));
-				mc.registerAccessible("value", metapp::createAccessor(&A::value));
+				mc.registerAccessible("a", &A::a);
+				mc.registerAccessible("value", &A::value);
 			}
 		);
 		return &metaClass;
@@ -83,8 +83,8 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerAccessible("b", metapp::createAccessor(&B::b));
-				mc.registerAccessible("value", metapp::createAccessor(&B::value));
+				mc.registerAccessible("b", &B::b);
+				mc.registerAccessible("value", &B::value);
 			}
 		);
 		return &metaClass;
@@ -99,7 +99,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerAccessible("b2", metapp::createAccessor(&B2::b2));
+				mc.registerAccessible("b2", &B2::b2);
 			}
 		);
 		return &metaClass;
@@ -119,9 +119,9 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerAccessible("c", metapp::createAccessor(&C::c));
-				mc.registerAccessible("value", metapp::createAccessor(&C::value));
-				mc.registerAccessible("staticValue", metapp::createAccessor(&C::staticValue));
+				mc.registerAccessible("c", &C::c);
+				mc.registerAccessible("value", &C::value);
+				mc.registerAccessible("staticValue", &C::staticValue);
 			}
 		);
 		return &metaClass;

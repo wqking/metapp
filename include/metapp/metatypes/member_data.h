@@ -29,6 +29,37 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	using UpType = TypeList <Class, T>;
 	static constexpr TypeKind typeKind = tkMemberPointer;
 
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGetValueType,
+			&accessibleIsReadOnly,
+			&accessibleGetClassType,
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
+
+	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
+		return getMetaType<T>();
+	}
+
+	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
+		return std::is_const<T>::value;
+	}
+
+	static const MetaType * accessibleGetClassType(const Variant & /*accessible*/) {
+		return getMetaType<Class>();
+	}
+
+	static Variant accessibleGet(const Variant & accessible, const void * instance) {
+		return Variant::reference(((const Class *)instance)->*(accessible.get<T Class::*>()));
+	}
+
+	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
+		internal_::assignValue(((Class *)instance)->*(accessible.get<T Class::*>()), value.cast<T>().template get<const T &>());
+	}
+
 };
 
 

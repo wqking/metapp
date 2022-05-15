@@ -53,7 +53,7 @@ public:
 	}
 
 	int getDataCount() const {
-		return dataList.size();
+		return (int)dataList.size();
 	}
 
 	T getData(const int index) const {

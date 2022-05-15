@@ -76,7 +76,13 @@ public:
 	const MetaRepo * asMetaRepo() const;
 	const Variant & asEnumValue() const;
 
-	operator const Variant & () const;
+	const Variant & getTarget() const {
+		return doGetVariant();
+	}
+
+	operator const Variant & () const {
+		return doGetVariant();
+	}
 
 	void registerAnnotation(const std::string & name, const Variant & value);
 	const Variant & getAnnotation(const std::string & name) const;

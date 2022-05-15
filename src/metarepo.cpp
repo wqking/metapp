@@ -386,33 +386,6 @@ MetaItem::~MetaItem()
 {
 }
 
-void MetaItem::registerAnnotation(const std::string & name, const Variant & value)
-{
-	if(! annotationMap) {
-		annotationMap = std::make_shared<std::map<std::string, Variant> >();
-	}
-	annotationMap->insert(std::make_pair(name, value));
-}
-
-const Variant & MetaItem::getAnnotation(const std::string & name) const
-{
-	if(annotationMap) {
-		auto it = annotationMap->find(name);
-		if(it != annotationMap->end()) {
-			return it->second;
-		}
-	}
-	return internal_::emptyVariant;
-}
-
-const std::map<std::string, Variant> & MetaItem::getAllAnnotations() const
-{
-	if(annotationMap) {
-		return *annotationMap;
-	}
-	return internal_::emptyAnnotationMap;
-}
-
 const std::string & MetaItem::getName() const
 {
 	return data ? data->name : internal_::emptyString;
@@ -465,9 +438,31 @@ const Variant & MetaItem::asEnumValue() const
 	return doGetVariant();
 }
 
-MetaItem::operator const Variant & () const
+void MetaItem::registerAnnotation(const std::string & name, const Variant & value)
 {
-	return doGetVariant();
+	if(! annotationMap) {
+		annotationMap = std::make_shared<std::map<std::string, Variant> >();
+	}
+	annotationMap->insert(std::make_pair(name, value));
+}
+
+const Variant & MetaItem::getAnnotation(const std::string & name) const
+{
+	if(annotationMap) {
+		auto it = annotationMap->find(name);
+		if(it != annotationMap->end()) {
+			return it->second;
+		}
+	}
+	return internal_::emptyVariant;
+}
+
+const std::map<std::string, Variant> & MetaItem::getAllAnnotations() const
+{
+	if(annotationMap) {
+		return *annotationMap;
+	}
+	return internal_::emptyAnnotationMap;
 }
 
 void MetaItem::setTarget(const Variant & target)
