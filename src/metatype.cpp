@@ -325,6 +325,12 @@ const void * MetaType::getModule() const noexcept
 
 bool MetaType::equal(const MetaType * other) const
 {
+	if(this == other) {
+		return true;
+	}
+	if(other == nullptr) {
+		return false;
+	}
 	if(getUnifiedType() == other->getUnifiedType()) {
 		return true;
 	}

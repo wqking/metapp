@@ -26,27 +26,46 @@ namespace metapp {
 template <typename T>
 struct DeclareMetaTypeBase <std::shared_ptr<T> >
 {
+	using SharedPtr = std::shared_ptr<T>;
+
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
-				data->constructSharedPtr(std::static_pointer_cast<void>(std::shared_ptr<T>()));
+				data->constructSharedPtr(std::static_pointer_cast<void>(SharedPtr()));
 			}
 			else {
-				data->constructSharedPtr(std::static_pointer_cast<void>(*(std::shared_ptr<T> *)copyFrom));
+				data->constructSharedPtr(std::static_pointer_cast<void>(*(SharedPtr *)copyFrom));
 			}
 			return nullptr;
 		}
 		else {
 			if(copyFrom == nullptr) {
-				return new std::shared_ptr<T>();
+				return new SharedPtr();
 			}
 			else {
-				return new std::shared_ptr<T>(*(std::shared_ptr<T> *)copyFrom);
+				return new SharedPtr(*(SharedPtr *)copyFrom);
 			}
 		}
+	}
+
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+		if(toMetaType->isPointer()) {
+			if(result != nullptr) {
+				*result = value.get<SharedPtr &>().get();
+			}
+			return true;
+		}
+		if(toMetaType->getTypeKind() == tkStdWeakPtr && getMetaType<SharedPtr>()->getUpType()->equal(toMetaType->getUpType())) {
+			if(result != nullptr) {
+				*result = std::weak_ptr<T>(value.get<SharedPtr &>());
+			}
+			return true;
+		}
+
+		return commonCast(result, value, getMetaType<SharedPtr>(), toMetaType);
 	}
 
 };

@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_STD_UNIQUE_PTR_H_969872685611
-#define METAPP_STD_UNIQUE_PTR_H_969872685611
+#ifndef METAPP_STD_WEAK_PTR_H_969872685611
+#define METAPP_STD_WEAK_PTR_H_969872685611
 
 #include "metapp/metatype.h"
 
@@ -24,22 +24,22 @@
 namespace metapp {
 
 template <typename T>
-struct DeclareMetaTypeBase <std::unique_ptr<T> >
+struct DeclareMetaTypeBase <std::weak_ptr<T> >
 {
-	using UniquePtr = std::unique_ptr<T>;
+	using WeakPtr = std::weak_ptr<T>;
 
 	using UpType = T;
-	static constexpr TypeKind typeKind = tkStdUniquePtr;
+	static constexpr TypeKind typeKind = tkStdWeakPtr;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->isPointer()) {
+		if(toMetaType->getTypeKind() == tkStdSharedPtr && getMetaType<WeakPtr>()->getUpType()->equal(toMetaType->getUpType())) {
 			if(result != nullptr) {
-				*result = value.get<UniquePtr &>().get();
+				*result = std::shared_ptr<T>(value.get<WeakPtr &>());
 			}
 			return true;
 		}
 
-		return commonCast(result, value, getMetaType<UniquePtr>(), toMetaType);
+		return commonCast(result, value, getMetaType<WeakPtr>(), toMetaType);
 	}
 
 };

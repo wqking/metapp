@@ -30,3 +30,25 @@ TEST_CASE("metatypes, std::shared_ptr<int>")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdSharedPtr, tkInt }));
 }
 
+TEST_CASE("metatypes, std::shared_ptr<int>, cast to pointer")
+{
+	std::shared_ptr<int> sp = std::make_shared<int>(5);
+	metapp::Variant v(sp);
+	REQUIRE(*sp == 5);
+	REQUIRE(v.cast<const int *>().get<const int *>() == sp.get());
+	REQUIRE(*v.cast<const int *>().get<const int *>() == 5);
+	*v.cast<int *>().get<int *>() = 38;
+	REQUIRE(*sp == 38);
+	REQUIRE(*v.cast<const int *>().get<const int *>() == 38);
+}
+
+TEST_CASE("metatypes, std::shared_ptr<int>, cast to std::weak_ptr")
+{
+	std::shared_ptr<int> sp = std::make_shared<int>(9);
+	metapp::Variant v(sp);
+	REQUIRE(*sp == 9);
+	std::weak_ptr<int> wp = v.cast<std::weak_ptr<int> &>().get<std::weak_ptr<int> &>();
+	std::shared_ptr<int> wsp = wp.lock();
+	REQUIRE(*wsp == 9);
+}
+

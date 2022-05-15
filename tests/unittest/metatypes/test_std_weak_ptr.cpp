@@ -19,27 +19,25 @@
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 
-TEST_CASE("metatypes, std::unique_ptr<int>")
+TEST_CASE("metatypes, std::weak_ptr<int>")
 {
-	using PTR = std::unique_ptr<int>;
-	PTR up = PTR(new int{38});
-	REQUIRE(up);
-	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
-	REQUIRE(! up);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdUniquePtr);
-	REQUIRE(v.canGet<PTR &>());
-	REQUIRE(*(v.get<PTR &>()) == 38);
+	std::shared_ptr<int> sp = std::make_shared<int>(38);
+	std::weak_ptr<int> wp(sp);
+	metapp::Variant v(wp);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdWeakPtr);
+	REQUIRE(v.canGet<std::weak_ptr<int> >());
+	REQUIRE(*(v.get<std::weak_ptr<int> >().lock()) == 38);
 	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdUniquePtr, tkInt }));
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdWeakPtr, tkInt }));
 }
 
-TEST_CASE("metatypes, std::unique_ptr<int>, cast to pointer")
+TEST_CASE("metatypes, std::weak_ptr<int>, cast to std::shared_ptr")
 {
-	using PTR = std::unique_ptr<int>;
-	PTR up = PTR(new int{38});
-	REQUIRE(up);
-	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
-	REQUIRE(! up);
-	REQUIRE(*v.cast<const int *>().get<const int *>() == 38);
+	std::shared_ptr<int> sp = std::make_shared<int>(9);
+	std::weak_ptr<int> wp(sp);
+	metapp::Variant v(wp);
+	REQUIRE(*sp == 9);
+	std::shared_ptr<int> wsp = v.cast<std::shared_ptr<int> &>().get<std::shared_ptr<int> &>();
+	REQUIRE(*wsp == 9);
 }
 

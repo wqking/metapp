@@ -51,6 +51,7 @@
 #include "metapp/metatypes/std_unordered_map.h"
 #include "metapp/metatypes/std_unordered_set.h"
 #include "metapp/metatypes/std_vector.h"
+#include "metapp/metatypes/std_weak_ptr.h"
 #include "metapp/metatypes/variadic_function.h"
 #include "metapp/metatypes/variant_metatype.h"
 
