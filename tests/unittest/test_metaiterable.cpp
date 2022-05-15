@@ -56,7 +56,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 		resultList.push_back(value.get<ValueType &>());
 		return true;
 	});
-	REQUIRE(resultList.size() == getContainerSize(container));
+	REQUIRE((int)resultList.size() == getContainerSize(container));
 	for(size_t i = 0; i < resultList.size(); ++i) {
 		auto it = container.begin();
 		std::advance(it, i);

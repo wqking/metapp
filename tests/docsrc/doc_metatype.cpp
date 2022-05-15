@@ -143,7 +143,7 @@ This function is useful when putting `MetaType` in ordered containers, such as `
 
 ```c++
 const MetaType * getUpType() const; // #1
-const MetaType * getUpType(const size_t i) const; // #2
+const MetaType * getUpType(const int i) const; // #2
 ```
 
 Returns the pointer to UpType.  
@@ -159,7 +159,7 @@ it has only one UpType, which is the type it points to. Reference is similar to 
 #### getUpTypeCount
 
 ```c++
-size_t getUpTypeCount() const noexcept;
+int getUpTypeCount() const noexcept;
 ```
 
 Returns the count of UpType. The result can be 0, 1, or more.  

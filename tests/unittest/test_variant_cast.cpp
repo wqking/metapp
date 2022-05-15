@@ -29,7 +29,7 @@ namespace {
 TEMPLATE_LIST_TEST_CASE("Variant, cast T to T", "", TestTypes_All)
 {
 	auto dataProvider = TestDataProvider<TestType>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
 		metapp::Variant v(dataProvider.getData(dataIndex));
 		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
 
@@ -41,7 +41,7 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast T to T", "", TestTypes_All)
 TEMPLATE_LIST_TEST_CASE("Variant, cast T to T &", "", TestTypes_All)
 {
 	auto dataProvider = TestDataProvider<TestType>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
 		metapp::Variant v(dataProvider.getData(dataIndex));
 		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
 
@@ -57,7 +57,7 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast T to U", "", TestTypes_Pairs_Arithmetic)
 	//printf("%d %d\n", metapp::getMetaType<First>()->getTypeKind(), metapp::getMetaType<Second>()->getTypeKind());
 
 	auto dataProvider = TestDataProvider<First>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
 		metapp::Variant v(dataProvider.getData(dataIndex));
 		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
 		REQUIRE(v.canCast<Second>());
@@ -71,7 +71,7 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arit
 	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
 
 	auto dataProvider = TestDataProvider<First>();
-	for(size_t dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
 		First n = dataProvider.getData(dataIndex);
 		metapp::Variant v(metapp::Variant::create<const First &>(n));
 		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);

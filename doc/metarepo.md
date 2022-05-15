@@ -34,6 +34,7 @@
   * [getRelationship](#a4_24)
   * [isClassInHierarchy](#a4_25)
   * [traverseBases](#a4_26)
+* [TODO MetaRepoList](#a2_7)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -291,9 +292,9 @@ The first templated form is similar to `getDerives(metapp::getMetaType<remove al
 
 ```c++
 template <typename Class>
-void * castToBase(void * instance, const size_t baseIndex) const;
+void * castToBase(void * instance, const int baseIndex) const;
 
-void * castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const;
+void * castToBase(void * instance, const MetaType * classMetaType, const int baseIndex) const;
 ```
 
 Casts `instance` of `Class`, or of `classMetaType`, to its base class at `baseIndex` in the base list returned by `getBases`, then returns the casted pointer.  
@@ -304,9 +305,9 @@ The first templated form is similar to `castToBase(instance, metapp::getMetaType
 
 ```c++
 template <typename Class>
-void * castToDerived(void * instance, const size_t derivedIndex) const;
+void * castToDerived(void * instance, const int derivedIndex) const;
 
-void * castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const;
+void * castToDerived(void * instance, const MetaType * classMetaType, const int derivedIndex) const;
 ```
 
 Casts `instance` of `Class`, or of `classMetaType`, to its derived class at `derivedIndex` in the derived list returned by `getDerives`, then returns the casted pointer.  
@@ -370,3 +371,6 @@ bool traverseBases(const MetaType * metaType, FT && callback) const;
 Traverses all base classes of `metaType`, and call `callback` on each meta type. The first meta type is always `metaType`.  
 It's guaranteed duplicated meta types are only passed to `callback` once.  
 `callback` prototype is `bool callback(const MetaType * metaType)`. If `callback` returns false, the traversing stops.
+
+<a id="a2_7"></a>
+## TODO MetaRepoList

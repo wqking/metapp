@@ -28,7 +28,7 @@
 #include <tuple>
 #include <initializer_list>
 
-const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, size_t index);
+const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, int index);
 std::vector<metapp::TypeKind> getUpTypeTypeKinds(const metapp::MetaType * metaType);
 
 template <typename Iterator>
@@ -60,10 +60,10 @@ inline bool matchUpTypeKinds(const metapp::MetaType * metaType, const U & typeKi
 }
 
 template <typename Container>
-size_t getContainerSize(const Container & container)
+int getContainerSize(const Container & container)
 {
 	// some container such as std::forward_list doesn't support size() function
-	size_t size = 0;
+	int size = 0;
 	for(auto it = std::begin(container); it != std::end(container); ++it) {
 		++size;
 	}

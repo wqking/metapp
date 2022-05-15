@@ -34,7 +34,7 @@ inline void verifyVariantWritable(const Variant & var)
 }
 
 template <typename ...Types>
-inline const MetaType * getMetaTypeAt(const size_t index)
+inline const MetaType * getMetaTypeAt(const int index)
 {
 	const MetaType * metaTypeList[] = {
 		getMetaType<Types>()...,
@@ -44,7 +44,7 @@ inline const MetaType * getMetaTypeAt(const size_t index)
 }
 
 template <typename ...Types>
-inline const MetaType * getMetaTypeAt(const size_t index, const TypeList<Types...> &)
+inline const MetaType * getMetaTypeAt(const int index, const TypeList<Types...> &)
 {
 	const MetaType * metaTypeList[] = {
 		getMetaType<Types>()...,

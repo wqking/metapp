@@ -27,7 +27,7 @@ namespace {
 
 struct SetupClass {};
 
-volatile size_t setupCalledCount = 0;
+volatile int setupCalledCount = 0;
 
 } // namespace
 

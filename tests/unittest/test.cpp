@@ -16,7 +16,7 @@
 
 #include "test.h"
 
-const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, size_t index)
+const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, int index)
 {
 	while(metaType != nullptr && index > 0) {
 		metaType = metaType->getUpType();

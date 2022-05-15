@@ -40,7 +40,7 @@ BaseView InheritanceRepo::getDerives(const MetaType * classMetaType) const
 	return BaseView(&doGetClassInfo(classMetaType)->derivedList);
 }
 
-void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const
+void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaType, const int baseIndex) const
 {
 	if(instance == nullptr) {
 		return nullptr;
@@ -48,7 +48,7 @@ void * InheritanceRepo::castToBase(void * instance, const MetaType * classMetaTy
 	return doGetClassInfo(classMetaType)->baseList[baseIndex].cast(instance);
 }
 
-void * InheritanceRepo::castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const
+void * InheritanceRepo::castToDerived(void * instance, const MetaType * classMetaType, const int derivedIndex) const
 {
 	if(instance == nullptr) {
 		return nullptr;
@@ -142,11 +142,8 @@ int InheritanceRepo::doFindBaseClass(
 {
 	assert(level < maxInheritanceLevels);
 
-	const size_t count = currentClassInfo->baseList.size();
-	if(count == 0) {
-		return 0;
-	}
-	for(size_t i = 0; i < count; ++i) {
+	const int count = static_cast<int>(currentClassInfo->baseList.size());
+	for(int i = 0; i < count; ++i) {
 		entryList[level] = currentClassInfo->baseList[i];
 		if(currentClassInfo->baseList[i].targetMetaType->equal(targetBaseMetaType)) {
 			return level + 1;
@@ -168,11 +165,8 @@ int InheritanceRepo::doFindDerivedClass(
 {
 	assert(level < maxInheritanceLevels);
 
-	const size_t count = currentClassInfo->derivedList.size();
-	if(count == 0) {
-		return 0;
-	}
-	for(size_t i = 0; i < count; ++i) {
+	const int count = static_cast<int>(currentClassInfo->derivedList.size());
+	for(int i = 0; i < count; ++i) {
 		entryList[level] = currentClassInfo->derivedList[i];
 		if(currentClassInfo->derivedList[i].targetMetaType->equal(targetDerivedMetaType)) {
 			return level + 1;

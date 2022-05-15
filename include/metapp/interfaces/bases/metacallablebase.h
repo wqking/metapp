@@ -32,7 +32,7 @@ public:
 	using ClassType = Class;
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
-	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
+	static constexpr int argsCount = TypeListCount<ArgumentTypeList>::value;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
@@ -52,7 +52,7 @@ public:
 		return getMetaType<ClassType>();
 	}
 
-	static size_t metaCallableGetParameterCount(const Variant & /*callable*/)
+	static int metaCallableGetParameterCount(const Variant & /*callable*/)
 	{
 		return argsCount;
 	}
@@ -62,12 +62,12 @@ public:
 		return getMetaType<RT>();
 	}
 
-	static const MetaType * metaCallableGetParameterType(const Variant & /*callable*/, const size_t index)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*callable*/, const int index)
 	{
 		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
-	static unsigned int metaCallableRankInvoke(const Variant & /*callable*/, const Variant * arguments, const size_t argumentCount)
+	static int metaCallableRankInvoke(const Variant & /*callable*/, const Variant * arguments, const int argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return 0;
@@ -75,7 +75,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*callable*/, const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant & /*callable*/, const Variant * arguments, const int argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			return false;
@@ -83,7 +83,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
 	}
 
-	static Variant metaCallableInvoke(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount)
 	{
 		if(argumentCount != argsCount) {
 			errorIllegalArgument();

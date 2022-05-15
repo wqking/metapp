@@ -14,12 +14,13 @@
   * [getUpType](#a4_4)
   * [getUpTypeCount](#a4_5)
   * [getTypeKind](#a4_6)
-  * [Get type attributes](#a4_7)
-  * [Get meta interfaces](#a4_8)
-  * [construct](#a4_9)
-  * [copyConstruct](#a4_10)
-  * [destroy](#a4_11)
-  * [getModule](#a4_12)
+  * [isVoid](#a4_7)
+  * [Get type attributes](#a4_8)
+  * [Get meta interfaces](#a4_9)
+  * [construct](#a4_10)
+  * [copyConstruct](#a4_11)
+  * [destroy](#a4_12)
+  * [getModule](#a4_13)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -139,7 +140,7 @@ This function is useful when putting `MetaType` in ordered containers, such as `
 
 ```c++
 const MetaType * getUpType() const; // #1
-const MetaType * getUpType(const size_t i) const; // #2
+const MetaType * getUpType(const int i) const; // #2
 ```
 
 Returns the pointer to UpType.  
@@ -156,7 +157,7 @@ it has only one UpType, which is the type it points to. Reference is similar to 
 #### getUpTypeCount
 
 ```c++
-size_t getUpTypeCount() const noexcept;
+int getUpTypeCount() const noexcept;
 ```
 
 Returns the count of UpType. The result can be 0, 1, or more.  
@@ -176,6 +177,17 @@ For example, instead of `metaType->getTypeKind() == metapp::tkPointer`, you shou
 Using type attributes and meta interfaces are more flexible and less error prone.  
 
 <a id="a4_7"></a>
+#### isVoid
+
+```c++
+bool isVoid() const noexcept;
+```
+
+Returns true if the meta type is for `void` (tkVoid).  
+`metapp` doesn't use nullptr meta type. When there is no appropriate underlying type, `void` is used.  
+For example, the default constructed `Variant` (i.e, `Variant v`), has meta type of void.  
+
+<a id="a4_8"></a>
 #### Get type attributes
 
 ```c++
@@ -208,7 +220,7 @@ To check if a MetaType is static member, check `! isMemberPointer()`.
 Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType.
 That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  
 
-<a id="a4_8"></a>
+<a id="a4_9"></a>
 #### Get meta interfaces
 
 ```c++
@@ -220,7 +232,6 @@ const MetaIndexable * getMetaIndexable() const;
 const MetaIterable * getMetaIterable() const;
 const MetaStreaming * getMetaStreaming() const;
 const MetaMappable * getMetaMappable() const;
-const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```
 
@@ -229,7 +240,7 @@ If any interface is not implemented by the meta type, `nullptr` is returned.
 MetaType has very few public functions, most functions are in the meta interfaces.  
 Please see the document for each meta interface for more detailed information.  
 
-<a id="a4_9"></a>
+<a id="a4_10"></a>
 #### construct
 
 ```c++
@@ -240,7 +251,7 @@ Similar to C++ code `new T()`.
 Allocate and initialize an object on the heap, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-<a id="a4_10"></a>
+<a id="a4_11"></a>
 #### copyConstruct
 
 ```c++
@@ -251,7 +262,7 @@ Similar to C++ code `new T(anotherObject)`.
 Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-<a id="a4_11"></a>
+<a id="a4_12"></a>
 #### destroy
 
 ```c++
@@ -260,7 +271,7 @@ void destroy(void * instance) const;
 
 Free an object constructed by `construct` or `copyConstruct`.  
 
-<a id="a4_12"></a>
+<a id="a4_13"></a>
 #### getModule
 
 ```c++

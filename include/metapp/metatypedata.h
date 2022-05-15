@@ -27,14 +27,21 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+template <typename T>
+constexpr T maxOf(T a, T b)
+{
+	return a > b ? a : b;
+}
+
+} // namespace internal_
+
 class MetaTypeData
 {
 private:
-	static constexpr size_t bufferSize = internal_::MaxOfInt<
-		sizeof(long long),
-		sizeof(long double),
-		sizeof(void *)
-	>::value;
+	static constexpr size_t bufferSize = internal_::maxOf(sizeof(long long), internal_::maxOf(sizeof(long double), sizeof(void *)));
+	static_assert(bufferSize >= sizeof(int), "MetaTypeData, wrong bufferSize");
 
 	template <typename T>
 	using FitBuffer = std::integral_constant<bool,

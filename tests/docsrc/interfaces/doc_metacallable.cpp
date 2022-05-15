@@ -54,12 +54,12 @@ Variadic function (tkVariadicFunction)
 ```c++
 MetaCallable(
 	const MetaType * (*getClassType)(const Variant & callable),
-	size_t (*getParameterCount)(const Variant & callable),
+	int (*getParameterCount)(const Variant & callable),
 	const MetaType * (*getReturnType)(const Variant & callable),
-	const MetaType * (*getParameterType)(const Variant & callable, const size_t index),
-	unsigned int (*rankInvoke)(const Variant & callable, const Variant * arguments, const size_t argumentCount),
-	bool (*canInvoke)(const Variant & callable, const Variant * arguments, const size_t argumentCount),
-	Variant (*invoke)(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount)
+	const MetaType * (*getParameterType)(const Variant & callable, const int index),
+	int (*rankInvoke)(const Variant & callable, const Variant * arguments, const int argumentCount),
+	bool (*canInvoke)(const Variant & callable, const Variant * arguments, const int argumentCount),
+	Variant (*invoke)(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount)
 );
 ```
 
@@ -87,7 +87,7 @@ When invoking the callable, the `instance` must be pointer to a valid object.
 #### getParameterCount
 
 ```c++
-size_t getParameterCount(const Variant & callable);
+int getParameterCount(const Variant & callable);
 ```
 
 Returns the parameter count.  
@@ -105,7 +105,7 @@ For constructor (tkConstructor), the return type is pointer to the class.
 #### getParameterType
 
 ```c++
-const MetaType * getParameterType(const Variant & callable, const size_t index);
+const MetaType * getParameterType(const Variant & callable, const int index);
 ```
 
 Returns the meta type of parameter at `index`.  
@@ -114,7 +114,7 @@ For variadic function (tkVariadicFunction), the function always returns nullptr.
 #### rankInvoke
 
 ```c++
-unsigned int rankInvoke(const Variant & callable, const Variant * arguments, const size_t argumentCount);
+int rankInvoke(const Variant & callable, const Variant * arguments, const int argumentCount);
 ```
 
 Returns the rank value of whether each argument in array `arguments` matches the parameter in the callable.  
@@ -126,7 +126,7 @@ Parameter `argumentCount` is the number of argument in `arguments`.
 #### canInvoke
 
 ```c++
-bool canInvoke(const Variant & callable, const Variant * arguments, const size_t argumentCount);
+bool canInvoke(const Variant & callable, const Variant * arguments, const int argumentCount);
 ```
 
 Returns true if the `arguments` can be used to invoke the callable, false if not.  
@@ -135,7 +135,7 @@ This is similar to check if the result of `rankInvoke` is larger than 0, but it'
 #### invoke
 
 ```c++
-Variant invoke(const Variant & callable, void * instance, const Variant * arguments, const size_t argumentCount);
+Variant invoke(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount);
 ```
 
 Invokes the callable, returns the result of the callable. If the callable doesn't return any value (the result type is void), then empty Variant is returned (Variant::isEmpty() is true).  
@@ -168,7 +168,7 @@ Shortcut for `MetaCallable::getClassType()`.
 #### callableGetParameterCount
 
 ```c++
-inline size_t callableGetParameterCount(const Variant & callable)
+inline int callableGetParameterCount(const Variant & callable)
 {
 	return callable.getMetaType()->getMetaCallable()->getParameterCount(callable);
 }
@@ -190,7 +190,7 @@ Shortcut for `MetaCallable::getReturnType()`.
 #### callableGetParameterType
 
 ```c++
-inline const MetaType * callableGetParameterType(const Variant & callable, const size_t index)
+inline const MetaType * callableGetParameterType(const Variant & callable, const int index)
 {
 	return callable.getMetaType()->getMetaCallable()->getParameterType(callable, index);
 }
@@ -202,7 +202,7 @@ Shortcut for `MetaCallable::getParameterType()`.
 
 ```c++
 template <typename ...Args>
-unsigned int callableRankInvoke(const Variant & callable, Args ...args);
+int callableRankInvoke(const Variant & callable, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and returns the result.
@@ -245,7 +245,7 @@ Iterator findCallable(
 	Iterator first,
 	Iterator last,
 	const Variant * arguments,
-	const size_t argumentCount
+	const int argumentCount
 );
 ```
 

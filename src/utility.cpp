@@ -63,10 +63,10 @@ private:
 	}
 
 	void doDumpUpType(std::ostream & stream, const MetaType * metaType, const int level) {
-		const size_t upCount = metaType->getUpTypeCount();
+		const int upCount = metaType->getUpTypeCount();
 		stream << ", UpCount: " << upCount;
 		stream << std::endl;
-		for(size_t i = 0; i < upCount; ++i) {
+		for(int i = 0; i < upCount; ++i) {
 			doDump(stream, metaType->getUpType(i), level + 1);
 		}
 	}

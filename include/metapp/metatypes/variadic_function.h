@@ -59,7 +59,7 @@ private:
 	using ReturnType = typename Underlying::ReturnType;
 	using ArgumentTypeList = typename Underlying::ArgumentTypeList;
 
-	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
+	static constexpr int argsCount = TypeListCount<ArgumentTypeList>::value;
 
 public:
 	static constexpr TypeKind typeKind = tkVariadicFunction;
@@ -84,7 +84,7 @@ public:
 		return underlyingFunc.getMetaType()->getMetaCallable()->getClassType(underlyingFunc);
 	}
 
-	static size_t metaCallableGetParameterCount(const Variant & /*func*/)
+	static int metaCallableGetParameterCount(const Variant & /*func*/)
 	{
 		return 0;
 	}
@@ -94,22 +94,22 @@ public:
 		return getMetaType<ReturnType>();
 	}
 
-	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const size_t /*index*/)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const int /*index*/)
 	{
 		return voidMetaType;
 	}
 
-	static unsigned int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const int /*argumentCount*/)
 	{
 		return invokeRankCast;
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const size_t /*argumentCount*/)
+	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const int /*argumentCount*/)
 	{
 		return true;
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const int argumentCount)
 	{
 		Variant newArguments[2] = { arguments, argumentCount };
 

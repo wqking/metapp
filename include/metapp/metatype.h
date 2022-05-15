@@ -77,8 +77,8 @@ public:
 	int compare(const MetaType * other) const;
 
 	const MetaType * getUpType() const;
-	const MetaType * getUpType(const size_t i) const;
-	size_t getUpTypeCount() const noexcept;
+	const MetaType * getUpType(const int i) const;
+	int getUpTypeCount() const noexcept;
 
 	TypeKind getTypeKind() const noexcept;
 	bool isVoid() const noexcept;

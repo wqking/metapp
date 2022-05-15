@@ -172,10 +172,10 @@ The function must accept two arguments, the first is a pointer to Variant, which
 the arguments array. The second argument is the number of Variant in the array.
 
 ```c++
-int myVariadicFunc(const metapp::Variant * arguments, const size_t argumentCount)
+int myVariadicFunc(const metapp::Variant * arguments, const int argumentCount)
 {
   int total = 0;
-  for(size_t i = 0; i < argumentCount; ++i) {
+  for(int i = 0; i < argumentCount; ++i) {
     total += arguments[i].cast<int>().get<int>();
   }
   return total;

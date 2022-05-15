@@ -43,7 +43,8 @@
 ## Overview
 
 `metapp::Variant` allows to store data of any type and convert between types.  
-Variant holds a single value of any type at the same time. The type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
+Variant holds a single value of any type at the same time.
+The type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
 
 For example,  
 
@@ -53,7 +54,8 @@ metapp::Variant v2 = std::vector<std::string>();
 metapp::Variant v3 = MyClass();
 ```
 
-In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector, v3 is metapp::tkObject unless MyClass is registered with another type kind.
+In above code, the type held by v1 is metapp::tkInt, v2 is metapp::tkVector,
+v3 is metapp::tkObject unless MyClass is registered with another type kind.
 
 <a id="a2_2"></a>
 ## Header
@@ -83,7 +85,9 @@ Variant(T value);
 ```
 
 Construct a Variant of type T and copy value into Variant.  
-Since there is no way to specify the template parameter T explicitly when calling a constructor, we can't construct reference (tkReference) or C array (tkArray) using this constructor, because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
+Since there is no way to specify the template parameter T explicitly when calling a constructor,
+we can't construct reference (tkReference) or C array (tkArray) using this constructor,
+because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
 
 <a id="a4_3"></a>
 #### Construct from a type
@@ -102,7 +106,8 @@ Note: this constructor can't create Variant of pointer to a MetaType, to create 
 Variant(const MetaType * metaType, const void * copyFrom);
 ```
 
-Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`. `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
+Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.
+`copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
 
 <a id="a4_5"></a>
 #### Copy and move constructors
@@ -121,7 +126,8 @@ template <typename T>
 static Variant create(T value);
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
-This is similar with the constructor `template <typename T> Variant(T value)`, the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
+This is similar with the constructor `template <typename T> Variant(T value)`,
+the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
 **Example**
@@ -157,7 +163,8 @@ static Variant retype(const MetaType * metaType, const Variant & var);
 ```
 
 Return a Variant which data is the data in `var`, type is `metaType`.  
-This is only useful if you are 100% sure the data in `var` can be in type `metaType`, otherwise, you should cast the Variant instead of retyping it.  
+This is only useful if you are 100% sure the data in `var` can be in type `metaType`,
+otherwise, you should cast the Variant instead of retyping it.  
 
 <a id="a4_9"></a>
 #### takeFrom
@@ -166,8 +173,10 @@ static Variant takeFrom(const MetaType * metaType, void * instance);
 ```
 
 Return a Variant which data is the object pointed by `instance`, type is `metaType`.  
-`instance` is a pointer that points to an object allocated on the heap, the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
-`metaType` should the type that `instance` points to, not the pointer type. The returned `Variant` is a value object, not a pointer.
+`instance` is a pointer that points to an object allocated on the heap,
+the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
+`metaType` should the type that `instance` points to, not the pointer type.
+The returned `Variant` is a value object, not a pointer.
 
 **Example**  
 
@@ -228,7 +237,8 @@ The previous value held by the variant is destroyed after assigned with the new 
 ```c++
 const MetaType * getMetaType() const noexcept;
 ```
-Return the meta type held by the variant. The result is always valid pointer. Any variant, including the default constructed, always contains a meta type.
+Return the meta type held by the variant. The result is always valid pointer.
+Any variant, including the default constructed, always contains a meta type.
 
 <a id="a4_14"></a>
 #### canGet
@@ -245,7 +255,8 @@ The rules to determine `canGet`, assume the underlying value has type V,
 1. If both T and V are references, `canGet` returns true.  
 2. If both T and V are pointers after reference is removed, `canGet` returns true.  
 3. If both T and V are C array after reference is removed, `canGet` returns true.  
-4. If either T or V is reference, the other one is not reference, `canGet` returns true only if the referred type is same as the non-reference type.  
+4. If either T or V is reference, the other one is not reference,
+`canGet` returns true only if the referred type is same as the non-reference type.  
 5. If neither T and V are reference or pointer, `canGet` returns true only if T is same as V.  
 
 `canGet` and `get` expect either T is same as underlying type V, or T and V are reference are pointer.  
@@ -288,7 +299,9 @@ If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
 If T is function type, the return type is function pointer.  
 
-T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string, we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference instead of copy the value. That helps to improve the performance.  
+T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string,
+we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference
+instead of copy the value. That helps to improve the performance.  
 We should always getting as reference to avoid copying, unless you do want to copy the value.  
 
 <a id="a4_16"></a>
@@ -339,8 +352,10 @@ bool canCast() const;
 ```
 
 Return true if `myVariant.cast(toMetaType)` can be called to cast the underlying value to `toMetaType`.   
-Note: if both the Variant and `toMetaType` are class pointers or references, the function will use the global MetaRepo returned by `metapp::getMetaRepo()` to cast between base and derived classes.  
-Below table shows the rules to determine `canCast`, assume the underlying value has meta type `from`, and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are value type, they are not reference, not pointer.  
+Note: if both the Variant and `toMetaType` are class pointers or references,
+the function will use the global MetaRepoList returned by `metapp::getMetaRepoList()` to cast between base and derived classes.  
+Below table shows the rules to determine `canCast`, assume the underlying value has meta type `from`,
+and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are value type, they are not reference, not pointer.  
 
 | from | to  | canCast returns                                                                                            |
 |------|-----|------------------------------------------------------------------------------------------------------------|
@@ -375,11 +390,13 @@ template <typename T>
 Variant castSilently() const;
 ```
 
-Similar to `cast`, the only difference is that if `canCast<T>()` returns false, `castSilently` doesn't throw exception, and returns an empty Variant (which isEmpty() is true).  
+Similar to `cast`, the only difference is that if `canCast<T>()` returns false,
+`castSilently` doesn't throw exception, and returns an empty Variant (which isEmpty() is true).  
 
 **Hint**: when to use `canCast`, `cast`, and `castSilently`   
 If you only want to check if it's cast-able, but don't need to perform the cast, use `canCast`.  
-If you want a variant must be casted, and throw exception if it can't be casted, use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
+If you want a variant must be casted, and throw exception if it can't be casted,
+use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
 If you want a variant be casted, and allow the cast fail, use `castSilently`, then check if the result is empty.  
 
 <a id="a4_20"></a>
@@ -387,7 +404,8 @@ If you want a variant be casted, and allow the cast fail, use `castSilently`, th
 ```c++
 bool isEmpty() const noexcept;
 ```
-Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`. Such a variant can't be got value, and can't be casted.  
+Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`.
+Such a variant can't be got value, and can't be casted.  
 
 <a id="a4_21"></a>
 #### clone
@@ -409,7 +427,11 @@ If `this` Variant is a pointer, the returned reference refers to the value that 
 If `this` Variant is a value, the returned reference refers to the value.  
 `toReference` only makes reference, it doesn't copy any underlying value.  
 
-`toReference` is useful to write generic code. Assume a function accepts an argument of Variant. Without `toReference`, the function either requires the Variant to be a value, or a reference, but not both, or the function uses extra code to detect whether the argument is a value or reference. With `toReference`, the argument can be value, reference, or even pointer, then the function calls `toReference` to normalize the argument to reference, and use a single logic for all three kinds of Variants (value, reference pointer).
+`toReference` is useful to write generic code. Assume a function accepts an argument of Variant.
+Without `toReference`, the function either requires the Variant to be a value, or a reference,
+but not both, or the function uses extra code to detect whether the argument is a value or reference.
+With `toReference`, the argument can be value, reference, or even pointer, then the function calls `toReference`
+to normalize the argument to reference, and use a single logic for all three kinds of Variants (value, reference pointer).
 
 **Example**  
 
@@ -453,11 +475,13 @@ ASSERT(r3.get<int &>() == 15);
 ```c++
 Variant dereference() const;
 ```
-Return the value that the underlying pointer or reference points to. This is the same semantic as the dereference operator * in C++.  
+Return the value that the underlying pointer or reference points to.
+This is the same semantic as the dereference operator * in C++.  
 If `this` Variant is a reference, return the value that `this` refers to.  
 If `this` Variant is a pointer, return the value that `this` points to.  
 If `this` Variant is a value, return `*this`.  
-Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant, which may be expensive.  
+Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant,
+which may be expensive.  
 
 <a id="a4_24"></a>
 #### swap
@@ -503,14 +527,20 @@ Swap two variants.
 <a id="a4_28"></a>
 #### The data storage in Variant is similar to native C++
 
-If the underlying value is pointer or reference, Variant only stores the pointer or reference, it doesn't store the data pointed by the pointer or reference.  
+If the underlying value is pointer or reference, Variant only stores the pointer or reference,
+it doesn't store the data pointed by the pointer or reference.  
 If the underlying value is C array, the array is copied to the internal memory.  
 If the underlying value is function, it's decayed to function pointer.  
-If the underlying value is not a pointer or reference, Variant copies the value to the internal memory, and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
+If the underlying value is not a pointer or reference, Variant copies the value to the internal memory,
+and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
 <a id="a4_29"></a>
 #### Copying variants is different from native C++
 
-For value which is fundamental types such as int, long, or pointer, or any POD struct which size is smaller enough (the max size is 8 or 16 bytes, depending on the platform and the compiler), the value is stored in Variant directly. That means when the Variant is copied, the value is copied too.  
-For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr` that's managed by Variant. That's to say, when the Variant is copied, the value is not copied. If you want the value be copied, use `Variant::clone`.  
+For value which is fundamental types such as int, long, or pointer, or any POD struct
+which size is smaller enough (the max size is 8 or 16 bytes, depending on the platform and the compiler),
+the value is stored in Variant directly. That means when the Variant is copied, the value is copied too.  
+For value which size is not small, or not POD data, the value is stored on the heap using a `std::shared_ptr`
+that's managed by Variant. That's to say, when the Variant is copied, the value is not copied.
+If you want the value be copied, use `Variant::clone`.  
 Copying Variant is always trivial, there is not any memory allocation.  

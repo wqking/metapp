@@ -17,7 +17,7 @@ It can be constructor, function pointer, member function pointer, etc.
 The callable must have the prototype as,  
 
 ```c++
-ResultType callable(const metapp::Variant * arguments, const size_t argumentCount)
+ResultType callable(const metapp::Variant * arguments, const int argumentCount)
 ```
 
 The function can have any result type.  

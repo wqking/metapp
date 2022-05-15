@@ -334,8 +334,8 @@ bool MetaType::equal(const MetaType * other) const
 	if(getTypeKind() != other->getTypeKind() || getUpTypeCount() != other->getUpTypeCount()) {
 		return false;
 	}
-	const size_t upTypeCount = getUpTypeCount();
-	for(size_t i = 0; i < upTypeCount; ++i) {
+	const int upTypeCount = getUpTypeCount();
+	for(int i = 0; i < upTypeCount; ++i) {
 		if(! getUpType(i)->equal(other->getUpType(i))) {
 			return false;
 		}
@@ -348,12 +348,12 @@ int MetaType::compare(const MetaType * other) const
 	if(getModule() == other->getModule()) {
 		return internal_::compareTwoValues(getUnifiedType(), other->getUnifiedType());
 	}
-	const size_t upTypeCount = getUpTypeCount();
+	const int upTypeCount = getUpTypeCount();
 	int result = internal_::compareTwoValues(upTypeCount, other->getUpTypeCount());
 	if(result != 0) {
 		return result;
 	}
-	for(size_t i = 0; i < upTypeCount; ++i) {
+	for(int i = 0; i < upTypeCount; ++i) {
 		result = getUpType(i)->compare(other->getUpType(i));
 		if(result != 0) {
 			return result;
@@ -370,7 +370,7 @@ const MetaType * MetaType::getUpType() const
 	return upTypeData.upTypeList[1];
 }
 
-const MetaType * MetaType::getUpType(const size_t i) const
+const MetaType * MetaType::getUpType(const int i) const
 {
 	if(upTypeData.upTypeList == nullptr) {
 		return nullptr;
@@ -378,12 +378,12 @@ const MetaType * MetaType::getUpType(const size_t i) const
 	return upTypeData.upTypeList[i + 1];
 }
 
-size_t MetaType::getUpTypeCount() const noexcept
+int MetaType::getUpTypeCount() const noexcept
 {
 	if(upTypeData.upTypeList == nullptr) {
 		return 0;
 	}
-	return (size_t)upTypeData.upTypeList[0];
+	return (int)(size_t)upTypeData.upTypeList[0];
 }
 
 TypeKind MetaType::getTypeKind() const noexcept

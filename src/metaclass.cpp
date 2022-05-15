@@ -14,8 +14,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "metapp/metatype.h"
 #include "metapp/interfaces/metaclass.h"
+#include "metapp/metatype.h"
+#include "metapp/metarepo.h"
 
 namespace metapp {
 

@@ -64,38 +64,28 @@ struct ConstantList
 template <size_t ...values>
 using SizeConstantList = ConstantList<size_t, values...>;
 
+template <int ...values>
+using IntConstantList = ConstantList<int, values...>;
+
 template <bool ...values>
 using BoolConstantList = ConstantList<bool, values...>;
 
-template <size_t N, size_t ...Indexes>
-struct MakeSizeSequence : MakeSizeSequence <N - 1, N - 1, Indexes...>
+template <typename T, size_t N, T ...Indexes>
+struct MakeSequence : MakeSequence <T, N - 1, N - 1, Indexes...>
 {
 };
+
+template <typename T, T ...Indexes>
+struct MakeSequence <T, 0, Indexes...>
+{
+	using Type = ConstantList<T, Indexes...>;
+};
+
+template <int ...Indexes>
+using MakeIntSequence = MakeSequence <int, Indexes...>;
 
 template <size_t ...Indexes>
-struct MakeSizeSequence <0, Indexes...>
-{
-	using Type = SizeConstantList<Indexes...>;
-};
-
-
-template <size_t ...Ns>
-struct MaxOfInt
-{
-};
-
-template <size_t N1, size_t N2, size_t ...Ns>
-struct MaxOfInt <N1, N2, Ns...>
-{
-	static constexpr size_t r = MaxOfInt<N2, Ns...>::value;
-	static constexpr size_t value = (N1 > r ? N1 : r);
-};
-
-template <size_t N1>
-struct MaxOfInt <N1>
-{
-	static constexpr size_t value = N1;
-};
+using MakeSizeSequence = MakeSequence <size_t, Indexes...>;
 
 template <typename T>
 struct VariantReturnType

@@ -25,7 +25,7 @@ namespace metapp {
 
 namespace internal_ {
 
-template <typename ValueType, typename Container, size_t smallListSize = 4>
+template <typename ValueType, typename Container, int smallListSize = 4>
 class DisjointView
 {
 private:
@@ -34,7 +34,7 @@ private:
 	struct ContainerItem
 	{
 		const Container * container;
-		size_t totalSize;
+		int totalSize;
 	};
 
 public:
@@ -48,7 +48,7 @@ public:
 		using reference = const value_type &;
 
 	public:
-		Iterator(const DisjointView * view, const size_t listIndex, const size_t itemIndex)
+		Iterator(const DisjointView * view, const int listIndex, const int itemIndex)
 			: view(view), listIndex(listIndex), itemIndex(itemIndex)
 		{}
 
@@ -62,7 +62,7 @@ public:
 
 		Iterator & operator ++ () {
 			++itemIndex;
-			if(itemIndex >= view->listPointer[listIndex].container->size()) {
+			if(itemIndex >= (int)view->listPointer[listIndex].container->size()) {
 				itemIndex = 0;
 				++listIndex;
 			}
@@ -85,12 +85,12 @@ public:
 
 	private:
 		const DisjointView * view;
-		size_t listIndex;
-		size_t itemIndex;
+		int listIndex;
+		int itemIndex;
 	};
 
 	using value_type = const ValueType;
-	using size_type = size_t;
+	using size_type = int;
 	using difference_type = typename Iterator::difference_type;
 	using reference = const value_type &;
 	using const_reference = const value_type &;
@@ -176,8 +176,8 @@ public:
 	}
 
 	reference at(const size_type index) const {
-		size_t listIndex;
-		size_t itemIndex;
+		int listIndex;
+		int itemIndex;
 		splitIndex(index, &listIndex, &itemIndex);
 		return listPointer[listIndex].container->at(itemIndex);
 	}
@@ -187,7 +187,7 @@ public:
 	}
 
 	void addContainer(const Container * container) {
-		size_t totalSize = container->size();
+		int totalSize = (int)container->size();
 		if(totalSize == 0) {
 			return;
 		}
@@ -208,7 +208,7 @@ public:
 	}
 
 private:
-	void splitIndex(const size_type index, size_t * listIndex, size_t * itemIndex) const {
+	void splitIndex(const size_type index, int * listIndex, int * itemIndex) const {
 		*listIndex = 0;
 		*itemIndex = 0;
 		while(*listIndex < listCount) {
@@ -231,7 +231,7 @@ private:
 	std::array<ContainerItem, smallListSize> smallList;
 	std::vector<ContainerItem> largeList;
 	ContainerItem * listPointer;
-	size_t listCount;
+	int listCount;
 };
 
 } // namespace internal_

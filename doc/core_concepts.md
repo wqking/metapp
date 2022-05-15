@@ -81,8 +81,8 @@ Below member functions in MetaType can be used to retrieve UpType.
 
 ```c++
 const MetaType * getUpType() const noexcept;
-const MetaType * getUpType(const size_t i) const;
-size_t getUpTypeCount() const noexcept;
+const MetaType * getUpType(const int i) const;
+int getUpTypeCount() const noexcept;
 ```
 
 A MetaType only has one TypeKind, so it can represent only one type information, it can't represent compound information.
@@ -185,7 +185,6 @@ const MetaIndexable * getMetaIndexable() const;
 const MetaIterable * getMetaIterable() const;
 const MetaStreaming * getMetaStreaming() const;
 const MetaMappable * getMetaMappable() const;
-const MetaMember * getMetaMember() const;
 const void * getMetaUser() const;
 ```
 

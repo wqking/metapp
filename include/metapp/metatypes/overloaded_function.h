@@ -72,7 +72,7 @@ public:
 		return voidMetaType;
 	}
 
-	static size_t metaCallableGetParameterCount(const Variant & /*func*/)
+	static int metaCallableGetParameterCount(const Variant & /*func*/)
 	{
 		return 0;
 	}
@@ -82,20 +82,20 @@ public:
 		return voidMetaType;
 	}
 
-	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const size_t /*index*/)
+	static const MetaType * metaCallableGetParameterType(const Variant & /*func*/, const int /*index*/)
 	{
 		return voidMetaType;
 	}
 
-	static unsigned int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
+	static int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
 	{
-		unsigned int maxRank;
+		int maxRank;
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		findCallable(callableList.begin(), callableList.end(), arguments, argumentCount, &maxRank);
 		return maxRank;
 	}
 
-	static bool metaCallableCanInvoke(const Variant & func, const Variant * arguments, const size_t argumentCount)
+	static bool metaCallableCanInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
 	{
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		for(const auto & callable : callableList) {
@@ -106,7 +106,7 @@ public:
 		return false;
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const size_t argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const int argumentCount)
 	{
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		auto it = findCallable(callableList.begin(), callableList.end(), arguments, argumentCount, nullptr);

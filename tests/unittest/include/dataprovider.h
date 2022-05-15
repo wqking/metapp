@@ -52,11 +52,11 @@ public:
 		return typeKind;
 	}
 
-	size_t getDataCount() const {
+	int getDataCount() const {
 		return dataList.size();
 	}
 
-	T getData(const size_t index) const {
+	T getData(const int index) const {
 		return dataList.at(index % getDataCount());
 	}
 

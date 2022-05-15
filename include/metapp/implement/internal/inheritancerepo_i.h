@@ -101,20 +101,20 @@ public:
 	BaseView getDerives(const MetaType * classMetaType) const;
 
 	template <typename Class>
-	void * castToBase(void * instance, const size_t baseIndex) const
+	void * castToBase(void * instance, const int baseIndex) const
 	{
 		return castToBase(instance, doGetNormalizedMetaType<Class>(), baseIndex);
 	}
 
-	void * castToBase(void * instance, const MetaType * classMetaType, const size_t baseIndex) const;
+	void * castToBase(void * instance, const MetaType * classMetaType, const int baseIndex) const;
 
 	template <typename Class>
-	void * castToDerived(void * instance, const size_t derivedIndex) const
+	void * castToDerived(void * instance, const int derivedIndex) const
 	{
 		return castToDerived(instance, doGetNormalizedMetaType<Class>(), derivedIndex);
 	}
 
-	void * castToDerived(void * instance, const MetaType * classMetaType, const size_t derivedIndex) const;
+	void * castToDerived(void * instance, const MetaType * classMetaType, const int derivedIndex) const;
 
 	template <typename Class, typename ToClass>
 	void * cast(void * instance) const

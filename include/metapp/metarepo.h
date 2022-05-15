@@ -108,7 +108,7 @@ public:
 	};
 
 	using value_type = const MetaRepo *;
-	using size_type = size_t;
+	using size_type = int;
 	using difference_type = typename Iterator::difference_type;
 	using reference = const value_type &;
 	using const_reference = const value_type &;
