@@ -29,14 +29,10 @@ When retrieving any meta data from `MetaRepo` and `MetaClass`, the returned data
 
 ## Header
 
-`MetaItem` is declared in either below headers, including any header will include `MetaItem`,
-
 desc*/
 
 //code
-#include "metapp/metarepo.h"
-//desc Or
-#include "metapp/interfaces/metaclass.h"
+#include "metapp/metaitem.h"
 //code
 
 /*desc

@@ -17,6 +17,7 @@
 #ifndef METAPP_METACLASS_H_969872685611
 #define METAPP_METACLASS_H_969872685611
 
+#include "metapp/metaitem.h"
 #include "metapp/implement/internal/metarepobase_i.h"
 
 #include <memory>

@@ -16,8 +16,6 @@
 
 #include "metapp/metatype.h"
 #include "metapp/metarepo.h"
-#include "metapp/implement/internal/metarepobase_i.h"
-#include "metapp/implement/internal/inheritancerepo_i.h"
 #include "metapp/allmetatypes.h"
 
 namespace metapp {
@@ -26,7 +24,6 @@ namespace internal_ {
 
 Variant emptyVariant;
 std::string emptyString;
-std::map<std::string, Variant> emptyAnnotationMap;
 MetaItem emptyMetaItem;
 MetaItemList emptyMetaItemList;
 
@@ -371,118 +368,6 @@ Variant doCombineOverloadedCallable(const Variant & target, const Variant & call
 
 } // namespace internal_
 
-
-MetaItem::MetaItem()
-	: data()
-{
-}
-
-MetaItem::MetaItem(const Type type, const std::string & name, const Variant & target)
-	: data(std::make_shared<Data>(type, name, target))
-{
-}
-
-MetaItem::~MetaItem()
-{
-}
-
-const std::string & MetaItem::getName() const
-{
-	return data ? data->name : internal_::emptyString;
-}
-
-MetaItem::Type MetaItem::getType() const
-{
-	return data ? data->type : MetaItem::Type::none;
-}
-
-const Variant & MetaItem::asAccessible() const
-{
-	doCheckType(Type::accessible);
-	return doGetVariant();
-}
-
-const Variant & MetaItem::asCallable() const
-{
-	doCheckType(Type::callable);
-	return doGetVariant();
-}
-
-const Variant & MetaItem::asConstant() const
-{
-	doCheckType(Type::constant);
-	return doGetVariant();
-}
-
-const Variant & MetaItem::asConstructor() const
-{
-	doCheckType(Type::constructor);
-	return doGetVariant();
-}
-
-const MetaType * MetaItem::asMetaType() const
-{
-	doCheckType(Type::metaType);
-	return doGetVariant().get<const MetaType *>();
-}
-
-const MetaRepo * MetaItem::asMetaRepo() const
-{
-	doCheckType(Type::metaRepo);
-	return doGetVariant().get<const MetaRepo *>();
-}
-
-const Variant & MetaItem::asEnumValue() const
-{
-	doCheckType(Type::enumValue);
-	return doGetVariant();
-}
-
-void MetaItem::registerAnnotation(const std::string & name, const Variant & value)
-{
-	if(! annotationMap) {
-		annotationMap = std::make_shared<std::map<std::string, Variant> >();
-	}
-	annotationMap->insert(std::make_pair(name, value));
-}
-
-const Variant & MetaItem::getAnnotation(const std::string & name) const
-{
-	if(annotationMap) {
-		auto it = annotationMap->find(name);
-		if(it != annotationMap->end()) {
-			return it->second;
-		}
-	}
-	return internal_::emptyVariant;
-}
-
-const std::map<std::string, Variant> & MetaItem::getAllAnnotations() const
-{
-	if(annotationMap) {
-		return *annotationMap;
-	}
-	return internal_::emptyAnnotationMap;
-}
-
-void MetaItem::setTarget(const Variant & target)
-{
-	if(data) {
-		data->target = target;
-	}
-}
-
-const Variant & MetaItem::doGetVariant() const
-{
-	return data ? data->target : internal_::emptyVariant;
-}
-
-void MetaItem::doCheckType(const Type type) const
-{
-	if(getType() != type) {
-		errorIllegalArgument();
-	}
-}
 
 MetaRepo * getMetaRepo()
 {
