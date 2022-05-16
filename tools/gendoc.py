@@ -22,6 +22,7 @@ import re
 import shutil
 import subprocess
 import shlex
+import pathlib
 
 forceGenerateAll = False
 sourcePath = '../tests/docsrc'
@@ -31,6 +32,10 @@ fileConfigs = {
 	'readme' : {
 		'targetFileName' : '../readme.md',
 		#'generateToc' : False,
+	},
+
+	'list_all' : {
+		'tocMinHeadings' : 2
 	}
 }
 
@@ -67,7 +72,7 @@ def doPostProcessMarkdown(fileName, config) :
 	cpp2md.writeLines(fileName, lineList)
 
 	if config['generateToc'] :
-		command = 'perl addtoc2md.pl --max-level=4 "%s"' % (fileName)
+		command = 'perl addtoc2md.pl --max-level=4 --min-headings=%d "%s"' % (config['tocMinHeadings'], fileName)
 		command = normalizeCommand(command)
 		subprocess.run(command)
 
@@ -85,12 +90,14 @@ def doGetFileConfig(sourceFile) :
 	specialConfig = getDictValue(fileConfigs, fileName)
 	targetFileName = getDictValue(specialConfig, 'targetFileName', targetFileName)
 	generateToc = getDictValue(specialConfig, 'generateToc', True)
+	tocMinHeadings = getDictValue(specialConfig, 'tocMinHeadings', 6)
 	os.makedirs(os.path.dirname(targetFileName), exist_ok = True)
 	config = {
 		'fileName' : fileName,
 		'fileType' : fileType,
 		'targetFileName' : targetFileName,
 		'generateToc' : generateToc,
+		'tocMinHeadings' : tocMinHeadings,
 	}
 	return config
 
@@ -116,6 +123,16 @@ def doProcessFile(sourceFile) :
 	if targetFileName.endswith('.md') :
 		doPostProcessMarkdown(targetFileName, config)
 
+def checkGenerateTables() :
+	excelFileName = os.path.join(sourcePath, 'tables.xlsx')
+	incFileName = os.path.join(sourcePath, 'inc/inc_typekind_cpp_type.md')
+	if isFileUpToDate(excelFileName, incFileName) :
+		return
+	print("Re-generate markdown tables.")
+	subprocess.run('python gentypekindtables.py')
+	docFileName = os.path.join(sourcePath, 'metatypes/doc_list_all.cpp')
+	pathlib.Path(docFileName).touch()
+
 def doMain() :
 	global sourcePath, docPath
 
@@ -124,6 +141,8 @@ def doMain() :
 
 	pattern = os.path.join(sourcePath, '**/doc_*.*')
 	sourceFileList = glob.glob(pattern, recursive = True)
+
+	checkGenerateTables()
 
 	for sourceFile in sourceFileList :
 		doProcessFile(sourceFile)

@@ -25,17 +25,9 @@ When retrieving any meta data from `MetaRepo` and `MetaClass`, the returned data
 <a id="a2_2"></a>
 ## Header
 
-`MetaItem` is declared in either below headers, including any header will include `MetaItem`,
-
 
 ```c++
-#include "metapp/metarepo.h"
-```
-
-Or
-
-```c++
-#include "metapp/interfaces/metaclass.h"
+#include "metapp/metaitem.h"
 ```
 
 <a id="a2_3"></a>

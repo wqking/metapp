@@ -16,7 +16,7 @@
 
 import enum
 import re
-import codecs
+import os
 import sys
 
 @enum.unique
@@ -118,16 +118,23 @@ def doRemoveBlankCodeLines(lineList, beginIndex, endIndex) :
 		index -= 1
 
 class BlockParser :
-	def __init__(self) :
+	def __init__(self, inputFile) :
+		self._inputFile = inputFile
 		self._blockList = []
 		self._blockStack = []
 		self._hasParent = False
 
 	def process(self, lineList) :
 		for line in lineList :
+			matches = re.search(r'\/\/\s*\@include\s+(.*)\s*$', line)
+			if matches is not None :
+				self._processInclude(matches.group(1))
+				continue
+
 			matches = re.search(r'\/\/\s*nocode\s*$', line)
 			if matches is not None :
 				continue
+
 			matches = re.match(r'\s*//\s*desc\s*(.*)\s*', line, re.I)
 			if matches is not None :
 				text = matches.group(1)
@@ -189,8 +196,19 @@ class BlockParser :
 		if currentBlock is not None :
 			currentBlock['lineList'].append(line)
 
-def doParseBlocks(lineList) :
-	return BlockParser().process(lineList)
+	def _processLineList(self, lineList) :
+		currentBlock = self._getCurrentBlock()
+		if currentBlock is not None :
+			currentBlock['lineList'] = currentBlock['lineList'] + lineList
+
+	def _processInclude(self, includeFile) :
+		fileName = os.path.dirname(self._inputFile)
+		fileName = os.path.join(fileName, includeFile)
+		lineList = readLines(fileName)
+		self._processLineList(lineList)
+
+def doParseBlocks(inputFile, lineList) :
+	return BlockParser(inputFile).process(lineList)
 
 def doConvertDescBlock(block) :
 	lineList = block['lineList']
@@ -244,7 +262,7 @@ def doCombineSingleLineDescBlocks(blockList) :
 def extractMarkdownFromCpp(inputFile, outputFile) :
 	lineList = readLines(inputFile)
 	outputLineList = []
-	blockList = doParseBlocks(lineList)
+	blockList = doParseBlocks(inputFile, lineList)
 	blockList = doRemoveEmptyBlocks(blockList)
 	blockList = doCombineSingleLineDescBlocks(blockList)
 	for block in blockList :
