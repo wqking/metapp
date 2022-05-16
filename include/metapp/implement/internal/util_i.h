@@ -55,7 +55,8 @@ inline const MetaType * getMetaTypeAt(const int index, const TypeList<Types...> 
 
 template <typename ToType, typename FromType>
 inline void assignValue(ToType & to, const FromType & from,
-	typename std::enable_if<std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
+	typename std::enable_if<std::is_assignable<ToType &, FromType>::value
+		&& std::is_copy_assignable<FromType>::value>::type * = nullptr)
 {
 	using U = typename std::remove_cv<ToType>::type;
 	to = (U)from;
@@ -63,7 +64,8 @@ inline void assignValue(ToType & to, const FromType & from,
 
 template <typename ToType, typename FromType>
 inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
-	typename std::enable_if<! std::is_assignable<ToType &, FromType>::value>::type * = nullptr)
+	typename std::enable_if<! (std::is_assignable<ToType &, FromType>::value
+		&& std::is_copy_assignable<FromType>::value)>::type * = nullptr)
 {
 	errorUnwritable();
 }
