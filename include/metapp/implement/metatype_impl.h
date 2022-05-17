@@ -87,7 +87,7 @@ const MetaType * doGetMetaTypeStorage()
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType(
-		&unifiedTypeGetter<typename DeepRemoveCv<T>::Type>,
+		&unifiedTypeGetter<typename std::remove_cv<T>::type>,
 		UpTypeGetter<
 			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
@@ -116,25 +116,38 @@ auto doGetMetaType()
 }
 
 template <typename T>
-const UnifiedType * unifiedTypeGetter(bool isModule)
+const void * doGetRawType()
 {
-	if(isModule) {
+	static int x;
+	return &x;
+}
+
+template <typename T>
+const UnifiedType * unifiedTypeGetter(UnifiedCommand command)
+{
+	if(command == UnifiedCommand::getModule) {
 		return (const UnifiedType *)&commonCast;
 	}
-	using M = DeclareMetaType<T>;
+	if(command == UnifiedCommand::getUnifiedType) {
+		using M = DeclareMetaType<T>;
 
-	static const UnifiedType unifiedType(
-		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
-		UnifiedMetaTable{
-			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
-			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
-			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-			SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+		static const UnifiedType unifiedType(
+			SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
+			UnifiedMetaTable{
+				&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
+				&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
+				&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
+				SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
 
-			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-		}
-	);
-	return &unifiedType;
+				MakeMetaInterfaceData<T>::getMetaInterfaceData(),
+			}
+		);
+		return &unifiedType;
+	}
+	if(command == UnifiedCommand::getRawType) {
+		return (const UnifiedType *)doGetRawType<typename DeepRemoveCv<T>::Type>();
+	}
+	return nullptr;
 }
 
 } // namespace internal_

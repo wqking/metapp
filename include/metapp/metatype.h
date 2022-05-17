@@ -147,7 +147,7 @@ public:
 
 private:
 	MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
+		const internal_::UnifiedType * (*doGetUnifiedType)(internal_::UnifiedCommand),
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
@@ -156,6 +156,7 @@ private:
 	
 	const void * getUnifiedType() const noexcept;
 	const internal_::UnifiedType * doGetUnifiedTypePointer() const noexcept;
+	const void * getRawType() const noexcept;
 
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();
@@ -164,7 +165,7 @@ private:
 	friend class Variant;
 
 private:
-	const internal_::UnifiedType * (*doGetUnifiedType)(bool);
+	const internal_::UnifiedType * (*doGetUnifiedType)(internal_::UnifiedCommand);
 
 #ifdef METAPP_DEBUG_ENABLED
 	// need this in debug window to ease debugging

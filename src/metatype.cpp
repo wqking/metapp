@@ -276,7 +276,7 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
+		const internal_::UnifiedType * (*doGetUnifiedType)(internal_::UnifiedCommand),
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
@@ -297,7 +297,12 @@ const void * MetaType::getUnifiedType() const noexcept
 
 const internal_::UnifiedType * MetaType::doGetUnifiedTypePointer() const noexcept
 {
-	return doGetUnifiedType(false);
+	return doGetUnifiedType(internal_::UnifiedCommand::getUnifiedType);
+}
+
+const void * MetaType::getRawType() const noexcept
+{
+	return doGetUnifiedType(internal_::UnifiedCommand::getRawType);
 }
 
 const void * MetaType::getModule() const noexcept
@@ -313,7 +318,7 @@ const void * MetaType::getModule() const noexcept
 	//Method 2, put the module pointer in to UnifiedType member data, and assign it in UnifiedType constructor.
 	//That works, but that will bloat the UnifiedType size significantly.
 
-	return doGetUnifiedType(true);
+	return doGetUnifiedType(internal_::UnifiedCommand::getModule);
 }
 
 bool MetaType::equal(const MetaType * other) const
@@ -324,11 +329,11 @@ bool MetaType::equal(const MetaType * other) const
 	if(other == nullptr) {
 		return false;
 	}
-	if(getUnifiedType() == other->getUnifiedType()) {
+	if(getRawType() == other->getRawType()) {
 		return true;
 	}
 	if(getModule() == other->getModule()) {
-		return 0;
+		return false;
 	}
 	if(getTypeKind() != other->getTypeKind() || getUpTypeCount() != other->getUpTypeCount()) {
 		return false;
@@ -345,7 +350,7 @@ bool MetaType::equal(const MetaType * other) const
 int MetaType::compare(const MetaType * other) const
 {
 	if(getModule() == other->getModule()) {
-		return internal_::compareTwoValues(getUnifiedType(), other->getUnifiedType());
+		return internal_::compareTwoValues(getRawType(), other->getRawType());
 	}
 	const int upTypeCount = getUpTypeCount();
 	int result = internal_::compareTwoValues(upTypeCount, other->getUpTypeCount());

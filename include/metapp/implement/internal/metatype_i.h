@@ -43,8 +43,15 @@ namespace internal_ {
 
 class UnifiedType;
 
+enum class UnifiedCommand
+{
+	getUnifiedType,
+	getModule,
+	getRawType,
+};
+
 template <typename T>
-const UnifiedType * unifiedTypeGetter(bool);
+const UnifiedType * unifiedTypeGetter(UnifiedCommand);
 
 using MetaInterfaceKind = uint32_t;
 using MetaInterfaceGetter = const void * (*)();
@@ -331,7 +338,7 @@ private:
 	}
 
 	template <typename T>
-	friend const UnifiedType * unifiedTypeGetter(bool);
+	friend const UnifiedType * unifiedTypeGetter(UnifiedCommand);
 	friend class metapp::MetaType;
 
 	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
