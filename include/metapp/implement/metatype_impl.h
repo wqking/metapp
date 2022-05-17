@@ -122,32 +122,40 @@ const void * doGetRawType()
 	return &x;
 }
 
+//unifiedTypeGetter takes three roles and returns pointers for different meaning depending on the command argument.
+//Such design is ugly, but it's the most efficient method I can come up. Since it's private design, that should be fine.
+//There are two more elegant methods,
+//Method 1, getModule returns a pointer a static variable, but that doesn't work, because if so,
+//when executable A uses dynamic library B, both getModule will returns the same pointers
+//because getModule is always the code inside A.
+//Method 2, put the module pointer and raw type pointer in to UnifiedType member data, and assign it in UnifiedType constructor.
+//That works, but that will bloat the UnifiedType size significantly.
+
 template <typename T>
-const UnifiedType * unifiedTypeGetter(UnifiedCommand command)
+const void * unifiedTypeGetter(const UnifiedCommand command)
 {
 	if(command == UnifiedCommand::getModule) {
-		return (const UnifiedType *)&commonCast;
-	}
-	if(command == UnifiedCommand::getUnifiedType) {
-		using M = DeclareMetaType<T>;
-
-		static const UnifiedType unifiedType(
-			SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
-			UnifiedMetaTable{
-				&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
-				&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
-				&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-				SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
-
-				MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-			}
-		);
-		return &unifiedType;
+		return (const void *)&commonCast;
 	}
 	if(command == UnifiedCommand::getRawType) {
-		return (const UnifiedType *)doGetRawType<typename DeepRemoveCv<T>::Type>();
+		return doGetRawType<typename DeepRemoveCv<T>::Type>();
 	}
-	return nullptr;
+
+	// command == UnifiedCommand::getUnifiedType
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType(
+		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
+		UnifiedMetaTable{
+			&SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
+			&SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
+			&SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
+			SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+
+			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
+		}
+	);
+	return (const void *)&unifiedType;
 }
 
 } // namespace internal_

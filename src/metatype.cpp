@@ -276,7 +276,7 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const internal_::UnifiedType * (*doGetUnifiedType)(internal_::UnifiedCommand),
+		const void * (*doGetUnifiedType)(internal_::UnifiedCommand),
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
@@ -288,37 +288,6 @@ MetaType::MetaType(
 		upTypeData(upTypeData),
 		typeFlags(typeFlags)
 {
-}
-
-const void * MetaType::getUnifiedType() const noexcept
-{
-	return doGetUnifiedTypePointer();
-}
-
-const internal_::UnifiedType * MetaType::doGetUnifiedTypePointer() const noexcept
-{
-	return doGetUnifiedType(internal_::UnifiedCommand::getUnifiedType);
-}
-
-const void * MetaType::getRawType() const noexcept
-{
-	return doGetUnifiedType(internal_::UnifiedCommand::getRawType);
-}
-
-const void * MetaType::getModule() const noexcept
-{
-	//doGetUnifiedType takes two roles. If the argument is false, it returns the unified type.
-	//If the argument is true, it returns a pointer to identify the module (executable or dynamic library).
-	//Such design is ugly, but it's the most efficient method I can come up. Since it's private design,
-	// that should be fine.
-	//There are two more elegant methods,
-	//Method 1, getModule returns a pointer a static variable, but that doesn't work, because if so,
-	//when executable A uses dynamic library B, both getModule will returns the same pointers
-	//because getModule is always the code inside A.
-	//Method 2, put the module pointer in to UnifiedType member data, and assign it in UnifiedType constructor.
-	//That works, but that will bloat the UnifiedType size significantly.
-
-	return doGetUnifiedType(internal_::UnifiedCommand::getModule);
 }
 
 bool MetaType::equal(const MetaType * other) const
