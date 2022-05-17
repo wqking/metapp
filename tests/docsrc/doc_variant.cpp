@@ -405,21 +405,21 @@ Variant clone() const;
 Clone the underlying object and return a Variant that holds the cloned object.  
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
-#### toReference
+#### depointer
 ```c++
-Variant toReference() const;
+Variant depointer() const;
 ```
-Return a Variant which is a reference that refers to the underlying in `this` Variant.  
-If `this` Variant is a reference, `*this` is returned.  
+Convert a pointer to its non-pointer equivalence.  
+Return a Variant that,  
+If `this` Variant is a value or reference, `*this` is returned.  
 If `this` Variant is a pointer, the returned reference refers to the value that the pointer points to.  
-If `this` Variant is a value, the returned reference refers to the value.  
-`toReference` only makes reference, it doesn't copy any underlying value.  
+`depointer` only makes reference, it doesn't copy any underlying value.  
 
-`toReference` is useful to write generic code. Assume a function accepts an argument of Variant.
-Without `toReference`, the function either requires the Variant to be a value, or a reference,
-but not both, or the function uses extra code to detect whether the argument is a value or reference.
-With `toReference`, the argument can be value, reference, or even pointer, then the function calls `toReference`
-to normalize the argument to reference, and use a single logic for all three kinds of Variants (value, reference pointer).
+`depointer` is useful to write generic code. Assume a function accepts an argument of Variant.
+Without `depointer`, the function either requires the Variant to be a value/reference, or a pointer,
+but not both, or the function uses extra code to detect whether the argument is a value/reference or pointer.
+With `depointer`, the argument can be value, reference, or pointer, then the function calls `depointer`
+to normalize the argument, and use a single logic for all three kinds of Variants (value, reference pointer).
 
 **Example**  
 desc*/
@@ -429,10 +429,12 @@ ExampleFunc
 	//code
 	metapp::Variant v1(5); // value
 	ASSERT(v1.get<int>() == 5);
-	metapp::Variant r1(v1.toReference());
+	// r1 is a value too
+	metapp::Variant r1(v1.depointer());
 	ASSERT(r1.get<int &>() == 5);
 	r1.get<int &>() = 38;
-	ASSERT(v1.get<int>() == 38);
+	// Assignment doesn't affect original value
+	ASSERT(v1.get<int>() == 5);
 	ASSERT(r1.get<int &>() == 38);
 
 	int n = 9;
@@ -441,7 +443,7 @@ ExampleFunc
 	ASSERT(n == 9);
 	ASSERT(*v2.get<int *>() == 9);
 	// r2 refers to n
-	metapp::Variant r2(v2.toReference()); 
+	metapp::Variant r2(v2.depointer()); 
 	ASSERT(r2.get<int &>() == 9);
 	r2.get<int &>() = 10;
 	ASSERT(n == 10);
@@ -453,7 +455,7 @@ ExampleFunc
 	ASSERT(m == 10);
 	ASSERT(v3.get<int &>() == 10);
 	// r3 refers to m
-	metapp::Variant r3(v3.toReference()); 
+	metapp::Variant r3(v3.depointer()); 
 	ASSERT(r3.get<int &>() == 10);
 	r3.get<int &>() = 15;
 	ASSERT(m == 15);

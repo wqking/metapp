@@ -35,7 +35,7 @@ struct MetaIterableBase
 private:
 	static void metaIterableForEach(const Variant & iterable, MetaIterable::Callback callback)
 	{
-		ContainerType & container = iterable.toReference().get<ContainerType &>();
+		ContainerType & container = iterable.depointer().get<ContainerType &>();
 		for(auto & item : container) {
 			if(! callback(Variant::create<decltype(item)>(item))) {
 				break;

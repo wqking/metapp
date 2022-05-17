@@ -166,7 +166,7 @@ Variant Variant::clone() const
 	return result;
 }
 
-Variant Variant::toReference() const
+Variant Variant::depointer() const
 {
 	if(metaType->isPointer()) {
 		return metaType->getMetaAccessible()->get(*this, nullptr);

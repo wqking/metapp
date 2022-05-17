@@ -109,7 +109,7 @@ public:
 
 	Variant clone() const;
 
-	Variant toReference() const;
+	Variant depointer() const;
 	Variant dereference() const;
 
 	void swap(Variant & other) noexcept;
