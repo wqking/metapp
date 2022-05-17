@@ -264,11 +264,6 @@ void DeclareMetaTypeVoidBase::destroy(void * /*instance*/)
 {
 }
 
-const MetaType * DeclareMetaTypeVoidBase::addReference()
-{
-	return nullptr;
-}
-
 bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*toMetaType*/)
 {
 	return false;
@@ -282,7 +277,6 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 MetaType::MetaType(
 		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
-		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
@@ -291,7 +285,6 @@ MetaType::MetaType(
 		#ifdef METAPP_DEBUG_ENABLED
 		debugUnifiedType(doGetUnifiedTypePointer()),
 		#endif
-		metaTable(metaTable),
 		upTypeData(upTypeData),
 		typeFlags(typeFlags)
 {
@@ -465,11 +458,6 @@ void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
 void MetaType::destroy(void * instance) const
 {
 	doGetUnifiedTypePointer()->destroy(instance);
-}
-
-const MetaType * MetaType::addReference() const
-{
-	return metaTable.addReference();
 }
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const

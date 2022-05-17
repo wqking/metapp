@@ -285,11 +285,6 @@ struct UnifiedMetaTable
 	MetaInterfaceData metaInterfaceData;
 };
 
-struct MetaTable
-{
-	const MetaType * (*addReference)();
-};
-
 struct UpTypeData
 {
 	const MetaType ** upTypeList;

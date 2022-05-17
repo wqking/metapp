@@ -25,6 +25,7 @@
 
 namespace {
 
+#if 0
 TEST_CASE("Variant, toReference, int *")
 {
 	int n = 5;
@@ -274,6 +275,6 @@ TEST_CASE("Variant, dereference, MyClass &")
 	REQUIRE(deref.get<MyClass &>().text == "hello");
 	REQUIRE(v.get<MyClass &>().text == "world");
 }
-
+#endif
 
 } // namespace

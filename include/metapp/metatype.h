@@ -142,15 +142,12 @@ public:
 
 	void destroy(void * instance) const;
 
-	const MetaType * addReference() const;
-
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 
 private:
 	MetaType(
 		const internal_::UnifiedType * (*doGetUnifiedType)(bool),
-		const internal_::MetaTable & metaTable,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
@@ -174,7 +171,6 @@ private:
 	const internal_::UnifiedType * debugUnifiedType;
 #endif
 
-	internal_::MetaTable metaTable;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
@@ -205,8 +201,6 @@ public:
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
-	static const MetaType * addReference();
-
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
 	static constexpr bool (*castFrom)(Variant * result, const Variant & value, const MetaType * fromMetaType) = nullptr;
@@ -236,8 +230,6 @@ struct DeclareMetaTypeVoidBase
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom);
 	static void destroy(void * instance);
-
-	static const MetaType * addReference();
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 

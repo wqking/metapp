@@ -17,6 +17,7 @@
 #include "metapp/variant.h"
 #include "metapp/utilities/utility.h"
 #include "metapp/interfaces/metastreaming.h"
+#include "metapp/interfaces/metaaccessible.h"
 
 namespace metapp {
 
@@ -167,17 +168,10 @@ Variant Variant::clone() const
 
 Variant Variant::toReference() const
 {
-	if(metaType->isReference()) {
-		return *this;
-	}
 	if(metaType->isPointer()) {
-		const MetaType * newMetaType = metaType->getUpType()->addReference();
-		return Variant(newMetaType, *(void **)(getAddress()));
+		return metaType->getMetaAccessible()->get(*this, nullptr);
 	}
-	else {
-		const MetaType * newMetaType = metaType->addReference();
-		return Variant(newMetaType, getAddress());
-	}
+	return *this;
 }
 
 Variant Variant::dereference() const

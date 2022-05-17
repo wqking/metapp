@@ -238,11 +238,3 @@ TEST_CASE("MetaType, destroy")
 	REQUIRE(freed);
 }
 
-TEST_CASE("MetaType, addReference")
-{
-	REQUIRE(metapp::getMetaType<int>()->addReference() == metapp::getMetaType<int &>());
-	REQUIRE(metapp::getMetaType<int &>()->addReference() == metapp::getMetaType<int &>());
-	REQUIRE(metapp::getMetaType<int &&>()->addReference() == metapp::getMetaType<int &>());
-	REQUIRE(metapp::getMetaType<const int>()->addReference() == metapp::getMetaType<const int &>());
-	REQUIRE(metapp::getMetaType<int *>()->addReference() == metapp::getMetaType<int * &>());
-}
