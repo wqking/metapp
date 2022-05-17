@@ -72,7 +72,7 @@ public:
 	~MetaType() = default;
 
 	const void * getModule() const noexcept {
-		return doGetUnifiedType(internal_::UnifiedCommand::getModule);
+		return doGetUnifiedData(internal_::UnifiedCommand::getModule);
 	}
 
 	bool equal(const MetaType * other) const;
@@ -149,23 +149,19 @@ public:
 
 private:
 	MetaType(
-		const void * (*doGetUnifiedType)(const internal_::UnifiedCommand),
+		const void * (*doGetUnifiedData)(const internal_::UnifiedCommand),
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
-	const void * getUnifiedType() const noexcept {
-		return doGetUnifiedTypePointer();
-	}
-
-	const internal_::UnifiedType * doGetUnifiedTypePointer() const noexcept {
-		return (const internal_::UnifiedType *)doGetUnifiedType(internal_::UnifiedCommand::getUnifiedType);
+	const internal_::UnifiedType * getUnifiedType() const noexcept {
+		return (const internal_::UnifiedType *)doGetUnifiedData(internal_::UnifiedCommand::getUnifiedType);
 	}
 	
 	const void * getRawType() const noexcept {
-		return doGetUnifiedType(internal_::UnifiedCommand::getRawType);
+		return doGetUnifiedData(internal_::UnifiedCommand::getRawType);
 	}
 
 	template <typename T>
@@ -175,7 +171,7 @@ private:
 	friend class Variant;
 
 private:
-	const void * (*doGetUnifiedType)(const internal_::UnifiedCommand);
+	const void * (*doGetUnifiedData)(const internal_::UnifiedCommand);
 
 #ifdef METAPP_DEBUG_ENABLED
 	// need this in debug window to ease debugging

@@ -276,14 +276,14 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const void * (*doGetUnifiedType)(internal_::UnifiedCommand),
+		const void * (*doGetUnifiedData)(internal_::UnifiedCommand),
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
 	:
-		doGetUnifiedType(doGetUnifiedType),
+		doGetUnifiedData(doGetUnifiedData),
 		#ifdef METAPP_DEBUG_ENABLED
-		debugUnifiedType(doGetUnifiedTypePointer()),
+		debugUnifiedType(getUnifiedType()),
 		#endif
 		upTypeData(upTypeData),
 		typeFlags(typeFlags)
@@ -361,7 +361,7 @@ int MetaType::getUpTypeCount() const noexcept
 
 TypeKind MetaType::getTypeKind() const noexcept
 {
-	return doGetUnifiedTypePointer()->getTypeKind();
+	return getUnifiedType()->getTypeKind();
 }
 
 bool MetaType::isVoid() const noexcept
@@ -371,47 +371,47 @@ bool MetaType::isVoid() const noexcept
 
 const MetaClass * MetaType::getMetaClass() const
 {
-	return doGetUnifiedTypePointer()->getMetaClass();
+	return getUnifiedType()->getMetaClass();
 }
 
 const MetaCallable * MetaType::getMetaCallable() const
 {
-	return doGetUnifiedTypePointer()->getMetaCallable();
+	return getUnifiedType()->getMetaCallable();
 }
 
 const MetaAccessible * MetaType::getMetaAccessible() const
 {
-	return doGetUnifiedTypePointer()->getMetaAccessible();
+	return getUnifiedType()->getMetaAccessible();
 }
 
 const MetaEnum * MetaType::getMetaEnum() const
 {
-	return doGetUnifiedTypePointer()->getMetaEnum();
+	return getUnifiedType()->getMetaEnum();
 }
 
 const MetaIndexable * MetaType::getMetaIndexable() const
 {
-	return doGetUnifiedTypePointer()->getMetaIndexable();
+	return getUnifiedType()->getMetaIndexable();
 }
 
 const MetaIterable * MetaType::getMetaIterable() const
 {
-	return doGetUnifiedTypePointer()->getMetaIterable();
+	return getUnifiedType()->getMetaIterable();
 }
 
 const MetaStreaming * MetaType::getMetaStreaming() const
 {
-	return doGetUnifiedTypePointer()->getMetaStreaming();
+	return getUnifiedType()->getMetaStreaming();
 }
 
 const MetaMappable * MetaType::getMetaMappable() const
 {
-	return doGetUnifiedTypePointer()->getMetaMappable();
+	return getUnifiedType()->getMetaMappable();
 }
 
 const void * MetaType::getMetaUser() const
 {
-	return doGetUnifiedTypePointer()->getMetaUser();
+	return getUnifiedType()->getMetaUser();
 }
 
 void * MetaType::construct() const
@@ -426,22 +426,22 @@ void * MetaType::copyConstruct(const void * copyFrom) const
 
 void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
 {
-	return doGetUnifiedTypePointer()->constructData(data, copyFrom);
+	return getUnifiedType()->constructData(data, copyFrom);
 }
 
 void MetaType::destroy(void * instance) const
 {
-	doGetUnifiedTypePointer()->destroy(instance);
+	getUnifiedType()->destroy(instance);
 }
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
 {
-	return doGetUnifiedTypePointer()->cast(result, value, toMetaType);
+	return getUnifiedType()->cast(result, value, toMetaType);
 }
 
 bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
-	return doGetUnifiedTypePointer()->castFrom(result, value, fromMetaType);
+	return getUnifiedType()->castFrom(result, value, fromMetaType);
 }
 
 bool commonCast(
