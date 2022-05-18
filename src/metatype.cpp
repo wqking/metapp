@@ -276,7 +276,7 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const void * (*doGetUnifiedData)(internal_::UnifiedCommand),
+		const void * (*doGetUnifiedData)(),
 		const internal_::UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags

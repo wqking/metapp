@@ -43,16 +43,6 @@ namespace internal_ {
 
 class UnifiedType;
 
-enum class UnifiedCommand
-{
-	getUnifiedType,
-	getModule,
-	getRawType,
-};
-
-template <typename T>
-const void * unifiedDataGetter(const UnifiedCommand);
-
 template <typename T>
 const UnifiedType * doGetUnifiedType();
 
@@ -340,8 +330,6 @@ private:
 	{
 	}
 
-	template <typename T>
-	friend const void * unifiedDataGetter(const UnifiedCommand);
 	template <typename T>
 	friend const UnifiedType * doGetUnifiedType();
 	friend class metapp::MetaType;

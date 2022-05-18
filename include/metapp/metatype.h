@@ -72,7 +72,7 @@ public:
 	~MetaType() = default;
 
 	const void * getModule() const noexcept {
-		return doGetUnifiedData(internal_::UnifiedCommand::getModule);
+		return doGetUnifiedData();
 	}
 
 	bool equal(const MetaType * other) const;
@@ -149,7 +149,7 @@ public:
 
 private:
 	MetaType(
-		const void * (*doGetUnifiedData)(const internal_::UnifiedCommand),
+		const void * (*doGetUnifiedData)(),
 		const internal_::UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
@@ -162,7 +162,7 @@ private:
 	}
 	
 	const void * getRawType() const noexcept {
-		return doGetUnifiedData(internal_::UnifiedCommand::getRawType);
+		return (const void *)doGetUnifiedData;
 	}
 
 	template <typename T>
@@ -172,7 +172,7 @@ private:
 	friend class Variant;
 
 private:
-	const void * (*doGetUnifiedData)(const internal_::UnifiedCommand);
+	const void * (*doGetUnifiedData)();
 	const internal_::UnifiedType * unifiedType;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;

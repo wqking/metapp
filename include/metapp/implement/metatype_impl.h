@@ -82,12 +82,18 @@ template <typename T> struct DeepRemoveCv <T &> { using Type = typename DeepRemo
 template <typename T> struct DeepRemoveCv <T &&> { using Type = typename DeepRemoveCv<T>::Type &&; };
 
 template <typename T>
+const void * unifiedDataGetter()
+{
+	return (const void *)&commonCast;
+}
+
+template <typename T>
 const MetaType * doGetMetaTypeStorage()
 {
 	using M = DeclareMetaType<T>;
 
 	static const MetaType metaType(
-		&unifiedDataGetter<typename std::remove_cv<T>::type>,
+		&unifiedDataGetter<typename DeepRemoveCv<T>::Type>,
 		doGetUnifiedType<typename std::remove_cv<T>::type>(),
 		UpTypeGetter<
 			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
@@ -117,22 +123,6 @@ auto doGetMetaType()
 }
 
 template <typename T>
-const void * doGetRawType()
-{
-	static int x;
-	return &x;
-}
-
-//unifiedDataGetter takes three roles and returns pointers for different meaning depending on the command argument.
-//Such design is ugly, but it's the most efficient method I can come up. Since it's private design, that should be fine.
-//There are two more elegant methods,
-//Method 1, getModule returns a pointer a static variable, but that doesn't work, because if so,
-//when executable A uses dynamic library B, both getModule will returns the same pointers
-//because getModule is always the code inside A.
-//Method 2, put the module pointer and raw type pointer in to UnifiedType member data, and assign it in UnifiedType constructor.
-//That works, but that will bloat the UnifiedType size significantly.
-
-template <typename T>
 const UnifiedType * doGetUnifiedType()
 {
 	using M = DeclareMetaType<T>;
@@ -149,17 +139,6 @@ const UnifiedType * doGetUnifiedType()
 		}
 	);
 	return &unifiedType;
-}
-
-template <typename T>
-const void * unifiedDataGetter(const UnifiedCommand command)
-{
-	if(command == UnifiedCommand::getModule) {
-		return (const void *)&commonCast;
-	}
-	
-	// command == UnifiedCommand::getRawType
-	return doGetRawType<typename DeepRemoveCv<T>::Type>();
 }
 
 } // namespace internal_
