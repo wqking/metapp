@@ -201,6 +201,7 @@ constexpr bool isMemberPointer() const noexcept;
 constexpr bool isIntegral() const noexcept;
 constexpr bool isFloat() const noexcept;
 constexpr bool isArithmetic() const noexcept;
+constexpr bool isPointerWrapper() const noexcept;
 ```
 
 `isConst` returns true if the type is const qualified. It uses `std::is_const` to detect it.  
@@ -215,6 +216,9 @@ To check if a MetaType is static member, check `! isMemberPointer()`.
 `isIntegral` returns true if the type is integral type. It uses `std::is_integral` to detect it.  
 `isFloat` returns true if the type is float point type. It uses `std::is_floating_point` to detect it.  
 `isArithmetic` returns true if the type is arithmetic type. It equals to `isIntegral() || isFloat()`.  
+`isPointerWrapper` return true if the type is a pointer wrapper. A pointer wrapper is a type that acts as a pointer,
+and a raw pointer can be obtained from the type. A typical pointer wrapper is smart pointer. `std::shared_ptr`
+and `std::unique_ptr` are pointer wrapper.  
 
 Note: the attributes are C++ type traits. They don't have connection to meta interface or other features in MetaType.
 That's to say, `isClass()` returning true doesn't mean the MetaType implements `MetaClass` interface, etc.  

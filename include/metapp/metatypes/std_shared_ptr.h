@@ -65,6 +65,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
+	static constexpr TypeFlags typeFlags = tfPointerWrapper;
 
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {

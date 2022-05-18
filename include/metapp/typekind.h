@@ -118,6 +118,7 @@ constexpr TypeFlags tfEnum = 1 << 6;
 constexpr TypeFlags tfMemberPointer = 1 << 7;
 constexpr TypeFlags tfIntegral = 1 << 8;
 constexpr TypeFlags tfFloat = 1 << 9;
+constexpr TypeFlags tfPointerWrapper = 1 << 10;
 
 
 } // namespace metapp

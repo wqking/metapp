@@ -129,6 +129,10 @@ public:
 		return isIntegral() || isFloat();
 	}
 
+	constexpr bool isPointerWrapper() const noexcept {
+		return typeFlags & tfPointerWrapper;
+	}
+
 	const MetaClass * getMetaClass() const;
 	const MetaCallable * getMetaCallable() const;
 	const MetaAccessible * getMetaAccessible() const;

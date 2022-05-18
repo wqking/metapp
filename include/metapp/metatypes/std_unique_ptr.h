@@ -31,6 +31,7 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdUniquePtr;
+	static constexpr TypeFlags typeFlags = tfPointerWrapper;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
 		if(toMetaType->isPointer()) {

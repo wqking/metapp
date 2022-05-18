@@ -83,6 +83,7 @@ TEST_CASE("metatypes, std::string *, MetaAccessible")
 	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());
 	REQUIRE(! metapp::accessibleIsReadOnly(v));
 
+	REQUIRE(metapp::accessibleGet(v, nullptr).getMetaType()->isReference());
 	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "");
 	metapp::accessibleSet(v, nullptr, "hello");
 	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "hello");
