@@ -88,6 +88,7 @@ const MetaType * doGetMetaTypeStorage()
 
 	static const MetaType metaType(
 		&unifiedDataGetter<typename std::remove_cv<T>::type>,
+		doGetUnifiedType<typename std::remove_cv<T>::type>(),
 		UpTypeGetter<
 			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
 		>::getUpType(),
@@ -132,25 +133,27 @@ const void * doGetRawType()
 //That works, but that will bloat the UnifiedType size significantly.
 
 template <typename T>
+const UnifiedType * doGetUnifiedType()
+{
+	using M = DeclareMetaType<T>;
+
+	static const UnifiedType unifiedType(
+		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
+		UnifiedMetaTable{
+			SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
+			SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
+			SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
+			SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
+
+			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
+		}
+	);
+	return &unifiedType;
+}
+
+template <typename T>
 const void * unifiedDataGetter(const UnifiedCommand command)
 {
-	if(command == UnifiedCommand::getUnifiedType) {
-		using M = DeclareMetaType<T>;
-
-		static const UnifiedType unifiedType(
-			SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
-			UnifiedMetaTable{
-				SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
-				SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
-				SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
-				SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
-
-				MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-			}
-		);
-		return (const void *)&unifiedType;
-	}
-
 	if(command == UnifiedCommand::getModule) {
 		return (const void *)&commonCast;
 	}

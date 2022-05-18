@@ -150,6 +150,7 @@ public:
 private:
 	MetaType(
 		const void * (*doGetUnifiedData)(const internal_::UnifiedCommand),
+		const internal_::UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
@@ -157,7 +158,7 @@ private:
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 	
 	const internal_::UnifiedType * getUnifiedType() const noexcept {
-		return (const internal_::UnifiedType *)doGetUnifiedData(internal_::UnifiedCommand::getUnifiedType);
+		return unifiedType;
 	}
 	
 	const void * getRawType() const noexcept {
@@ -172,12 +173,7 @@ private:
 
 private:
 	const void * (*doGetUnifiedData)(const internal_::UnifiedCommand);
-
-#ifdef METAPP_DEBUG_ENABLED
-	// need this in debug window to ease debugging
-	const internal_::UnifiedType * debugUnifiedType;
-#endif
-
+	const internal_::UnifiedType * unifiedType;
 	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };

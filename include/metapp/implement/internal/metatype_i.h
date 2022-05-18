@@ -53,6 +53,9 @@ enum class UnifiedCommand
 template <typename T>
 const void * unifiedDataGetter(const UnifiedCommand);
 
+template <typename T>
+const UnifiedType * doGetUnifiedType();
+
 using MetaInterfaceKind = uint32_t;
 using MetaInterfaceGetter = const void * (*)();
 
@@ -339,6 +342,8 @@ private:
 
 	template <typename T>
 	friend const void * unifiedDataGetter(const UnifiedCommand);
+	template <typename T>
+	friend const UnifiedType * doGetUnifiedType();
 	friend class metapp::MetaType;
 
 	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;

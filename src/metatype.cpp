@@ -277,14 +277,13 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 MetaType::MetaType(
 		const void * (*doGetUnifiedData)(internal_::UnifiedCommand),
+		const internal_::UnifiedType * unifiedType,
 		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
 	:
 		doGetUnifiedData(doGetUnifiedData),
-		#ifdef METAPP_DEBUG_ENABLED
-		debugUnifiedType(getUnifiedType()),
-		#endif
+		unifiedType(unifiedType),
 		upTypeData(upTypeData),
 		typeFlags(typeFlags)
 {
