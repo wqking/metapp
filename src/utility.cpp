@@ -17,8 +17,48 @@
 #include "metapp/utilities/utility.h"
 #include "metapp/typekind.h"
 #include "metapp/metarepo.h"
+#include "metapp/interfaces/metaaccessible.h"
 
 namespace metapp {
+
+void * getPointer(const Variant & var)
+{
+	const MetaType * metaType = getNonReferenceMetaType(var);
+	if(metaType->isPointer()) {
+		return var.get<void *>();
+	}
+	if(metaType->isPointerWrapper()) {
+		return accessibleGet(var, nullptr).getAddress();
+	}
+	return var.getAddress();
+}
+
+const MetaType * getPointedType(const Variant & var)
+{
+	const MetaType * metaType = getNonReferenceMetaType(var);
+	if(metaType->isPointer()) {
+		return metaType->getUpType();
+	}
+	if(metaType->isPointerWrapper()) {
+		return metaType->getMetaAccessible()->getValueType(var);
+	}
+	return metaType;
+}
+
+std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
+{
+	const MetaType * metaType = getNonReferenceMetaType(var);
+	if(metaType->isPointer()) {
+		return std::make_pair(var.get<void *>(), metaType->getUpType());
+	}
+	if(metaType->isPointerWrapper()) {
+		return std::make_pair(
+			accessibleGet(var, nullptr).getAddress(),
+			metaType->getMetaAccessible()->getValueType(var)
+		);
+	}
+	return std::make_pair(var.getAddress(), metaType);
+}
 
 namespace {
 

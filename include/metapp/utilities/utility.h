@@ -28,8 +28,6 @@
 
 namespace metapp {
 
-std::string getNameByTypeKind(const TypeKind typeKind);
-
 inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
 {
 	if(metaType->isReference()) {
@@ -103,8 +101,13 @@ auto selectOverload(Signature * func) -> decltype(func)
 	return func;
 }
 
-class MetaRepo;
+void * getPointer(const Variant & var);
+const MetaType * getPointedType(const Variant & var);
+std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 
+std::string getNameByTypeKind(const TypeKind typeKind);
+
+class MetaRepo;
 void dumpMetaType(std::ostream & stream, const MetaType * metaType, const MetaRepo * metaRepo = nullptr);
 
 
