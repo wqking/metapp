@@ -22,7 +22,7 @@
 #ifndef METAPP_COMPILER_GCC
 // I'm pretty sure MingW GCC 8.3.0 has a bug that
 // can't pass below two tests. They pass in MSVC and Clang.
-TEST_CASE("metatypes, tkPointer, void *")
+TEST_CASE("metatypes, void *")
 {
 	metapp::Variant v((void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -30,7 +30,7 @@ TEST_CASE("metatypes, tkPointer, void *")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 }
 
-TEST_CASE("metatypes, tkPointer, void ***")
+TEST_CASE("metatypes, void ***")
 {
 	void *** p = nullptr;
 	metapp::Variant v(p);
@@ -40,7 +40,7 @@ TEST_CASE("metatypes, tkPointer, void ***")
 }
 #endif
 
-TEST_CASE("metatypes, tkPointer, const volatile void *")
+TEST_CASE("metatypes, const volatile void *")
 {
 	metapp::Variant v((const volatile void *)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -50,12 +50,12 @@ TEST_CASE("metatypes, tkPointer, const volatile void *")
 	REQUIRE(v.getMetaType()->getUpType()->isVolatile());
 }
 
-TEST_CASE("metatypes, tkPointer, const char *")
+TEST_CASE("metatypes, const char *")
 {
 	REQUIRE(metapp::getMetaType<const char *>()->getTypeKind() == metapp::tkPointer);
 }
 
-TEST_CASE("metatypes, tkPointer, int **")
+TEST_CASE("metatypes, int **")
 {
 	metapp::Variant v((int **)0);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
@@ -64,12 +64,42 @@ TEST_CASE("metatypes, tkPointer, int **")
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
 }
 
-TEST_CASE("metatypes, tkPointer, nullptr")
+TEST_CASE("metatypes, nullptr")
 {
 	metapp::Variant v(nullptr);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
 	REQUIRE(v.getMetaType()->isPointer());
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
+}
+
+TEST_CASE("metatypes, std::string *, MetaAccessible")
+{
+	std::string text;
+	metapp::Variant v(&text);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());
+	REQUIRE(! metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "");
+	metapp::accessibleSet(v, nullptr, "hello");
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "hello");
+}
+
+TEST_CASE("metatypes, const std::string *, MetaAccessible")
+{
+	const std::string text("good");
+	metapp::Variant v(&text);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<const std::string>());
+	REQUIRE(metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+	REQUIRE_THROWS(metapp::accessibleSet(v, nullptr, "hello"));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
 }
 

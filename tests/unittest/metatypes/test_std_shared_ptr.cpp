@@ -52,3 +52,33 @@ TEST_CASE("metatypes, std::shared_ptr<int>, cast to std::weak_ptr")
 	REQUIRE(*wsp == 9);
 }
 
+TEST_CASE("metatypes, std::shared_ptr<std::string>, MetaAccessible")
+{
+	std::shared_ptr<std::string> sp = std::make_shared<std::string>("good");
+	metapp::Variant v(sp);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdSharedPtr);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());
+	REQUIRE(! metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+	metapp::accessibleSet(v, nullptr, "hello");
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "hello");
+}
+
+TEST_CASE("metatypes, std::shared_ptr<const std::string>, MetaAccessible")
+{
+	std::shared_ptr<const std::string> sp = std::make_shared<const std::string>("good");
+	metapp::Variant v(sp);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdSharedPtr);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<const std::string>());
+	REQUIRE(metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+	REQUIRE_THROWS(metapp::accessibleSet(v, nullptr, "hello"));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+}
+

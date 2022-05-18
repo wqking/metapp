@@ -67,3 +67,31 @@ TEST_CASE("metatypes, Accessor, member data, std::map<int, std::string> Class1::
 	REQUIRE(fieldValue.get<const Map &>() == obj.value);
 }
 
+TEST_CASE("metatypes, Accessor, MetaAccessible, int")
+{
+	int n = 5;
+	metapp::Variant v(metapp::createAccessor<int>(&n, &n));
+	REQUIRE(! metapp::accessibleIsReadOnly(v));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<int>() == 5);
+
+	metapp::accessibleSet(v, nullptr, 38);
+	REQUIRE(n == 38);
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<int>() == 38);
+
+	metapp::accessibleSet(v, nullptr, 98.0);
+	REQUIRE(n == 98);
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<int>() == 98);
+}
+
+TEST_CASE("metatypes, Accessor, MetaAccessible, int, read only")
+{
+	int n = 5;
+	metapp::Variant v(metapp::createReadOnlyAccessor<int>(&n));
+	REQUIRE(metapp::accessibleIsReadOnly(v));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<int>() == 5);
+
+	REQUIRE_THROWS(metapp::accessibleSet(v, nullptr, 38));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<int>() == 5);
+}
+
+

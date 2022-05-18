@@ -18,6 +18,7 @@
 #define METAPP_STD_UNIQUE_PTR_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/interfaces/metaaccessible.h"
 
 #include <memory>
 
@@ -40,6 +41,37 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 		}
 
 		return commonCast(result, value, getMetaType<UniquePtr>(), toMetaType);
+	}
+
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGetValueType,
+			&accessibleIsReadOnly,
+			&accessibleGetClassType,
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
+
+	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
+		return getMetaType<T>();
+	}
+
+	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
+		return std::is_const<T>::value;
+	}
+
+	static const MetaType * accessibleGetClassType(const Variant & /*accessible*/) {
+		return voidMetaType;
+	}
+
+	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+		return Variant::reference(*accessible.get<UniquePtr &>());
+	}
+
+	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
+		internal_::assignValue(*(accessible.get<UniquePtr &>()), value.cast<T>().template get<const T &>());
 	}
 
 };

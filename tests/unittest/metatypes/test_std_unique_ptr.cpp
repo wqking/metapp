@@ -43,3 +43,35 @@ TEST_CASE("metatypes, std::unique_ptr<int>, cast to pointer")
 	REQUIRE(*v.cast<const int *>().get<const int *>() == 38);
 }
 
+TEST_CASE("metatypes, std::unique_ptr<std::string>, MetaAccessible")
+{
+	using PTR = std::unique_ptr<std::string>;
+	PTR up(new std::string("good"));
+	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdUniquePtr);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());
+	REQUIRE(! metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+	metapp::accessibleSet(v, nullptr, "hello");
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "hello");
+}
+
+TEST_CASE("metatypes, std::unique_ptr<const std::string>, MetaAccessible")
+{
+	using PTR = std::unique_ptr<const std::string>;
+	PTR up(new std::string("good"));
+	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdUniquePtr);
+	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
+	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<const std::string>());
+	REQUIRE(metapp::accessibleIsReadOnly(v));
+
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+	REQUIRE_THROWS(metapp::accessibleSet(v, nullptr, "hello"));
+	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+}
+

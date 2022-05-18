@@ -18,10 +18,45 @@
 #define METAPP_STD_SHARED_PTR_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/interfaces/metaaccessible.h"
 
 #include <memory>
 
 namespace metapp {
+
+namespace internal_ {
+
+template <typename T>
+std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<T> & sp)
+{
+	return std::static_pointer_cast<void>(sp);
+};
+
+template <typename T>
+std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const T> & sp)
+{
+	return std::static_pointer_cast<void>(
+		std::const_pointer_cast<T>(sp)
+	);
+};
+
+template <typename T>
+std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<volatile T> & sp)
+{
+	return std::static_pointer_cast<void>(
+		std::const_pointer_cast<T>(sp)
+	);
+};
+
+template <typename T>
+std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const volatile T> & sp)
+{
+	return std::static_pointer_cast<void>(
+		std::const_pointer_cast<T>(sp)
+	);
+};
+
+} // namespace internal_
 
 template <typename T>
 struct DeclareMetaTypeBase <std::shared_ptr<T> >
@@ -34,10 +69,10 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	static void * constructData(MetaTypeData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
-				data->constructSharedPtr(std::static_pointer_cast<void>(SharedPtr()));
+				data->constructSharedPtr(internal_::castSharedPtrToVoid(SharedPtr()));
 			}
 			else {
-				data->constructSharedPtr(std::static_pointer_cast<void>(*(SharedPtr *)copyFrom));
+				data->constructSharedPtr(internal_::castSharedPtrToVoid(*(SharedPtr *)copyFrom));
 			}
 			return nullptr;
 		}
@@ -66,6 +101,37 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 		}
 
 		return commonCast(result, value, getMetaType<SharedPtr>(), toMetaType);
+	}
+
+	static const MetaAccessible * getMetaAccessible() {
+		static MetaAccessible metaAccessible(
+			&accessibleGetValueType,
+			&accessibleIsReadOnly,
+			&accessibleGetClassType,
+			&accessibleGet,
+			&accessibleSet
+		);
+		return &metaAccessible;
+	}
+
+	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
+		return getMetaType<T>();
+	}
+
+	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
+		return std::is_const<T>::value;
+	}
+
+	static const MetaType * accessibleGetClassType(const Variant & /*accessible*/) {
+		return voidMetaType;
+	}
+
+	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+		return Variant::reference(*accessible.get<SharedPtr &>());
+	}
+
+	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
+		internal_::assignValue(*(accessible.get<SharedPtr &>()), value.cast<T>().template get<const T &>());
 	}
 
 };
