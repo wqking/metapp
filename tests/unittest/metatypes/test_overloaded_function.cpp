@@ -62,3 +62,34 @@ TEST_CASE("Overloaded function, (const char *), (std::string)")
 	REQUIRE_THROWS(metapp::callableInvoke(callable, nullptr, 5));
 }
 
+TEST_CASE("Overloaded function, member function, constness")
+{
+	struct MyClass {
+		std::string func() { return "nocv"; }
+		std::string func() const { return "const"; }
+		std::string func() volatile { return "volatile"; }
+		std::string func() const volatile { return "const volatile"; }
+	};
+
+	metapp::Variant callable = metapp::OverloadedFunction();
+	metapp::OverloadedFunction & overloadedFunction = callable.get<metapp::OverloadedFunction &>();
+	overloadedFunction.addCallable(metapp::selectOverload<std::string ()>(&MyClass::func));
+	overloadedFunction.addCallable(metapp::selectOverload<std::string () const>(&MyClass::func));
+	overloadedFunction.addCallable(metapp::selectOverload<std::string () volatile>(&MyClass::func));
+	overloadedFunction.addCallable(metapp::selectOverload<std::string () const volatile>(&MyClass::func));
+
+	MyClass obj;
+	
+	MyClass * nocv = &obj;
+	REQUIRE(metapp::callableInvoke(callable, nocv).get<const std::string &>() == "nocv");
+	
+	const MyClass * c = &obj;
+	REQUIRE(metapp::callableInvoke(callable, c).get<const std::string &>() == "const");
+	
+	volatile MyClass * v = &obj;
+	REQUIRE(metapp::callableInvoke(callable, v).get<const std::string &>() == "volatile");
+
+	const volatile MyClass * cv = &obj;
+	REQUIRE(metapp::callableInvoke(callable, cv).get<const std::string &>() == "const volatile");
+}
+

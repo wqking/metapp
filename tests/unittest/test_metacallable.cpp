@@ -28,28 +28,15 @@ namespace {
 
 TEST_CASE("MetaCallable, rankInvoke")
 {
-	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), 5) == metapp::invokeRankMatch);
-	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), metapp::Variant(5)) == metapp::invokeRankMatch);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), nullptr, 5) == metapp::invokeRankMatch);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), nullptr, metapp::Variant(5)) == metapp::invokeRankMatch);
 
-	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), std::string("abc")) == metapp::invokeRankMatch);
-	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), "abc") == metapp::invokeRankCast);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), nullptr, std::string("abc")) == metapp::invokeRankMatch);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), nullptr, "abc") == metapp::invokeRankCast);
 
-	REQUIRE(metapp::callableRankInvoke(std::function<void (long, std::string)>(), 5, "abc") == metapp::invokeRankCast + metapp::invokeRankCast);
-	REQUIRE(metapp::callableRankInvoke(std::function<void (long, std::string)>(), "def", "abc") == metapp::invokeRankNone);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (long, std::string)>(), nullptr, 5, "abc") == metapp::invokeRankCast + metapp::invokeRankCast);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (long, std::string)>(), nullptr, "def", "abc") == metapp::invokeRankNone);
 }
-
-TEST_CASE("MetaCallable, overloaded, succeed")
-{
-	std::vector<metapp::Variant> callableList;
-	callableList.push_back(std::function<int (int)>([](const int n) {
-		return n + 1;
-	}));
-	callableList.push_back(std::function<std::string (const std::string &)>([](const std::string & s) {
-		return s + "good";
-	}));
-	//REQUIRE(metapp::r)
-}
-
 
 
 } // namespace

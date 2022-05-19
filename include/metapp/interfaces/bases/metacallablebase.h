@@ -67,7 +67,7 @@ public:
 		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*callable*/, const ArgumentSpan & arguments)
+	static int metaCallableRankInvoke(const Variant & /*callable*/, const Variant & /*instance*/, const ArgumentSpan & arguments)
 	{
 		if(arguments.size() != argsCount) {
 			return 0;
@@ -75,7 +75,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*callable*/, const ArgumentSpan & arguments)
+	static bool metaCallableCanInvoke(const Variant & /*callable*/, const Variant & /*instance*/, const ArgumentSpan & arguments)
 	{
 		if(arguments.size() != argsCount) {
 			return false;
@@ -83,7 +83,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments);
 	}
 
-	static Variant metaCallableInvoke(const Variant & callable, void * instance, const ArgumentSpan & arguments)
+	static Variant metaCallableInvoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments)
 	{
 		if(arguments.size() != argsCount) {
 			errorIllegalArgument();
@@ -91,7 +91,7 @@ public:
 		}
 
 		FunctionType f = callable.get<FunctionType &>();
-		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments);
+		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, getPointer(instance), arguments);
 	}
 
 };

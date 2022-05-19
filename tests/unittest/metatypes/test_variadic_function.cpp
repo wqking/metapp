@@ -39,17 +39,17 @@ TEST_CASE("metatypes, VariadicFunction, sum")
 	REQUIRE(v.getMetaType()->getUpType() == nullptr);
 
 	SECTION("0 arguments") {
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, {}));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, {}));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, {}).get<int>() == 0);
 	}
 	SECTION("2 arguments") {
 		metapp::Variant arguments[] = { 6, 3 };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, { arguments, 2 }));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, { arguments, 2 }));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 2 }).get<int>() == 9);
 	}
 	SECTION("5 arguments") {
 		metapp::Variant arguments[] = { 6, 3, 1, 5, 8 };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, { arguments, 5 }));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, { arguments, 5 }));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 5 }).get<int>() == 23);
 	}
 }
@@ -73,7 +73,7 @@ TEST_CASE("metatypes, VariadicFunction, ClassForVariadicFunc::join")
 	metapp::Variant v(metapp::createVariadicFunction(&ClassForVariadicFunc::join));
 	SECTION("0 arguments") {
 		ClassForVariadicFunc obj { "first" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, {}));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, {}));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, {}).get<const std::string&>()
 			== 
 			"first"
@@ -82,7 +82,7 @@ TEST_CASE("metatypes, VariadicFunction, ClassForVariadicFunc::join")
 	SECTION("2 arguments") {
 		ClassForVariadicFunc obj { "first" };
 		metapp::Variant arguments[] = { "abc", "hello" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, { arguments, 2 }));
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, { arguments, 2 }));
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, &obj, { arguments, 2 }).get<const std::string&>()
 			== 
 			"firstabchello"

@@ -72,7 +72,13 @@ public:
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 
-	const MetaType * getMetaType() const noexcept;
+	const MetaType * getMetaType() const noexcept {
+		return metaType;
+	}
+
+	void * getAddress() const {
+		return data.getAddress();
+	}
 
 	template <typename T>
 	bool canGet() const;
@@ -90,8 +96,6 @@ public:
 			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
 		>::value>::type * = nullptr
 	) const -> typename internal_::VariantReturnType<T>::Type;
-
-	void * getAddress() const;
 
 	bool canCast(const MetaType * toMetaType) const;
 	template <typename T>

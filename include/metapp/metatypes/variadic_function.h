@@ -99,17 +99,17 @@ public:
 		return voidMetaType;
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*func*/, const ArgumentSpan & /*arguments*/)
+	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant & /*instance*/, const ArgumentSpan & /*arguments*/)
 	{
 		return invokeRankCast;
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*func*/, const ArgumentSpan & /*arguments*/)
+	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant & /*instance*/, const ArgumentSpan & /*arguments*/)
 	{
 		return true;
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const ArgumentSpan & arguments)
+	static Variant metaCallableInvoke(const Variant & func, const Variant & instance, const ArgumentSpan & arguments)
 	{
 		Variant newArguments[2] = { arguments.data(), arguments.size() };
 

@@ -18,6 +18,7 @@
 #define METAPP_MEMBER_FUNCTION_H_969872685611
 
 #include "metapp/interfaces/bases/metacallablebase.h"
+#include "metapp/utilities/utility.h"
 #include "metapp/compiler.h"
 
 namespace metapp {
@@ -25,9 +26,48 @@ namespace metapp {
 template <typename FullType, typename Class, typename RT, typename ...Args>
 struct DeclareMetaTypeMemberFunctionBase : MetaCallableBase<FullType, Class, RT, Args...>
 {
+private:
+	using super = MetaCallableBase<FullType, Class, RT, Args...>;
+
 public:
 	using UpType = TypeList <Class, RT, Args...>;
 	static constexpr TypeKind typeKind = tkMemberFunction;
+
+	static const MetaCallable * getMetaCallable() {
+		static const MetaCallable metaCallable(
+			&DeclareMetaTypeMemberFunctionBase::metaCallableGetClassType,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableGetParameterCount,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableGetReturnType,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableGetParameterType,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableRankInvoke,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableCanInvoke,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableInvoke
+		);
+		return &metaCallable;
+	}
+
+	static bool canAccess(const Variant & callable, const Variant & instance)
+	{
+		return getPointedType(instance)->getConstness().canConvertTo(
+			getNonReferenceMetaType(callable)->getConstness()
+		);
+	}
+
+	static int metaCallableRankInvoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments)
+	{
+		if(! canAccess(callable, instance)) {
+			return 0;
+		}
+		return super::metaCallableRankInvoke(callable, instance, arguments);
+	}
+
+	static bool metaCallableCanInvoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments)
+	{
+		if(! canAccess(callable, instance)) {
+			return 0;
+		}
+		return super::metaCallableRankInvoke(callable, instance, arguments);
+	}
 
 };
 

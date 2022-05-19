@@ -34,9 +34,9 @@ public:
 		int (*getParameterCount)(const Variant & callable),
 		const MetaType * (*getReturnType)(const Variant & callable),
 		const MetaType * (*getParameterType)(const Variant & callable, const int index),
-		int (*rankInvoke)(const Variant & callable, const ArgumentSpan & arguments),
-		bool (*canInvoke)(const Variant & callable, const ArgumentSpan & arguments),
-		Variant (*invoke)(const Variant & callable, void * instance, const ArgumentSpan & arguments)
+		int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
+		bool (*canInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
+		Variant (*invoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments)
 	)
 		:
 			getClassType(getClassType),
@@ -54,9 +54,9 @@ public:
 	const MetaType * (*getReturnType)(const Variant & callable);
 	const MetaType * (*getParameterType)(const Variant & callable, const int index);
 
-	int (*rankInvoke)(const Variant & callable, const ArgumentSpan & arguments);
-	bool (*canInvoke)(const Variant & callable, const ArgumentSpan & arguments);
-	Variant (*invoke)(const Variant & callable, void * instance, const ArgumentSpan & arguments);
+	int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
+	bool (*canInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
+	Variant (*invoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
 
 	bool isStatic(const Variant & callable) const {
 		return getClassType(callable)->isVoid();
@@ -67,6 +67,7 @@ template <typename Iterator>
 Iterator findCallable(
 	Iterator first,
 	Iterator last,
+	const Variant & instance, 
 	const ArgumentSpan & arguments,
 	int * resultMaxRank = nullptr
 )
@@ -76,7 +77,7 @@ Iterator findCallable(
 	int maxRank = 0;
 	for(; first != last; ++first) {
 		const Variant & callable = (const Variant &)*first;
-		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, arguments);
+		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, arguments);
 		if(rank > maxRank) {
 			maxRank = rank;
 			result = first;
@@ -96,26 +97,26 @@ struct CallableInvoker;
 template <typename Arg0, typename ...Args>
 struct CallableInvoker <Arg0, Args...>
 {
-	static Variant invoke(const Variant & callable, void * instance, Arg0 arg0, Args ...args)
+	static Variant invoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
 	{
-		Variant arguments[] = {
+		Variant arguments[sizeof...(Args) + 1] = {
 			arg0,
 			args...
 		};
-		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, { arguments, sizeof...(Args) + 1 });
+		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments);
 	}
 
 	template <typename Iterator>
-	static Variant invokeCallableList(Iterator first, Iterator last, void * instance, Arg0 arg0, Args ...args)
+	static Variant invokeCallableList(Iterator first, Iterator last, const Variant & instance, Arg0 arg0, Args ...args)
 	{
-		Variant arguments[] = {
+		Variant arguments[sizeof...(Args) + 1] = {
 			arg0,
 			args...
 		};
-		auto it = findCallable(first, last, { arguments, sizeof...(Args) + 1 });
+		auto it = findCallable(first, last, arguments);
 		if(it != last) {
 			const Variant & callable = (const Variant &)*it;
-			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, { arguments, sizeof...(Args) + 1 });
+			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments);
 		}
 		else {
 			errorIllegalArgument();
@@ -123,22 +124,22 @@ struct CallableInvoker <Arg0, Args...>
 		}
 	}
 
-	static int rankInvoke(const Variant & callable, Arg0 arg0, Args ...args)
+	static int rankInvoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
 	{
-		Variant arguments[] = {
+		Variant arguments[sizeof...(Args) + 1] = {
 			arg0,
 			args...
 		};
-		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, { arguments, sizeof...(Args) + 1 });
+		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, arguments);
 	}
 
-	static bool canInvoke(const Variant & callable, Arg0 arg0, Args ...args)
+	static bool canInvoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
 	{
-		Variant arguments[] = {
+		Variant arguments[sizeof...(Args) + 1] = {
 			arg0,
 			args...
 		};
-		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, { arguments, sizeof...(Args) + 1 });
+		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, instance, arguments);
 	}
 
 };
@@ -146,13 +147,13 @@ struct CallableInvoker <Arg0, Args...>
 template <>
 struct CallableInvoker <>
 {
-	static Variant invoke(const Variant & callable, void * instance)
+	static Variant invoke(const Variant & callable, const Variant & instance)
 	{
 		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, {});
 	}
 
 	template <typename Iterator>
-	static Variant invokeCallableList(Iterator first, Iterator last, void * instance)
+	static Variant invokeCallableList(Iterator first, Iterator last, const Variant & instance)
 	{
 		auto it = findCallable(first, last, {});
 		if(it != last) {
@@ -165,14 +166,14 @@ struct CallableInvoker <>
 		}
 	}
 
-	static int rankInvoke(const Variant & callable)
+	static int rankInvoke(const Variant & callable, const Variant & instance)
 	{
-		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, {});
+		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, {});
 	}
 
-	static bool canInvoke(const Variant & callable)
+	static bool canInvoke(const Variant & callable, const Variant & instance)
 	{
-		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, {});
+		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, instance, {});
 	}
 
 };
@@ -198,25 +199,25 @@ inline const MetaType * callableGetParameterType(const Variant & callable, const
 }
 
 template <typename ...Args>
-inline int callableRankInvoke(const Variant & callable, Args ...args)
+inline int callableRankInvoke(const Variant & callable, const Variant & instance, Args ...args)
 {
-	return CallableInvoker<Args...>::rankInvoke(callable, args...);
+	return CallableInvoker<Args...>::rankInvoke(callable, instance, args...);
 }
 
 template <typename ...Args>
-inline bool callableCanInvoke(const Variant & callable, Args ...args)
+inline bool callableCanInvoke(const Variant & callable, const Variant & instance, Args ...args)
 {
-	return CallableInvoker<Args...>::canInvoke(callable, args...);
+	return CallableInvoker<Args...>::canInvoke(callable, instance, args...);
 }
 
 template <typename ...Args>
-inline Variant callableInvoke(const Variant & callable, void * instance, Args ...args)
+inline Variant callableInvoke(const Variant & callable, const Variant & instance, Args ...args)
 {
 	return CallableInvoker<Args...>::invoke(callable, instance, args...);
 }
 
 template <template <typename, typename> class Container, typename T, typename Allocator, typename ...Args>
-inline Variant callableInvoke(const Container<T, Allocator> & callableList, void * instance, Args ...args)
+inline Variant callableInvoke(const Container<T, Allocator> & callableList, const Variant & instance, Args ...args)
 {
 	return CallableInvoker<Args...>::invokeCallableList(callableList.begin(), callableList.end(), instance, args...);
 }

@@ -62,6 +62,32 @@ class UnifiedType;
 
 } // namespace internal_
 
+class Constness
+{
+public:
+	constexpr bool isConst() const noexcept {
+		return flags & tfConst;
+	}
+
+	constexpr bool isVolatile() const noexcept {
+		return flags & tfVolatile;
+	}
+
+	constexpr bool canConvertTo(const Constness & other) const noexcept {
+		return (flags & other.flags) == flags;
+	}
+
+private:
+	explicit constexpr Constness(const TypeFlags flags)
+		: flags(flags & (tfConst | tfVolatile)) {
+	}
+
+private:
+	TypeFlags flags;
+
+	friend class MetaType;
+};
+
 class MetaType
 {
 public:
@@ -131,6 +157,10 @@ public:
 
 	constexpr bool isPointerWrapper() const noexcept {
 		return typeFlags & tfPointerWrapper;
+	}
+
+	constexpr Constness getConstness() const noexcept {
+		return Constness(typeFlags);
 	}
 
 	const MetaClass * getMetaClass() const;

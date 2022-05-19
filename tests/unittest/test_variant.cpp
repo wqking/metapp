@@ -253,6 +253,36 @@ TEST_CASE("Variant, get/canGet")
 		REQUIRE(v.get<const int &>() == 38);
 		REQUIRE(v.get<volatile int &>() == 38);
 	}
+
+	SECTION("int *") {
+		int n = 38;
+		int * pn = &n;
+		metapp::Variant v(pn);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+		REQUIRE(v.canGet<int *>());
+		REQUIRE(v.canGet<int * &>());
+		REQUIRE(v.canGet<const int * &>());
+		REQUIRE(v.canGet<volatile int * &>());
+		REQUIRE(v.get<int *>() == pn);
+		REQUIRE(v.get<int * &>() == pn);
+		REQUIRE(v.get<const int * &>() == pn);
+		REQUIRE(v.get<volatile int * &>() == pn);
+	}
+
+	SECTION("int * &") {
+		int n = 38;
+		int * pn = &n;
+		metapp::Variant v(metapp::Variant::create<int * &>(pn));
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+		REQUIRE(v.canGet<int *>());
+		REQUIRE(v.canGet<int * &>());
+		REQUIRE(v.canGet<const int * &>());
+		REQUIRE(v.canGet<volatile int * &>());
+		REQUIRE(v.get<int *>() == pn);
+		REQUIRE(v.get<int * &>() == pn);
+		REQUIRE(v.get<const int * &>() == pn);
+		REQUIRE(v.get<volatile int * &>() == pn);
+	}
 }
 
 

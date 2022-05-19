@@ -28,8 +28,6 @@
 
 TEST_CASE("play camp")
 {
-	int *x = 0;
-	metapp::span<int> span = {x, 1};
 	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
 }
 

@@ -126,7 +126,7 @@ public:
 		return internal_::getMetaTypeAt(index, ArgumentTypeList());
 	}
 
-	static int metaCallableRankInvoke(const Variant & func, const ArgumentSpan & arguments)
+	static int metaCallableRankInvoke(const Variant & func, const Variant & /*instance*/, const ArgumentSpan & arguments)
 	{
 		if(! isValidArgumentCount(func, arguments.size())) {
 			return invokeRankNone;
@@ -135,7 +135,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & func, const ArgumentSpan & arguments)
+	static bool metaCallableCanInvoke(const Variant & func, const Variant & /*instance*/, const ArgumentSpan & arguments)
 	{
 		if(! isValidArgumentCount(func, arguments.size())) {
 			return false;
@@ -144,7 +144,7 @@ public:
 		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments);
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const ArgumentSpan & arguments)
+	static Variant metaCallableInvoke(const Variant & func, const Variant & instance, const ArgumentSpan & arguments)
 	{
 		if(! isValidArgumentCount(func, arguments.size())) {
 			errorIllegalArgument();

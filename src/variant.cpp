@@ -105,11 +105,6 @@ Variant & Variant::operator = (Variant && other) noexcept
 	return *this;
 }
 
-const MetaType * Variant::getMetaType() const noexcept
-{
-	return metaType;
-}
-
 bool Variant::canGet(const MetaType * toMetaType) const
 {
 	const MetaType * fromMetaType = metaType;
@@ -125,11 +120,6 @@ bool Variant::canGet(const MetaType * toMetaType) const
 		return true;
 	}
 	return fromMetaType->equal(toMetaType);
-}
-
-void * Variant::getAddress() const
-{
-	return data.getAddress();
 }
 
 bool Variant::canCast(const MetaType * toMetaType) const
@@ -155,7 +145,7 @@ Variant Variant::castSilently(const MetaType * toMetaType) const
 
 bool Variant::isEmpty() const noexcept
 {
-	return metaType->getTypeKind() == tkVoid;
+	return metaType->isVoid();
 }
 
 Variant Variant::clone() const
