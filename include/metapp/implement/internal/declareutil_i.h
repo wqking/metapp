@@ -26,14 +26,14 @@
 
 namespace metapp {
 
-static constexpr int invokeRankMatch = 1000u;
-static constexpr int invokeRankCast = 1u;
-static constexpr int invokeRankNone = 0u;
+static constexpr int invokeRankMatch = 1000;
+static constexpr int invokeRankCast = 1;
+static constexpr int invokeRankNone = 0;
 
 namespace internal_ {
 
-template <typename TL, int N, typename Args>
-bool canCastArgument(const Args & arguments, const int argumentCount)
+template <typename TL, int N>
+bool canCastArgument(const Variant * arguments, const int argumentCount)
 {
 	if(N >= argumentCount) {
 		return true;
@@ -41,8 +41,8 @@ bool canCastArgument(const Args & arguments, const int argumentCount)
 	return arguments[N].template canCast<typename TypeListGetAt<TL, N>::Type>();
 }
 
-template <typename TL, int N, typename Args>
-int rankArgumentMatching(const Args & arguments, const int argumentCount)
+template <typename TL, int N>
+int rankArgumentMatching(const Variant * arguments, const int argumentCount)
 {
 	if(N >= argumentCount) {
 		return invokeRankMatch;
@@ -57,14 +57,14 @@ int rankArgumentMatching(const Args & arguments, const int argumentCount)
 	return invokeRankNone;
 }
 
-template <typename TL, int N, typename Args>
-Variant castArgument(const Args & arguments)
+template <typename TL, int N>
+Variant castArgument(const Variant * arguments)
 {
 	return arguments[N].template cast<typename TypeListGetAt<TL, N>::Type>();
 }
 
-template <typename TL, int N, typename Args>
-auto getArgument(const Args & arguments) -> typename TypeListGetAt<TL, N>::Type
+template <typename TL, int N>
+auto getArgument(const Variant * arguments) -> typename TypeListGetAt<TL, N>::Type
 {
 	return arguments[N].template get<typename TypeListGetAt<TL, N>::Type>();
 }
@@ -75,14 +75,13 @@ struct MetaCallableInvokeChecker
 	using ArgumentTypeList = ArgList;
 	static constexpr int argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename Args>
-	static bool canInvoke(const Args & arguments, const int argumentCount) {
+	static bool canInvoke(const Variant * arguments, const int argumentCount) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doCanInvoke(arguments, argumentCount, Sequence());
 	}
 
-	template <int ...Indexes, typename Args>
-	static bool doCanInvoke(const Args & arguments, const int argumentCount, IntConstantList<Indexes...>) {
+	template <int ...Indexes>
+	static bool doCanInvoke(const Variant * arguments, const int argumentCount, IntConstantList<Indexes...>) {
 		std::array<bool, argCount> canCastList {
 			canCastArgument<ArgumentTypeList, Indexes>(arguments, argumentCount)...
 		};
@@ -93,14 +92,13 @@ struct MetaCallableInvokeChecker
 		return std::find(std::begin(canCastList), std::end(canCastList), false) == std::end(canCastList);
 	}
 
-	template <typename Args>
-	static int rankInvoke(const Args & arguments, const int argumentCount) {
+	static int rankInvoke(const Variant * arguments, const int argumentCount) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doRankInvoke(arguments, argumentCount, Sequence());
 	}
 
-	template <int ...Indexes, typename Args>
-	static int doRankInvoke(const Args & arguments, const int argumentCount, IntConstantList<Indexes...>) {
+	template <int ...Indexes>
+	static int doRankInvoke(const Variant * arguments, const int argumentCount, IntConstantList<Indexes...>) {
 		if(argCount == argumentCount && argumentCount == 0) {
 			return invokeRankMatch;
 		}
@@ -131,14 +129,14 @@ struct MetaCallableInvoker <void, RT, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr int argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT, typename Args>
-	static Variant invoke(FT && func, void * instance, const Args & arguments, const int /*argumentCount*/) {
+	template <typename FT>
+	static Variant invoke(FT && func, void * instance, const Variant * arguments, const int /*argumentCount*/) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
-	template <typename FT, typename Args, int ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, IntConstantList<Indexes...>) {
+	template <typename FT, int ...Indexes>
+	static Variant doInvoke(FT func, void * /*instance*/, const Variant * arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -155,14 +153,14 @@ struct MetaCallableInvoker <void, void, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr int argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT, typename Args>
-	static Variant invoke(FT && func, void * instance, const Args & arguments, const int /*argumentCount*/) {
+	template <typename FT>
+	static Variant invoke(FT && func, void * instance, const Variant * arguments, const int /*argumentCount*/) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
-	template <typename FT, typename Args, int ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const Args & arguments, IntConstantList<Indexes...>) {
+	template <typename FT, int ...Indexes>
+	static Variant doInvoke(FT func, void * /*instance*/, const Variant * arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -180,14 +178,14 @@ struct MetaCallableInvoker
 	using ArgumentTypeList = ArgList;
 	static constexpr int argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT, typename Args>
-	static Variant invoke(FT && func, void * instance, const Args & arguments, const int /*argumentCount*/) {
+	template <typename FT>
+	static Variant invoke(FT && func, void * instance, const Variant * arguments, const int /*argumentCount*/) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
-	template <typename FT, typename Args, int ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const Args & arguments, IntConstantList<Indexes...>) {
+	template <typename FT, int ...Indexes>
+	static Variant doInvoke(FT func, void * instance, const Variant * arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -204,14 +202,14 @@ struct MetaCallableInvoker <Class, void, ArgList>
 	using ArgumentTypeList = ArgList;
 	static constexpr int argCount = TypeListCount<ArgumentTypeList>::value;
 
-	template <typename FT, typename Args>
-	static Variant invoke(FT && func, void * instance, const Args & arguments, const int /*argumentCount*/) {
+	template <typename FT>
+	static Variant invoke(FT && func, void * instance, const Variant * arguments, const int /*argumentCount*/) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;
 		return doInvoke(std::forward<FT>(func), instance, arguments, Sequence());
 	}
 
-	template <typename FT, typename Args, int ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const Args & arguments, IntConstantList<Indexes...>) {
+	template <typename FT, int ...Indexes>
+	static Variant doInvoke(FT func, void * instance, const Variant * arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
