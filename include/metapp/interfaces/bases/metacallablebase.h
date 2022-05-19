@@ -32,7 +32,7 @@ public:
 	using ClassType = Class;
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
-	static constexpr int argsCount = TypeListCount<ArgumentTypeList>::value;
+	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
@@ -67,31 +67,31 @@ public:
 		return internal_::getMetaTypeAt<Args...>(index);
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*callable*/, const Variant * arguments, const int argumentCount)
+	static int metaCallableRankInvoke(const Variant & /*callable*/, const ArgumentSpan & arguments)
 	{
-		if(argumentCount != argsCount) {
+		if(arguments.size() != argsCount) {
 			return 0;
 		}
-		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*callable*/, const Variant * arguments, const int argumentCount)
+	static bool metaCallableCanInvoke(const Variant & /*callable*/, const ArgumentSpan & arguments)
 	{
-		if(argumentCount != argsCount) {
+		if(arguments.size() != argsCount) {
 			return false;
 		}
-		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments);
 	}
 
-	static Variant metaCallableInvoke(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount)
+	static Variant metaCallableInvoke(const Variant & callable, void * instance, const ArgumentSpan & arguments)
 	{
-		if(argumentCount != argsCount) {
+		if(arguments.size() != argsCount) {
 			errorIllegalArgument();
 			return Variant();
 		}
 
 		FunctionType f = callable.get<FunctionType &>();
-		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments, argumentCount);
+		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, instance, arguments);
 	}
 
 };

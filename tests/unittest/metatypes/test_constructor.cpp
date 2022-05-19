@@ -48,7 +48,7 @@ TEST_CASE("metatypes, constructor")
 		{
 			metapp::Variant arguments[] = { 7, &ctorCounter };
 			metapp::Variant obj = metapp::Variant::takeFrom(
-				ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments, 2)
+				ctor.getMetaType()->getMetaCallable()->invoke(ctor, nullptr, arguments)
 			);
 			REQUIRE(ctorCounter == 1);
 			Base & base = obj.get<Base &>();

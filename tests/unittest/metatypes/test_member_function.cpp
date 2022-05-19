@@ -88,7 +88,7 @@ TEST_CASE("metatypes, tkMemberFunction, invoke")
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant::create<int &>(a), metapp::Variant::create<std::string &>(b) };
 		Base obj { 5 };
-		v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 2);
+		v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments);
 		REQUIRE(a == 8);
 		REQUIRE(b == "Good");
 	}
@@ -97,7 +97,7 @@ TEST_CASE("metatypes, tkMemberFunction, invoke")
 		metapp::Variant v(&Base::add);
 		metapp::Variant arguments[] = { 7 };
 		Derived obj { 5 };
-		metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments, 1);
+		metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments);
 		REQUIRE(result.get<int>() == 12);
 	}
 

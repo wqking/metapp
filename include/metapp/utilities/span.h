@@ -14,22 +14,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "test.h"
+#ifndef METAPP_SPAN_H_969872685611
+#define METAPP_SPAN_H_969872685611
 
-#include "metapp/variant.h"
-#include "metapp/allmetatypes.h"
-#include "metapp/interfaces/metaclass.h"
-#include "metapp/utilities/utility.h"
-#include "metapp/utilities/span.h"
+#include "metapp/compiler.h"
 
-#include <string>
-#include <iostream>
-#include <climits>
+#ifdef METAPP_SUPPORT_STD_SPAN
 
-TEST_CASE("play camp")
-{
-	int *x = 0;
-	metapp::span<int> span = {x, 1};
-	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
-}
+#include <span>
 
+namespace metapp {
+
+template<typename T, std::size_t Extent = std::dynamic_extent>
+using span = std::span<T, Extent>;
+
+} // namespace metapp
+
+#else
+
+#include "metapp/thirdparty/tcb/span.hpp"
+
+namespace metapp {
+
+template<typename T, std::size_t Extent = tcb::dynamic_extent>
+using span = tcb::span<T, Extent>;
+
+} // namespace metapp
+
+#endif
+
+#endif

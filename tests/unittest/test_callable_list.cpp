@@ -36,22 +36,22 @@ TEST_CASE("Callable list, (), (int), (long)")
 		return (int)n * 3;
 	}));
 
-	auto it = metapp::findCallable(callableList.begin(), callableList.end(), nullptr, 0);
+	auto it = metapp::findCallable(callableList.begin(), callableList.end(), {});
 	REQUIRE(it == callableList.begin());
-	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, nullptr, 0).get<int>() == 1);
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, {}).get<int>() == 1);
 
 	metapp::Variant arguments[] = { 5 };
-	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.begin() + 1);
-	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<int>() == 10);
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments).get<int>() == 10);
 
 	arguments[0] = 5L;
-	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.begin() + 2);
-	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<int>() == 15);
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments).get<int>() == 15);
 
 	arguments[0] = "abc";
-	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.end());
 }
 
@@ -65,17 +65,17 @@ TEST_CASE("Callable list, (const char *), (std::string)")
 		return "string" + s;
 	}));
 	metapp::Variant arguments[] = { "abc" };
-	auto it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	auto it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.begin());
-	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<const std::string &>() == "char*abc");
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments).get<const std::string &>() == "char*abc");
 
 	arguments[0] = std::string("def");
-	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.begin() + 1);
-	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments, 1).get<const std::string &>() == "stringdef");
+	REQUIRE(it->getMetaType()->getMetaCallable()->invoke(*it, nullptr, arguments).get<const std::string &>() == "stringdef");
 
 	arguments[0] = 5;
-	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments, 1);
+	it = metapp::findCallable(callableList.begin(), callableList.end(), arguments);
 	REQUIRE(it == callableList.end());
 }
 

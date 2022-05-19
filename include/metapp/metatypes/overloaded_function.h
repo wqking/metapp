@@ -87,31 +87,31 @@ public:
 		return voidMetaType;
 	}
 
-	static int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
+	static int metaCallableRankInvoke(const Variant & func, const ArgumentSpan & arguments)
 	{
 		int maxRank;
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
-		findCallable(callableList.begin(), callableList.end(), arguments, argumentCount, &maxRank);
+		findCallable(callableList.begin(), callableList.end(), arguments, &maxRank);
 		return maxRank;
 	}
 
-	static bool metaCallableCanInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
+	static bool metaCallableCanInvoke(const Variant & func, const ArgumentSpan & arguments)
 	{
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		for(const auto & callable : callableList) {
-			if(callable.getMetaType()->getMetaCallable()->canInvoke(callable, arguments, argumentCount)) {
+			if(callable.getMetaType()->getMetaCallable()->canInvoke(callable, arguments)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const int argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const ArgumentSpan & arguments)
 	{
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
-		auto it = findCallable(callableList.begin(), callableList.end(), arguments, argumentCount, nullptr);
+		auto it = findCallable(callableList.begin(), callableList.end(), arguments, nullptr);
 		if(it != callableList.end()) {
-			return (*it).getMetaType()->getMetaCallable()->invoke(*it, instance, arguments, argumentCount);
+			return (*it).getMetaType()->getMetaCallable()->invoke(*it, instance, arguments);
 		}
 		errorIllegalArgument();
 		return Variant();

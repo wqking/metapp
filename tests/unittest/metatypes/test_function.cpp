@@ -65,21 +65,21 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 		int a = 0;
 		std::string b;
 		metapp::Variant arguments[] = { metapp::Variant::reference(a), metapp::Variant::reference(b) };
-		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 2));
-		REQUIRE(! v.getMetaType()->getMetaCallable()->canInvoke(v, arguments, 1));
-		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2);
+		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, { arguments, 2 }));
+		REQUIRE(! v.getMetaType()->getMetaCallable()->canInvoke(v, { arguments, 1 }));
+		v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 2 });
 		REQUIRE(a == 15);
 		REQUIRE(b == "world");
 	}
 	{
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, "hello" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 2).get<std::string>() == "hello5");
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 2 }).get<std::string>() == "hello5");
 		REQUIRE(metapp::callableInvoke(v, nullptr, 6, "world").get<std::string>() == "world6");
 	}
 	{
 		metapp::Variant v(&myFunc3);
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, nullptr, 0).get<int>() == 38);
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, {}).get<int>() == 38);
 		REQUIRE(metapp::callableInvoke(v, nullptr).get<int>() == 38);
 	}
 }

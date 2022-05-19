@@ -62,7 +62,7 @@ TEST_CASE("tutorialCallable_freeFunction")
 	//desc Prepare the arguments array
 	metapp::Variant arguments[] { 5 };
 	//desc Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
-	metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
+	metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments);
 	ASSERT(result.get<std::string>() == "5");
 
 	//desc Or we can use metapp::callableInvoke to pass the arguments directly

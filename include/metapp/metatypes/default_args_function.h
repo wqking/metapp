@@ -97,10 +97,10 @@ public:
 		return &metaCallable;
 	}
 
-	static bool isValidArgumentCount(const Variant & func, const int argumentCount)
+	static bool isValidArgumentCount(const Variant & func, const size_t argumentCount)
 	{
-		return (argumentCount >= argsCount - func.get<FunctionType &>().getDefaultArgsCount())
-			&& (argumentCount <= argsCount)
+		return ((int)argumentCount >= argsCount - func.get<FunctionType &>().getDefaultArgsCount())
+			&& ((int)argumentCount <= argsCount)
 		;
 	}
 
@@ -126,47 +126,47 @@ public:
 		return internal_::getMetaTypeAt(index, ArgumentTypeList());
 	}
 
-	static int metaCallableRankInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
+	static int metaCallableRankInvoke(const Variant & func, const ArgumentSpan & arguments)
 	{
-		if(! isValidArgumentCount(func, argumentCount)) {
+		if(! isValidArgumentCount(func, arguments.size())) {
 			return invokeRankNone;
 		}
 
-		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::rankInvoke(arguments);
 	}
 
-	static bool metaCallableCanInvoke(const Variant & func, const Variant * arguments, const int argumentCount)
+	static bool metaCallableCanInvoke(const Variant & func, const ArgumentSpan & arguments)
 	{
-		if(! isValidArgumentCount(func, argumentCount)) {
+		if(! isValidArgumentCount(func, arguments.size())) {
 			return false;
 		}
 
-		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments, argumentCount);
+		return internal_::MetaCallableInvokeChecker<ArgumentTypeList>::canInvoke(arguments);
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const int argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const ArgumentSpan & arguments)
 	{
-		if(! isValidArgumentCount(func, argumentCount)) {
+		if(! isValidArgumentCount(func, arguments.size())) {
 			errorIllegalArgument();
 			return Variant();
 		}
 
 		const FunctionType & defaultArgsFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = defaultArgsFunc.getFunc();
-		if(argumentCount == argsCount) {
-			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, arguments, argumentCount);
+		if(arguments.size() == argsCount) {
+			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, arguments);
 		}
 		else {
 			std::array<Variant, argsCount> newArguments;
 			int i = 0;
-			for(; i < argumentCount; ++i) {
+			for(; i < (int)arguments.size(); ++i) {
 				newArguments[i] = arguments[i];
 			}
 			while(i < argsCount) {
 				newArguments[i] = defaultArgsFunc.getDefaultArgs()[argsCount - i - 1];
 				++i;
 			}
-			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments.data(), argsCount);
+			return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments);
 		}
 	}
 

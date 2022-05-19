@@ -99,23 +99,23 @@ public:
 		return voidMetaType;
 	}
 
-	static int metaCallableRankInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const int /*argumentCount*/)
+	static int metaCallableRankInvoke(const Variant & /*func*/, const ArgumentSpan & /*arguments*/)
 	{
 		return invokeRankCast;
 	}
 
-	static bool metaCallableCanInvoke(const Variant & /*func*/, const Variant * /*arguments*/, const int /*argumentCount*/)
+	static bool metaCallableCanInvoke(const Variant & /*func*/, const ArgumentSpan & /*arguments*/)
 	{
 		return true;
 	}
 
-	static Variant metaCallableInvoke(const Variant & func, void * instance, const Variant * arguments, const int argumentCount)
+	static Variant metaCallableInvoke(const Variant & func, void * instance, const ArgumentSpan & arguments)
 	{
-		Variant newArguments[2] = { arguments, argumentCount };
+		Variant newArguments[2] = { arguments.data(), arguments.size() };
 
 		const FunctionType & variadicFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = variadicFunc.getFunc();
-		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments, 2);
+		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments);
 	}
 
 };
