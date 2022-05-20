@@ -120,8 +120,8 @@
 |tkMetaRepo            |None                           |
 |tkStdString           |None                           |
 |tkStdWideString       |None                           |
-|tkStdSharedPtr        |None                           |
-|tkStdUniquePtr        |None                           |
+|tkStdSharedPtr        |MetaAccessible                 |
+|tkStdUniquePtr        |MetaAccessible                 |
 |tkStdWeakPtr          |None                           |
 |tkStdFunction         |MetaCallable                   |
 |tkStdVector           |MetaIndexable<br />MetaIterable|

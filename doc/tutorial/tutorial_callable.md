@@ -60,7 +60,7 @@ metapp::Variant arguments[] { 5 };
 Invoke the callable, the nullptr is the object instance, for free function, it's nullptr
 
 ```c++
-metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments, 1);
+metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments);
 ASSERT(result.get<std::string>() == "5");
 ```
 

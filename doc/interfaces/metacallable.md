@@ -16,7 +16,8 @@
   * [canInvoke](#a4_6)
   * [invoke](#a4_7)
   * [isStatic](#a4_8)
-* [Non-member utility functions](#a2_7)
+* [ArgumentSpan](#a2_7)
+* [Non-member utility functions](#a2_8)
   * [callableGetClassType](#a4_9)
   * [callableGetParameterCount](#a4_10)
   * [callableGetReturnType](#a4_11)
@@ -24,9 +25,8 @@
   * [callableRankInvoke](#a4_13)
   * [callableCanInvoke](#a4_14)
   * [callableInvoke](#a4_15)
-  * [callableInvoke on container](#a4_16)
-  * [findCallable](#a4_17)
-  * [callableIsStatic](#a4_18)
+  * [findCallable](#a4_16)
+  * [callableIsStatic](#a4_17)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -44,7 +44,8 @@
 <a id="a2_3"></a>
 ## Get MetaCallable interface
 
-We can call `MetaType::getMetaCallable()` to get the `MetaCallable` interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaCallable()` to get the `MetaCallable` interface.
+If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
@@ -70,9 +71,9 @@ MetaCallable(
   int (*getParameterCount)(const Variant & callable),
   const MetaType * (*getReturnType)(const Variant & callable),
   const MetaType * (*getParameterType)(const Variant & callable, const int index),
-  int (*rankInvoke)(const Variant & callable, const Variant * arguments, const int argumentCount),
-  bool (*canInvoke)(const Variant & callable, const Variant * arguments, const int argumentCount),
-  Variant (*invoke)(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount)
+  int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
+  bool (*canInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
+  Variant (*invoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments)
 );
 ```
 
@@ -82,7 +83,9 @@ The meaning of each functions are same as the member functions listed below.
 <a id="a2_6"></a>
 ## MetaCallable member functions
 
-The first parameter in all of the member functions is `const Variant & callable`. It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer. The member functions operate on the data.  
+The first parameter in all of the member functions is `const Variant & callable`.
+It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer.
+The member functions operate on the data.  
 We can treat `callable` as the C++ object instance which class implements an interface called `MetaCallable`.  
 `callable` can be a value, a reference, or a pointer.  
 
@@ -133,20 +136,29 @@ For variadic function (tkVariadicFunction), the function always returns nullptr.
 #### rankInvoke
 
 ```c++
-int rankInvoke(const Variant & callable, const Variant * arguments, const int argumentCount);
+int rankInvoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
 ```
 
 Returns the rank value of whether each argument in array `arguments` matches the parameter in the callable.  
-If the return value is 0, then the arguments can't be used to invoke the callable. Otherwise, the larger the return value, the more matching.  
+The return value is positive number or zero.  
+If the return value is 0, then the arguments can't be used to invoke the callable.
+Otherwise, the larger the return value, the more matching.  
 
-Parameter `arguments` is a pointer to an array of Variant, each element is an argument. The first element is the left-most argument in the callable.  
-Parameter `argumentCount` is the number of argument in `arguments`.  
+Parameter `instance` is the object instance if `callable` is a class member function.
+If `callable` is a member function, and the constness of `instance` can't access `callable`
+(for example, `instance` is a pointer to const, while `callable` is a non-const member function),
+the rank is 0, value 0 is returned, and the `arguments` are not checked.  
+If `callable` is not a member function, `instance` is ignored.  
+`instance` can be value, reference, pointer, `std::shared_ptr`, `std::unique_ptr`, etc.  
+
+Parameter `arguments` is an `ArgumentSpan` object. It's used to pass the arguments. For details, please see the section
+for `ArgumentSpan` in this document.  
 
 <a id="a4_6"></a>
 #### canInvoke
 
 ```c++
-bool canInvoke(const Variant & callable, const Variant * arguments, const int argumentCount);
+bool canInvoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
 ```
 
 Returns true if the `arguments` can be used to invoke the callable, false if not.  
@@ -156,10 +168,12 @@ This is similar to check if the result of `rankInvoke` is larger than 0, but it'
 #### invoke
 
 ```c++
-Variant invoke(const Variant & callable, void * instance, const Variant * arguments, const int argumentCount);
+Variant invoke(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments);
 ```
 
-Invokes the callable, returns the result of the callable. If the callable doesn't return any value (the result type is void), then empty Variant is returned (Variant::isEmpty() is true).  
+Invokes the callable, returns the result of the callable. If the callable doesn't return any value (the result type is void),
+then empty Variant is returned (Variant::isEmpty() is true).  
+Parameter `instance` can be value, reference, pointer, `std::shared_ptr`, `std::unique_ptr`, etc.  
 
 <a id="a4_8"></a>
 #### isStatic
@@ -168,14 +182,83 @@ Invokes the callable, returns the result of the callable. If the callable doesn'
 bool isStatic(const Variant & callable) const;
 ```
 
-Returns true if the accessible is static or non-member, false if the accessbile is class member.  
+Returns true if the callable is static or non-member, false if the callable is class member.  
 The function is equivalent to `return getClassType(callable)->isVoid();`.  
 
 <a id="a2_7"></a>
+## ArgumentSpan
+
+`ArgumentSpan` is used to pass arguments to MetaCallable.  
+The definition of `ArgumentSpan` is `metapp::span<const Variant>`.  
+`metapp::span` is alias of `std::span` which is a feature in C++20.
+If the compiler doesn't support C++20, a C++11 equivalent third party library is used (github.com/tcbrindle/span).  
+That's to say, `ArgumentSpan` doesn't require C++20, it can be used in C++11.  
+In this document, the term `std::span` is exchangable with `metapp::span`.  
+
+In case you are not familar with `std::span`, here is a quick summary how to use `ArgumentSpan`.  
+`ArgumentSpan` refers to a contiguous sequence of `Variant`, which is the arguments passed to the callable.
+The first argument in `ArgumentSpan` is passed as the left-most argument. Below is some sample code,  
+
+Define a callable Variant.
+
+```c++
+metapp::Variant myCallable(std::function<std::string (const std::string &, int)>(
+  [](const std::string & a, int b) {
+    return a + std::to_string(b);
+  }
+));
+```
+
+Get the MetaCallable.
+
+```c++
+const metapp::MetaCallable * metaCallable = myCallable.getMetaType()->getMetaCallable();
+```
+
+Now let's prepare the ArgumentSpan.  
+We can pass std::vector directly.
+
+```c++
+std::vector<metapp::Variant> argumentsA { "a", 5 };
+ASSERT(metaCallable->invoke(myCallable, nullptr, argumentsA).get<const std::string &>() == "a5");
+```
+
+We can use std::array.
+
+```c++
+std::array<metapp::Variant, 2> argumentsB { "b", 6 };
+ASSERT(metaCallable->invoke(myCallable, nullptr, argumentsB).get<const std::string &>() == "b6");
+```
+
+We can use C++ array, argumentsC has known size 2.
+
+```c++
+metapp::Variant argumentsC[] { "c", 7 };
+ASSERT(metaCallable->invoke(myCallable, nullptr, argumentsC).get<const std::string &>() == "c7");
+```
+
+We can use C++ array that doesn't have known size, then we need to pass the size explicitly.
+
+```c++
+metapp::Variant temp[] { "d", 8 };
+// We use a lambda to enable the unknown size array.
+auto simulateUnknowSizeArray = [&myCallable, &metaCallable](metapp::Variant argumentsD[]) {
+  // Won't compile, argumentsD has unknown size.
+  //ASSERT(metaCallable->invoke(myCallable, nullptr, argumentsD).get<const std::string &>() == "d8");
+  // Compiles, we pass the size explicityly.
+  ASSERT(metaCallable->invoke(myCallable, nullptr, { argumentsD, 2 }).get<const std::string &>() == "d8");
+};
+simulateUnknowSizeArray(temp);
+```
+
+<a id="a2_8"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
-Usually you should prefer the utility functions to calling `MetaCallable` member function directly. However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application, you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions. This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaCallable` member function directly.
+However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application,
+you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions.
+This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
 
 <a id="a4_9"></a>
 #### callableGetClassType
@@ -230,7 +313,7 @@ Shortcut for `MetaCallable::getParameterType()`.
 
 ```c++
 template <typename ...Args>
-int callableRankInvoke(const Variant & callable, Args ...args);
+int callableRankInvoke(const Variant & callable, const Variant & instance, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and returns the result.
@@ -240,7 +323,7 @@ Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and ret
 
 ```c++
 template <typename ...Args>
-bool callableCanInvoke(const Variant & callable, Args ...args);
+bool callableCanInvoke(const Variant & callable, const Variant & instance, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and returns the result.
@@ -250,25 +333,12 @@ Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and retu
 
 ```c++
 template <typename ...Args>
-Variant callableInvoke(const Variant & callable, void * instance, Args ...args);
+Variant callableInvoke(const Variant & callable, const Variant & instance, Args ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::invoke()` and returns the result.
 
 <a id="a4_16"></a>
-#### callableInvoke on container
-
-```c++
-template <template <typename, typename> class Container, typename T, typename Allocator, typename ...Args>
-Variant callableInvoke(const Container<T, Allocator> & callableList, void * instance, Args ...args);
-```
-
-Finds a best matched callable in `callableList`, then invokes the matched callable and returns the result.  
-If no matched callable, exception `metapp::IllegalArgumentException` is thrown.  
-`callableList` can be STL iterable containers, such as `std::vector`, `std::deque`, or `std::list`. The value type T can be `metapp::Variant` that holds a callable.  
-`callableList` can also be `MetaItemList` or `MetaItemList` obtained from MetaClass or MetaRepo.
-
-<a id="a4_17"></a>
 #### findCallable
 
 ```c++
@@ -276,8 +346,9 @@ template <typename Iterator>
 Iterator findCallable(
   Iterator first,
   Iterator last,
-  const Variant * arguments,
-  const int argumentCount
+  const Variant & instance,
+  const ArgumentSpan & arguments,
+  int * resultMaxRank = nullptr
 );
 ```
 
@@ -285,7 +356,7 @@ Returns an iterator to the element that's best matched to `arguments` in the ran
 If no matched callable, `last` is returned.  
 `Iterator` must be the iterator to `Variant`, `MetaItem`, or `MetaItem`.
 
-<a id="a4_18"></a>
+<a id="a4_17"></a>
 #### callableIsStatic
 
 ```c++
