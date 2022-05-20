@@ -106,24 +106,6 @@ struct CallableInvoker <Arg0, Args...>
 		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments);
 	}
 
-	template <typename Iterator>
-	static Variant invokeCallableList(Iterator first, Iterator last, const Variant & instance, Arg0 arg0, Args ...args)
-	{
-		Variant arguments[sizeof...(Args) + 1] = {
-			arg0,
-			args...
-		};
-		auto it = findCallable(first, last, arguments);
-		if(it != last) {
-			const Variant & callable = (const Variant &)*it;
-			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments);
-		}
-		else {
-			errorIllegalArgument();
-			return Variant();
-		}
-	}
-
 	static int rankInvoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
 	{
 		Variant arguments[sizeof...(Args) + 1] = {
@@ -150,20 +132,6 @@ struct CallableInvoker <>
 	static Variant invoke(const Variant & callable, const Variant & instance)
 	{
 		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, {});
-	}
-
-	template <typename Iterator>
-	static Variant invokeCallableList(Iterator first, Iterator last, const Variant & instance)
-	{
-		auto it = findCallable(first, last, {});
-		if(it != last) {
-			const Variant & callable = (const Variant &)*it;
-			return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, {});
-		}
-		else {
-			errorIllegalArgument();
-			return Variant();
-		}
 	}
 
 	static int rankInvoke(const Variant & callable, const Variant & instance)
@@ -214,12 +182,6 @@ template <typename ...Args>
 inline Variant callableInvoke(const Variant & callable, const Variant & instance, Args ...args)
 {
 	return CallableInvoker<Args...>::invoke(callable, instance, args...);
-}
-
-template <template <typename, typename> class Container, typename T, typename Allocator, typename ...Args>
-inline Variant callableInvoke(const Container<T, Allocator> & callableList, const Variant & instance, Args ...args)
-{
-	return CallableInvoker<Args...>::invokeCallableList(callableList.begin(), callableList.end(), instance, args...);
 }
 
 inline bool callableIsStatic(const Variant & callable)
