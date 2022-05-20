@@ -146,6 +146,7 @@ sub doProcessPattern
 	my ($pattern) = @_;
 	my @files = glob($pattern);
 	foreach my $file (@files) {
+		$file =~ s/\"//;
 		next unless -f ($file);
 		&doProcessFile($file, $args->{output});
 	}

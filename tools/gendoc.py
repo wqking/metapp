@@ -72,6 +72,7 @@ def doPostProcessMarkdown(fileName, config) :
 	cpp2md.writeLines(fileName, lineList)
 
 	if config['generateToc'] :
+		fileName = fileName.replace('\\', '/')
 		command = 'perl addtoc2md.pl --max-level=4 --min-headings=%d "%s"' % (config['tocMinHeadings'], fileName)
 		command = normalizeCommand(command)
 		subprocess.run(command)

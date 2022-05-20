@@ -279,6 +279,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
     - [Overview](doc/metatypes/overview_metatypes.md)
     - [List of all built-in meta types](doc/metatypes/list_all.md)
     - [Constructor](doc/metatypes/constructor.md)
+    - [Overloaded function](doc/metatypes/overloaded_function.md)
     - [Default arguments function](doc/metatypes/default_args_function.md)
     - [Variadic function](doc/metatypes/variadic_function.md)
     - [Accessor](doc/metatypes/accessor.md)
