@@ -30,7 +30,7 @@ template <typename T>
 std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<T> & sp)
 {
 	return std::static_pointer_cast<void>(sp);
-};
+}
 
 template <typename T>
 std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const T> & sp)
@@ -38,7 +38,7 @@ std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const T> & sp)
 	return std::static_pointer_cast<void>(
 		std::const_pointer_cast<T>(sp)
 	);
-};
+}
 
 template <typename T>
 std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<volatile T> & sp)
@@ -46,7 +46,7 @@ std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<volatile T> & sp
 	return std::static_pointer_cast<void>(
 		std::const_pointer_cast<T>(sp)
 	);
-};
+}
 
 template <typename T>
 std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const volatile T> & sp)
@@ -54,7 +54,7 @@ std::shared_ptr<void> castSharedPtrToVoid(const std::shared_ptr<const volatile T
 	return std::static_pointer_cast<void>(
 		std::const_pointer_cast<T>(sp)
 	);
-};
+}
 
 } // namespace internal_
 
