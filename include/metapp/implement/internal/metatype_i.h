@@ -303,42 +303,6 @@ private:
 		return typeKind;
 	}
 
-	const MetaClass * getMetaClass() const {
-		return static_cast<const MetaClass *>(doGetMetaInterface(mikMetaClass));
-	}
-
-	const MetaCallable * getMetaCallable() const {
-		return static_cast<const MetaCallable *>(doGetMetaInterface(mikMetaCallable));
-	}
-
-	const MetaAccessible * getMetaAccessible() const {
-		return static_cast<const MetaAccessible *>(doGetMetaInterface(mikMetaAccessible));
-	}
-
-	const MetaEnum * getMetaEnum() const {
-		return static_cast<const MetaEnum *>(doGetMetaInterface(mikMetaEnum));
-	}
-
-	const MetaIndexable * getMetaIndexable() const {
-		return static_cast<const MetaIndexable *>(doGetMetaInterface(mikMetaIndexable));
-	}
-
-	const MetaIterable * getMetaIterable() const {
-		return static_cast<const MetaIterable *>(doGetMetaInterface(mikMetaIterable));
-	}
-
-	const MetaStreaming * getMetaStreaming() const {
-		return static_cast<const MetaStreaming *>(doGetMetaInterface(mikMetaStreaming));
-	}
-
-	const MetaMappable * getMetaMappable() const {
-		return static_cast<const MetaMappable *>(doGetMetaInterface(mikMetaMap));
-	}
-
-	const void * getMetaUser() const {
-		return static_cast<const void *>(doGetMetaInterface(mikMetaUser));
-	}
-
 	void * constructData(VariantData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
@@ -346,6 +310,8 @@ private:
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
+
+	const void * getMetaInterface(const MetaInterfaceKind kind) const;
 
 private:
 	constexpr UnifiedType(
@@ -362,11 +328,9 @@ private:
 	friend const UnifiedType * doGetUnifiedType();
 	friend class metapp::MetaType;
 
-	const void * doGetMetaInterface(const internal_::MetaInterfaceKind kind) const;
-
 private:
 	TypeKind typeKind;
-	internal_::UnifiedMetaTable metaMethodTable;
+	UnifiedMetaTable metaMethodTable;
 };
 
 template <typename P>

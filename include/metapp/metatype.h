@@ -101,15 +101,13 @@ public:
 		return doGetUnifiedData();
 	}
 
-	bool equal(const MetaType * other) const;
-	int compare(const MetaType * other) const;
+	TypeKind getTypeKind() const noexcept {
+		return unifiedType->getTypeKind();
+	}
 
-	const MetaType * getUpType() const;
-	const MetaType * getUpType(const int i) const;
-	int getUpTypeCount() const noexcept;
-
-	TypeKind getTypeKind() const noexcept;
-	bool isVoid() const noexcept;
+	bool isVoid() const noexcept {
+		return getTypeKind() == tkVoid;
+	}
 
 	constexpr bool isConst() const noexcept {
 		return typeFlags & tfConst;
@@ -163,15 +161,48 @@ public:
 		return Constness(typeFlags);
 	}
 
-	const MetaClass * getMetaClass() const;
-	const MetaCallable * getMetaCallable() const;
-	const MetaAccessible * getMetaAccessible() const;
-	const MetaEnum * getMetaEnum() const;
-	const MetaIndexable * getMetaIndexable() const;
-	const MetaIterable * getMetaIterable() const;
-	const MetaStreaming * getMetaStreaming() const;
-	const MetaMappable * getMetaMappable() const;
-	const void * getMetaUser() const;
+	const MetaClass * getMetaClass() const {
+		return static_cast<const MetaClass *>(unifiedType->getMetaInterface(internal_::mikMetaClass));
+	}
+
+	const MetaCallable * getMetaCallable() const {
+		return static_cast<const MetaCallable *>(unifiedType->getMetaInterface(internal_::mikMetaCallable));
+	}
+
+	const MetaAccessible * getMetaAccessible() const {
+		return static_cast<const MetaAccessible *>(unifiedType->getMetaInterface(internal_::mikMetaAccessible));
+	}
+
+	const MetaEnum * getMetaEnum() const {
+		return static_cast<const MetaEnum *>(unifiedType->getMetaInterface(internal_::mikMetaEnum));
+	}
+
+	const MetaIndexable * getMetaIndexable() const {
+		return static_cast<const MetaIndexable *>(unifiedType->getMetaInterface(internal_::mikMetaIndexable));
+	}
+
+	const MetaIterable * getMetaIterable() const {
+		return static_cast<const MetaIterable *>(unifiedType->getMetaInterface(internal_::mikMetaIterable));
+	}
+
+	const MetaStreaming * getMetaStreaming() const {
+		return static_cast<const MetaStreaming *>(unifiedType->getMetaInterface(internal_::mikMetaStreaming));
+	}
+
+	const MetaMappable * getMetaMappable() const {
+		return static_cast<const MetaMappable *>(unifiedType->getMetaInterface(internal_::mikMetaMap));
+	}
+
+	const void * getMetaUser() const {
+		return static_cast<const void *>(unifiedType->getMetaInterface(internal_::mikMetaUser));
+	}
+
+	bool equal(const MetaType * other) const;
+	int compare(const MetaType * other) const;
+
+	const MetaType * getUpType() const;
+	const MetaType * getUpType(const int i) const;
+	int getUpTypeCount() const noexcept;
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
@@ -190,10 +221,6 @@ private:
 	) noexcept;
 
 	void * constructData(VariantData * data, const void * copyFrom) const;
-	
-	const internal_::UnifiedType * getUnifiedType() const noexcept {
-		return unifiedType;
-	}
 	
 	const void * getRawType() const noexcept {
 		return (const void *)doGetUnifiedData;

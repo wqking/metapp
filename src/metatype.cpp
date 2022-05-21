@@ -149,7 +149,7 @@ TristateBool doCastPointerReference(
 	return TristateBool::unknown;
 }
 
-const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
+const void * UnifiedType::getMetaInterface(const internal_::MetaInterfaceKind kind) const
 {
 	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
 		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
@@ -308,61 +308,6 @@ int MetaType::getUpTypeCount() const noexcept
 	return (int)(size_t)upTypeData.upTypeList[0];
 }
 
-TypeKind MetaType::getTypeKind() const noexcept
-{
-	return getUnifiedType()->getTypeKind();
-}
-
-bool MetaType::isVoid() const noexcept
-{
-	return getTypeKind() == tkVoid;
-}
-
-const MetaClass * MetaType::getMetaClass() const
-{
-	return getUnifiedType()->getMetaClass();
-}
-
-const MetaCallable * MetaType::getMetaCallable() const
-{
-	return getUnifiedType()->getMetaCallable();
-}
-
-const MetaAccessible * MetaType::getMetaAccessible() const
-{
-	return getUnifiedType()->getMetaAccessible();
-}
-
-const MetaEnum * MetaType::getMetaEnum() const
-{
-	return getUnifiedType()->getMetaEnum();
-}
-
-const MetaIndexable * MetaType::getMetaIndexable() const
-{
-	return getUnifiedType()->getMetaIndexable();
-}
-
-const MetaIterable * MetaType::getMetaIterable() const
-{
-	return getUnifiedType()->getMetaIterable();
-}
-
-const MetaStreaming * MetaType::getMetaStreaming() const
-{
-	return getUnifiedType()->getMetaStreaming();
-}
-
-const MetaMappable * MetaType::getMetaMappable() const
-{
-	return getUnifiedType()->getMetaMappable();
-}
-
-const void * MetaType::getMetaUser() const
-{
-	return getUnifiedType()->getMetaUser();
-}
-
 void * MetaType::construct() const
 {
 	return constructData(nullptr, nullptr);
@@ -375,22 +320,22 @@ void * MetaType::copyConstruct(const void * copyFrom) const
 
 void * MetaType::constructData(VariantData * data, const void * copyFrom) const
 {
-	return getUnifiedType()->constructData(data, copyFrom);
+	return unifiedType->constructData(data, copyFrom);
 }
 
 void MetaType::destroy(void * instance) const
 {
-	getUnifiedType()->destroy(instance);
+	unifiedType->destroy(instance);
 }
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
 {
-	return getUnifiedType()->cast(result, value, toMetaType);
+	return unifiedType->cast(result, value, toMetaType);
 }
 
 bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
 {
-	return getUnifiedType()->castFrom(result, value, fromMetaType);
+	return unifiedType->castFrom(result, value, fromMetaType);
 }
 
 bool commonCast(
