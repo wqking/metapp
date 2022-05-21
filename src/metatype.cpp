@@ -149,56 +149,6 @@ TristateBool doCastPointerReference(
 	return TristateBool::unknown;
 }
 
-TypeKind UnifiedType::getTypeKind() const noexcept
-{
-	return typeKind;
-}
-
-const MetaClass * UnifiedType::getMetaClass() const
-{
-	return static_cast<const MetaClass *>(doGetMetaInterface(internal_::mikMetaClass));
-}
-
-const MetaCallable * UnifiedType::getMetaCallable() const
-{
-	return static_cast<const MetaCallable *>(doGetMetaInterface(internal_::mikMetaCallable));
-}
-
-const MetaAccessible * UnifiedType::getMetaAccessible() const
-{
-	return static_cast<const MetaAccessible *>(doGetMetaInterface(internal_::mikMetaAccessible));
-}
-
-const MetaEnum * UnifiedType::getMetaEnum() const
-{
-	return static_cast<const MetaEnum *>(doGetMetaInterface(internal_::mikMetaEnum));
-}
-
-const MetaIndexable * UnifiedType::getMetaIndexable() const
-{
-	return static_cast<const MetaIndexable *>(doGetMetaInterface(internal_::mikMetaIndexable));
-}
-
-const MetaIterable * UnifiedType::getMetaIterable() const
-{
-	return static_cast<const MetaIterable *>(doGetMetaInterface(internal_::mikMetaIterable));
-}
-
-const MetaStreaming * UnifiedType::getMetaStreaming() const
-{
-	return static_cast<const MetaStreaming *>(doGetMetaInterface(internal_::mikMetaStreaming));
-}
-
-const MetaMappable * UnifiedType::getMetaMappable() const
-{
-	return static_cast<const MetaMappable *>(doGetMetaInterface(internal_::mikMetaMap));
-}
-
-const void * UnifiedType::getMetaUser() const
-{
-	return static_cast<const void *>(doGetMetaInterface(internal_::mikMetaUser));
-}
-
 const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind kind) const
 {
 	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {

@@ -299,17 +299,45 @@ private:
 
 	~UnifiedType() = default;
 
-	TypeKind getTypeKind() const noexcept;
+	TypeKind getTypeKind() const noexcept {
+		return typeKind;
+	}
 
-	const MetaClass * getMetaClass() const;
-	const MetaCallable * getMetaCallable() const;
-	const MetaAccessible * getMetaAccessible() const;
-	const MetaEnum * getMetaEnum() const;
-	const MetaIndexable * getMetaIndexable() const;
-	const MetaIterable * getMetaIterable() const;
-	const MetaStreaming * getMetaStreaming() const;
-	const MetaMappable * getMetaMappable() const;
-	const void * getMetaUser() const;
+	const MetaClass * getMetaClass() const {
+		return static_cast<const MetaClass *>(doGetMetaInterface(mikMetaClass));
+	}
+
+	const MetaCallable * getMetaCallable() const {
+		return static_cast<const MetaCallable *>(doGetMetaInterface(mikMetaCallable));
+	}
+
+	const MetaAccessible * getMetaAccessible() const {
+		return static_cast<const MetaAccessible *>(doGetMetaInterface(mikMetaAccessible));
+	}
+
+	const MetaEnum * getMetaEnum() const {
+		return static_cast<const MetaEnum *>(doGetMetaInterface(mikMetaEnum));
+	}
+
+	const MetaIndexable * getMetaIndexable() const {
+		return static_cast<const MetaIndexable *>(doGetMetaInterface(mikMetaIndexable));
+	}
+
+	const MetaIterable * getMetaIterable() const {
+		return static_cast<const MetaIterable *>(doGetMetaInterface(mikMetaIterable));
+	}
+
+	const MetaStreaming * getMetaStreaming() const {
+		return static_cast<const MetaStreaming *>(doGetMetaInterface(mikMetaStreaming));
+	}
+
+	const MetaMappable * getMetaMappable() const {
+		return static_cast<const MetaMappable *>(doGetMetaInterface(mikMetaMap));
+	}
+
+	const void * getMetaUser() const {
+		return static_cast<const void *>(doGetMetaInterface(mikMetaUser));
+	}
 
 	void * constructData(MetaTypeData * data, const void * copyFrom) const;
 
