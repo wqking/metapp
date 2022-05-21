@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METATYPEDATA_H_969872685611
-#define METAPP_METATYPEDATA_H_969872685611
+#ifndef METAPP_VARIANTDATA_H_969872685611
+#define METAPP_VARIANTDATA_H_969872685611
 
 #include "metapp/exception.h"
 #include "metapp/implement/internal/typeutil_i.h"
@@ -37,11 +37,11 @@ constexpr T maxOf(T a, T b)
 
 } // namespace internal_
 
-class MetaTypeData
+class VariantData
 {
 private:
 	static constexpr size_t bufferSize = internal_::maxOf(sizeof(long long), internal_::maxOf(sizeof(long double), sizeof(void *)));
-	static_assert(bufferSize >= sizeof(int), "MetaTypeData, wrong bufferSize");
+	static_assert(bufferSize >= sizeof(int), "VariantData, wrong bufferSize");
 
 	template <typename T>
 	using FitBuffer = std::integral_constant<bool,
@@ -57,7 +57,7 @@ private:
 	static constexpr uint8_t storageReference = 4;
 
 public:
-	MetaTypeData()
+	VariantData()
 		: object(), buffer()
 	{
 	}
@@ -82,30 +82,14 @@ public:
 		setStorageType(storageReference);
 	}
 
-	void * getAddress() const {
-		switch(getStorageType()) {
-		case storageObject:
-			return (void *)(object.get());
-
-		case storageBuffer:
-			return (void *)(buffer.data());
-
-		case storageSharedPtr:
-			return (void *)&object;
-
-		case storageReference:
-			return *(void **)(buffer.data());
-		}
-
-		return nullptr;
-	}
+	void * getAddress() const;
 
 	void reset() {
 		setStorageType(storageNone);
 		object.reset();
 	}
 
-	void swap(MetaTypeData & other) noexcept {
+	void swap(VariantData & other) noexcept {
 		object.swap(other.object);
 		buffer.swap(other.buffer);
 	}
@@ -159,6 +143,7 @@ private:
 	uint8_t getStorageType() const {
 		return buffer[bufferSize];
 	}
+
 	void setStorageType(const uint8_t value) {
 		buffer[bufferSize] = value;
 	}
@@ -168,7 +153,7 @@ private:
 	std::array<uint8_t, bufferSize + 1> buffer;
 };
 
-inline void swap(MetaTypeData & a, MetaTypeData & b) noexcept
+inline void swap(VariantData & a, VariantData & b) noexcept
 {
 	a.swap(b);
 }

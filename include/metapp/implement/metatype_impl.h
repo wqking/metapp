@@ -144,7 +144,7 @@ const UnifiedType * doGetUnifiedType()
 } // namespace internal_
 
 template <typename T>
-inline void * CommonDeclareMetaType<T>::constructData(MetaTypeData * data, const void * copyFrom)
+inline void * CommonDeclareMetaType<T>::constructData(VariantData * data, const void * copyFrom)
 {
 	if(data != nullptr) {
 		data->construct<Underlying>(copyFrom);

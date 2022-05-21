@@ -75,3 +75,8 @@ TEST_CASE("docConstructor")
 	//code
 }
 
+/*desc
+One may wonder why invoking a constructor doesn't return a Variant that manages the memory of the created instance. The reason is,
+if the constructor returns Variant that owns the instance, then there is no way to take away the ownership from the Variant,
+then the created object can't be managed by other mechanism such as a std::unique_ptr.
+desc*/

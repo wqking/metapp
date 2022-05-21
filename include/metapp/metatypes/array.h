@@ -42,7 +42,7 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 		return &metaIndexable;
 	}
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(VariantData * data, const void * copyFrom) {
 		return doConstructData<length != MetaIndexable::unknowSize>(data, copyFrom);
 	}
 
@@ -53,7 +53,7 @@ private:
 	};
 
 	template <bool hasLength>
-	static void * doConstructData(MetaTypeData * data, const void * copyFrom, typename std::enable_if<hasLength>::type * = nullptr) {
+	static void * doConstructData(VariantData * data, const void * copyFrom, typename std::enable_if<hasLength>::type * = nullptr) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
 				data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
@@ -74,7 +74,7 @@ private:
 	}
 
 	template <bool hasLength>
-	static void * doConstructData(MetaTypeData * /*data*/, const void * /*copyFrom*/, typename std::enable_if<! hasLength>::type * = nullptr) {
+	static void * doConstructData(VariantData * /*data*/, const void * /*copyFrom*/, typename std::enable_if<! hasLength>::type * = nullptr) {
 		errorNotConstructible();
 		return nullptr;
 	}

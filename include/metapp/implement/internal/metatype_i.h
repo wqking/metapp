@@ -274,7 +274,7 @@ struct MakeMetaInterfaceData
 
 struct UnifiedMetaTable
 {
-	void * (*constructData)(MetaTypeData * data, const void * copyFrom);
+	void * (*constructData)(VariantData * data, const void * copyFrom);
 
 	void (*destroy)(void * instance);
 
@@ -339,7 +339,7 @@ private:
 		return static_cast<const void *>(doGetMetaInterface(mikMetaUser));
 	}
 
-	void * constructData(MetaTypeData * data, const void * copyFrom) const;
+	void * constructData(VariantData * data, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
 

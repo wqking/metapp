@@ -19,7 +19,7 @@
 
 #include "metapp/compiler.h"
 #include "metapp/typekind.h"
-#include "metapp/metatypedata.h"
+#include "metapp/variantdata.h"
 #include "metapp/exception.h"
 
 #include "metapp/implement/variant_intf.h"
@@ -189,7 +189,7 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
-	void * constructData(MetaTypeData * data, const void * copyFrom) const;
+	void * constructData(VariantData * data, const void * copyFrom) const;
 	
 	const internal_::UnifiedType * getUnifiedType() const noexcept {
 		return unifiedType;
@@ -235,7 +235,7 @@ public:
 		| (std::is_floating_point<T>::value ? tfFloat : 0)
 	;
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom);
+	static void * constructData(VariantData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
@@ -265,7 +265,7 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom);
+	static void * constructData(VariantData * data, const void * copyFrom);
 	static void destroy(void * instance);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);

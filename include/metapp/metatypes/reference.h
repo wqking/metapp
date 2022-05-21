@@ -29,7 +29,7 @@ struct DeclareMetaTypeBase <T &>
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(VariantData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			data->constructReference(copyFrom);
 		}
@@ -52,7 +52,7 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> >
 
 	using WrapperType = std::reference_wrapper<T>;
 
-	static void * constructData(MetaTypeData * data, const void * copyFrom) {
+	static void * constructData(VariantData * data, const void * copyFrom) {
 		if(data != nullptr) {
 			data->constructReference(&(T &)*(WrapperType *)copyFrom);
 		}

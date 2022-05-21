@@ -17,7 +17,7 @@
 #ifndef METAPP_VARIANT_INTF_H_969872685611
 #define METAPP_VARIANT_INTF_H_969872685611
 
-#include "metapp/metatypedata.h"
+#include "metapp/variantdata.h"
 #include "metapp/typekind.h"
 #include "metapp/implement/internal/typeutil_i.h"
 #include "metapp/exception.h"
@@ -123,7 +123,7 @@ public:
 
 private:
 	const MetaType * metaType;
-	MetaTypeData data;
+	VariantData data;
 };
 
 void swap(Variant & a, Variant & b) noexcept;

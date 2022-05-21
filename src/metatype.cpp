@@ -167,7 +167,7 @@ const void * UnifiedType::doGetMetaInterface(const internal_::MetaInterfaceKind 
 	return nullptr;
 }
 
-void * UnifiedType::constructData(MetaTypeData * data, const void * copyFrom) const
+void * UnifiedType::constructData(VariantData * data, const void * copyFrom) const
 {
 	return metaMethodTable.constructData(data, copyFrom);
 }
@@ -205,7 +205,7 @@ int compareTwoValues(T a, T b)
 } // namespace internal_
 
 
-void * DeclareMetaTypeVoidBase::constructData(MetaTypeData * /*data*/, const void * /*value*/)
+void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/)
 {
 	return nullptr;
 }
@@ -373,7 +373,7 @@ void * MetaType::copyConstruct(const void * copyFrom) const
 	return constructData(nullptr, copyFrom);
 }
 
-void * MetaType::constructData(MetaTypeData * data, const void * copyFrom) const
+void * MetaType::constructData(VariantData * data, const void * copyFrom) const
 {
 	return getUnifiedType()->constructData(data, copyFrom);
 }
