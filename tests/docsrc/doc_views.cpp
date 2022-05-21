@@ -24,8 +24,8 @@
 ## Overview
 
 `MetaItemView` and `BaseView` are STL-like containers that are used to view the underlying data.  
-`MetaItemView` is used when retrieve multiple `MetaItem`s from `MetaRepo` or `MetaClass`.  
-`BaseView` is used when retrieve base or derived classes from `MetaRepo`.  
+`MetaItemView` is used when retrieving multiple `MetaItem`s from `MetaRepo` or `MetaClass`.  
+`BaseView` is used when retrieving base or derived classes from `MetaRepo`.  
 
 ## Header
 

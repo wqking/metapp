@@ -19,7 +19,8 @@
   * [Call function](#a3_10)
 * [Documentations](#a2_6)
 * [Build the test code](#a2_7)
-* [Motivations](#a2_8)
+* [Known compiler related quirks](#a2_8)
+* [Motivations](#a2_9)
 <!--endtoc-->
 
 metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
@@ -27,33 +28,48 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 <a id="a2_1"></a>
 ## Highlight features
 
-- Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template, const-volatile qualifiers, and much more. Can you understand the type `char *(*(* * [][8])())[]` in 20 seconds? metapp can understand it in no time!   
-- Allow runtime generic programming. For example, we can access elements in a container, without knowing whether the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`, or `std::string`, or another container.  
+- **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
+const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * [][8])())[]` in 20 seconds?
+metapp can understand it, including every CV, pointer, array, function, etc, in no time!   
+- **Allow runtime generic programming.** For example, we can access elements in a container, without knowing whether
+the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`,
+or `std::string`, or another container.  
+- **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
+then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
+even `std::vector<std::list<std::vector<std::string> > >`.
 
 <a id="a2_2"></a>
 ## Facts and features
 
 - **Powerful**
-    - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers, and much more.
+    - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers,
+and much more.
     - Support runtime generic programming.
-    - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior, no template parameters are needed. All parameters and return values are passed via metapp::Variant.
+    - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
+no template parameters are needed. All parameters and return values are passed via metapp::Variant.
     - Automatically type conversion when getting/setting fields, invoking methods, etc.
     - Support multiple inheritance and hierarchy.
     - Support using in dynamic library (plugins).
 
 - **Flexible and easy to use**
     - Building meta data doesn't require preprocessor or any external tool. Only use native C++ code, no need macros.
+    - Very easy to reflect templates. We only need to reflect for the template rather than any instantiations, then we can
+get any instantiation information. Indeed there are built-in reflections for STL containers such std::vector, there is
+only one reflection for `std::vector`, then we can get any information for `std::vector<int>`, `std::vector<std::string>`, etc.
     - Non-intrusive. You don't need to change your code for reflection.
-    - Easy to reflect templates. Indeed there are built-in reflections for STL containers such std::vector.
-    - Loose coupled design. For example, constructors and member functions can be used without the class information.
-    - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead. If you don't use the meta data, no any performance overhead. If you build and use the meta data, you get trivial memory and performance overhead beside very powerful reflection system.
+    - Loose coupled design. For example, constructors and member functions can be used without coupling with the class information.
+    - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead.
+If you don't use the meta data, no any performance overhead. If you build and use the meta data,
+you get trivial memory and performance overhead beside very powerful reflection system.
     - Doesn't require C++ RTTI.
     - Written in standard and portable C++, only require C++11, and support later C++ standard.
     - Cross platforms, cross compilers.
 
 - **Language features that can be reflected**
+    - Const volatile qualifiers, include top level CV, and CV in pointer, array and member function.
     - Pointer, reference.
     - Classes and nested inner classes.
+    - Templates.
     - Accessibles (global variable, member data, property with getter/setter, etc).
     - Callables (global function, member function, constructor, std::function, etc).
     - Overloaded function.
@@ -63,6 +79,15 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
     - Constants in any data type.
     - Namespace simulation.
     - Array, multi-dimensional array.
+
+- **Built-in reflected meta types**
+    - Primary types (void, bool, int, unsigned int, etc).
+    - STL strings (std::string, std::wstring).
+    - STL smart pointers (std::shared_ptr, std::unique_ptr, std::weak_ptr).
+    - STL containers (std::vector, std::list, std::map, etc).
+    - Callables (free function, member function, std::function, constructor, overloaded function, default arguments function, variadic function, etc).
+    - Many other meta types.
+    - Adding new meta types is easy.
 
 <a id="a2_3"></a>
 ## Basic information
@@ -311,6 +336,15 @@ Go to folder `tests/build`, then run `make` with different target.
 - `make mingw_coverage` #build using MinGW and generate code coverage report
 
 <a id="a2_8"></a>
+## Known compiler related quirks
+
+MSVC 2022 and 2019, can build the CMake generated test projects and the tests run correctly in Debug and RelWithDebugInfo
+configurations. But some tests fails in Release mode when incremental linking is disabled.  
+Adding /Debug option to linking which generates debug information makes the tests success.  
+Without /Debug option, but enabling incremental linking, will cause the tests success too.  
+So if metapp shows weird behavior in MSVC, try to enable incremental linking.
+
+<a id="a2_9"></a>
 ## Motivations
 
 I (wqking) developed `cpgf` library in more than 12 years ago. `cpgf` works, but it has several serious problems.

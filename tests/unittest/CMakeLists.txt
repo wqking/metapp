@@ -30,7 +30,7 @@ endif()
 endif()
 
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "/bigobj /EHsc")
+	target_link_options(${TARGET_TEST} PRIVATE "/INCREMENTAL")
 endif()
 
 add_test(NAME ${TARGET_TEST} COMMAND ${TARGET_TEST})

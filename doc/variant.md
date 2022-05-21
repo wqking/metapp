@@ -175,7 +175,7 @@ static Variant takeFrom(const MetaType * metaType, void * instance);
 Return a Variant which data is the object pointed by `instance`, type is `metaType`.  
 `instance` is a pointer that points to an object allocated on the heap,
 the constructed Variant will take and manage the ownership of `instance`, so `instance` should not be freed any elsewhere.  
-`metaType` should the type that `instance` points to, not the pointer type.
+`metaType` should be the type that `instance` points to, not the pointer type.
 The returned `Variant` is a value object, not a pointer.
 
 **Example**  

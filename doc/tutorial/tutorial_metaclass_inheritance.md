@@ -41,7 +41,7 @@ struct Grandson2 : Son1, Parent2
 
 If we declare meta type (DeclareMetaType) for any classes, we can register the base classes in `setup` function.  
 `setup` is a static function in DeclareMetaType. It will be called when the meta type is used,
-and it's guaranteed to be called only once.  
+and it's guaranteed to be called only once even in multi threading.  
 `setup` is a good place to register the base classes.
 
 ```c++

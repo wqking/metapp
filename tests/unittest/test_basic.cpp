@@ -28,6 +28,6 @@
 
 TEST_CASE("play camp")
 {
-	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char *(*(* * [][8])())[]>());
+	//metapp::dumpMetaType(std::cout, metapp::getMetaType<char const *(*(* volatile * [][8])())[]>());
 }
 

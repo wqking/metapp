@@ -67,6 +67,6 @@ To call `greeting()`, we can write,
 ASSERT(object.get<DcClass &>().greeting("world") == "Hello, world");
 ```
 
-One may wonder why invoking a constructor doesn't return a Variant that manage the memory of the created instance. The reason is,
+One may wonder why invoking a constructor doesn't return a Variant that manages the memory of the created instance. The reason is,
 if the constructor returns Variant that owns the instance, then there is no way to take away the ownership from the Variant,
 then the created object can't be managed by other mechanism such as a std::unique_ptr.
