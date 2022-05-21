@@ -286,26 +286,17 @@ int MetaType::compare(const MetaType * other) const
 
 const MetaType * MetaType::getUpType() const
 {
-	if(upTypeData.upTypeList == nullptr) {
-		return nullptr;
-	}
-	return upTypeData.upTypeList[1];
+	return upTypeData.count == 0 ? nullptr : upTypeData.upTypeList[0];
 }
 
 const MetaType * MetaType::getUpType(const int i) const
 {
-	if(upTypeData.upTypeList == nullptr) {
-		return nullptr;
-	}
-	return upTypeData.upTypeList[i + 1];
+	return upTypeData.upTypeList[i];
 }
 
 int MetaType::getUpTypeCount() const noexcept
 {
-	if(upTypeData.upTypeList == nullptr) {
-		return 0;
-	}
-	return (int)(size_t)upTypeData.upTypeList[0];
+	return upTypeData.count;
 }
 
 void * MetaType::construct() const

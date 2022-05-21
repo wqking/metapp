@@ -287,6 +287,7 @@ struct UnifiedMetaTable
 
 struct UpTypeData
 {
+	int count;
 	const MetaType ** upTypeList;
 };
 

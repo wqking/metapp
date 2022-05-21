@@ -33,8 +33,7 @@ struct UpTypeGetter <TypeList<Type0, Types...> >
 {
 	static const MetaType ** makeUpTypeList()
 	{
-		static std::array<const MetaType *, 1 + sizeof...(Types) + 1> upTypeList {
-			(const MetaType *)(sizeof...(Types) + 1),
+		static std::array<const MetaType *, sizeof...(Types) + 1> upTypeList {
 			getMetaType<Type0>(),
 			getMetaType<Types>()...,
 		};
@@ -43,6 +42,7 @@ struct UpTypeGetter <TypeList<Type0, Types...> >
 
 	static UpTypeData getUpType() {
 		return {
+			(int)(sizeof...(Types) + 1),
 			makeUpTypeList()
 		};
 	}
@@ -53,6 +53,7 @@ struct UpTypeGetter <TypeList<> >
 {
 	static UpTypeData getUpType() {
 		return {
+			0,
 			nullptr
 		};
 	}
