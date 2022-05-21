@@ -149,7 +149,7 @@ TristateBool doCastPointerReference(
 	return TristateBool::unknown;
 }
 
-const void * UnifiedType::getMetaInterface(const internal_::MetaInterfaceKind kind) const
+const void * UnifiedType::getMetaInterface(const MetaInterfaceKind kind) const
 {
 	if((kind & metaMethodTable.metaInterfaceData.kinds) != 0) {
 		if(metaMethodTable.metaInterfaceData.items[0].kind == kind) {
@@ -228,13 +228,11 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 MetaType::MetaType(
 		const void * (*doGetUnifiedData)(),
 		const internal_::UnifiedType * unifiedType,
-		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept
 	:
 		doGetUnifiedData(doGetUnifiedData),
 		unifiedType(unifiedType),
-		upTypeData(upTypeData),
 		typeFlags(typeFlags)
 {
 }
@@ -286,17 +284,17 @@ int MetaType::compare(const MetaType * other) const
 
 const MetaType * MetaType::getUpType() const
 {
-	return upTypeData.count == 0 ? nullptr : upTypeData.upTypeList[0];
+	return unifiedType->upTypeData.count == 0 ? nullptr : unifiedType->upTypeData.upTypeList[0];
 }
 
 const MetaType * MetaType::getUpType(const int i) const
 {
-	return upTypeData.upTypeList[i];
+	return unifiedType->upTypeData.upTypeList[i];
 }
 
 int MetaType::getUpTypeCount() const noexcept
 {
-	return upTypeData.count;
+	return unifiedType->upTypeData.count;
 }
 
 void * MetaType::construct() const

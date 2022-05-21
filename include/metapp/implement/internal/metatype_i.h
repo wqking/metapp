@@ -317,11 +317,13 @@ private:
 private:
 	constexpr UnifiedType(
 		const TypeKind typeKind,
-		const internal_::UnifiedMetaTable & metaMethodTable
+		const UnifiedMetaTable & metaMethodTable,
+		const UpTypeData & upTypeData
 	) noexcept
 		:
-		typeKind(typeKind),
-		metaMethodTable(metaMethodTable)
+			typeKind(typeKind),
+			metaMethodTable(metaMethodTable),
+			upTypeData(upTypeData)
 	{
 	}
 
@@ -332,6 +334,7 @@ private:
 private:
 	TypeKind typeKind;
 	UnifiedMetaTable metaMethodTable;
+	UpTypeData upTypeData;
 };
 
 template <typename P>

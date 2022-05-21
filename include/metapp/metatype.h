@@ -216,7 +216,6 @@ private:
 	MetaType(
 		const void * (*doGetUnifiedData)(),
 		const internal_::UnifiedType * unifiedType,
-		const internal_::UpTypeData & upTypeData,
 		const TypeFlags typeFlags
 	) noexcept;
 
@@ -235,7 +234,6 @@ private:
 private:
 	const void * (*doGetUnifiedData)();
 	const internal_::UnifiedType * unifiedType;
-	internal_::UpTypeData upTypeData;
 	TypeFlags typeFlags;
 };
 

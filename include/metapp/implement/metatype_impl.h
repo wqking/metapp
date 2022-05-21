@@ -96,9 +96,6 @@ const MetaType * doGetMetaTypeStorage()
 	static const MetaType metaType(
 		&unifiedDataGetter<typename DeepRemoveCv<T>::Type>,
 		doGetUnifiedType<typename std::remove_cv<T>::type>(),
-		UpTypeGetter<
-			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
-		>::getUpType(),
 		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags | CommonDeclareMetaType<T>::typeFlags
 	);
 	return &metaType;
@@ -137,7 +134,10 @@ const UnifiedType * doGetUnifiedType()
 			SelectDeclareClass<T, HasMember_castFrom<M>::value>::castFrom,
 
 			MakeMetaInterfaceData<T>::getMetaInterfaceData(),
-		}
+		},
+		UpTypeGetter<
+			typename SelectDeclareClass<T, HasMember_UpType<M>::value>::UpType
+		>::getUpType()
 	);
 	return &unifiedType;
 }
