@@ -242,6 +242,22 @@ If any interface is not implemented by the meta type, `nullptr` is returned.
 MetaType has very few public functions, most functions are in the meta interfaces.  
 Please see the document for each meta interface for more detailed information.  
 
+#### Check meta interfaces
+
+```c++
+bool hasMetaClass() const;
+bool hasMetaCallable() const;
+bool hasMetaAccessible() const;
+bool hasMetaEnum() const;
+bool hasMetaIndexable() const;
+bool hasMetaIterable() const;
+bool hasMetaStreaming() const;
+bool hasMetaMappable() const;
+bool hasMetaUser() const;
+```
+
+Each function returns true if the MetaType implements the interface.  
+
 #### construct
 
 ```c++

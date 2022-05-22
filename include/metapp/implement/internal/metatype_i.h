@@ -57,7 +57,7 @@ static constexpr MetaInterfaceKind mikMetaEnum = (mikStart << 3);
 static constexpr MetaInterfaceKind mikMetaIndexable = (mikStart << 4);
 static constexpr MetaInterfaceKind mikMetaIterable = (mikStart << 5);
 static constexpr MetaInterfaceKind mikMetaStreaming = (mikStart << 6);
-static constexpr MetaInterfaceKind mikMetaMap = (mikStart << 7);
+static constexpr MetaInterfaceKind mikMetaMappable = (mikStart << 7);
 static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 8);
 
 static constexpr uint32_t metaInterfaceCountMask = 0xff;
@@ -181,7 +181,7 @@ struct MakeMetaInterfaceItem_MetaStreaming
 
 struct MakeMetaInterfaceItem_MetaMap
 {
-	static constexpr MetaInterfaceKind kind = mikMetaMap;
+	static constexpr MetaInterfaceKind kind = mikMetaMappable;
 
 	template <typename T>
 	static constexpr MetaInterfaceItem make() {
@@ -313,6 +313,10 @@ private:
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 
 	const void * getMetaInterface(const MetaInterfaceKind kind) const;
+
+	bool hasMetaInterface(const MetaInterfaceKind kind) const {
+		return (kind & metaMethodTable.metaInterfaceData.kinds) != 0;
+	}
 
 private:
 	constexpr UnifiedType(

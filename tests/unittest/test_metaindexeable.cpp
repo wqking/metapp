@@ -33,8 +33,17 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable get", "", TestTypes_Indexables)
 	using ValueType = typename Container::value_type;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container container = dataProvider.getContainer();
-	metapp::Variant v(container);
-	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	metapp::Variant v;
+	SECTION("value") {
+		v = container;
+	}
+	SECTION("pointer") {
+		v = &container;
+	}
+	SECTION("reference") {
+		v = metapp::Variant::reference(container);
+	}
+	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(metaIndexable->getSize(v) == container.size());
 	for(size_t i = 0; i < container.size(); ++i) {
@@ -48,11 +57,22 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set", "", TestTypes_Indexables)
 	using ValueType = typename Container::value_type;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container container = dataProvider.getContainer();
-	metapp::Variant v(container);
-	REQUIRE(v.getMetaType()->getTypeKind() == dataProvider.getTypeKind());
-	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getValueTypeKind());
+
+	metapp::Variant v;
+	SECTION("value") {
+		v = container;
+	}
+	SECTION("pointer") {
+		v = &container;
+	}
+	SECTION("reference") {
+		v = metapp::Variant::reference(container);
+	}
+
+	REQUIRE(metapp::getReferredMetaType(v)->getTypeKind() == dataProvider.getTypeKind());
+	REQUIRE(metapp::getReferredMetaType(v)->getUpType()->getTypeKind() == dataProvider.getValueTypeKind());
 	
-	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(metaIndexable->getSize(v) == container.size());
 

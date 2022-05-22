@@ -190,11 +190,47 @@ public:
 	}
 
 	const MetaMappable * getMetaMappable() const {
-		return static_cast<const MetaMappable *>(unifiedType->getMetaInterface(internal_::mikMetaMap));
+		return static_cast<const MetaMappable *>(unifiedType->getMetaInterface(internal_::mikMetaMappable));
 	}
 
 	const void * getMetaUser() const {
 		return static_cast<const void *>(unifiedType->getMetaInterface(internal_::mikMetaUser));
+	}
+
+	bool hasMetaClass() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaClass);
+	}
+
+	bool hasMetaCallable() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaCallable);
+	}
+
+	bool hasMetaAccessible() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaAccessible);
+	}
+
+	bool hasMetaEnum() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaEnum);
+	}
+
+	bool hasMetaIndexable() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaIndexable);
+	}
+
+	bool hasMetaIterable() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaIterable);
+	}
+
+	bool hasMetaStreaming() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaStreaming);
+	}
+
+	bool hasMetaMappable() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaMappable);
+	}
+
+	bool hasMetaUser() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaUser);
 	}
 
 	bool equal(const MetaType * other) const;

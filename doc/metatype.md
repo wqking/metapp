@@ -17,10 +17,11 @@
   * [isVoid](#a4_7)
   * [Get type attributes](#a4_8)
   * [Get meta interfaces](#a4_9)
-  * [construct](#a4_10)
-  * [copyConstruct](#a4_11)
-  * [destroy](#a4_12)
-  * [getModule](#a4_13)
+  * [Check meta interfaces](#a4_10)
+  * [construct](#a4_11)
+  * [copyConstruct](#a4_12)
+  * [destroy](#a4_13)
+  * [getModule](#a4_14)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -245,6 +246,23 @@ MetaType has very few public functions, most functions are in the meta interface
 Please see the document for each meta interface for more detailed information.  
 
 <a id="a4_10"></a>
+#### Check meta interfaces
+
+```c++
+bool hasMetaClass() const;
+bool hasMetaCallable() const;
+bool hasMetaAccessible() const;
+bool hasMetaEnum() const;
+bool hasMetaIndexable() const;
+bool hasMetaIterable() const;
+bool hasMetaStreaming() const;
+bool hasMetaMappable() const;
+bool hasMetaUser() const;
+```
+
+Each function returns true if the MetaType implements the interface.  
+
+<a id="a4_11"></a>
 #### construct
 
 ```c++
@@ -255,7 +273,7 @@ Similar to C++ code `new T()`.
 Allocate and initialize an object on the heap, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-<a id="a4_11"></a>
+<a id="a4_12"></a>
 #### copyConstruct
 
 ```c++
@@ -266,7 +284,7 @@ Similar to C++ code `new T(anotherObject)`.
 Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
-<a id="a4_12"></a>
+<a id="a4_13"></a>
 #### destroy
 
 ```c++
@@ -275,7 +293,7 @@ void destroy(void * instance) const;
 
 Free an object constructed by `construct` or `copyConstruct`.  
 
-<a id="a4_13"></a>
+<a id="a4_14"></a>
 #### getModule
 
 ```c++

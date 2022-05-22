@@ -272,7 +272,8 @@ Let's define a `concat` function that processes any Variant that implements meta
 ```c++
 std::string concat(const metapp::Variant & container)
 {
-    const metapp::MetaIterable * metaIterable = metapp::getNonReferenceMetaType(container.depointer())->getMetaIterable();
+    const metapp::MetaIterable * metaIterable
+        = metapp::getNonReferenceMetaType(container.depointer())->getMetaIterable();
     if(metaIterable == nullptr) {
         return "";
    }

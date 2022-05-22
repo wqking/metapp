@@ -33,20 +33,16 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 	using ValueType = typename Container::value_type;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container container = dataProvider.getContainer();
+	
 	metapp::Variant v;
-	const int type = GENERATE(0, 1, 2);
-	switch(type) {
-	case 0:
-		v = metapp::Variant(container);
-		break;
-
-	case 1:
-		v = metapp::Variant(&container);
-		break;
-
-	case 2:
-		v = metapp::Variant::create<const Container &>(container);
-		break;
+	SECTION("value") {
+		v = container;
+	}
+	SECTION("pointer") {
+		v = &container;
+	}
+	SECTION("reference") {
+		v = metapp::Variant::reference(container);
 	}
 
 	std::vector<ValueType> resultList;
@@ -57,10 +53,8 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 		return true;
 	});
 	REQUIRE((int)resultList.size() == getContainerSize(container));
-	for(size_t i = 0; i < resultList.size(); ++i) {
-		auto it = container.begin();
-		std::advance(it, i);
-		REQUIRE(resultList.at(i) == *it);
+	for(auto & resultItem : resultList) {
+		REQUIRE(std::find(container.begin(), container.end(), resultItem) != container.end());
 	}
 }
 
