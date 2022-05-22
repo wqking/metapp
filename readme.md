@@ -6,7 +6,7 @@
 * [Facts and features](#a2_2)
 * [Basic information](#a2_3)
   * [License](#a3_1)
-  * [Version 0.1 and status](#a3_2)
+  * [Version 0.1.0 and status](#a3_2)
   * [Source code](#a3_3)
   * [Supported compilers](#a3_4)
   * [C++ standard requirements](#a3_5)
@@ -99,16 +99,18 @@ you get trivial memory and performance overhead beside very powerful reflection 
 Apache License, Version 2.0  
 
 <a id="a3_2"></a>
-### Version 0.1 and status
+### Version 0.1.0 and status
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
-Currently the architecture is almost stable, though minor parts may be refactored.  
-Most code should work correctly.  
+The first stable release will be v1.0.0. 
 
 To put the library to first release, we need to,   
 1. Add more test.
-2. Complete the documentations.
+2. Finish the metapp based Lua bind project (under development).
+3. Complete the documentations.
+
+You are welcome to try the project and give feedback. Your participation will help to make the development faster and better.
 
 <a id="a3_3"></a>
 ### Source code
@@ -172,7 +174,7 @@ message(FATAL_ERROR "metapp library is not found")
 endif(eventpp_FOUND)
 ```
 
-Note: when using the method 3 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
+Note: when using the method 2 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
 
@@ -265,7 +267,7 @@ ASSERT(result.get<int>() == 17);
 
 <a id="a3_11"></a>
 ### Run time generic STL container
-Let's define a `concat` function that process any Variant that implements meta interface MetaIterable
+Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 
 ```c++
 std::string concat(const metapp::Variant & container)
