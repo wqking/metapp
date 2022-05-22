@@ -17,11 +17,13 @@
 #include "testutil.h"
 
 #include "metapp/allmetatypes.h"
+#include "metapp/interfaces/metaiterable.h"
 
 #include <cstring>
+#include <sstream>
 
 /*desc
-# metapp -- C++ library for runtime reflection and meta types
+# metapp -- C++ library for runtime reflection, introspection and meta types
 
 metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
 
@@ -93,16 +95,18 @@ even `std::vector<std::list<std::vector<std::string> > >`.
 
 Apache License, Version 2.0  
 
-### Version 0.1 and status
+### Version 0.1.0 and status
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
-Currently the architecture is almost stable, though minor parts may be refactored.  
-Most code should work correctly.  
+The first stable release will be v1.0.0. 
 
 To put the library to first release, we need to,   
 1. Add more test.
-2. Complete the documentations.
+2. Finish the metapp based Lua bind project (under development).
+3. Complete the documentations.
+
+You are welcome to try the project and give feedback. Your participation will help to make the development faster and better.
 
 ### Source code
 
@@ -160,7 +164,7 @@ message(FATAL_ERROR "metapp library is not found")
 endif(eventpp_FOUND)
 ```
 
-Note: when using the method 3 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
+Note: when using the method 2 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
 
@@ -239,7 +243,50 @@ ExampleFunc
     MyClass obj { 5 };
     // The second argument is the pointer to obj, it's required when invoking member function
     metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
-    ASSERT(result.get<int>() == 17);
+   ASSERT(result.get<int>() == 17);
+    //code
+}
+
+//desc ### Run time generic STL container
+//desc Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
+//code
+std::string concat(const metapp::Variant & container)
+{
+    const metapp::MetaIterable * metaIterable = metapp::getNonReferenceMetaType(container.depointer())->getMetaIterable();
+    if(metaIterable == nullptr) {
+        return "";
+   }
+    std::stringstream stream;
+    metaIterable->forEach(container, [&stream](const metapp::Variant & item) {
+        stream << item;
+        return true;
+    });
+    return stream.str();
+}
+//code
+
+ExampleFunc
+{
+    //code
+    //desc A std::vector of int.
+    std::vector<int> container1 { 1, 5, 9, 6, 7 };
+    //desc Construct a Variant with the vector.
+    metapp::Variant v1(container1);
+    //desc Concat the items in the vector.
+    ASSERT(concat(v1) == "15967");
+
+    //desc We can also use std::list. Any value can convert to Variant implicitly, so we can pass the container std::list on the fly.
+    ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
+
+    //desc Isn't cool we can use std::pair as a constainer?
+    ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
+    //desc std::tuple is suppported too, and we can use heterogeneous types.
+    ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
+
+    //desc we can even pass a pointer to the container to `concat`.
+    std::deque<int> container2 { 1, 2, 3 };
+    metapp::Variant v2(&container2);
+    ASSERT(concat(v2) == "123");
     //code
 }
 

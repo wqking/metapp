@@ -66,7 +66,7 @@ private:
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
-		return doGetAt(var, index, Sequence());
+		return doGetAt(var.depointer(), index, Sequence());
 	}
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
@@ -76,7 +76,7 @@ private:
 		}
 		else {
 			using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
-			doSetAt(var, index, value, Sequence());
+			doSetAt(var.depointer(), index, value, Sequence());
 		}
 	}
 
@@ -128,14 +128,14 @@ private:
 		internal_::assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
 	}
 
-	static void metaIterableForEach(const Variant & value, MetaIterable::Callback callback)
+	static void metaIterableForEach(const Variant & var, MetaIterable::Callback callback)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
-		doForEach(value, callback, Sequence());
+		doForEach(var.depointer(), callback, Sequence());
 	}
 
 	template <size_t ...Indexes>
-	static void doForEach(const Variant & value, MetaIterable::Callback callback, internal_::SizeConstantList<Indexes...>)
+	static void doForEach(const Variant & var, MetaIterable::Callback callback, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = bool (*)(const Variant & value, MetaIterable::Callback callback);
 
@@ -143,21 +143,21 @@ private:
 			&doForEachHelper<Indexes>...
 		};
 		for(auto func : funcList) {
-			if(! func(value, callback)) {
+			if(! func(var, callback)) {
 				break;
 			}
 		}
 	}
 
 	template <size_t index>
-	static bool doForEachHelper(const Variant & value, MetaIterable::Callback callback)
+	static bool doForEachHelper(const Variant & var, MetaIterable::Callback callback)
 	{
 		using TupleType = std::tuple<Types...>;
 
 		return callback(Variant::create<
 			typename std::tuple_element<index, TupleType>::type &
 			>(
-				std::get<index>(value.get<TupleType &>())
+				std::get<index>(var.get<TupleType &>())
 		));
 	}
 

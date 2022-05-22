@@ -92,6 +92,12 @@ TEST_CASE("Variant, output stream")
 		REQUIRE(ss.str() == s);
 	}
 
+	SECTION("const char *") {
+		metapp::Variant v("abc");
+		ss << v;
+		REQUIRE(ss.str() == "abc");
+	}
+
 }
 
 

@@ -33,17 +33,29 @@ namespace metapp_top_internal_ {
 // Putting these functions in metapp_top_internal_ will prevent ADL.
 
 template <typename U>
-inline void doStreamIn(std::istream & stream, metapp::Variant & value)
+inline void doStreamIn(std::istream & stream, metapp::Variant & value, std::true_type)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream >> *static_cast<M *>(value.getAddress());
 }
 
 template <typename U>
-inline void doStreamOut(std::ostream & stream, const metapp::Variant & value)
+inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
+{
+	metapp::errorUnsupported("No >> input streaming operator.");
+}
+
+template <typename U>
+inline void doStreamOut(std::ostream & stream, const metapp::Variant & value, std::true_type)
 {
 	using M = typename std::remove_reference<U>::type;
 	stream << *static_cast<const M *>(value.getAddress());
+}
+
+template <typename U>
+inline void doStreamOut(std::ostream & /*stream*/, const metapp::Variant & /*value*/, std::false_type)
+{
+	metapp::errorUnsupported("No << output streaming operator.");
 }
 
 } // namespace metapp_top_internal_
@@ -58,8 +70,8 @@ struct MetaStreamingBase
 template <typename T>
 struct MetaStreamingBase <T, typename std::enable_if<
 		! std::is_reference<T>::value
-		&& internal_::HasInputStreamOperator<T>::value
-		&& internal_::HasOutputStreamOperator<T>::value
+		&& (internal_::HasInputStreamOperator<T>::value
+		|| internal_::HasOutputStreamOperator<T>::value)
 	>::type>
 {
 public:
@@ -75,14 +87,16 @@ private:
 	static void streamIn(std::istream & stream, metapp::Variant & value) {
 		metapp_top_internal_::doStreamIn<T>(
 			stream,
-			value
+			value,
+			std::integral_constant<bool, internal_::HasInputStreamOperator<T>::value>()
 		);
 	}
 
 	static void streamOut(std::ostream & stream, const metapp::Variant & value) {
 		metapp_top_internal_::doStreamOut<T>(
 			stream,
-			value
+			value,
+			std::integral_constant<bool, internal_::HasOutputStreamOperator<T>::value>()
 		);
 	}
 

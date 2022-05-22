@@ -1,6 +1,6 @@
 [//]: # (Auto generated file, don't modify this file.)
 
-# metapp -- C++ library for runtime reflection and meta types
+# metapp -- C++ library for runtime reflection, introspection and meta types
 <!--begintoc-->
 * [Highlight features](#a2_1)
 * [Facts and features](#a2_2)
@@ -17,6 +17,7 @@
   * [Use Variant](#a3_8)
   * [Use MetaType](#a3_9)
   * [Call function](#a3_10)
+  * [Run time generic STL container](#a3_11)
 * [Documentations](#a2_6)
 * [Build the test code](#a2_7)
 * [Known compiler related quirks](#a2_8)
@@ -247,19 +248,83 @@ ASSERT(metaType->isConst());
 ### Call function
 
 ```c++
-struct MyClass {
-    int value;
+ struct MyClass {
+     int value;
 
-    int add(const int delta1, const int delta2) const {
-        return value + delta1 + delta2;
-    }
-};
+     int add(const int delta1, const int delta2) const {
+         return value + delta1 + delta2;
+     }
+ };
 
-metapp::Variant v(&MyClass::add);
-MyClass obj { 5 };
-// The second argument is the pointer to obj, it's required when invoking member function
-metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
+ metapp::Variant v(&MyClass::add);
+ MyClass obj { 5 };
+ // The second argument is the pointer to obj, it's required when invoking member function
+ metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 ASSERT(result.get<int>() == 17);
+```
+
+<a id="a3_11"></a>
+### Run time generic STL container
+Let's define a `concat` function that process any Variant that implements meta interface MetaIterable
+
+```c++
+std::string concat(const metapp::Variant & container)
+{
+    const metapp::MetaIterable * metaIterable = metapp::getNonReferenceMetaType(container.depointer())->getMetaIterable();
+    if(metaIterable == nullptr) {
+        return "";
+   }
+    std::stringstream stream;
+    metaIterable->forEach(container, [&stream](const metapp::Variant & item) {
+        stream << item;
+        return true;
+    });
+    return stream.str();
+}
+```
+
+A std::vector of int.
+
+```c++
+std::vector<int> container1 { 1, 5, 9, 6, 7 };
+```
+
+Construct a Variant with the vector.
+
+```c++
+metapp::Variant v1(container1);
+```
+
+Concat the items in the vector.
+
+```c++
+ASSERT(concat(v1) == "15967");
+```
+
+We can also use std::list. Any value can convert to Variant implicitly, so we can pass the container std::list on the fly.
+
+```c++
+ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
+```
+
+Isn't cool we can use std::pair as a constainer?
+
+```c++
+ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
+```
+
+std::tuple is suppported too, and we can use heterogeneous types.
+
+```c++
+ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
+```
+
+we can even pass a pointer to the container to `concat`.
+
+```c++
+std::deque<int> container2 { 1, 2, 3 };
+metapp::Variant v2(&container2);
+ASSERT(concat(v2) == "123");
 ```
 
 Below are tutorials and documents.  
