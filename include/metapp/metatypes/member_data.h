@@ -52,12 +52,15 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 		return getMetaType<Class>();
 	}
 
-	static Variant accessibleGet(const Variant & accessible, const void * instance) {
-		return Variant::reference(((const Class *)instance)->*(accessible.get<T Class::*>()));
+	static Variant accessibleGet(const Variant & accessible, const Variant & instance) {
+		return Variant::reference(((const Class *)getPointer(instance))->*(accessible.get<T Class::*>()));
 	}
 
-	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
-		internal_::assignValue(((Class *)instance)->*(accessible.get<T Class::*>()), value.cast<T>().template get<const T &>());
+	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {
+		internal_::assignValue(
+			((Class *)getPointer(instance))->*(accessible.get<T Class::*>()),
+			value.cast<T>().template get<const T &>()
+		);
 	}
 
 };

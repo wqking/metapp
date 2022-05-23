@@ -133,18 +133,18 @@ public:
 		return accessor.getGetter().getClassMetaType();
 	}
 
-	static Variant accessibleGet(const Variant & accessible, const void * instance) {
+	static Variant accessibleGet(const Variant & accessible, const Variant & instance) {
 		const AccessorType & accessor = accessible.get<const AccessorType &>();
-		return Variant::create<T>(accessor.get(instance));
+		return Variant::create<T>(accessor.get(getPointer(instance)));
 	}
 
-	static void accessibleSet(const Variant & accessible, void * instance, const Variant & value) {
+	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {
 		AccessorType & accessor = accessible.get<AccessorType &>();
 		if(accessor.isReadOnly()) {
 			errorUnwritable();
 			return;
 		}
-		accessor.set(value.cast<T>().template get<T>(), instance);
+		accessor.set(value.cast<T>().template get<T>(), getPointer(instance));
 	}
 
 };

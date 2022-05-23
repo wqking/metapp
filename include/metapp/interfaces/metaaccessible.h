@@ -28,8 +28,8 @@ public:
 		const MetaType * (*getValueType)(const Variant & accessible),
 		bool (*isReadOnly)(const Variant & accessible),
 		const MetaType * (*getClassType)(const Variant & accessible),
-		Variant (*get)(const Variant & accessible, const void * instance),
-		void (*set)(const Variant & accessible, void * instance, const Variant & value)
+		Variant (*get)(const Variant & accessible, const Variant & instance),
+		void (*set)(const Variant & accessible, const Variant & instance, const Variant & value)
 	)
 		:
 			getValueType(getValueType),
@@ -42,8 +42,8 @@ public:
 	const MetaType * (*getValueType)(const Variant & accessible);
 	bool (*isReadOnly)(const Variant & accessible);
 	const MetaType * (*getClassType)(const Variant & accessible);
-	Variant (*get)(const Variant & accessible, const void * instance);
-	void (*set)(const Variant & accessible, void * instance, const Variant & value);
+	Variant (*get)(const Variant & accessible, const Variant & instance);
+	void (*set)(const Variant & accessible, const Variant & instance, const Variant & value);
 
 	bool isStatic(const Variant & accessible) const {
 		return getClassType(accessible)->isVoid();
@@ -70,12 +70,12 @@ inline bool accessibleIsStatic(const Variant & accessible)
 	return accessible.getMetaType()->getMetaAccessible()->isStatic(accessible);
 }
 
-inline Variant accessibleGet(const Variant & accessible, const void * instance)
+inline Variant accessibleGet(const Variant & accessible, const Variant & instance)
 {
 	return accessible.getMetaType()->getMetaAccessible()->get(accessible, instance);
 }
 
-inline void accessibleSet(const Variant & accessible, void * instance, const Variant & value)
+inline void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value)
 {
 	accessible.getMetaType()->getMetaAccessible()->set(accessible, instance, value);
 }

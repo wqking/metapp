@@ -67,11 +67,11 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 		return voidMetaType;
 	}
 
-	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+	static Variant accessibleGet(const Variant & accessible, const Variant & /*instance*/) {
 		return Variant::reference(*accessible.get<UniquePtr &>());
 	}
 
-	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
+	static void accessibleSet(const Variant & accessible, const Variant & /*instance*/, const Variant & value) {
 		internal_::assignValue(*(accessible.get<UniquePtr &>()), value.cast<T>().template get<const T &>());
 	}
 

@@ -61,11 +61,11 @@ struct DeclareMetaTypeBase <T *> : DeclareMetaTypePointerBase<T *>
 		return voidMetaType;
 	}
 
-	static Variant accessibleGet(const Variant & accessible, const void * /*instance*/) {
+	static Variant accessibleGet(const Variant & accessible, const Variant & /*instance*/) {
 		return Variant::reference(*accessible.get<T *>());
 	}
 
-	static void accessibleSet(const Variant & accessible, void * /*instance*/, const Variant & value) {
+	static void accessibleSet(const Variant & accessible, const Variant & /*instance*/, const Variant & value) {
 		internal_::assignValue(*(accessible.get<T *>()), value.cast<T>().template get<const T &>());
 	}
 
