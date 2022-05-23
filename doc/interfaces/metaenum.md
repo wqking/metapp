@@ -7,14 +7,12 @@
 * [Get MetaEnum interface](#a2_3)
 * [Implemented built-in meta types](#a2_4)
 * [MetaEnum constructor](#a2_5)
-* [MetaEnum member types](#a2_6)
-  * [ValueType](#a4_1)
-* [MetaEnum member functions for registering meta data](#a2_7)
-  * [registerValue](#a4_2)
-* [MetaEnum member functions for retrieving meta data](#a2_8)
-  * [getValue](#a4_3)
-  * [getNameList](#a4_4)
-* [Non-member utility functions](#a2_9)
+* [MetaEnum member functions for registering meta data](#a2_6)
+  * [registerValue](#a4_1)
+* [MetaEnum member functions for retrieving meta data](#a2_7)
+  * [getValue](#a4_2)
+  * [getValueView](#a4_3)
+* [Non-member utility functions](#a2_8)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -61,35 +59,23 @@ void callback(metapp::MetaEnum & me);
 The MetaEnum instance under constructing is passed as the parameter. The callback should register all meta data to `me`.
 
 <a id="a2_6"></a>
-## MetaEnum member types
-
-<a id="a4_1"></a>
-#### ValueType
-```
-using ValueType = long long;
-```
-
-Represents the `enum` value type.
-
-<a id="a2_7"></a>
 ## MetaEnum member functions for registering meta data
 
-<a id="a4_2"></a>
+<a id="a4_1"></a>
 #### registerValue
 
 ```c++
-template <typename T>
-MetaItem & registerValue(const std::string & name, const T value);
+MetaItem & registerValue(const std::string & name, const Variant & value);
 ```
 
-Register a enum `value` under `name`. `value` can be any type which can be casted to `ValueType`.  
+Register a enum `value` under `name`. `value` can be any type, not limited to enum value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 
-<a id="a2_8"></a>
+<a id="a2_7"></a>
 ## MetaEnum member functions for retrieving meta data
 
-<a id="a4_3"></a>
+<a id="a4_2"></a>
 #### getValue
 
 ```c++
@@ -98,16 +84,16 @@ const MetaItem & getValue(const std::string & name) const;
 
 Get a value of `name`. If the name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_4"></a>
-#### getNameList
+<a id="a4_3"></a>
+#### getValueView
 
 ```c++
-std::vector<std::string> getNameList() const;
+MetaItemView getValueView() const;
 ```
 
-Returns all registered names.  
+Returns a MetaItemView for all registered names and values.  
 
-<a id="a2_9"></a>
+<a id="a2_8"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaItem`.  
@@ -118,8 +104,8 @@ inline const MetaItem & enumGetValue(const Variant & var, const std::string & na
   return var.getMetaType()->getMetaEnum()->getValue(name);
 }
 
-inline std::vector<std::string> enumGetNameList(const Variant & var)
+inline MetaItemView enumGetValueView(const Variant & var)
 {
-  return var.getMetaType()->getMetaEnum()->getNameList();
+  return var.getMetaType()->getMetaEnum()->getValueView();
 }
 ```

@@ -59,25 +59,15 @@ void callback(metapp::MetaEnum & me);
 ```
 The MetaEnum instance under constructing is passed as the parameter. The callback should register all meta data to `me`.
 
-## MetaEnum member types
-
-#### ValueType
-```
-using ValueType = long long;
-```
-
-Represents the `enum` value type.
-
 ## MetaEnum member functions for registering meta data
 
 #### registerValue
 
 ```c++
-template <typename T>
-MetaItem & registerValue(const std::string & name, const T value);
+MetaItem & registerValue(const std::string & name, const Variant & value);
 ```
 
-Register a enum `value` under `name`. `value` can be any type which can be casted to `ValueType`.  
+Register a enum `value` under `name`. `value` can be any type, not limited to enum value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 
@@ -91,13 +81,13 @@ const MetaItem & getValue(const std::string & name) const;
 
 Get a value of `name`. If the name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-#### getNameList
+#### getValueView
 
 ```c++
-std::vector<std::string> getNameList() const;
+MetaItemView getValueView() const;
 ```
 
-Returns all registered names.  
+Returns a MetaItemView for all registered names and values.  
 
 ## Non-member utility functions
 
@@ -109,9 +99,9 @@ inline const MetaItem & enumGetValue(const Variant & var, const std::string & na
 	return var.getMetaType()->getMetaEnum()->getValue(name);
 }
 
-inline std::vector<std::string> enumGetNameList(const Variant & var)
+inline MetaItemView enumGetValueView(const Variant & var)
 {
-	return var.getMetaType()->getMetaEnum()->getNameList();
+	return var.getMetaType()->getMetaEnum()->getValueView();
 }
 ```
 
