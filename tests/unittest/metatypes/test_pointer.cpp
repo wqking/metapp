@@ -38,6 +38,16 @@ TEST_CASE("metatypes, void ***")
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkPointer, tkVoid }));
 }
+
+TEST_CASE("metatypes, nullptr")
+{
+	metapp::Variant v(nullptr);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
+	REQUIRE(v.getMetaType()->isPointer());
+	using namespace metapp;
+	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
+}
+
 #endif
 
 TEST_CASE("metatypes, const volatile void *")
@@ -62,15 +72,6 @@ TEST_CASE("metatypes, int **")
 	REQUIRE(v.canGet<int **>());
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkPointer, tkInt }));
-}
-
-TEST_CASE("metatypes, nullptr")
-{
-	metapp::Variant v(nullptr);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkPointer);
-	REQUIRE(v.getMetaType()->isPointer());
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 }
 
 TEST_CASE("metatypes, std::string *, MetaAccessible")

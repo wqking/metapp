@@ -21,6 +21,7 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/thirdparty/accessorpp/accessor.h"
+#include "metapp/utilities/utility.h"
 
 namespace metapp {
 
