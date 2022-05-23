@@ -56,7 +56,6 @@ public:
 	template <typename T>
 	Variant(T value);
 
-	explicit Variant(const MetaType * metaType);
 	Variant(const MetaType * metaType, const void * copyFrom);
 
 	Variant(const Variant & other) noexcept;

@@ -160,7 +160,7 @@ TEST_CASE("metatypes, tkArray, int[2][3]")
 
 TEST_CASE("metatypes, tkArray, empty int[2][3]")
 {
-	metapp::Variant v(metapp::getMetaType<int[2][3]>());
+	metapp::Variant v(metapp::getMetaType<int[2][3]>(), nullptr);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.get<int[][3]>()[0][0] == 0);
 	REQUIRE(v.get<int[][3]>()[0][1] == 0);

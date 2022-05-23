@@ -27,7 +27,7 @@ TEST_CASE("Variant, input stream")
 {
 	std::stringstream ss;
 	SECTION("bool") {
-		metapp::Variant v(metapp::getMetaType<bool>());
+		metapp::Variant v(metapp::getMetaType<bool>(), nullptr);
 		REQUIRE(v.get<bool>() == false);
 		ss >> std::boolalpha;
 		ss.str("true");
@@ -36,7 +36,7 @@ TEST_CASE("Variant, input stream")
 	}
 
 	SECTION("int") {
-		metapp::Variant v(metapp::getMetaType<int>());
+		metapp::Variant v(metapp::getMetaType<int>(), nullptr);
 		REQUIRE(v.get<int>() == 0);
 		ss.str("138");
 		ss >> v;
@@ -44,7 +44,7 @@ TEST_CASE("Variant, input stream")
 	}
 	
 	SECTION("std::string") {
-		metapp::Variant v(metapp::getMetaType<std::string>());
+		metapp::Variant v(metapp::getMetaType<std::string>(), nullptr);
 		REQUIRE(v.get<std::string>() == "");
 		ss.str("abcxyz");
 		ss >> v;

@@ -42,12 +42,6 @@ TEST_CASE("Variant, ctor Variant()")
 	REQUIRE(! v.canCast<void *>());
 }
 
-TEST_CASE("Variant, ctor Variant(const MetaType * metaType)")
-{
-	metapp::Variant v(metapp::getMetaType<MyClass>());
-	REQUIRE(v.get<MyClass &>().value == 9);
-}
-
 TEST_CASE("Variant, ctor Variant(const MetaType * metaType, nullptr)")
 {
 	SECTION("int") {

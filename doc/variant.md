@@ -7,36 +7,35 @@
 * [Construct a Variant](#a2_3)
   * [Default constructor](#a4_1)
   * [Construct from a value](#a4_2)
-  * [Construct from a type](#a4_3)
-  * [Construct from a type and a value](#a4_4)
-  * [Copy and move constructors](#a4_5)
-  * [create](#a4_6)
-  * [reference](#a4_7)
-  * [retype](#a4_8)
-  * [takeFrom](#a4_9)
-  * [takeFrom another Variant](#a4_10)
+  * [Construct from a type and a value](#a4_3)
+  * [Copy and move constructors](#a4_4)
+  * [create](#a4_5)
+  * [reference](#a4_6)
+  * [retype](#a4_7)
+  * [takeFrom](#a4_8)
+  * [takeFrom another Variant](#a4_9)
 * [Member functions](#a2_4)
-  * [Assign from value](#a4_11)
-  * [Copy and move assignment](#a4_12)
-  * [getMetaType](#a4_13)
-  * [canGet](#a4_14)
-  * [get](#a4_15)
-  * [getAddress](#a4_16)
-  * [canCast](#a4_17)
-  * [cast](#a4_18)
-  * [castSilently](#a4_19)
-  * [isEmpty](#a4_20)
-  * [clone](#a4_21)
-  * [depointer](#a4_22)
-  * [dereference](#a4_23)
-  * [swap](#a4_24)
+  * [Assign from value](#a4_10)
+  * [Copy and move assignment](#a4_11)
+  * [getMetaType](#a4_12)
+  * [canGet](#a4_13)
+  * [get](#a4_14)
+  * [getAddress](#a4_15)
+  * [canCast](#a4_16)
+  * [cast](#a4_17)
+  * [castSilently](#a4_18)
+  * [isEmpty](#a4_19)
+  * [clone](#a4_20)
+  * [depointer](#a4_21)
+  * [dereference](#a4_22)
+  * [swap](#a4_23)
 * [Free functions](#a2_5)
-  * [getTypeKind](#a4_25)
-  * [Streaming operators](#a4_26)
-  * [swap](#a4_27)
+  * [getTypeKind](#a4_24)
+  * [Streaming operators](#a4_25)
+  * [swap](#a4_26)
 * [Memory management in Variant](#a2_6)
-  * [The data storage in Variant is similar to native C++](#a4_28)
-  * [Copying variants is different from native C++](#a4_29)
+  * [The data storage in Variant is similar to native C++](#a4_27)
+  * [Copying variants is different from native C++](#a4_28)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -90,26 +89,21 @@ we can't construct reference (tkReference) or C array (tkArray) using this const
 because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
 
 <a id="a4_3"></a>
-#### Construct from a type
-
-```c++
-explicit Variant(const MetaType * metaType);
-```
-
-Construct a Variant of type `metaType`, and initialize the default value using `metaType`.  
-Note: this constructor can't create Variant of pointer to a MetaType, to create MetaType pointer, use `Variant::create`.
-
-<a id="a4_4"></a>
 #### Construct from a type and a value
 
 ```c++
 Variant(const MetaType * metaType, const void * copyFrom);
 ```
 
-Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.
+Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.  
+If `copyFrom` is nullptr, the object in the Variant is default constructed.  
+If `copyFrom` is not nullptr, the object in the Variant is copied from the object pointed by `copyFrom`. In such case,
 `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
 
-<a id="a4_5"></a>
+Note: `Variant(metaType)` will create a Variant that holds a pointer to a MetaType (tkMetaType), it's different with
+`Variant(metaType, nullptr)`.
+
+<a id="a4_4"></a>
 #### Copy and move constructors
 
 ```c++
@@ -119,7 +113,7 @@ Variant(Variant && other) noexcept;
 
 Copy and move constructors.
 
-<a id="a4_6"></a>
+<a id="a4_5"></a>
 #### create
 ```c++
 template <typename T>
@@ -138,7 +132,7 @@ int n = 5;
 metapp::Variant v = metapp::Variant::create<int &>(n);
 ```
 
-<a id="a4_7"></a>
+<a id="a4_6"></a>
 #### reference
 ```c++
 template <typename T>
@@ -156,7 +150,7 @@ int n = 5;
 metapp::Variant v = metapp::Variant::reference(n);
 ```
 
-<a id="a4_8"></a>
+<a id="a4_7"></a>
 #### retype
 ```c++
 static Variant retype(const MetaType * metaType, const Variant & var);
@@ -166,7 +160,7 @@ Return a Variant which data is the data in `var`, type is `metaType`.
 This is only useful if you are 100% sure the data in `var` can be in type `metaType`,
 otherwise, you should cast the Variant instead of retyping it.  
 
-<a id="a4_9"></a>
+<a id="a4_8"></a>
 #### takeFrom
 ```c++
 static Variant takeFrom(const MetaType * metaType, void * instance);
@@ -186,7 +180,7 @@ metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<std::string>()
 // Now v will free instance when v is destroyed
 ```
 
-<a id="a4_10"></a>
+<a id="a4_9"></a>
 #### takeFrom another Variant
 ```c++
 static Variant takeFrom(const Variant & var);
@@ -213,7 +207,7 @@ metapp::Variant v(metapp::Variant::takeFrom(var));
 <a id="a2_4"></a>
 ## Member functions
 
-<a id="a4_11"></a>
+<a id="a4_10"></a>
 #### Assign from value
 ```c++
 template <typename T>
@@ -223,7 +217,7 @@ Variant & operator = (T value) noexcept;
 Assign to the Variant with `value`.  
 The previous value held by the variant is destroyed after assigned with the new value.  
 
-<a id="a4_12"></a>
+<a id="a4_11"></a>
 #### Copy and move assignment
 ```c++
 Variant & operator = (const Variant & other) noexcept;
@@ -232,7 +226,7 @@ Variant & operator = (Variant && other) noexcept;
 Copy and move assignment.  
 The previous value held by the variant is destroyed after assigned with the new variant.  
 
-<a id="a4_13"></a>
+<a id="a4_12"></a>
 #### getMetaType
 ```c++
 const MetaType * getMetaType() const noexcept;
@@ -240,7 +234,7 @@ const MetaType * getMetaType() const noexcept;
 Return the meta type held by the variant. The result is always valid pointer.
 Any variant, including the default constructed, always contains a meta type.
 
-<a id="a4_14"></a>
+<a id="a4_13"></a>
 #### canGet
 ```c++
 template <typename T>
@@ -288,7 +282,7 @@ ASSERT(v3.canGet<const int *>()); // rule 2
 ASSERT(! v3.canGet<int>()); // rule 2
 ```
 
-<a id="a4_15"></a>
+<a id="a4_14"></a>
 #### get
 ```c++
 template <typename T>
@@ -304,7 +298,7 @@ we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a
 instead of copy the value. That helps to improve the performance.  
 We should always getting as reference to avoid copying, unless you do want to copy the value.  
 
-<a id="a4_16"></a>
+<a id="a4_15"></a>
 #### getAddress
 ```c++
 void * getAddress() const;
@@ -340,7 +334,7 @@ ASSERT(m == 10);
 ASSERT(m == 15);
 ```
 
-<a id="a4_17"></a>
+<a id="a4_16"></a>
 #### canCast
 ```c++
 bool canCast(const MetaType * toMetaType) const;
@@ -367,7 +361,7 @@ and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are val
 | F    | T * | false                                                                                                      |
 | F    | T   | determined by canCast                                                                                      |
 
-<a id="a4_18"></a>
+<a id="a4_17"></a>
 #### cast
 ```c++
 Variant cast(const MetaType * toMetaType) const;
@@ -382,7 +376,7 @@ If `canCast` returns true, `cast` returns the casted variant which type matches 
 If `canCast<T>()` returns false, it throws exception `metapp::BadCastException`.  
 To get the casted value, call `get` on the returned variant. For example, `int castedValue = v.cast<int>().get<int>()`.  
 
-<a id="a4_19"></a>
+<a id="a4_18"></a>
 #### castSilently
 ```c++
 Variant castSilently(const MetaType * toMetaType) const;
@@ -399,7 +393,7 @@ If you want a variant must be casted, and throw exception if it can't be casted,
 use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
 If you want a variant be casted, and allow the cast fail, use `castSilently`, then check if the result is empty.  
 
-<a id="a4_20"></a>
+<a id="a4_19"></a>
 #### isEmpty
 ```c++
 bool isEmpty() const noexcept;
@@ -407,7 +401,7 @@ bool isEmpty() const noexcept;
 Return true if the variant holds `tkVoid`. A default constructed variant holds `tkVoid`.
 Such a variant can't be got value, and can't be casted.  
 
-<a id="a4_21"></a>
+<a id="a4_20"></a>
 #### clone
 ```c++
 Variant clone() const;
@@ -416,7 +410,7 @@ Variant clone() const;
 Clone the underlying object and return a Variant that holds the cloned object.  
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
-<a id="a4_22"></a>
+<a id="a4_21"></a>
 #### depointer
 ```c++
 Variant depointer() const;
@@ -472,7 +466,7 @@ ASSERT(v3.get<int &>() == 15);
 ASSERT(r3.get<int &>() == 15);
 ```
 
-<a id="a4_23"></a>
+<a id="a4_22"></a>
 #### dereference
 ```c++
 Variant dereference() const;
@@ -485,7 +479,7 @@ If `this` Variant is a value, return `*this`.
 Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant,
 which may be expensive.  
 
-<a id="a4_24"></a>
+<a id="a4_23"></a>
 #### swap
 ```c++
 void swap(Variant & other) noexcept;
@@ -496,7 +490,7 @@ Swap with another variant.
 <a id="a2_5"></a>
 ## Free functions
 
-<a id="a4_25"></a>
+<a id="a4_24"></a>
 #### getTypeKind
 ```c++
 TypeKind getTypeKind(const Variant & v);
@@ -504,7 +498,7 @@ TypeKind getTypeKind(const Variant & v);
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-<a id="a4_26"></a>
+<a id="a4_25"></a>
 #### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
@@ -514,7 +508,7 @@ std::ostream & operator << (std::ostream & stream, const Variant & v);
 Variant supports input and output stream if the underlying value supports the stream.  
 If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
-<a id="a4_27"></a>
+<a id="a4_26"></a>
 #### swap
 ```c++
 void swap(Variant & a, Variant & b) noexcept;
@@ -526,7 +520,7 @@ Swap two variants.
 <a id="a2_6"></a>
 ## Memory management in Variant
 
-<a id="a4_28"></a>
+<a id="a4_27"></a>
 #### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference,
@@ -536,7 +530,7 @@ If the underlying value is function, it's decayed to function pointer.
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory,
 and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
-<a id="a4_29"></a>
+<a id="a4_28"></a>
 #### Copying variants is different from native C++
 
 For value which is fundamental types such as int, long, or pointer, or any POD struct

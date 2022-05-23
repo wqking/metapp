@@ -54,8 +54,8 @@ MetaAccessible(
   const MetaType * (*getValueType)(const Variant & accessible),
   bool (*isReadOnly)(const Variant & accessible),
   const MetaType * (*getClassType)(const Variant & accessible),
-  Variant (*get)(const Variant & accessible, const void * instance),
-  void (*set)(const Variant & accessible, void * instance, const Variant & value)
+  Variant (*get)(const Variant & accessible, const Variant & instance),
+  void (*set)(const Variant & accessible, const Variant & instance, const Variant & value)
 );
 ```
 
@@ -107,7 +107,7 @@ When getting/setting value in the accessble, the `instance` must be pointer to a
 #### get
 
 ```c++
-Variant get(const Variant & accessible, const void * instance);
+Variant get(const Variant & accessible, const Variant & instance);
 ```
 
 Returns the value.  
@@ -120,7 +120,7 @@ For Accessor, `instance` is passed to the accessor. The returned Variant is the 
 #### set
 
 ```c++
-void set(const Variant & accessible, void * instance, const Variant & value);
+void set(const Variant & accessible, const Variant & instance, const Variant & value);
 ```
 
 Set a new value.  
@@ -157,12 +157,12 @@ inline const MetaType * accessibleGetClassType(const Variant & accessible)
   return accessible.getMetaType()->getMetaAccessible()->getClassType(accessible);
 }
 
-inline Variant accessibleGet(const Variant & accessible, const void * instance)
+inline Variant accessibleGet(const Variant & accessible, const Variant & instance)
 {
   return accessible.getMetaType()->getMetaAccessible()->get(accessible, instance);
 }
 
-inline void accessibleSet(const Variant & accessible, void * instance, const Variant & value)
+inline void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value)
 {
   accessible.getMetaType()->getMetaAccessible()->set(accessible, instance, value);
 }

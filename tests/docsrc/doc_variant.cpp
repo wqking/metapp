@@ -68,23 +68,19 @@ Since there is no way to specify the template parameter T explicitly when callin
 we can't construct reference (tkReference) or C array (tkArray) using this constructor,
 because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
 
-#### Construct from a type
-
-```c++
-explicit Variant(const MetaType * metaType);
-```
-
-Construct a Variant of type `metaType`, and initialize the default value using `metaType`.  
-Note: this constructor can't create Variant of pointer to a MetaType, to create MetaType pointer, use `Variant::create`.
-
 #### Construct from a type and a value
 
 ```c++
 Variant(const MetaType * metaType, const void * copyFrom);
 ```
 
-Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.
+Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.  
+If `copyFrom` is nullptr, the object in the Variant is default constructed.  
+If `copyFrom` is not nullptr, the object in the Variant is copied from the object pointed by `copyFrom`. In such case,
 `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
+
+Note: `Variant(metaType)` will create a Variant that holds a pointer to a MetaType (tkMetaType), it's different with
+`Variant(metaType, nullptr)`.
 
 #### Copy and move constructors
 

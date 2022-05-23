@@ -77,13 +77,6 @@ Variant::Variant() noexcept
 {
 }
 
-Variant::Variant(const MetaType * metaType)
-	:
-		metaType(metaType)
-{
-	metaType->constructData(&data, nullptr);
-}
-
 Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
 		metaType(metaType)
