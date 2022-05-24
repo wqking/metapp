@@ -18,6 +18,7 @@
 #define METAPP_METAINDEXABLE_H_969872685611
 
 #include "metapp/variant.h"
+#include "metapp/utilities/utility.h"
 
 #include <limits>
 
@@ -62,22 +63,26 @@ private:
 
 inline size_t indexableGetSize(const Variant & indexable)
 {
-	return indexable.getMetaType()->getMetaIndexable()->getSize(indexable);
+	const Variant ref = depointer(indexable);
+	return getNonReferenceMetaType(ref)->getMetaIndexable()->getSize(ref);
 }
 
 inline void indexableResize(const Variant & indexable, const size_t size)
 {
-	indexable.getMetaType()->getMetaIndexable()->resize(indexable, size);
+	const Variant ref = depointer(indexable);
+	getNonReferenceMetaType(ref)->getMetaIndexable()->resize(ref, size);
 }
 
 inline Variant indexableGet(const Variant & indexable, const size_t index)
 {
-	return indexable.getMetaType()->getMetaIndexable()->get(indexable, index);
+	const Variant ref = depointer(indexable);
+	return getNonReferenceMetaType(ref)->getMetaIndexable()->get(ref, index);
 }
 
 inline void indexableSet(const Variant & indexable, const size_t index, const Variant & value)
 {
-	indexable.getMetaType()->getMetaIndexable()->set(indexable, index, value);
+	const Variant ref = depointer(indexable);
+	getNonReferenceMetaType(ref)->getMetaIndexable()->set(ref, index, value);
 }
 
 

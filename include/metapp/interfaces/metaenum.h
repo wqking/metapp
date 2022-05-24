@@ -19,6 +19,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/metarepo.h"
+#include "metapp/utilities/utility.h"
 
 #include <map>
 #include <algorithm>
@@ -72,12 +73,14 @@ private:
 
 inline const MetaItem & enumGetValue(const Variant & var, const std::string & name)
 {
-	return var.getMetaType()->getMetaEnum()->getValue(name);
+	const Variant ref = depointer(var);
+	return getNonReferenceMetaType(ref)->getMetaEnum()->getValue(name);
 }
 
 inline MetaItemView enumGetValueView(const Variant & var)
 {
-	return var.getMetaType()->getMetaEnum()->getValueView();
+	const Variant ref = depointer(var);
+	return getNonReferenceMetaType(ref)->getMetaEnum()->getValueView();
 }
 
 

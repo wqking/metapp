@@ -28,7 +28,7 @@ void * getPointer(const Variant & var)
 		return var.get<void *>();
 	}
 	if(metaType->isPointerWrapper()) {
-		return getPointer(accessibleGet(var, nullptr));
+		return getPointer(metaType->getMetaAccessible()->get(var, nullptr));
 	}
 	return var.getAddress();
 }
@@ -52,9 +52,10 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
 		return std::make_pair(var.get<void *>(), metaType->getUpType());
 	}
 	if(metaType->isPointerWrapper()) {
+		auto metaAccessible = metaType->getMetaAccessible();
 		return std::make_pair(
-			accessibleGet(var, nullptr).getAddress(),
-			metaType->getMetaAccessible()->getValueType(var)
+			metaAccessible->get(var, nullptr).getAddress(),
+			metaAccessible->getValueType(var)
 		);
 	}
 	return std::make_pair(var.getAddress(), metaType);
@@ -62,12 +63,14 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
 
 Variant depointer(const Variant & var)
 {
+	// In this function we can't call accessibleGet, because accessibleGet will call depointer too.
+
 	const MetaType * metaType = getNonReferenceMetaType(var);
 	if(metaType->isPointer()) {
-		return accessibleGet(var, nullptr);
+		return metaType->getUpType()->getMetaAccessible()->get(var, nullptr);
 	}
 	if(metaType->isPointerWrapper()) {
-		return accessibleGet(var, nullptr);
+		return metaType->getMetaAccessible()->get(var, nullptr);
 	}
 	return var;
 }

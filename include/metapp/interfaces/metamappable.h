@@ -18,6 +18,7 @@
 #define METAPP_METAMAPPABLE_H_969872685611
 
 #include "metapp/variant.h"
+#include "metapp/utilities/utility.h"
 
 namespace metapp {
 
@@ -43,17 +44,20 @@ public:
 
 inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
 {
-	return mappable.getMetaType()->getMetaMappable()->getValueType(mappable);
+	const Variant ref = depointer(mappable);
+	return getNonReferenceMetaType(ref)->getMetaMappable()->getValueType(ref);
 }
 
 inline Variant mappableGet(const Variant & mappable, const Variant & key)
 {
-	return mappable.getMetaType()->getMetaMappable()->get(mappable, key);
+	const Variant ref = depointer(mappable);
+	return getNonReferenceMetaType(ref)->getMetaMappable()->get(ref, key);
 }
 
 inline void mappableSet(const Variant & mappable, const Variant & key, const Variant & value)
 {
-	mappable.getMetaType()->getMetaMappable()->set(mappable, key, value);
+	const Variant ref = depointer(mappable);
+	getNonReferenceMetaType(ref)->getMetaMappable()->set(ref, key, value);
 }
 
 

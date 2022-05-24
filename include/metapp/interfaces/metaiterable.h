@@ -18,6 +18,7 @@
 #define METAPP_METAITERABLE_H_969872685611
 
 #include "metapp/variant.h"
+#include "metapp/utilities/utility.h"
 
 #include <functional>
 
@@ -41,7 +42,8 @@ public:
 
 inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)
 {
-	iterable.getMetaType()->getMetaIterable()->forEach(iterable, callback);
+	const Variant ref = depointer(iterable);
+	getNonReferenceMetaType(ref)->getMetaIterable()->forEach(ref, callback);
 }
 
 
