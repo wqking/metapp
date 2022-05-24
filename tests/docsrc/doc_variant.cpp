@@ -67,6 +67,8 @@ Construct a Variant of type T and copy value into Variant.
 Since there is no way to specify the template parameter T explicitly when calling a constructor,
 we can't construct reference (tkReference) or C array (tkArray) using this constructor,
 because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
+If `value` is not copyable, it will be moved into Variant.  
+If `value` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
 
 #### Construct from a type and a value
 
@@ -78,6 +80,9 @@ Construct a Variant of type `metaType`, and initialize with the object pointed b
 If `copyFrom` is nullptr, the object in the Variant is default constructed.  
 If `copyFrom` is not nullptr, the object in the Variant is copied from the object pointed by `copyFrom`. In such case,
 `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
+
+If `metaType` is not copyable, `copyFrom` will be moved into Variant.  
+If `metaType` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
 
 Note: `Variant(metaType)` will create a Variant that holds a pointer to a MetaType (tkMetaType), it's different with
 `Variant(metaType, nullptr)`.
@@ -100,6 +105,9 @@ Construct a Variant of type T and copy value into Variant, then return the Varia
 This is similar with the constructor `template <typename T> Variant(T value)`,
 the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
+
+If `value` is not copyable, it will be moved into Variant.  
+If `value` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
 
 **Example**
 desc*/
