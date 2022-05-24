@@ -28,7 +28,7 @@ void * getPointer(const Variant & var)
 		return var.get<void *>();
 	}
 	if(metaType->isPointerWrapper()) {
-		return accessibleGet(var, nullptr).getAddress();
+		return getPointer(accessibleGet(var, nullptr));
 	}
 	return var.getAddress();
 }
@@ -59,6 +59,37 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
 	}
 	return std::make_pair(var.getAddress(), metaType);
 }
+
+Variant depointer(const Variant & var)
+{
+	const MetaType * metaType = getNonReferenceMetaType(var);
+	if(metaType->isPointer()) {
+		return accessibleGet(var, nullptr);
+	}
+	if(metaType->isPointerWrapper()) {
+		return accessibleGet(var, nullptr);
+	}
+	return var;
+}
+
+Variant dereference(const Variant & var)
+{
+	const MetaType * mt = var.getMetaType();
+	void * address = nullptr;
+	if(mt->isPointer()) {
+		mt = mt->getUpType();
+		address = var.get<void *>();
+	}
+	else if(mt->isReference()) {
+		mt = mt->getUpType();
+		address = var.getAddress();
+	}
+	if(address != nullptr) {
+		return Variant(mt, address);
+	}
+	return var;
+}
+
 
 namespace {
 

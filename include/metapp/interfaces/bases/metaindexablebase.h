@@ -68,7 +68,7 @@ private:
 
 	static size_t metaIndexableGetSize(const Variant & indexable)
 	{
-		return indexable.depointer().get<ContainerType &>().size();
+		return depointer(indexable).get<ContainerType &>().size();
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const size_t /*index*/)
@@ -78,12 +78,12 @@ private:
 
 	static void metaIndexableResize(const Variant & indexable, const size_t size)
 	{
-		internal_::doResize(indexable.depointer().get<ContainerType &>(), size);
+		internal_::doResize(depointer(indexable).get<ContainerType &>(), size);
 	}
 
 	static Variant metaIndexableGet(const Variant & indexable, const size_t index)
 	{
-		const Variant ref = indexable.depointer();
+		const Variant ref = depointer(indexable);
 
 		if(index >= metaIndexableGetSize(ref)) {
 			errorInvalidIndex();
@@ -93,7 +93,7 @@ private:
 
 	static void metaIndexableSet(const Variant & indexable, const size_t index, const Variant & value)
 	{
-		const Variant ref = indexable.depointer();
+		const Variant ref = depointer(indexable);
 
 		internal_::verifyVariantWritable(ref);
 
@@ -101,7 +101,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			internal_::assignValue(ref.depointer().get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
+			internal_::assignValue(depointer(ref).get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
 		}
 	}
 

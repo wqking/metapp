@@ -26,16 +26,14 @@
   * [castSilently](#a4_18)
   * [isEmpty](#a4_19)
   * [clone](#a4_20)
-  * [depointer](#a4_21)
-  * [dereference](#a4_22)
-  * [swap](#a4_23)
+  * [swap](#a4_21)
 * [Free functions](#a2_5)
-  * [getTypeKind](#a4_24)
-  * [Streaming operators](#a4_25)
-  * [swap](#a4_26)
+  * [getTypeKind](#a4_22)
+  * [Streaming operators](#a4_23)
+  * [swap](#a4_24)
 * [Memory management in Variant](#a2_6)
-  * [The data storage in Variant is similar to native C++](#a4_27)
-  * [Copying variants is different from native C++](#a4_28)
+  * [The data storage in Variant is similar to native C++](#a4_25)
+  * [Copying variants is different from native C++](#a4_26)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -419,75 +417,6 @@ Clone the underlying object and return a Variant that holds the cloned object.
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
 <a id="a4_21"></a>
-#### depointer
-```c++
-Variant depointer() const;
-```
-Convert a pointer to its non-pointer equivalence.  
-Return a Variant that,  
-If `this` Variant is a value or reference, `*this` is returned.  
-If `this` Variant is a pointer, the returned reference refers to the value that the pointer points to.  
-`depointer` only makes reference, it doesn't copy any underlying value.  
-
-`depointer` is useful to write generic code. Assume a function accepts an argument of Variant.
-Without `depointer`, the function either requires the Variant to be a value/reference, or a pointer,
-but not both, or the function uses extra code to detect whether the argument is a value/reference or pointer.
-With `depointer`, the argument can be value, reference, or pointer, then the function calls `depointer`
-to normalize the argument, and use a single logic for all three kinds of Variants (value, reference pointer).
-
-**Example**  
-
-```c++
-metapp::Variant v1(5); // value
-ASSERT(v1.get<int>() == 5);
-// r1 is a value too
-metapp::Variant r1(v1.depointer());
-ASSERT(r1.get<int &>() == 5);
-r1.get<int &>() = 38;
-// Assignment doesn't affect original value
-ASSERT(v1.get<int>() == 5);
-ASSERT(r1.get<int &>() == 38);
-
-int n = 9;
-// pointer, points to n;
-metapp::Variant v2(&n);
-ASSERT(n == 9);
-ASSERT(*v2.get<int *>() == 9);
-// r2 refers to n
-metapp::Variant r2(v2.depointer()); 
-ASSERT(r2.get<int &>() == 9);
-r2.get<int &>() = 10;
-ASSERT(n == 10);
-ASSERT(*v2.get<int *>() == 10);
-
-int m = 10;
-// reference, refers to m;
-metapp::Variant v3(metapp::Variant::create<int &>(m));
-ASSERT(m == 10);
-ASSERT(v3.get<int &>() == 10);
-// r3 refers to m
-metapp::Variant r3(v3.depointer()); 
-ASSERT(r3.get<int &>() == 10);
-r3.get<int &>() = 15;
-ASSERT(m == 15);
-ASSERT(v3.get<int &>() == 15);
-ASSERT(r3.get<int &>() == 15);
-```
-
-<a id="a4_22"></a>
-#### dereference
-```c++
-Variant dereference() const;
-```
-Return the value that the underlying pointer or reference points to.
-This is the same semantic as the dereference operator * in C++.  
-If `this` Variant is a reference, return the value that `this` refers to.  
-If `this` Variant is a pointer, return the value that `this` points to.  
-If `this` Variant is a value, return `*this`.  
-Note: if `this` Variant is a reference or pointer, `dereference` will copy the underlying value to the result Variant,
-which may be expensive.  
-
-<a id="a4_23"></a>
 #### swap
 ```c++
 void swap(Variant & other) noexcept;
@@ -498,7 +427,7 @@ Swap with another variant.
 <a id="a2_5"></a>
 ## Free functions
 
-<a id="a4_24"></a>
+<a id="a4_22"></a>
 #### getTypeKind
 ```c++
 TypeKind getTypeKind(const Variant & v);
@@ -506,7 +435,7 @@ TypeKind getTypeKind(const Variant & v);
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-<a id="a4_25"></a>
+<a id="a4_23"></a>
 #### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
@@ -516,7 +445,7 @@ std::ostream & operator << (std::ostream & stream, const Variant & v);
 Variant supports input and output stream if the underlying value supports the stream.  
 If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
-<a id="a4_26"></a>
+<a id="a4_24"></a>
 #### swap
 ```c++
 void swap(Variant & a, Variant & b) noexcept;
@@ -528,7 +457,7 @@ Swap two variants.
 <a id="a2_6"></a>
 ## Memory management in Variant
 
-<a id="a4_27"></a>
+<a id="a4_25"></a>
 #### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference,
@@ -538,7 +467,7 @@ If the underlying value is function, it's decayed to function pointer.
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory,
 and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
-<a id="a4_28"></a>
+<a id="a4_26"></a>
 #### Copying variants is different from native C++
 
 For value which is fundamental types such as int, long, or pointer, or any POD struct

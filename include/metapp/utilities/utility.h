@@ -105,6 +105,9 @@ void * getPointer(const Variant & var);
 const MetaType * getPointedType(const Variant & var);
 std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 
+Variant depointer(const Variant & var);
+Variant dereference(const Variant & var);
+
 std::string getNameByTypeKind(const TypeKind typeKind);
 
 class MetaRepo;

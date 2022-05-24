@@ -169,7 +169,7 @@ ASSERT(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
 
 The core class MetaType only has very few public functions, and provides very few functions.
 metapp obeys the principle "You don't pay (or pay very little) for what you don't use".
-We usually don't need many function from most meta types, so the core MetaType is quite small.
+We usually don't need many functions from most meta types, so the core MetaType is quite small.
 The powerful features are extensions in MetaType, which called meta interface.
 For example, if a meta type implements the interface MetaClass, then we can get the class information such as methods,
 fields, constructors, etc, from the interface. If the meta type doesn't implement the interface MetaClass,

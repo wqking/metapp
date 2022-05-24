@@ -68,7 +68,7 @@ private:
 
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
-		const Variant ref = var.depointer();
+		const Variant ref = depointer(var);
 		if(index == 0) {
 			return Variant::create<T1 &>(ref.get<PairType &>().first);
 		}
@@ -81,7 +81,7 @@ private:
 			errorInvalidIndex();
 		}
 		else {
-			const Variant ref = var.depointer();
+			const Variant ref = depointer(var);
 			if(index == 0) {
 				internal_::assignValue(ref.get<PairType &>().first, value.get<T1 &>());
 			}
@@ -93,7 +93,7 @@ private:
 
 	static void metaIterableForEach(const Variant & var, MetaIterable::Callback callback)
 	{
-		const Variant ref = var.depointer();
+		const Variant ref = depointer(var);
 		if(callback(ref.get<PairType &>().first)) {
 			callback(ref.get<PairType &>().second);
 		}

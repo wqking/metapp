@@ -121,28 +121,22 @@ constexpr metapp::TypeKind tkMyClass = metapp::tkUser + 1;
 ```
 
 Now declare meta type for TmClass.  
-The declaration must be specialization of metapp::DeclareMetaType, and inherit from metapp::DeclareMetaTypeBase.
+The declaration must be specialization of metapp::DeclareMetaType, and inherit from metapp::DeclareMetaTypeBase.  
 
 ```c++
 template <>
 struct metapp::DeclareMetaType <TmClass> : metapp::DeclareMetaTypeBase <TmClass>
 {
-```
-
-Define the TypeKind for the type. We don't need to define the TypeKind for
-every meta type unless we do need it.  
-If we don't define the typeKind, it will be tkObject by default.  
-
-```c++
+  // Define the TypeKind for the type. We don't need to define the TypeKind for
+  // every meta type unless we do need it.  
+  // If we don't define the typeKind, it will be tkObject by default.  
   static constexpr metapp::TypeKind typeKind = tkMyClass;
-```
 
-Implement the MetaClass interface.  
-Not every classes need to implement MetaClass. Without MetaClass, we can still construct object of the class.  
-But with MetaClass we can get more information such as member data, member functions, etc.  
-Note the code is inside the specialization `struct metapp::DeclareMetaType <TmClass>`.  
-
-```c++
+  // Implement the MetaClass interface.  
+  // Not every classes need to implement MetaClass.
+  // Without MetaClass, we can still construct object of the class.  
+  // But with MetaClass we can get more information such as member data, member functions, etc.  
+  // Note the code is inside the specialization `struct metapp::DeclareMetaType <TmClass>`.  
   static const metapp::MetaClass * getMetaClass() {
     static const metapp::MetaClass metaClass(
       metapp::getMetaType<TmClass>(),
@@ -234,7 +228,7 @@ metapp::Variant v = TmClass();
 const metapp::MetaType * metaType = v.getMetaType();
 ```
 
-Get the MetaClass from the MetaType.  
+Now get the MetaClass from the MetaType.  
 If the MetaType doesn't implement MetaClass, the return value is nullptr.
 
 ```c++
@@ -254,6 +248,7 @@ const metapp::MetaItem & fieldValue = metaClass->getAccessible("value");
 ```
 
 Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
+The second argument is the object instance.  
 Call asAccessible() to get the underlying accessible Variant.
 
 ```c++

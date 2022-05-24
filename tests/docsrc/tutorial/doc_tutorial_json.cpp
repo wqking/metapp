@@ -44,7 +44,7 @@ private:
 			return;
 		}
 
-		metapp::Variant ref = value.depointer();
+		metapp::Variant ref = depointer(value);
 		auto metaType = metapp::getReferredMetaType(ref.getMetaType());
 		auto typeKind = metaType->getTypeKind();
 		if(typeKind == metapp::tkVariant) {

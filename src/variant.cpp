@@ -169,32 +169,6 @@ Variant Variant::clone() const
 	return result;
 }
 
-Variant Variant::depointer() const
-{
-	if(metaType->isPointer()) {
-		return metaType->getMetaAccessible()->get(*this, nullptr);
-	}
-	return *this;
-}
-
-Variant Variant::dereference() const
-{
-	const MetaType * mt = metaType;
-	void * address = nullptr;
-	if(mt->isPointer()) {
-		mt = mt->getUpType();
-		address = get<void *>();
-	}
-	else if(mt->isReference()) {
-		mt = mt->getUpType();
-		address = getAddress();
-	}
-	if(address != nullptr) {
-		return Variant(mt, address);
-	}
-	return *this;
-}
-
 void Variant::swap(Variant & other) noexcept
 {
 	using std::swap;

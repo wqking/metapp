@@ -297,7 +297,7 @@ ExampleFunc
 std::string concat(const metapp::Variant & container)
 {
     const metapp::MetaIterable * metaIterable
-        = metapp::getNonReferenceMetaType(container.depointer())->getMetaIterable();
+        = metapp::getNonReferenceMetaType(depointer(container))->getMetaIterable();
     if(metaIterable == nullptr) {
         return "";
    }

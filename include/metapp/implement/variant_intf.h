@@ -112,9 +112,6 @@ public:
 
 	Variant clone() const;
 
-	Variant depointer() const;
-	Variant dereference() const;
-
 	void swap(Variant & other) noexcept;
 
 	friend std::istream & operator >> (std::istream & stream, Variant & v);

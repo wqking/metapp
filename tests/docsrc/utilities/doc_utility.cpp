@@ -114,6 +114,112 @@ bool typeIsWideString(const MetaType * type);
 
 Returns true if the type is either `std::wstring` or a pointer to wchar_t.  
 
+#### depointer
+```c++
+Variant depointer(const Variant & var);
+```
+Convert a pointer in `var` to its non-pointer equivalence.  
+Return a Variant that,  
+If `var` is a value or reference, `var` is returned.  
+If `var` is a pointer, the returned reference refers to the value that the pointer points to.  
+If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
+the returned reference refers to the value that the pointer points to.  
+
+`depointer` only makes reference, it doesn't copy any underlying value.  
+
+`depointer` is useful to write generic code. Assume a function accepts an argument of Variant.
+Without `depointer`, the function either requires the Variant to be a value/reference, or a pointer,
+but not both, or the function uses extra code to detect whether the argument is a value/reference or pointer.
+With `depointer`, the argument can be value, reference, or pointer, then the function calls `depointer`
+to normalize the argument, and use a single logic for all three kinds of Variants (value, reference pointer).
+
+**Example**  
+desc*/
+
+ExampleFunc
+{
+	//code
+	metapp::Variant v1(5); // value
+	ASSERT(v1.get<int>() == 5);
+	// r1 is a value too
+	metapp::Variant r1(depointer(v1));
+	ASSERT(r1.get<int &>() == 5);
+	r1.get<int &>() = 38;
+	// Assignment doesn't affect original value
+	ASSERT(v1.get<int>() == 5);
+	ASSERT(r1.get<int &>() == 38);
+
+	int n = 9;
+	// pointer, points to n;
+	metapp::Variant v2(&n);
+	ASSERT(n == 9);
+	ASSERT(*v2.get<int *>() == 9);
+	// r2 refers to n
+	metapp::Variant r2(depointer(v2)); 
+	ASSERT(r2.get<int &>() == 9);
+	r2.get<int &>() = 10;
+	ASSERT(n == 10);
+	ASSERT(*v2.get<int *>() == 10);
+
+	int m = 10;
+	// reference, refers to m;
+	metapp::Variant v3(metapp::Variant::create<int &>(m));
+	ASSERT(m == 10);
+	ASSERT(v3.get<int &>() == 10);
+	// r3 refers to m
+	metapp::Variant r3(depointer(v3)); 
+	ASSERT(r3.get<int &>() == 10);
+	r3.get<int &>() = 15;
+	ASSERT(m == 15);
+	ASSERT(v3.get<int &>() == 15);
+	ASSERT(r3.get<int &>() == 15);
+	//code
+}
+
+/*desc
+#### dereference
+```c++
+Variant dereference(const Variant & var);
+```
+Return the value that the underlying pointer or reference points to.
+This is the same semantic as the dereference operator * in C++.  
+If `var` is a reference, return the value that `var` refers to.  
+If `var` is a pointer, return the value that `var` points to.  
+If `var` is a value, return `var`.  
+Note: if `var` is a reference or pointer, `dereference` will copy the underlying value to the result Variant, that may be expensive.  
+
+#### getPointer
+
+```c++
+void * getPointer(const Variant & var);
+```
+
+Returns a pointer to the underlying value in `var`.  
+If `var` is value or reference to value, returns the value address.  
+If `var` is a pointer or reference to pointer, returns the pointer.  
+If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
+returns the stored pointer (`std::shared_ptr<T>::get()`, or `std::unique_ptr<T>::get()`).  
+
+#### getPointedType
+
+```c++
+const MetaType * getPointedType(const Variant & var);
+```
+
+Returns the meta type pointed by the pointer to the underlying value in `var`.  
+If `var` is value or reference to value, returns the value type.  
+If `var` is a pointer or reference to pointer, returns the type that the pointer points to.  
+If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`, returns T.  
+
+#### getPointerAndType
+
+```c++
+std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
+```
+
+Returns both the pointer and pointed type in one function.  
+It's sligher better performance than calling `getPointer` and `getPointedType` respectively.  
+
 #### selectOverload
 
 ```c++
