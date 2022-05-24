@@ -50,3 +50,29 @@ TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")
 	}
 }
 
+TEST_CASE("metatypes, std::function<int & (int &)>, invoke")
+{
+	{
+		std::function<int & (int &)> func([](int & a) -> int & {
+			return a;
+		});
+		metapp::Variant v(func);
+		int a = 0;
+		metapp::Variant arguments[1] = { metapp::Variant::create<int &>(a) };
+		metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments);
+		REQUIRE(result.getMetaType()->isReference());
+	}
+}
+
+TEST_CASE("metatypes, std::function<std::unique_ptr<int> ()>, invoke")
+{
+	{
+		std::function<std::unique_ptr<int> ()> func([]() -> std::unique_ptr<int> {
+			return std::unique_ptr<int>(new int{5});
+		});
+		metapp::Variant v(func);
+		metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, {});
+		REQUIRE(result.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<int> >()));
+	}
+}
+

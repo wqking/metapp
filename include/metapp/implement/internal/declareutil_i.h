@@ -142,7 +142,7 @@ struct MetaCallableInvoker <void, RT, ArgList>
 		// avoid unused warning if there is no arguments
 		(void)arguments;
 		(void)castedArguments;
-		return Variant(func(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
+		return Variant::create<RT>(func(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
 	}
 };
 
@@ -191,7 +191,7 @@ struct MetaCallableInvoker
 		// avoid unused warning if there is no arguments
 		(void)arguments;
 		(void)castedArguments;
-		return Variant((static_cast<Class *>(instance)->*func)(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
+		return Variant::create<RT>((static_cast<Class *>(instance)->*func)(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
 	}
 };
 
