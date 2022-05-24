@@ -45,7 +45,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable get", "", TestTypes_Indexables)
 	}
 	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == container.size());
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == container.size());
 	for(size_t i = 0; i < container.size(); ++i) {
 		REQUIRE(metaIndexable->get(v, i).template get<ValueType>() == container.at(i));
 	}
@@ -74,7 +74,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set", "", TestTypes_Indexables)
 	
 	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == container.size());
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == container.size());
 
 	REQUIRE(metaIndexable->get(v, 0).template get<ValueType>() != container.at(1));
 	metaIndexable->set(v, 0, container.at(1));
@@ -97,7 +97,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set T &", "", TestTypes_Indexables)
 
 	auto metaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == container.size());
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == container.size());
 
 	auto value0 = container.at(0);
 	auto value1 = container.at(1);

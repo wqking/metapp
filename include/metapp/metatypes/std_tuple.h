@@ -35,7 +35,7 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
-			&metaIndexableGetSize,
+			&metaIndexableGetSizeInfo,
 			&metaIndexableGetValueType,
 			nullptr,
 			&metaIndexableGet,
@@ -52,9 +52,11 @@ struct DeclareMetaTypeBase <std::tuple<Types...> >
 	}
 
 private:
-	static size_t metaIndexableGetSize(const Variant & /*var*/)
+	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & /*var*/)
 	{
-		return sizeof...(Types);
+		MetaIndexable::SizeInfo sizeInfo { sizeof...(Types) };
+		sizeInfo.setResizable(false);
+		return sizeInfo;
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t index)
@@ -71,7 +73,7 @@ private:
 
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
 	{
-		if(index >= metaIndexableGetSize(var)) {
+		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
 			errorInvalidIndex();
 		}
 		else {

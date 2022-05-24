@@ -54,7 +54,7 @@ struct MetaIndexableBase
 {
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
-			&metaIndexableGetSize,
+			&metaIndexableGetSizeInfo,
 			&metaIndexableGetValueType,
 			&metaIndexableResize,
 			&metaIndexableGet,
@@ -66,9 +66,9 @@ struct MetaIndexableBase
 private:
 	using ValueType = decltype(std::declval<ContainerType &>()[0]);
 
-	static size_t metaIndexableGetSize(const Variant & indexable)
+	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & indexable)
 	{
-		return depointer(indexable).get<ContainerType &>().size();
+		return MetaIndexable::SizeInfo { depointer(indexable).get<ContainerType &>().size() };
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const size_t /*index*/)
@@ -85,7 +85,7 @@ private:
 	{
 		const Variant ref = depointer(indexable);
 
-		if(index >= metaIndexableGetSize(ref)) {
+		if(index >= metaIndexableGetSizeInfo(ref).getSize()) {
 			errorInvalidIndex();
 		}
 		return Variant::create<ValueType>(ref.get<ContainerType &>()[index]);
@@ -97,7 +97,7 @@ private:
 
 		internal_::verifyVariantWritable(ref);
 
-		if(index >= metaIndexableGetSize(ref)) {
+		if(index >= metaIndexableGetSizeInfo(ref).getSize()) {
 			errorInvalidIndex();
 		}
 		else {

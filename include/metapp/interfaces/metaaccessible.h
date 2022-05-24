@@ -53,38 +53,32 @@ public:
 
 inline const MetaType * accessibleGetValueType(const Variant & accessible)
 {
-	const Variant ref = depointer(accessible);
-	return getNonReferenceMetaType(ref)->getMetaAccessible()->getValueType(ref);
+	return getNonReferenceMetaType(accessible)->getMetaAccessible()->getValueType(accessible);
 }
 
 inline const MetaType * accessibleGetClassType(const Variant & accessible)
 {
-	const Variant ref = depointer(accessible);
-	return getNonReferenceMetaType(ref)->getMetaAccessible()->getClassType(ref);
+	return getNonReferenceMetaType(accessible)->getMetaAccessible()->getClassType(accessible);
 }
 
 inline bool accessibleIsReadOnly(const Variant & accessible)
 {
-	const Variant ref = depointer(accessible);
-	return getNonReferenceMetaType(ref)->getMetaAccessible()->isReadOnly(ref);
+	return getNonReferenceMetaType(accessible)->getMetaAccessible()->isReadOnly(accessible);
 }
 
 inline bool accessibleIsStatic(const Variant & accessible)
 {
-	const Variant ref = depointer(accessible);
-	return getNonReferenceMetaType(ref)->getMetaAccessible()->isStatic(ref);
+	return getNonReferenceMetaType(accessible)->getMetaAccessible()->isStatic(accessible);
 }
 
 inline Variant accessibleGet(const Variant & accessible, const Variant & instance)
 {
-	const Variant ref = depointer(accessible);
-	return getNonReferenceMetaType(ref)->getMetaAccessible()->get(ref, instance);
+	return getNonReferenceMetaType(accessible)->getMetaAccessible()->get(accessible, instance);
 }
 
 inline void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value)
 {
-	const Variant ref = depointer(accessible);
-	getNonReferenceMetaType(ref)->getMetaAccessible()->set(ref, instance, value);
+	getNonReferenceMetaType(accessible)->getMetaAccessible()->set(accessible, instance, value);
 }
 
 } // namespace metapp

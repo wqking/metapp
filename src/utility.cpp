@@ -63,11 +63,9 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
 
 Variant depointer(const Variant & var)
 {
-	// In this function we can't call accessibleGet, because accessibleGet will call depointer too.
-
 	const MetaType * metaType = getNonReferenceMetaType(var);
 	if(metaType->isPointer()) {
-		return metaType->getUpType()->getMetaAccessible()->get(var, nullptr);
+		return metaType->getMetaAccessible()->get(var, nullptr);
 	}
 	if(metaType->isPointerWrapper()) {
 		return metaType->getMetaAccessible()->get(var, nullptr);

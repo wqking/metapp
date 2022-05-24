@@ -35,7 +35,7 @@ struct DeclareMetaTypeBase <std::list<T, Allocator> >
 
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
-			&metaIndexableGetSize,
+			&metaIndexableGetSizeInfo,
 			&metaIndexableGetValueType,
 			&metaIndexableResize,
 			&metaIndexableGet,
@@ -48,9 +48,9 @@ private:
 	using ValueType = T;
 	using ContainerType = std::list<T, Allocator>;
 
-	static size_t metaIndexableGetSize(const Variant & var)
+	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & var)
 	{
-		return depointer(var).get<ContainerType &>().size();
+		return MetaIndexable::SizeInfo { depointer(var).get<ContainerType &>().size() };
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
@@ -67,7 +67,7 @@ private:
 	{
 		const Variant ref = depointer(var);
 
-		if(index >= metaIndexableGetSize(ref)) {
+		if(index >= metaIndexableGetSizeInfo(ref).getSize()) {
 			errorInvalidIndex();
 		}
 		auto & list = ref.get<ContainerType &>();
@@ -82,7 +82,7 @@ private:
 
 		internal_::verifyVariantWritable(ref);
 
-		if(index >= metaIndexableGetSize(ref)) {
+		if(index >= metaIndexableGetSizeInfo(ref).getSize()) {
 			errorInvalidIndex();
 		}
 		else {

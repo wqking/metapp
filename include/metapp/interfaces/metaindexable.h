@@ -27,19 +27,50 @@ namespace metapp {
 class MetaIndexable
 {
 public:
-	static constexpr size_t unknowSize = std::numeric_limits<size_t>::max();
+	class SizeInfo
+	{
+	public:
+		SizeInfo() : SizeInfo(0) {}
+		explicit SizeInfo(const size_t size) : size(size), resizable(true), unknowSize(false) {}
 
+		size_t getSize() const {
+			return size;
+		}
+
+		bool isResizable() const {
+			return resizable;
+		}
+
+		bool isUnknownSize() const {
+			return unknowSize;
+		}
+
+		void setResizable(const bool value) {
+			resizable = value;
+		}
+
+		void setUnknowSize(const bool value) {
+			unknowSize = value;
+		}
+
+	private:
+		size_t size;
+		bool resizable;
+		bool unknowSize;
+	};
+
+public:
 	MetaIndexable() = delete;
 
 	MetaIndexable(
-		size_t (*getSize)(const Variant & indexable),
+		SizeInfo (*getSizeInfo)(const Variant & indexable),
 		const MetaType * (*getValueType)(const Variant & indexable, const size_t index),
 		void (*resize)(const Variant & indexable, const size_t size),
 		Variant (*get)(const Variant & indexable, const size_t index),
 		void (*set)(const Variant & indexable, const size_t index, const Variant & value)
 	)
 		:
-			getSize(getSize),
+			getSizeInfo(getSizeInfo),
 			getValueType(getValueType),
 			get(get),
 			set(set),
@@ -47,7 +78,7 @@ public:
 	{
 	}
 
-	size_t (*getSize)(const Variant & indexable);
+	SizeInfo (*getSizeInfo)(const Variant & indexable);
 	const MetaType * (*getValueType)(const Variant & indexable, const size_t index);
 	void resize(const Variant & indexable, const size_t size) const {
 		if(resize_ != nullptr) {
@@ -61,10 +92,10 @@ private:
 	void (*resize_)(const Variant & indexable, const size_t size);
 };
 
-inline size_t indexableGetSize(const Variant & indexable)
+inline MetaIndexable::SizeInfo indexableGetSizeInfo(const Variant & indexable)
 {
 	const Variant ref = depointer(indexable);
-	return getNonReferenceMetaType(ref)->getMetaIndexable()->getSize(ref);
+	return getNonReferenceMetaType(ref)->getMetaIndexable()->getSizeInfo(ref);
 }
 
 inline void indexableResize(const Variant & indexable, const size_t size)

@@ -24,6 +24,12 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+constexpr size_t unknownSize = size_t(-1);
+
+} // namespace internal_
+
 template <typename T, size_t length>
 struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::wstring> >
 {
@@ -33,7 +39,7 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 
 	static const MetaIndexable * getMetaIndexable() {
 		static MetaIndexable metaIndexable(
-			&metaIndexableGetSize,
+			&metaIndexableGetSizeInfo,
 			&metaIndexableGetValueType,
 			nullptr,
 			&metaIndexableGet,
@@ -43,7 +49,7 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 	}
 
 	static void * constructData(VariantData * data, const void * copyFrom) {
-		return doConstructData<length != MetaIndexable::unknowSize>(data, copyFrom);
+		return doConstructData<length != internal_::unknownSize>(data, copyFrom);
 	}
 
 private:
@@ -83,9 +89,12 @@ private:
 			typename std::remove_cv<T>::type
 		>::type;
 
-	static size_t metaIndexableGetSize(const Variant & /*var*/)
+	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & /*var*/)
 	{
-		return length;
+		MetaIndexable::SizeInfo sizeInfo { length };
+		sizeInfo.setResizable(false);
+		sizeInfo.setUnknowSize(length == internal_::unknownSize);
+		return sizeInfo;
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
@@ -102,7 +111,7 @@ private:
 	{
 		internal_::verifyVariantWritable(var);
 
-		if(index >= metaIndexableGetSize(var)) {
+		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
 			errorInvalidIndex();
 		}
 		else {
@@ -114,7 +123,7 @@ private:
 
 template <typename T>
 struct DeclareMetaTypeBase <T[]>
-	: DeclareMetaTypeArrayBase <T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <T[], internal_::unknownSize>
 {
 };
 
@@ -126,7 +135,7 @@ struct DeclareMetaTypeBase <T[N]>
 
 template <typename T>
 struct DeclareMetaTypeBase <const T[]>
-	: DeclareMetaTypeArrayBase <const T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <const T[], internal_::unknownSize>
 {
 };
 
@@ -138,7 +147,7 @@ struct DeclareMetaTypeBase <const T[N]>
 
 template <typename T>
 struct DeclareMetaTypeBase <volatile T[]>
-	: DeclareMetaTypeArrayBase <volatile T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <volatile T[], internal_::unknownSize>
 {
 };
 
@@ -150,7 +159,7 @@ struct DeclareMetaTypeBase <volatile T[N]>
 
 template <typename T>
 struct DeclareMetaTypeBase <const volatile T[]>
-	: DeclareMetaTypeArrayBase <const volatile T[], MetaIndexable::unknowSize>
+	: DeclareMetaTypeArrayBase <const volatile T[], internal_::unknownSize>
 {
 };
 

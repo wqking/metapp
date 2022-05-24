@@ -39,14 +39,14 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIndexable")
 	});
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdVector);
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(metapp::indexableGetSize(v) == 3);
+	REQUIRE(metapp::indexableGetSizeInfo(v).getSize() == 3);
 	REQUIRE(metapp::indexableGet(v, 0).getMetaType()->getTypeKind() == metapp::tkReference);
 	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "good");
 	REQUIRE(metapp::indexableGet(v, 1).get<const std::string &>() == "great");
 	REQUIRE(metapp::indexableGet(v, 2).get<const std::string &>() == "perfect");
 
 	metapp::indexableResize(v, 38);
-	REQUIRE(metapp::indexableGetSize(v) == 38);
+	REQUIRE(metapp::indexableGetSizeInfo(v).getSize() == 38);
 	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "good");
 	REQUIRE(metapp::indexableGet(v, 1).get<const std::string &>() == "great");
 	REQUIRE(metapp::indexableGet(v, 2).get<const std::string &>() == "perfect");

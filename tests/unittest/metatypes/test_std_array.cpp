@@ -39,7 +39,7 @@ TEST_CASE("metatypes, tkStdArray, std::array<int, 5>, MetaIndexable")
 	using Type = std::array<int, 5>;
 	metapp::Variant v(Type { 38, 98, 5, 16, 99 });
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSizeInfo(v).getSize() == 5);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 38);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 98);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 5);
@@ -58,7 +58,7 @@ TEST_CASE("metatypes, tkStdArray, const std::array<int, 5>, MetaIndexable, can't
 	using Type = const std::array<int, 5>;
 	metapp::Variant v(metapp::Variant::create<Type>({ 38, 98, 5, 16, 99 }));
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSizeInfo(v).getSize() == 5);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 38);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 98);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 5);
@@ -79,7 +79,7 @@ TEST_CASE("metatypes, tkStdArray, const std::array<int, 5> &, MetaIndexable, can
 	metapp::Variant v(metapp::Variant::create<const Type &>(array));
 	auto metaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 5);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 5);
 	REQUIRE(metaIndexable->get(v, 0).get<int>() == 38);
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 98);
 	REQUIRE(metaIndexable->get(v, 2).get<int>() == 5);

@@ -38,7 +38,7 @@ TEST_CASE("metatypes, std::list<int>, MetaIndexable")
 	using Type = std::list<int>;
 	metapp::Variant v(Type { 38, 98, 5, 16, 99 });
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSize(v) == 5);
+	REQUIRE(v.getMetaType()->getMetaIndexable()->getSizeInfo(v).getSize() == 5);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 38);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 98);
 	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 5);

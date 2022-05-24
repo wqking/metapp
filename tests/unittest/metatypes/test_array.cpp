@@ -33,7 +33,7 @@ TEST_CASE("metatypes, tkArray, int[3]")
 
 	auto metaIndexable = v.getMetaType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
 	REQUIRE(metaIndexable->get(v, 0).get<int>() == 3);
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 8);
 	REQUIRE(metaIndexable->get(v, 2).get<int>() == 9);
@@ -62,7 +62,7 @@ TEST_CASE("metatypes, tkArray, int (&)[3]")
 
 	auto metaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
 	REQUIRE(metaIndexable->get(v, 0).get<int>() == 3);
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 8);
 	REQUIRE(metaIndexable->get(v, 2).get<int>() == 9);
@@ -87,7 +87,7 @@ TEST_CASE("metatypes, tkArray, std::string[3]")
 
 	auto metaIndexable = v.getMetaType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
 	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "good");
 	REQUIRE(metaIndexable->get(v, 1).get<const std::string &>() == "great");
 	REQUIRE(metaIndexable->get(v, 2).get<const std::string &>() == "perfect");
@@ -140,8 +140,8 @@ TEST_CASE("metatypes, tkArray, int[2][3]")
 	auto upMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(upMetaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 2);
-	REQUIRE(upMetaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 2);
+	REQUIRE(upMetaIndexable->getSizeInfo(v).getSize() == 3);
 	metapp::Variant v1 = metaIndexable->get(v, 1);
 	REQUIRE(metapp::getTypeKind(v1) == metapp::tkReference);
 	auto v1UpMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
@@ -173,8 +173,8 @@ TEST_CASE("metatypes, tkArray, empty int[2][3]")
 	auto upMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(upMetaIndexable != nullptr);
-	REQUIRE(metaIndexable->getSize(v) == 2);
-	REQUIRE(upMetaIndexable->getSize(v) == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 2);
+	REQUIRE(upMetaIndexable->getSizeInfo(v).getSize() == 3);
 	metapp::Variant v1 = metaIndexable->get(v, 1);
 	REQUIRE(metapp::getTypeKind(v1) == metapp::tkReference);
 	auto v1UpMetaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
