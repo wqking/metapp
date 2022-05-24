@@ -157,11 +157,11 @@ Then in the project CMakeLists.txt,
 add_executable(mytest test.cpp)
 
 find_package(metapp)
-if(eventpp_FOUND)
+if(metapp_FOUND)
 target_link_libraries(mytest metapp::metapp)
-else(eventpp_FOUND)
+else(metapp_FOUND)
 message(FATAL_ERROR "metapp library is not found")
-endif(eventpp_FOUND)
+endif(metapp_FOUND)
 ```
 
 Note: when using the method 2 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
@@ -225,9 +225,19 @@ ExampleFunc
         ASSERT(metaType->isConst());
         //code
     }
+
+    {
+        //code
+        //desc equivalence
+        auto metaType = metapp::getMetaType<const int *>();
+        ASSERT(metaType->equal(metapp::getMetaType<const int *>()));
+        // Equivalence checking ignores all CV qualifiers.
+        ASSERT(metaType->equal(metapp::getMetaType<int *>()));
+        //code
+    }
 }
 
-//desc ### Call function
+//desc ### Call function and accessible
 ExampleFunc
 {
     //code
@@ -237,13 +247,47 @@ ExampleFunc
         int add(const int delta1, const int delta2) const {
             return value + delta1 + delta2;
         }
+
+        // metapp supports smart pointers very well.
+        std::unique_ptr<MyClass> clone() const {
+            // This is C++11, so we can't use std::make_unique
+            return std::unique_ptr<MyClass>(new MyClass(*this));
+        }
     };
 
-    metapp::Variant v(&MyClass::add);
     MyClass obj { 5 };
-    // The second argument is the pointer to obj, it's required when invoking member function
-    metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
-   ASSERT(result.get<int>() == 17);
+
+    metapp::Variant accessible(&MyClass::value);
+
+    metapp::Variant funcAdd(&MyClass::add);
+    //desc The second argument is the object instance, it's required when invoking member function.
+    metapp::Variant resultOfAdd = metapp::callableInvoke(funcAdd, &obj, 3, 9);
+    ASSERT(resultOfAdd.get<int>() == 17);
+
+    metapp::Variant funcClone(&MyClass::clone);
+    metapp::Variant cloned = metapp::callableInvoke(funcClone, &obj);
+    //desc `cloned` holds std::unique_ptr<MyClass>
+    ASSERT(cloned.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<MyClass>>()));
+    //desc We can pass the cloned Variant as the instance.
+    ASSERT(metapp::callableInvoke(funcAdd, cloned, 5, 9).get<int>() == 19);
+
+    //desc Get the value from accessible, which is MyClass::value.
+    //desc The second argument is the object instance.
+    //desc Since `cloned` is cloned freshly, both obj and cloned hold the same value.
+    ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 5);
+    ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 5);
+
+    //desc Change value in obj
+    obj.value = 6;
+    ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
+    //desc `cloned` is not affected.
+    ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 5);
+
+    //desc Set value in `cloned`.
+    metapp::accessibleSet(accessible, cloned, 38);
+    //desc `obj` is not affected.
+    ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
+    ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 38);
     //code
 }
 
@@ -356,9 +400,9 @@ All parts are in the `tests` folder.
 
 All parts require CMake to build, and there is a makefile to ease the building.  
 Go to folder `tests/build`, then run `make` with different target.
-- `make vc19` #generate solution files for Microsoft Visual Studio 2019, then open eventpptest.sln in folder project_vc19
-- `make vc17` #generate solution files for Microsoft Visual Studio 2017, then open eventpptest.sln in folder project_vc17
-- `make vc15` #generate solution files for Microsoft Visual Studio 2015, then open eventpptest.sln in folder project_vc15
+- `make vc19` #generate solution files for Microsoft Visual Studio 2019, then open metapptest.sln in folder project_vc19
+- `make vc17` #generate solution files for Microsoft Visual Studio 2017, then open metapptest.sln in folder project_vc17
+- `make vc15` #generate solution files for Microsoft Visual Studio 2015, then open metapptest.sln in folder project_vc15
 - `make mingw` #build using MinGW
 - `make linux` #build on Linux
 - `make mingw_coverage` #build using MinGW and generate code coverage report
