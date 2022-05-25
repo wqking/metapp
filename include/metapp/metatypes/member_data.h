@@ -57,6 +57,9 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	}
 
 	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {
+		internal_::verifyVariantWritable(accessible);
+		internal_::verifyVariantWritable(instance);
+
 		internal_::assignValue(
 			((Class *)getPointer(instance))->*(accessible.get<T Class::*>()),
 			value.cast<T>().template get<const T &>()

@@ -21,6 +21,18 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+void verifyVariantWritable(const Variant & var)
+{
+	auto metaType = getPointedType(var);
+	if(metaType->isConst()) {
+		errorUnwritable();
+	}
+}
+
+} // namespace internal_
+
 void * getPointer(const Variant & var)
 {
 	const MetaType * metaType = getNonReferenceMetaType(var);

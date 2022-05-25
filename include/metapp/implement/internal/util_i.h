@@ -25,13 +25,7 @@ namespace metapp {
 
 namespace internal_ {
 
-inline void verifyVariantWritable(const Variant & var)
-{
-	auto metaType = getReferredMetaType(var);
-	if(metaType->isConst()) {
-		errorUnwritable();
-	}
-}
+void verifyVariantWritable(const Variant & var);
 
 template <typename ...Types>
 inline const MetaType * getMetaTypeAt(const int index)

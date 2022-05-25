@@ -132,6 +132,8 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	}
 
 	static void accessibleSet(const Variant & accessible, const Variant & /*instance*/, const Variant & value) {
+		internal_::verifyVariantWritable(accessible);
+
 		internal_::assignValue(*(accessible.get<SharedPtr &>()), value.cast<T>().template get<const T &>());
 	}
 
