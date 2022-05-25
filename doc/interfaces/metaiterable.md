@@ -77,19 +77,27 @@ void forEach(const Variant & iterable, MetaIterable::Callback callback);
 using Callback = std::function<bool (const Variant &)>;
 ```
 
-The first parameter `iterable` is the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+The first parameter `iterable` is the Variant which meta type implements `MetaIndexable`,
+and hold the proper data such as `std::vector`. The member functions operate on the data.  
 We can treat `iterable` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`iterable` can be a value, a reference, or a pointer.  
+`iterable` can be a value, a reference. If it's pointer or smart pointer, you should call `metapp::depointer`
+to convert it to non-pointer. 
 The second parameter `callback` is a callback function. Its prototype is `std::function<bool (const Variant &)>`.  
 
-When `forEach` is invoked, `callback` is called for every element in `iterable`, and the referent to the element is passed as the parameter of the `callback`. If `callback` returns true, `forEach` will continue on next element, until there is no more elements. If `callback` returns false, `forEach` will stop the loop and return.  
-Note: for STL containers, the element is the `value_type` in the container. That means for associative containers such as `std::map`, the element is a `std::pair` of the key and value.  
+When `forEach` is invoked, `callback` is called for every element in `iterable`,and the referent to the element
+is passed as the parameter of the `callback`. If `callback` returns true, `forEach` will continue on next element,
+until there is no more elements. If `callback` returns false, `forEach` will stop the loop and return.  
+Note: for STL containers, the element is the `value_type` in the container.
+That means for associative containers such as `std::map`, the element is a `std::pair` of the key and value.  
 
 <a id="a2_7"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIterable`.  
-Usually you should prefer the utility functions to calling `MetaIterable` member function directly. However, if you need to call functions on a single `MetaIterable` more than one times in a high performance application, you may store `iterable.getMetaType()->getMetaIterable()` to a local variable, then use the variable to call the member functions. This is because `MetaIterable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaIterable` member function directly.
+However, if you need to call functions on a single `MetaIterable` more than one times in a high performance application,
+you may store `iterable.getMetaType()->getMetaIterable()` to a local variable, then use the variable to call the member functions.
+This is because `MetaIterable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
 inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)

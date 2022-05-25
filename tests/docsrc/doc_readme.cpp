@@ -296,13 +296,14 @@ ExampleFunc
 //code
 std::string concat(const metapp::Variant & container)
 {
+    const metapp::Variant nonPointer = depointer(container);
     const metapp::MetaIterable * metaIterable
-        = metapp::getNonReferenceMetaType(depointer(container))->getMetaIterable();
+        = metapp::getNonReferenceMetaType(nonPointer)->getMetaIterable();
     if(metaIterable == nullptr) {
         return "";
-   }
+    }
     std::stringstream stream;
-    metaIterable->forEach(container, [&stream](const metapp::Variant & item) {
+    metaIterable->forEach(nonPointer, [&stream](const metapp::Variant & item) {
         stream << item;
         return true;
     });

@@ -44,20 +44,17 @@ public:
 
 inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
 {
-	const Variant ref = depointer(mappable);
-	return getNonReferenceMetaType(ref)->getMetaMappable()->getValueType(ref);
+	return getNonReferenceMetaType(mappable)->getMetaMappable()->getValueType(mappable);
 }
 
 inline Variant mappableGet(const Variant & mappable, const Variant & key)
 {
-	const Variant ref = depointer(mappable);
-	return getNonReferenceMetaType(ref)->getMetaMappable()->get(ref, key);
+	return getNonReferenceMetaType(mappable)->getMetaMappable()->get(mappable, key);
 }
 
 inline void mappableSet(const Variant & mappable, const Variant & key, const Variant & value)
 {
-	const Variant ref = depointer(mappable);
-	getNonReferenceMetaType(ref)->getMetaMappable()->set(ref, key, value);
+	getNonReferenceMetaType(mappable)->getMetaMappable()->set(mappable, key, value);
 }
 
 

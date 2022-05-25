@@ -8,7 +8,7 @@
 * [Implemented built-in meta types](#a2_4)
 * [MetaIndexable constructor](#a2_5)
 * [MetaIndexable member functions](#a2_6)
-  * [getSize](#a4_1)
+  * [getSizeInfo](#a4_1)
   * [getValueType](#a4_2)
   * [resize](#a4_3)
   * [get](#a4_4)
@@ -54,7 +54,7 @@ const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 
 ```c++
 MetaIndexable(
-  size_t (*getSize)(const Variant & indexable),
+  SizeInfo (*getSizeInfo)(const Variant & indexable),
   const MetaType * (*getValueType)(const Variant & indexable, const size_t index),
   void (*resize)(const Variant & indexable, const size_t size),
   Variant (*get)(const Variant & indexable, const size_t index),
@@ -68,20 +68,24 @@ The meaning of each functions are same as the member functions listed below.
 <a id="a2_6"></a>
 ## MetaIndexable member functions
 
-The first parameter in all of the member functions is `const Variant & indexable`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+The first parameter in all of the member functions is `const Variant & indexable`.
+It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`.
+The member functions operate on the data.  
 We can treat `indexable` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`indexable` can be a value, a reference, or a pointer.  
+`indexable` can be a value, a reference. If it's pointer or smart pointer, you should call `metapp::depointer`
+to convert it to non-pointer. 
 
-For the functions that have parameter `index`, the functions don't do bound checking on `index`. It's the caller's responsibility to be sure the `index` is valid.
+For the functions that have parameter `index`, the functions don't do bound checking on `index`.
+It's the caller's responsibility to be sure the `index` is valid.
 
 <a id="a4_1"></a>
-#### getSize
+#### getSizeInfo
 
 ```c++
-size_t getSize(const Variant & indexable);
+MetaIndexable::SizeInfo getSizeInfo(const Variant & indexable);
 ```
 
-Returns the number of elements in the Variant.  
+Returns the SizeInfo of the indexable.  
 If the number is unknown, `MetaIndexable::unknowSize` is returned  
 For `std::pair`, the function returns 2.  
 For `std::tuple`, the function returns the tuple size.  
@@ -145,9 +149,9 @@ Below free functions are shortcut functions to use the member functions in `Meta
 Usually you should prefer the utility functions to calling `MetaIndexable` member function directly. However, if you need to call functions on a single `MetaIndexable` more than one times in a high performance application, you may store `indexable.getMetaType()->getMetaIndexable()` to a local variable, then use the variable to call the member functions. This is because `getMetaIndexable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
-inline size_t indexableGetSize(const Variant & indexable)
+inline SizeInfo indexableGetSizeInfo(const Variant & indexable)
 {
-  return indexable.getMetaType()->getMetaIndexable()->getSize(indexable);
+  return indexable.getMetaType()->getMetaIndexable()->getSizeInfo(indexable);
 }
 
 inline void indexableResize(const Variant & indexable, const size_t size)

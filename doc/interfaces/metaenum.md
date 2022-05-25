@@ -50,7 +50,9 @@ template <typename FT>
 explicit MetaEnum(FT callback);
 ```
 
-`callback` is a callback function. MetaEnum invokes the callback in the constructor. Since the interface is usually implemented as static variable inside static function, the "callback in constructor" mechanism can guarantee thread safety.  
+`callback` is a callback function. MetaEnum invokes the callback in the constructor.
+Since the interface is usually implemented as static variable inside static function, the "callback in constructor" mechanism
+can guarantee thread safety.  
 
 `callback` prototype,  
 ```c++

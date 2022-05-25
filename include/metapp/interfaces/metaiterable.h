@@ -42,8 +42,7 @@ public:
 
 inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)
 {
-	const Variant ref = depointer(iterable);
-	getNonReferenceMetaType(ref)->getMetaIterable()->forEach(ref, callback);
+	getNonReferenceMetaType(iterable)->getMetaIterable()->forEach(iterable, callback);
 }
 
 

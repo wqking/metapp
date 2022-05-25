@@ -34,13 +34,13 @@ TEST_CASE("utility, depointer, int *")
 	REQUIRE(v.canGet<int *>());
 	REQUIRE(*v.get<int *>() == 5);
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.canGet<int>());
-	REQUIRE(ref.get<int>() == 5);
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.canGet<int>());
+	REQUIRE(nonPointer.get<int>() == 5);
 
 	n = 38;
-	REQUIRE(ref.get<int>() == 38);
+	REQUIRE(nonPointer.get<int>() == 38);
 	REQUIRE(*v.get<int *>() == 38);
 }
 
@@ -52,13 +52,13 @@ TEST_CASE("utility, depointer, int &")
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.canGet<int>());
-	REQUIRE(ref.get<int>() == 5);
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.canGet<int>());
+	REQUIRE(nonPointer.get<int>() == 5);
 
 	n = 38;
-	REQUIRE(ref.get<int>() == 38);
+	REQUIRE(nonPointer.get<int>() == 38);
 	REQUIRE(v.get<int>() == 38);
 }
 
@@ -69,13 +69,13 @@ TEST_CASE("utility, depointer, int")
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkInt);
-	REQUIRE(ref.canGet<int>());
-	REQUIRE(ref.get<int>() == 5);
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkInt);
+	REQUIRE(nonPointer.canGet<int>());
+	REQUIRE(nonPointer.get<int>() == 5);
 
 	v.get<int &>() = 38;
-	REQUIRE(ref.get<int>() == 5);
+	REQUIRE(nonPointer.get<int>() == 5);
 	REQUIRE(v.get<int>() == 38);
 }
 
@@ -87,15 +87,15 @@ TEST_CASE("utility, depointer, std::string")
 	REQUIRE(v.canGet<std::string>());
 	REQUIRE(v.get<std::string &>() == "hello");
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkStdString);
-	REQUIRE(ref.canGet<std::string>());
-	REQUIRE(ref.get<std::string>() == "hello");
-	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkStdString);
+	REQUIRE(nonPointer.canGet<std::string>());
+	REQUIRE(nonPointer.get<std::string>() == "hello");
+	REQUIRE(nonPointer.cast<std::string>().get<std::string>() == "hello");
 
 	v.get<std::string &>() = "world";
-	// Even though both v and ref are values, they refer to the same copy of std::string
-	REQUIRE(ref.get<std::string>() == "world");
+	// Even though both v and nonPointer are values, they refer to the same copy of std::string
+	REQUIRE(nonPointer.get<std::string>() == "world");
 	REQUIRE(v.get<std::string>() == "world");
 }
 
@@ -108,12 +108,12 @@ TEST_CASE("utility, depointer, const std::string, constness")
 	REQUIRE(v.get<std::string &>() == "hello");
 	REQUIRE(v.getMetaType()->isConst());
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkStdString);
-	REQUIRE(ref.canGet<std::string>());
-	REQUIRE(ref.get<std::string>() == "hello");
-	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
-	REQUIRE(ref.getMetaType()->isConst());
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkStdString);
+	REQUIRE(nonPointer.canGet<std::string>());
+	REQUIRE(nonPointer.get<std::string>() == "hello");
+	REQUIRE(nonPointer.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(nonPointer.getMetaType()->isConst());
 }
 
 TEST_CASE("utility, depointer, const std::string &, constness")
@@ -126,13 +126,13 @@ TEST_CASE("utility, depointer, const std::string &, constness")
 	REQUIRE(! v.getMetaType()->isConst());
 	REQUIRE(v.getMetaType()->getUpType()->isConst());
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.canGet<std::string>());
-	REQUIRE(ref.get<std::string>() == "hello");
-	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
-	REQUIRE(! ref.getMetaType()->isConst());
-	REQUIRE(ref.getMetaType()->getUpType()->isConst());
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.canGet<std::string>());
+	REQUIRE(nonPointer.get<std::string>() == "hello");
+	REQUIRE(nonPointer.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(! nonPointer.getMetaType()->isConst());
+	REQUIRE(nonPointer.getMetaType()->getUpType()->isConst());
 }
 
 TEST_CASE("utility, depointer, const std::string *, constness")
@@ -145,13 +145,13 @@ TEST_CASE("utility, depointer, const std::string *, constness")
 	REQUIRE(! v.getMetaType()->isConst());
 	REQUIRE(v.getMetaType()->getUpType()->isConst());
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.canGet<std::string>());
-	REQUIRE(ref.get<std::string>() == "hello");
-	REQUIRE(ref.cast<std::string>().get<std::string>() == "hello");
-	REQUIRE(! ref.getMetaType()->isConst());
-	REQUIRE(ref.getMetaType()->getUpType()->isConst());
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.canGet<std::string>());
+	REQUIRE(nonPointer.get<std::string>() == "hello");
+	REQUIRE(nonPointer.cast<std::string>().get<std::string>() == "hello");
+	REQUIRE(! nonPointer.getMetaType()->isConst());
+	REQUIRE(nonPointer.getMetaType()->getUpType()->isConst());
 }
 
 struct MyClass
@@ -169,14 +169,14 @@ TEST_CASE("utility, depointer, MyClass *")
 	REQUIRE(v.canGet<MyClass *>());
 	REQUIRE(v.get<MyClass *>()->text == "hello");
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
-	REQUIRE(ref.canGet<MyClass>());
-	REQUIRE(ref.get<MyClass &>().text == "hello");
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+	REQUIRE(nonPointer.canGet<MyClass>());
+	REQUIRE(nonPointer.get<MyClass &>().text == "hello");
 
 	n.text = "world";
-	REQUIRE(ref.get<MyClass &>().text == "world");
+	REQUIRE(nonPointer.get<MyClass &>().text == "world");
 	REQUIRE(v.get<MyClass *>()->text == "world");
 }
 
@@ -188,14 +188,14 @@ TEST_CASE("utility, depointer, MyClass &")
 	REQUIRE(v.canGet<MyClass>());
 	REQUIRE(v.get<MyClass &>().text == "hello");
 
-	metapp::Variant ref(depointer(v));
-	REQUIRE(metapp::getTypeKind(ref) == metapp::tkReference);
-	REQUIRE(ref.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
-	REQUIRE(ref.canGet<MyClass>());
-	REQUIRE(ref.get<MyClass &>().text == "hello");
+	metapp::Variant nonPointer(depointer(v));
+	REQUIRE(metapp::getTypeKind(nonPointer) == metapp::tkReference);
+	REQUIRE(nonPointer.getMetaType()->getUpType() == metapp::getMetaType<MyClass>());
+	REQUIRE(nonPointer.canGet<MyClass>());
+	REQUIRE(nonPointer.get<MyClass &>().text == "hello");
 
 	n.text = "world";
-	REQUIRE(ref.get<MyClass &>().text == "world");
+	REQUIRE(nonPointer.get<MyClass &>().text == "world");
 	REQUIRE(v.get<MyClass &>().text == "world");
 }
 

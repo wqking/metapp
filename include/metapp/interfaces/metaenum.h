@@ -73,14 +73,12 @@ private:
 
 inline const MetaItem & enumGetValue(const Variant & var, const std::string & name)
 {
-	const Variant ref = depointer(var);
-	return getNonReferenceMetaType(ref)->getMetaEnum()->getValue(name);
+	return getNonReferenceMetaType(var)->getMetaEnum()->getValue(name);
 }
 
 inline MetaItemView enumGetValueView(const Variant & var)
 {
-	const Variant ref = depointer(var);
-	return getNonReferenceMetaType(ref)->getMetaEnum()->getValueView();
+	return getNonReferenceMetaType(var)->getMetaEnum()->getValueView();
 }
 
 

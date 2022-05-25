@@ -94,26 +94,22 @@ private:
 
 inline MetaIndexable::SizeInfo indexableGetSizeInfo(const Variant & indexable)
 {
-	const Variant ref = depointer(indexable);
-	return getNonReferenceMetaType(ref)->getMetaIndexable()->getSizeInfo(ref);
+	return getNonReferenceMetaType(indexable)->getMetaIndexable()->getSizeInfo(indexable);
 }
 
 inline void indexableResize(const Variant & indexable, const size_t size)
 {
-	const Variant ref = depointer(indexable);
-	getNonReferenceMetaType(ref)->getMetaIndexable()->resize(ref, size);
+	getNonReferenceMetaType(indexable)->getMetaIndexable()->resize(indexable, size);
 }
 
 inline Variant indexableGet(const Variant & indexable, const size_t index)
 {
-	const Variant ref = depointer(indexable);
-	return getNonReferenceMetaType(ref)->getMetaIndexable()->get(ref, index);
+	return getNonReferenceMetaType(indexable)->getMetaIndexable()->get(indexable, index);
 }
 
 inline void indexableSet(const Variant & indexable, const size_t index, const Variant & value)
 {
-	const Variant ref = depointer(indexable);
-	getNonReferenceMetaType(ref)->getMetaIndexable()->set(ref, index, value);
+	getNonReferenceMetaType(indexable)->getMetaIndexable()->set(indexable, index, value);
 }
 
 

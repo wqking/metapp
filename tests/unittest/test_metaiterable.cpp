@@ -48,7 +48,9 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 	std::vector<ValueType> resultList;
 	auto metaIterable = metapp::getReferredMetaType(v)->getMetaIterable();
 	REQUIRE(metaIterable != nullptr);
-	metaIterable->forEach(v, [&resultList](const metapp::Variant & value) -> bool {
+
+	auto nonPointer = metapp::depointer(v);
+	metaIterable->forEach(nonPointer, [&resultList](const metapp::Variant & value) -> bool {
 		resultList.push_back(value.get<ValueType &>());
 		return true;
 	});
@@ -57,7 +59,6 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 		REQUIRE(std::find(container.begin(), container.end(), resultItem) != container.end());
 	}
 }
-
 
 
 } // namespace

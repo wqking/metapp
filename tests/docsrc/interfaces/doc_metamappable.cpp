@@ -33,7 +33,8 @@
 
 ## Get MetaMappable interface
 
-We can call `MetaType::getMetaMappable()` to get the `MetaMappable` interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaMappable()` to get the `MetaMappable` interface.
+If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
@@ -62,9 +63,12 @@ The meaning of each functions are same as the member functions listed below.
 
 ## MetaMappable member functions
 
-The first parameter in all of the member functions is `const Variant & mappable`. It's the Variant which meta type implements `MetaMappable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+The first parameter in all of the member functions is `const Variant & mappable`.
+It's the Variant which meta type implements `MetaMappable`, and hold the proper data such as `std::vector`.
+The member functions operate on the data.  
 We can treat `mappable` as the C++ object instance which class implements an interface called `MetaMappable`.  
-`mappable` can be a value, a reference, or a pointer.  
+`mappable` can be a value, a reference. If it's pointer or smart pointer, you should call `metapp::depointer`
+to convert it to non-pointer. 
 
 #### getValueType
 
@@ -72,7 +76,8 @@ We can treat `mappable` as the C++ object instance which class implements an int
 std::pair<const MetaType *, const MetaType *> getValueType(const Variant & mappable);
 ```
 
-Returns the meta type of key/value. The `first` in the returned `std::pair` is the meta type for the key, the `second` in the returned `std::pair` is the meta type for the value.  
+Returns the meta type of key/value. The `first` in the returned `std::pair` is the meta type for the key,
+the `second` in the returned `std::pair` is the meta type for the value.  
 
 #### get
 
@@ -80,7 +85,8 @@ Returns the meta type of key/value. The `first` in the returned `std::pair` is t
 Variant get(const Variant & mappable, const Variant & key);
 ```
 
-Returns a reference to the mapped value of the element with `key`. If no such element exists, an empty Variant (Variant::isEmpty() is true) is returned.  
+Returns a reference to the mapped value of the element with `key`.
+If no such element exists, an empty Variant (Variant::isEmpty() is true) is returned.  
 `key` is casted to the key type in the container.  
 
 #### set
@@ -96,7 +102,10 @@ Set the mapped value of the element with `key` with `value`.
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaMappable`.  
-Usually you should prefer the utility functions to calling `MetaMappable` member function directly. However, if you need to call functions on a single `MetaMappable` more than one times in a high performance application, you may store `mappable.getMetaType()->getMetaMappable()` to a local variable, then use the variable to call the member functions. This is because `getMetaMappable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaMappable` member function directly.
+However, if you need to call functions on a single `MetaMappable` more than one times in a high performance application,
+you may store `mappable.getMetaType()->getMetaMappable()` to a local variable, then use the variable to call the member functions.
+This is because `getMetaMappable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
 inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
