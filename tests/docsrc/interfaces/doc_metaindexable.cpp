@@ -84,12 +84,40 @@ MetaIndexable::SizeInfo getSizeInfo(const Variant & indexable);
 ```
 
 Returns the SizeInfo of the indexable.  
-If the number is unknown, `MetaIndexable::unknowSize` is returned  
-For `std::pair`, the function returns 2.  
-For `std::tuple`, the function returns the tuple size.  
-For `T[]`, the function returns `MetaIndexable::unknowSize`.  
-For `T[N]`, the function returns N.  
-For other containers such as `std::vector`, the function returns the size of the container.  
+
+SizeInfo class,
+
+```c++
+class MetaIndexable::SizeInfo
+{
+public:
+	SizeInfo();
+	explicit SizeInfo(const size_t size);
+
+	size_t getSize() const;
+	bool isResizable() const;
+	bool isUnknownSize() const;
+
+	void setResizable(const bool value);
+	void setUnknowSize(const bool value);
+};
+```
+
+The constructors, `setResizable`, `setUnknowSize` are used by `MetaIndexable` implementations.  
+'getSize', `isResizable`, `isUnknownSize` are used by `MetaIndexable` users.  
+
+`size` is the number of elements in the indexable.  
+`resizable` means whether the indexable can be changed to another size by calling `resize`.  
+`unknownSize` is false by default for most cases, exception the type `T[]` has true unknownSize. If unknownSize is true,
+both `size` and `resizable` don't make sense.  
+
+For `std::pair`, size is 2, resizable is false.  
+For `std::tuple`, size is the tuple size, resizable is false.  
+For `T[]`, unknownSize is true.  
+For `T[N]`, size is N, resizable is false, unknownSize is false.  
+For `std::array<T, N>`, size is N, resizable is false.  
+For other containers such as `std::vector`, `std::deque`, `std::list`, the function returns the size of the container,
+and resizable is true.  
 
 #### getValueType
 

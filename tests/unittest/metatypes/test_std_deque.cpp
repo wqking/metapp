@@ -38,11 +38,14 @@ TEST_CASE("metatypes, std::deque<std::string>, MetaIndexable")
 		"good", "great", "perfect"
 	});
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdDeque);
-	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSizeInfo(v).getSize() == 3);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<const std::string &>() == "good");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<const std::string &>() == "great");
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<const std::string &>() == "perfect");
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
+	REQUIRE(metaIndexable->getSizeInfo(v).isResizable());
+	REQUIRE(! metaIndexable->getSizeInfo(v).isUnknownSize());
+	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "good");
+	REQUIRE(metaIndexable->get(v, 1).get<const std::string &>() == "great");
+	REQUIRE(metaIndexable->get(v, 2).get<const std::string &>() == "perfect");
 }
 
 TEST_CASE("metatypes, std::deque<std::string>, MetaIterable")

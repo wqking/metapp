@@ -63,6 +63,8 @@ TEST_CASE("metatypes, tkArray, int (&)[3]")
 	auto metaIndexable = v.getMetaType()->getUpType()->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
+	REQUIRE(! metaIndexable->getSizeInfo(v).isResizable());
+	REQUIRE(! metaIndexable->getSizeInfo(v).isUnknownSize());
 	REQUIRE(metaIndexable->get(v, 0).get<int>() == 3);
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 8);
 	REQUIRE(metaIndexable->get(v, 2).get<int>() == 9);
@@ -103,6 +105,8 @@ TEST_CASE("metatypes, tkArray, int[], constness")
 {
 	REQUIRE(metapp::getMetaType<const int[]>()->getTypeKind() == metapp::tkArray);
 	REQUIRE(metapp::getMetaType<const int[]>()->isConst());
+	REQUIRE(! metapp::getMetaType<const int[]>()->getMetaIndexable()->getSizeInfo(metapp::Variant()).isResizable());
+	REQUIRE(metapp::getMetaType<const int[]>()->getMetaIndexable()->getSizeInfo(metapp::Variant()).isUnknownSize());
 	
 	REQUIRE(metapp::getMetaType<volatile int[]>()->getTypeKind() == metapp::tkArray);
 	REQUIRE(metapp::getMetaType<volatile int[]>()->isVolatile());

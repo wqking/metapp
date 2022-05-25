@@ -37,18 +37,21 @@ TEST_CASE("metatypes, std::list<int>, MetaIndexable")
 {
 	using Type = std::list<int>;
 	metapp::Variant v(Type { 38, 98, 5, 16, 99 });
-	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->getSizeInfo(v).getSize() == 5);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 0).get<int>() == 38);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 1).get<int>() == 98);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 2).get<int>() == 5);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 3).get<int>() == 16);
-	REQUIRE(v.getMetaType()->getMetaIndexable()->get(v, 4).get<int>() == 99);
+	auto metaIndexable = v.getMetaType()->getMetaIndexable();
+	REQUIRE(metaIndexable != nullptr);
+	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 5);
+	REQUIRE(metaIndexable->getSizeInfo(v).isResizable());
+	REQUIRE(! metaIndexable->getSizeInfo(v).isUnknownSize());
+	REQUIRE(metaIndexable->get(v, 0).get<int>() == 38);
+	REQUIRE(metaIndexable->get(v, 1).get<int>() == 98);
+	REQUIRE(metaIndexable->get(v, 2).get<int>() == 5);
+	REQUIRE(metaIndexable->get(v, 3).get<int>() == 16);
+	REQUIRE(metaIndexable->get(v, 4).get<int>() == 99);
 
-	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 5, 3));
-	REQUIRE_THROWS(v.getMetaType()->getMetaIndexable()->set(v, 0, "abc"));
+	REQUIRE_THROWS(metaIndexable->set(v, 5, 3));
+	REQUIRE_THROWS(metaIndexable->set(v, 0, "abc"));
 	REQUIRE(v.get<Type &>().front() == 38);
-	v.getMetaType()->getMetaIndexable()->set(v, 0, 3);
+	metaIndexable->set(v, 0, 3);
 	REQUIRE(v.get<Type &>().front() == 3);
 }
 

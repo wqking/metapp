@@ -55,7 +55,9 @@ private:
 
 	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & /*var*/)
 	{
-		return MetaIndexable::SizeInfo { 2 };
+		MetaIndexable::SizeInfo sizeInfo { 2 };
+		sizeInfo.setResizable(false);
+		return sizeInfo;
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t index)

@@ -30,22 +30,28 @@ namespace metapp {
 
 namespace internal_ {
 
-template <typename T, typename Allocator>
-void doResize(std::deque<T, Allocator> & container, const size_t size)
+template <typename T>
+struct ResizeHelper
 {
-	container.resize(size);
-}
+	using ContainerType = T;
 
-template <typename T, typename Allocator>
-void doResize(std::vector<T, Allocator> & container, const size_t size)
-{
-	container.resize(size);
-}
+	static constexpr bool resizable = true;
+
+	static void resize(const Variant & indexable, const size_t size)
+	{
+		indexable.get<ContainerType &>().resize(size);
+	}
+};
 
 template <typename T, size_t length>
-void doResize(std::array<T, length> & /*container*/, const size_t /*size*/)
+struct ResizeHelper <std::array<T, length> >
 {
-}
+	static constexpr bool resizable = false;
+
+	static void resize(const Variant & /*indexable*/, const size_t /*size*/)
+	{
+	}
+};
 
 } // namespace internal_
 
@@ -68,7 +74,9 @@ private:
 
 	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & indexable)
 	{
-		return MetaIndexable::SizeInfo { indexable.get<ContainerType &>().size() };
+		MetaIndexable::SizeInfo sizeInfo { indexable.get<ContainerType &>().size() };
+		sizeInfo.setResizable(internal_::ResizeHelper<ContainerType>::resizable);
+		return sizeInfo;
 	}
 
 	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const size_t /*index*/)
@@ -78,7 +86,7 @@ private:
 
 	static void metaIndexableResize(const Variant & indexable, const size_t size)
 	{
-		internal_::doResize(indexable.get<ContainerType &>(), size);
+		internal_::ResizeHelper<ContainerType>::resize(indexable, size);
 	}
 
 	static Variant metaIndexableGet(const Variant & indexable, const size_t index)

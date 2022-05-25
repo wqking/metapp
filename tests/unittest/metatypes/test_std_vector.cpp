@@ -40,6 +40,8 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIndexable")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdVector);
 	REQUIRE(v.getMetaType()->getMetaIndexable() != nullptr);
 	REQUIRE(metapp::indexableGetSizeInfo(v).getSize() == 3);
+	REQUIRE(metapp::indexableGetSizeInfo(v).isResizable());
+	REQUIRE(! metapp::indexableGetSizeInfo(v).isUnknownSize());
 	REQUIRE(metapp::indexableGet(v, 0).getMetaType()->getTypeKind() == metapp::tkReference);
 	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "good");
 	REQUIRE(metapp::indexableGet(v, 1).get<const std::string &>() == "great");
