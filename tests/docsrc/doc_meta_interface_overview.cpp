@@ -64,6 +64,8 @@ We can implement meta interface in the specialization of DeclareMetaType for the
 An "implemented" meta interface is just a static function with exactly same prototype as the member functions in MetaType.  
 The static function defines a static instance of the meta interface with proper arguments to the constructor, then returns a pointer to the static instance.  
 A meta type can implement more than one meta interfaces.  
+The static function can be also a static function pointer, and it's assigned some elsewhere such as in the .cpp source file.
+That allows to decouple the interface implementation from the DeclareMetaType specialization.  
 
 For example, to implement meta interface `MetaClass` for `MyClass`,  
 desc*/
@@ -90,6 +92,12 @@ struct metapp::DeclareMetaType <MyClass>
 		);
 		return &metaClass;
 	}
+
+	// Previous function can also be function pointer, it's assigned elsewhere
+	// For example, 
+	//static const metapp::MetaClass * (*getMetaClass)();
+	// In .cpp file
+	// metapp::DeclareMetaType <MyClass>::getMetaClass = someFunction;
 };
 //code
 

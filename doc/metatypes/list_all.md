@@ -192,7 +192,7 @@
 |tkStdSharedPtr        |T *<br />std::weak_ptr<T>                                                                  |
 |tkStdUniquePtr        |T *                                                                                        |
 |tkStdWeakPtr          |std::shared_ptr<T>                                                                         |
-|tkStdFunction         |None                                                                                       |
+|tkStdFunction         |Any MetaCallable can cast to std::function, as long as the argument count matches.         |
 |tkStdVector           |None                                                                                       |
 |tkStdList             |None                                                                                       |
 |tkStdDeque            |None                                                                                       |

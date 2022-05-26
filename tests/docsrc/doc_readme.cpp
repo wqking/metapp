@@ -30,7 +30,7 @@ metapp is a cross platform C++ library that adds powerful reflection feature to 
 ## Highlight features
 
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
-const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * [][8])())[]` in 20 seconds?
+const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * (&)[][8])())[]` easily?
 metapp can understand it, including every CV, pointer, array, function, etc, in no time!   
 - **Allow runtime generic programming.** For example, we can access elements in a container, without knowing whether
 the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`,
@@ -38,6 +38,9 @@ or `std::string`, or another container.
 - **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
 then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
 even `std::vector<std::list<std::vector<std::string> > >`.
+- **Mimic C++ reference extensively for better performance.** For example, when getting a property (accessible, in metapp term) value,
+or get an element value from a container, a metapp::Variant of reference is returned when possible,
+and the performance cost is kept as minimum as possible.
 
 ## Facts and features
 
@@ -47,21 +50,22 @@ even `std::vector<std::list<std::vector<std::string> > >`.
     - Support runtime generic programming.
     - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
         no template parameters are needed. All parameters and return values are passed via metapp::Variant.
+    - Mimic C++ reference extensively for better performance.
     - Automatically type conversion when getting/setting fields, invoking methods, etc.
     - Support multiple inheritance and hierarchy.
     - Support using in dynamic library (plugins).
 
 - **Flexible and easy to use**
-    - Building meta data doesn't require preprocessor or any external tool. Only use native C++ code, no need macros.
-    - Very easy to reflect templates. We only need to reflect for the template rather than any instantiations, then we can
-        get any instantiation information. Indeed there are built-in reflections for STL containers such std::vector, there is
-        only one reflection for `std::vector`, then we can get any information for `std::vector<int>`, `std::vector<std::string>`, etc.
+    - Building meta data doesn't require preprocessor, macros, or any external tool. Only use native C++ code, no need macros.
+    - Very easy to reflect templates.
     - Non-intrusive. You don't need to change your code for reflection.
+    - Doesn't require C++ RTTI.
+    - Use exceptions by default, but exceptions can be disabled.
+    - No configuration, no policies, easy to use, while keeps powerful.
     - Loose coupled design. For example, constructors and member functions can be used without coupling with the class information.
     - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead.
         If you don't use the meta data, no any performance overhead. If you build and use the meta data,
         you get trivial memory and performance overhead beside very powerful reflection system.
-    - Doesn't require C++ RTTI.
     - Written in standard and portable C++, only require C++11, and support later C++ standard.
     - Cross platforms, cross compilers.
 

@@ -9,7 +9,7 @@
 * [MetaCallable constructor](#a2_5)
 * [MetaCallable member functions](#a2_6)
   * [getClassType](#a4_1)
-  * [getParameterCount](#a4_2)
+  * [getParameterCountInfo](#a4_2)
   * [getReturnType](#a4_3)
   * [getParameterType](#a4_4)
   * [rankInvoke](#a4_5)
@@ -19,7 +19,7 @@
 * [ArgumentSpan](#a2_7)
 * [Non-member utility functions](#a2_8)
   * [callableGetClassType](#a4_9)
-  * [callableGetParameterCount](#a4_10)
+  * [callableGetParameterCountInfo](#a4_10)
   * [callableGetReturnType](#a4_11)
   * [callableGetParameterType](#a4_12)
   * [callableRankInvoke](#a4_13)
@@ -68,7 +68,7 @@ Variadic function (tkVariadicFunction)
 ```c++
 MetaCallable(
   const MetaType * (*getClassType)(const Variant & callable),
-  int (*getParameterCount)(const Variant & callable),
+  int (*getParameterCountInfo)(const Variant & callable),
   const MetaType * (*getReturnType)(const Variant & callable),
   const MetaType * (*getParameterType)(const Variant & callable, const int index),
   int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
@@ -103,14 +103,40 @@ If the function returns non-void meta type, the callable belongs to the class of
 When invoking the callable, the `instance` must be pointer to a valid object.  
 
 <a id="a4_2"></a>
-#### getParameterCount
+#### getParameterCountInfo
 
 ```c++
-int getParameterCount(const Variant & callable);
+MetaCallable::ParameterCountInfo getParameterCountInfo(const Variant & callable);
 ```
 
 Returns the parameter count.  
-For variadic function (tkVariadicFunction), returns 0.  
+
+ParameterCountInfo class,
+
+```c++
+class ParameterCountInfo
+{
+public:
+  ParameterCountInfo();
+  ParameterCountInfo(const int resultCount, const int parameterCount);
+  ParameterCountInfo(const int resultCount, const int minParameterCount, const int maxParameterCount);
+  int getResultCount() const;
+  int getMinParameterCount() const;
+  int getMaxParameterCount() const;
+};
+```
+
+`resultCount` is 0 or 1. 0 means there is no return value. 1 means there is one return value.  
+`minParameterCount` and `maxParameterCount` define the number of arguments can be used to call the callable.
+The calling arguments count must be,  
+`minParameterCount <= argument count <= maxParameterCount`.  
+For most callables, `minParameterCount` equals to `maxParameterCount`.  
+For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
+'minParameterCount' is the minimum argument count of the overloaded fucntions.
+'maxParameterCount' is the maximum argument count of the overloaded fucntions.  
+For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
+is the number of all arguments, including both non-default and default arguments.  
+For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
 
 <a id="a4_3"></a>
 #### getReturnType
@@ -273,16 +299,16 @@ inline const MetaType * callableGetClassType(const Variant & callable)
 Shortcut for `MetaCallable::getClassType()`.
 
 <a id="a4_10"></a>
-#### callableGetParameterCount
+#### callableGetParameterCountInfo
 
 ```c++
-inline int callableGetParameterCount(const Variant & callable)
+inline int callableGetParameterCountInfo(const Variant & callable)
 {
-  return callable.getMetaType()->getMetaCallable()->getParameterCount(callable);
+  return callable.getMetaType()->getMetaCallable()->getParameterCountInfo(callable);
 }
 ```
 
-Shortcut for `MetaCallable::getParameterCount()`.
+Shortcut for `MetaCallable::getParameterCountInfo()`.
 
 <a id="a4_11"></a>
 #### callableGetReturnType
