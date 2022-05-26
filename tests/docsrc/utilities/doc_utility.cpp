@@ -45,16 +45,6 @@ const MetaType * getNonReferenceMetaType(const Variant & value);
 If the `metaType`, or meta type in the Variant `value`, is a reference, returns the meta type the reference refers to.  
 If the meta type is not a reference, returns the meta type.
 
-#### getReferredMetaType
-
-```c++
-const MetaType * getReferredMetaType(const MetaType * metaType);
-const MetaType * getReferredMetaType(const Variant & value);
-```
-
-If the `metaType`, or meta type in the Variant `value`, is a reference or pointer, returns the meta type the reference refers to, or the pointer points to.  
-If the meta type is not a reference nor pointer, returns the meta type.
-
 #### typeKindIsIntegral
 
 ```c++

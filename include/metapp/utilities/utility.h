@@ -41,19 +41,6 @@ inline const MetaType * getNonReferenceMetaType(const Variant & value)
 	return getNonReferenceMetaType(value.getMetaType());
 }
 
-inline const MetaType * getReferredMetaType(const MetaType * metaType)
-{
-	if(metaType->isPointer() || metaType->isReference()) {
-		metaType = metaType->getUpType();
-	}
-	return metaType;
-}
-
-inline const MetaType * getReferredMetaType(const Variant & value)
-{
-	return getReferredMetaType(value.getMetaType());
-}
-
 inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)
 {
 	return typeKind >= tkArithmeticBegin && typeKind <= tkArithmeticEnd;

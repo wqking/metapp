@@ -46,7 +46,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 	}
 
 	std::vector<ValueType> resultList;
-	auto metaIterable = metapp::getReferredMetaType(v)->getMetaIterable();
+	auto metaIterable = metapp::getPointedType(v)->getMetaIterable();
 	REQUIRE(metaIterable != nullptr);
 
 	auto nonPointer = metapp::depointer(v);

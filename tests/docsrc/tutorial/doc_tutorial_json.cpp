@@ -45,7 +45,7 @@ private:
 		}
 
 		metapp::Variant ref = depointer(value);
-		auto metaType = metapp::getReferredMetaType(ref.getMetaType());
+		auto metaType = metapp::getPointedType(ref.getMetaType());
 		auto typeKind = metaType->getTypeKind();
 		if(typeKind == metapp::tkVariant) {
 			doDump(ref.get<metapp::Variant &>(), level);
@@ -75,7 +75,7 @@ private:
 
 	void doDumpArray(const metapp::Variant & value, const int level)
 	{
-		auto metaType = metapp::getReferredMetaType(value.getMetaType());
+		auto metaType = metapp::getPointedType(value.getMetaType());
 		stream << "[" << std::endl;
 		bool firstItem = true;
 		metaType->getMetaIterable()->forEach(
@@ -101,7 +101,7 @@ private:
 
 	void doDumpObject(const metapp::Variant & value, const int level)
 	{
-		auto metaType = metapp::getReferredMetaType(value.getMetaType());
+		auto metaType = metapp::getPointedType(value.getMetaType());
 		stream << "{" << std::endl;
 		bool firstItem = true;
 		metaType->getMetaIterable()->forEach(
@@ -113,7 +113,7 @@ private:
 				}
 				firstItem = false;
 				doDumpIndent(level + 1);
-				auto indexable = metapp::getReferredMetaType(item.getMetaType())->getMetaIndexable();
+				auto indexable = metapp::getPointedType(item.getMetaType())->getMetaIndexable();
 				doDumpString(indexable->get(item, 0).cast<std::string>().get<std::string>());
 				stream << ": ";
 				doDump(indexable->get(item, 1), level + 1);

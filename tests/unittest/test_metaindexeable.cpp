@@ -43,7 +43,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable get", "", TestTypes_Indexables)
 	SECTION("reference") {
 		v = metapp::Variant::reference(container);
 	}
-	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
+	auto metaIndexable = metapp::getPointedType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 
 	auto nonPointer = metapp::depointer(v);
@@ -71,10 +71,10 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set", "", TestTypes_Indexables)
 		v = metapp::Variant::reference(container);
 	}
 
-	REQUIRE(metapp::getReferredMetaType(v)->getTypeKind() == dataProvider.getTypeKind());
-	REQUIRE(metapp::getReferredMetaType(v)->getUpType()->getTypeKind() == dataProvider.getValueTypeKind());
+	REQUIRE(metapp::getPointedType(v)->getTypeKind() == dataProvider.getTypeKind());
+	REQUIRE(metapp::getPointedType(v)->getUpType()->getTypeKind() == dataProvider.getValueTypeKind());
 	
-	auto metaIndexable = metapp::getReferredMetaType(v)->getMetaIndexable();
+	auto metaIndexable = metapp::getPointedType(v)->getMetaIndexable();
 	REQUIRE(metaIndexable != nullptr);
 
 	auto nonPointer = metapp::depointer(v);
