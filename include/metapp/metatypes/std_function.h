@@ -30,6 +30,42 @@ struct DeclareMetaTypeBase <std::function<RT (Args...)> >
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkStdFunction;
 
+	static bool castFrom(Variant * result, const Variant & value, const MetaType * /*fromMetaType*/)
+	{
+		const MetaCallable * metaCallable = getNonReferenceMetaType(value)->getMetaCallable();
+		if(metaCallable == nullptr) {
+			return false;
+		}
+		const auto paramInfo = metaCallable->getParameterCountInfo(value);
+		constexpr int argsCount_ = sizeof...(Args);
+		if(argsCount_ < paramInfo.getMinParameterCount() || argsCount_ > paramInfo.getMaxParameterCount()) {
+			return false;
+		}
+		if(result != nullptr) {
+			*result = std::function<RT (Args...)>(
+				[value](Args ... args) -> RT {
+					return doCastFromInvoke<RT>(value, args...);
+				}
+			);
+		}
+		return true;
+	}
+
+private:
+	template <typename R, typename ...A>
+	static auto doCastFromInvoke(const Variant & var, A &&... args)
+		-> typename std::enable_if<std::is_void<R>::value, R>::type
+	{
+		callableInvoke(var, nullptr, std::forward<A>(args)...);
+	}
+
+	template <typename R, typename ...A>
+	static auto doCastFromInvoke(const Variant & var, A &&... args)
+		-> typename std::enable_if<! std::is_void<R>::value, R>::type
+	{
+		return callableInvoke(var, nullptr, std::forward<A>(args)...).template cast<RT>().template get<RT &&>();
+	}
+
 };
 
 

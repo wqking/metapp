@@ -67,7 +67,7 @@ public:
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
 			&metaCallableGetClassType,
-			&metaCallableGetParameterCount,
+			&metaCallableGetParameterCountInfo,
 			&metaCallableGetReturnType,
 			&metaCallableGetParameterType,
 			&metaCallableRankInvoke,
@@ -84,9 +84,13 @@ public:
 		return underlyingFunc.getMetaType()->getMetaCallable()->getClassType(underlyingFunc);
 	}
 
-	static int metaCallableGetParameterCount(const Variant & /*func*/)
+	static MetaCallable::ParameterCountInfo metaCallableGetParameterCountInfo(const Variant & /*func*/)
 	{
-		return 0;
+		return MetaCallable::ParameterCountInfo {
+			MetaCallable::detectResultCount<ReturnType>(),
+			0,
+			std::numeric_limits<int>::max()
+		};
 	}
 
 	static const MetaType * metaCallableGetReturnType(const Variant & /*func*/)

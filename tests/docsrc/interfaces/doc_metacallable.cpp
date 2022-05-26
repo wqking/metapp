@@ -55,7 +55,7 @@ Variadic function (tkVariadicFunction)
 ```c++
 MetaCallable(
 	const MetaType * (*getClassType)(const Variant & callable),
-	int (*getParameterCount)(const Variant & callable),
+	int (*getParameterCountInfo)(const Variant & callable),
 	const MetaType * (*getReturnType)(const Variant & callable),
 	const MetaType * (*getParameterType)(const Variant & callable, const int index),
 	int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
@@ -87,10 +87,10 @@ or the callable is a static member function. When invoking the callable, the `in
 If the function returns non-void meta type, the callable belongs to the class of the meta type.
 When invoking the callable, the `instance` must be pointer to a valid object.  
 
-#### getParameterCount
+#### getParameterCountInfo
 
 ```c++
-int getParameterCount(const Variant & callable);
+MetaCallable::ParameterCountInfo getParameterCountInfo(const Variant & callable);
 ```
 
 Returns the parameter count.  
@@ -235,16 +235,16 @@ inline const MetaType * callableGetClassType(const Variant & callable)
 
 Shortcut for `MetaCallable::getClassType()`.
 
-#### callableGetParameterCount
+#### callableGetParameterCountInfo
 
 ```c++
-inline int callableGetParameterCount(const Variant & callable)
+inline int callableGetParameterCountInfo(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->getParameterCount(callable);
+	return callable.getMetaType()->getMetaCallable()->getParameterCountInfo(callable);
 }
 ```
 
-Shortcut for `MetaCallable::getParameterCount()`.
+Shortcut for `MetaCallable::getParameterCountInfo()`.
 
 #### callableGetReturnType
 

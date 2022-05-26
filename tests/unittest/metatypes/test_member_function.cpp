@@ -45,7 +45,7 @@ TEST_CASE("metatypes, tkMemberFunction, types")
 	using namespace metapp;
 	auto metaType = v.getMetaType();
 	REQUIRE(metaType->isConst());
-	REQUIRE(metaType->getMetaCallable()->getParameterCount(v) == 2);
+	REQUIRE(metaType->getMetaCallable()->getParameterCountInfo(v).getMinParameterCount() == 2);
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(v), { tkPointer, tkVoid }));
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 0), { tkInt }));
 	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 1), { tkReference, tkStdVector, tkInt }));

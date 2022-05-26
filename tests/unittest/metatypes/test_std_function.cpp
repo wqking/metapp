@@ -76,3 +76,50 @@ TEST_CASE("metatypes, std::function<std::unique_ptr<int> ()>, invoke")
 	}
 }
 
+TEST_CASE("metatypes, std::function<int (int)>, cast from other MetaCallable")
+{
+	struct X {
+		static int add(const double value) {
+			return (int)value + 1;
+		}
+	};
+	metapp::Variant v(X::add);
+	using FT = std::function<int (int)>;
+	REQUIRE(v.canCast<FT>());
+	FT f = v.cast<FT>().get<FT &>();
+	REQUIRE(f(2) == 3);
+}
+
+TEST_CASE("metatypes, std::function<std::unique_ptr<int> (int)>, cast from other MetaCallable")
+{
+	struct X {
+		static std::unique_ptr<int> func(const double value) {
+			return std::unique_ptr<int>(new int((int)value + 5));
+		}
+	};
+	metapp::Variant v(X::func);
+	using FT = std::function<std::unique_ptr<int> (int)>;
+	REQUIRE(v.canCast<FT>());
+	FT f = v.cast<FT>().get<FT &>();
+	REQUIRE(*f(2) == 7);
+}
+
+TEST_CASE("metatypes, std::function<int & ()>, cast from other MetaCallable")
+{
+	struct X {
+		static int & func() {
+			static int x = 38;
+			return x;
+		}
+	};
+	metapp::Variant v(X::func);
+	using FT = std::function<int & ()>;
+	REQUIRE(v.canCast<FT>());
+	FT f = v.cast<FT>().get<FT &>();
+	REQUIRE(f() == 38);
+	REQUIRE(X::func() == 38);
+	f() = 5;
+	REQUIRE(f() == 5);
+	REQUIRE(X::func() == 5);
+}
+

@@ -37,7 +37,7 @@ public:
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
 			&metaCallableGetClassType,
-			&metaCallableGetParameterCount,
+			&metaCallableGetParameterCountInfo,
 			&metaCallableGetReturnType,
 			&metaCallableGetParameterType,
 			&metaCallableRankInvoke,
@@ -52,9 +52,9 @@ public:
 		return getMetaType<ClassType>();
 	}
 
-	static int metaCallableGetParameterCount(const Variant & /*callable*/)
+	static MetaCallable::ParameterCountInfo metaCallableGetParameterCountInfo(const Variant & /*callable*/)
 	{
-		return argsCount;
+		return MetaCallable::ParameterCountInfo { MetaCallable::detectResultCount<RT>(), argsCount };
 	}
 
 	static const MetaType * metaCallableGetReturnType(const Variant & /*callable*/)

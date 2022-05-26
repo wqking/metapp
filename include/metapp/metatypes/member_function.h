@@ -36,7 +36,7 @@ public:
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(
 			&DeclareMetaTypeMemberFunctionBase::metaCallableGetClassType,
-			&DeclareMetaTypeMemberFunctionBase::metaCallableGetParameterCount,
+			&DeclareMetaTypeMemberFunctionBase::metaCallableGetParameterCountInfo,
 			&DeclareMetaTypeMemberFunctionBase::metaCallableGetReturnType,
 			&DeclareMetaTypeMemberFunctionBase::metaCallableGetParameterType,
 			&DeclareMetaTypeMemberFunctionBase::metaCallableRankInvoke,

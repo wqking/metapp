@@ -84,7 +84,7 @@ struct MakeMetaInterfaceItem_MetaClass
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaClass
+			(MetaInterfaceGetter)M::getMetaClass
 		};
 	}
 };
@@ -99,7 +99,7 @@ struct MakeMetaInterfaceItem_MetaCallable
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaCallable
+			(MetaInterfaceGetter)M::getMetaCallable
 		};
 	}
 };
@@ -114,7 +114,7 @@ struct MakeMetaInterfaceItem_MetaAccessible
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaAccessible
+			(MetaInterfaceGetter)M::getMetaAccessible
 		};
 	}
 };
@@ -129,7 +129,7 @@ struct MakeMetaInterfaceItem_MetaEnum
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaEnum
+			(MetaInterfaceGetter)M::getMetaEnum
 		};
 	}
 };
@@ -144,7 +144,7 @@ struct MakeMetaInterfaceItem_MetaIndexable
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaIndexable
+			(MetaInterfaceGetter)M::getMetaIndexable
 		};
 	}
 };
@@ -159,7 +159,7 @@ struct MakeMetaInterfaceItem_MetaIterable
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaIterable
+			(MetaInterfaceGetter)M::getMetaIterable
 		};
 	}
 };
@@ -174,7 +174,7 @@ struct MakeMetaInterfaceItem_MetaStreaming
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaStreaming
+			(MetaInterfaceGetter)M::getMetaStreaming
 		};
 	}
 };
@@ -189,7 +189,7 @@ struct MakeMetaInterfaceItem_MetaMap
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaMappable
+			(MetaInterfaceGetter)M::getMetaMappable
 		};
 	}
 };
@@ -204,7 +204,7 @@ struct MakeMetaInterfaceItem_MetaUser
 
 		return {
 			kind,
-			(MetaInterfaceGetter)&M::getMetaUser
+			(MetaInterfaceGetter)M::getMetaUser
 		};
 	}
 };

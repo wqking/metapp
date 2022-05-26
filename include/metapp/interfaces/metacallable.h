@@ -29,9 +29,60 @@ using ArgumentSpan = metapp::span<const Variant>;
 class MetaCallable
 {
 public:
+	class ParameterCountInfo
+	{
+	public:
+		ParameterCountInfo()
+			:
+				resultCount(0),
+				minParameterCount(0),
+				maxParameterCount(0)
+		{
+		}
+
+		ParameterCountInfo(const int resultCount, const int parameterCount)
+			:
+				resultCount(resultCount),
+				minParameterCount(parameterCount),
+				maxParameterCount(parameterCount)
+		{
+		}
+
+		ParameterCountInfo(const int resultCount, const int minParameterCount, const int maxParameterCount)
+			:
+				resultCount(resultCount),
+				minParameterCount(minParameterCount),
+				maxParameterCount(maxParameterCount)
+		{
+		}
+
+		int getResultCount() const {
+			return resultCount;
+		}
+
+		int getMinParameterCount() const {
+			return minParameterCount;
+		}
+
+		int getMaxParameterCount() const {
+			return maxParameterCount;
+		}
+	private:
+		int resultCount;
+		int minParameterCount;
+		int maxParameterCount;
+	};
+
+	template <typename T>
+	static constexpr int detectResultCount()
+	{
+		return std::is_void<T>::value ? 0 : 1;
+	}
+
+public:
 	MetaCallable(
 		const MetaType * (*getClassType)(const Variant & callable),
-		int (*getParameterCount)(const Variant & callable),
+		ParameterCountInfo (*getParameterCountInfo)(const Variant & callable),
 		const MetaType * (*getReturnType)(const Variant & callable),
 		const MetaType * (*getParameterType)(const Variant & callable, const int index),
 		int (*rankInvoke)(const Variant & callable, const Variant & instance, const ArgumentSpan & arguments),
@@ -40,7 +91,7 @@ public:
 	)
 		:
 			getClassType(getClassType),
-			getParameterCount(getParameterCount),
+			getParameterCountInfo(getParameterCountInfo),
 			getReturnType(getReturnType),
 			getParameterType(getParameterType),
 			rankInvoke(rankInvoke),
@@ -50,7 +101,7 @@ public:
 	}
 
 	const MetaType * (*getClassType)(const Variant & callable);
-	int (*getParameterCount)(const Variant & callable);
+	ParameterCountInfo (*getParameterCountInfo)(const Variant & callable);
 	const MetaType * (*getReturnType)(const Variant & callable);
 	const MetaType * (*getParameterType)(const Variant & callable, const int index);
 
@@ -151,9 +202,9 @@ inline const MetaType * callableGetClassType(const Variant & callable)
 	return callable.getMetaType()->getMetaCallable()->getClassType(callable);
 }
 
-inline int callableGetParameterCount(const Variant & callable)
+inline MetaCallable::ParameterCountInfo callableGetParameterCountInfo(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->getParameterCount(callable);
+	return callable.getMetaType()->getMetaCallable()->getParameterCountInfo(callable);
 }
 
 inline const MetaType * callableGetReturnType(const Variant & callable)
