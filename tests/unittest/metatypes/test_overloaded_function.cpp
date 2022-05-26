@@ -35,6 +35,9 @@ TEST_CASE("Overloaded function, (), (int), (long)")
 		return (int)n * 3;
 		}));
 
+	REQUIRE(metapp::callableGetParameterCountInfo(callable).getMinParameterCount() == 0);
+	REQUIRE(metapp::callableGetParameterCountInfo(callable).getMaxParameterCount() == 1);
+
 	REQUIRE(metapp::callableInvoke(callable, nullptr).get<int>() == 1);
 
 	REQUIRE(metapp::callableInvoke(callable, nullptr, 5).get<int>() == 10);
@@ -50,10 +53,13 @@ TEST_CASE("Overloaded function, (const char *), (std::string)")
 	metapp::OverloadedFunction & overloadedFunction = callable.get<metapp::OverloadedFunction &>();
 	overloadedFunction.addCallable(std::function<std::string (const char *)>([](const char * s) {
 		return std::string("char*") + s;
-		}));
+	}));
 	overloadedFunction.addCallable(std::function<std::string (const std::string &)>([](const std::string & s) {
 		return "string" + s;
-		}));
+	}));
+
+	REQUIRE(metapp::callableGetParameterCountInfo(callable).getMinParameterCount() == 1);
+	REQUIRE(metapp::callableGetParameterCountInfo(callable).getMaxParameterCount() == 1);
 
 	REQUIRE(metapp::callableInvoke(callable, nullptr, "abc").get<const std::string &>() == "char*abc");
 

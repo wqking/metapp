@@ -94,7 +94,33 @@ MetaCallable::ParameterCountInfo getParameterCountInfo(const Variant & callable)
 ```
 
 Returns the parameter count.  
-For variadic function (tkVariadicFunction), returns 0.  
+
+ParameterCountInfo class,
+
+```c++
+class ParameterCountInfo
+{
+public:
+	ParameterCountInfo();
+	ParameterCountInfo(const int resultCount, const int parameterCount);
+	ParameterCountInfo(const int resultCount, const int minParameterCount, const int maxParameterCount);
+	int getResultCount() const;
+	int getMinParameterCount() const;
+	int getMaxParameterCount() const;
+};
+```
+
+`resultCount` is 0 or 1. 0 means there is no return value. 1 means there is one return value.  
+`minParameterCount` and `maxParameterCount` define the number of arguments can be used to call the callable.
+The calling arguments count must be,  
+`minParameterCount <= argument count <= maxParameterCount`.  
+For most callables, `minParameterCount` equals to `maxParameterCount`.  
+For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
+'minParameterCount' is the minimum argument count of the overloaded fucntions.
+'maxParameterCount' is the maximum argument count of the overloaded fucntions.  
+For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
+is the number of all arguments, including both non-default and default arguments.  
+For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
 
 #### getReturnType
 

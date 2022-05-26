@@ -29,18 +29,33 @@ namespace metapp {
 class OverloadedFunction
 {
 public:
-	OverloadedFunction() : callableList() {}
+	OverloadedFunction() : callableList(), parameterCountInfo() {}
 
 	const std::deque<Variant> & getCallableList() const {
 		return callableList;
 	}
 
 	void addCallable(const Variant & callable) {
+		const auto info = getNonReferenceMetaType(callable)->getMetaCallable()->getParameterCountInfo(callable);
+		if(callableList.empty()) {
+			parameterCountInfo = info;
+		}
+		else {
+			const int resultCount = std::max(parameterCountInfo.getResultCount(), info.getResultCount());
+			const int minParameterCount = std::min(parameterCountInfo.getMinParameterCount(), info.getMinParameterCount());
+			const int maxParameterCount = std::max(parameterCountInfo.getMaxParameterCount(), info.getMaxParameterCount());
+			parameterCountInfo = { resultCount, minParameterCount, maxParameterCount };
+		}
 		callableList.push_back(callable);
+	}
+
+	const MetaCallable::ParameterCountInfo & getParameterCountInfo() const {
+		return parameterCountInfo;
 	}
 
 private:
 	std::deque<Variant> callableList;
+	MetaCallable::ParameterCountInfo parameterCountInfo;
 };
 
 template <>
@@ -67,14 +82,14 @@ public:
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		if(! callableList.empty()) {
 			const auto & callable = callableList.front();
-			return callable.getMetaType()->getMetaCallable()->getClassType(callable);
+			return getNonReferenceMetaType(callable)->getMetaCallable()->getClassType(callable);
 		}
 		return voidMetaType;
 	}
 
-	static MetaCallable::ParameterCountInfo metaCallableGetParameterCountInfo(const Variant & /*func*/)
+	static MetaCallable::ParameterCountInfo metaCallableGetParameterCountInfo(const Variant & func)
 	{
-		return MetaCallable::ParameterCountInfo {};
+		return func.get<const OverloadedFunction &>().getParameterCountInfo();
 	}
 
 	static const MetaType * metaCallableGetReturnType(const Variant & /*func*/)
@@ -99,7 +114,7 @@ public:
 	{
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		for(const auto & callable : callableList) {
-			if(callable.getMetaType()->getMetaCallable()->canInvoke(callable, instance, arguments)) {
+			if(getNonReferenceMetaType(callable)->getMetaCallable()->canInvoke(callable, instance, arguments)) {
 				return true;
 			}
 		}
@@ -111,7 +126,7 @@ public:
 		const auto & callableList = func.get<const OverloadedFunction &>().getCallableList();
 		auto it = findCallable(callableList.begin(), callableList.end(), instance, arguments, nullptr);
 		if(it != callableList.end()) {
-			return (*it).getMetaType()->getMetaCallable()->invoke(*it, instance, arguments);
+			return getNonReferenceMetaType(*it)->getMetaCallable()->invoke(*it, instance, arguments);
 		}
 		errorIllegalArgument();
 		return Variant();
