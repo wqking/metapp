@@ -40,6 +40,7 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 		return &metaAccessible;
 	}
 
+private:
 	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}
@@ -53,7 +54,21 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const Variant & instance) {
-		return Variant::reference(((const Class *)getPointer(instance))->*(accessible.get<T Class::*>()));
+		const auto pointerAndType = getPointerAndType(instance);
+		if(pointerAndType.second->isConst()) {
+			if(pointerAndType.second->isVolatile()) {
+				return Variant::reference(((const volatile Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+			}
+			else {
+				return Variant::reference(((const Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+			}
+		}
+		else if(pointerAndType.second->isVolatile()) {
+			return Variant::reference(((volatile Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+		}
+		else {
+			return Variant::reference(((Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+		}
 	}
 
 	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {

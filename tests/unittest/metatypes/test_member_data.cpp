@@ -21,35 +21,69 @@
 
 namespace {
 
-struct Class1
+TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, get/set")
 {
-	Class1() : data(), value(), constValue(5) {}
+	struct TestClass
+	{
+		TestClass() : value(), constValue(5) {}
+		TestClass(const int v, const int cv) : value(v), constValue(cv) {}
 
-	const void * func(int, const std::vector<int> &) { return nullptr; }
-	const std::array<int, 5> * data;
-	int value;
-	const int constValue;
-};
+		int value;
+		const int constValue;
+	};
 
-} // namespace
+	SECTION("value") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
 
-template <>
-struct metapp::DeclareMetaType <Class1> : metapp::DeclareMetaTypeBase<Class1>
-{
-	static constexpr metapp::TypeKind typeKind = 2000;
-};
-
-namespace {
-
-TEST_CASE("metatypes, tkMemberPointer, types")
-{
-	metapp::Variant v(&Class1::data);
-	REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+		TestClass obj;
+		REQUIRE(metapp::accessibleGet(v, &obj).get<int>() == 0);
+		obj.value = 5;
+		REQUIRE(metapp::accessibleGet(v, &obj).get<int>() == 5);
+		metapp::accessibleSet(v, &obj, 38);
+		REQUIRE(metapp::accessibleGet(v, &obj).get<int>() == 38);
+	}
 	
-	using namespace metapp;
-	auto metaType = v.getMetaType();
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(0), { 2000 }));
-	REQUIRE(matchUpTypeKinds(metaType->getUpType(1), { tkPointer, tkStdArray, tkInt }));
+	SECTION("constValue") {
+		metapp::Variant v(&TestClass::constValue);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		TestClass obj1;
+		REQUIRE(metapp::accessibleGet(v, &obj1).get<int>() == 5);
+		REQUIRE_THROWS(metapp::accessibleSet(v, &obj1, 38));
+
+		TestClass obj2 { 6, 9 };
+		REQUIRE(metapp::accessibleGet(v, &obj2).get<int>() == 9);
+		REQUIRE_THROWS(metapp::accessibleSet(v, &obj2, 38));
+	}
+	
+}
+
+TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, instance constness")
+{
+	struct TestClass
+	{
+		int value;
+	};
+
+	SECTION("no cv") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		TestClass obj {};
+		TestClass * ptr = &obj;
+		REQUIRE(! metapp::getNonReferenceMetaType(metapp::accessibleGet(v, ptr))->isConst());
+	}
+	
+	SECTION("const") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		TestClass obj { 5 };
+		const TestClass * ptr = &obj;
+		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, ptr))->isConst());
+	}
+	
 }
 
 } // namespace
