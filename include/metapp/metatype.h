@@ -360,4 +360,8 @@ extern const MetaType * voidMetaType;
 
 #include "metapp/implement/variant_impl.h"
 
+// Need to include the primary meta types to avoid pointer/reference can't be detected properly
+#include "metapp/metatypes/pointer.h"
+#include "metapp/metatypes/reference.h"
+
 #endif

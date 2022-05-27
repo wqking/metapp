@@ -36,9 +36,9 @@ inline const MetaType * getNonReferenceMetaType(const MetaType * metaType)
 	return metaType;
 }
 
-inline const MetaType * getNonReferenceMetaType(const Variant & value)
+inline const MetaType * getNonReferenceMetaType(const Variant & var)
 {
-	return getNonReferenceMetaType(value.getMetaType());
+	return getNonReferenceMetaType(var.getMetaType());
 }
 
 inline constexpr bool typeKindIsArithmetic(const TypeKind typeKind)

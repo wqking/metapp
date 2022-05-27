@@ -51,6 +51,8 @@ public:
 	}
 };
 
+const MetaType * getNonReferenceMetaType(const Variant & var);
+
 inline const MetaType * accessibleGetValueType(const Variant & accessible)
 {
 	return getNonReferenceMetaType(accessible)->getMetaAccessible()->getValueType(accessible);

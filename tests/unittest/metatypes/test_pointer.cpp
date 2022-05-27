@@ -19,9 +19,6 @@
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 
-#ifndef METAPP_COMPILER_GCC
-// I'm pretty sure MingW GCC 8.3.0 has a bug that
-// can't pass below two tests. They pass in MSVC and Clang.
 TEST_CASE("metatypes, void *")
 {
 	metapp::Variant v((void *)0);
@@ -47,8 +44,6 @@ TEST_CASE("metatypes, nullptr")
 	using namespace metapp;
 	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkPointer, tkVoid }));
 }
-
-#endif
 
 TEST_CASE("metatypes, const volatile void *")
 {

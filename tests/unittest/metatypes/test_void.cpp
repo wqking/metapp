@@ -19,11 +19,9 @@
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 
-#ifndef METAPP_COMPILER_GCC
 TEST_CASE("metatypes, void")
 {
 	REQUIRE(metapp::getTypeKind(metapp::Variant((void *)0)) == metapp::tkPointer);
 	REQUIRE(metapp::getMetaType<void>()->getTypeKind() == metapp::tkVoid);
 }
 
-#endif
