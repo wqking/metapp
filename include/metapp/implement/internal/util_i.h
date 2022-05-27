@@ -64,6 +64,11 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 	errorUnwritable();
 }
 
+void * constructReference(VariantData * data, const void * copyFrom);
+
+// Used by MetaAccessible::getClassType that returns void meta type
+const MetaType * voidMetaTypeFromVariant(const Variant & var);
+
 
 } // namespace internal_
 

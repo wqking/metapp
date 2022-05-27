@@ -22,6 +22,7 @@
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/interfaces/bases/metastreamingbase.h"
 #include "metapp/utilities/utility.h"
+#include "metapp/implement/internal/util_i.h"
 
 namespace metapp {
 
@@ -42,7 +43,7 @@ struct DeclareMetaTypeBase <T *> : DeclareMetaTypePointerBase<T *>
 		static MetaAccessible metaAccessible(
 			&accessibleGetValueType,
 			&accessibleIsReadOnly,
-			&accessibleGetClassType,
+			internal_::voidMetaTypeFromVariant,
 			&accessibleGet,
 			&accessibleSet
 		);
@@ -56,10 +57,6 @@ private:
 
 	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
 		return std::is_const<T>::value;
-	}
-
-	static const MetaType * accessibleGetClassType(const Variant & /*accessible*/) {
-		return voidMetaType;
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const Variant & /*instance*/) {

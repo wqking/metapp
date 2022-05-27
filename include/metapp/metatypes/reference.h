@@ -18,6 +18,7 @@
 #define METAPP_REFERENCE_H_969872685611
 
 #include "metapp/metatype.h"
+#include "metapp/implement/internal/util_i.h"
 
 #include <functional>
 
@@ -29,14 +30,11 @@ struct DeclareMetaTypeBase <T &>
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
-	static void * constructData(VariantData * data, const void * copyFrom) {
-		if(data != nullptr) {
-			data->constructReference(copyFrom);
-		}
-		return nullptr;
-	}
-
+	static void * (*constructData)(VariantData * data, const void * copyFrom);
 };
+
+template <typename T>
+void * (*DeclareMetaTypeBase <T &>::constructData)(VariantData * data, const void * copyFrom) = internal_::constructReference;
 
 template <typename T>
 struct DeclareMetaTypeBase <T &&> : DeclareMetaTypeBase<T &>

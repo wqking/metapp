@@ -19,6 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
+#include "metapp/implement/internal/util_i.h"
 
 #include <memory>
 
@@ -48,7 +49,7 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 		static MetaAccessible metaAccessible(
 			&accessibleGetValueType,
 			&accessibleIsReadOnly,
-			&accessibleGetClassType,
+			internal_::voidMetaTypeFromVariant,
 			&accessibleGet,
 			&accessibleSet
 		);
@@ -61,10 +62,6 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 
 	static bool accessibleIsReadOnly(const Variant & /*accessible*/) {
 		return std::is_const<T>::value;
-	}
-
-	static const MetaType * accessibleGetClassType(const Variant & /*accessible*/) {
-		return voidMetaType;
 	}
 
 	static Variant accessibleGet(const Variant & accessible, const Variant & /*instance*/) {

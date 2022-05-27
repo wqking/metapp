@@ -31,6 +31,19 @@ void verifyVariantWritable(const Variant & var)
 	}
 }
 
+void * constructReference(VariantData * data, const void * copyFrom)
+{
+	if(data != nullptr) {
+		data->constructReference(copyFrom);
+	}
+	return nullptr;
+}
+
+const MetaType * voidMetaTypeFromVariant(const Variant & /*var*/)
+{
+	return voidMetaType;
+}
+
 } // namespace internal_
 
 void * getPointer(const Variant & var)
