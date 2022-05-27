@@ -226,12 +226,12 @@ bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*v
 
 
 MetaType::MetaType(
-		const void * (*doGetUnifiedData)(),
+		const internal_::MetaTable & metaTable,
 		const internal_::UnifiedType * unifiedType,
 		const TypeFlags typeFlags
 	) noexcept
 	:
-		doGetUnifiedData(doGetUnifiedData),
+		metaTable(metaTable),
 		unifiedType(unifiedType),
 		typeFlags(typeFlags)
 {

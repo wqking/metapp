@@ -60,6 +60,11 @@ const MetaType * doGetMetaTypeStorage();
 
 class UnifiedType;
 
+struct MetaTable
+{
+	const void * (*doGetUnifiedData)();
+};
+
 } // namespace internal_
 
 class Constness
@@ -98,7 +103,7 @@ public:
 	~MetaType() = default;
 
 	const void * getModule() const noexcept {
-		return doGetUnifiedData();
+		return metaTable.doGetUnifiedData();
 	}
 
 	TypeKind getTypeKind() const noexcept {
@@ -246,29 +251,36 @@ public:
 	void destroy(void * instance) const;
 
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
-	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 
 private:
 	MetaType(
-		const void * (*doGetUnifiedData)(),
+		const internal_::MetaTable & metaTable,
 		const internal_::UnifiedType * unifiedType,
 		const TypeFlags typeFlags
 	) noexcept;
 
 	void * constructData(VariantData * data, const void * copyFrom) const;
-	
+	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
+
 	const void * getRawType() const noexcept {
-		return (const void *)doGetUnifiedData;
+		return (const void *)metaTable.doGetUnifiedData;
 	}
 
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();
-	
+
+	friend bool commonCast(
+		Variant * result,
+		const Variant & value,
+		const MetaType * fromMetaType,
+		const MetaType * toMetaType
+	);
+
 	// Variant needs to call constructData
 	friend class Variant;
 
 private:
-	const void * (*doGetUnifiedData)();
+	internal_::MetaTable metaTable;
 	const internal_::UnifiedType * unifiedType;
 	TypeFlags typeFlags;
 };
