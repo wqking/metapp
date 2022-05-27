@@ -49,6 +49,7 @@ struct DeclareMetaTypeBase <T *> : DeclareMetaTypePointerBase<T *>
 		return &metaAccessible;
 	}
 
+private:
 	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}

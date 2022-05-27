@@ -68,6 +68,7 @@ and the performance cost is kept as minimum as possible.
         you get trivial memory and performance overhead beside very powerful reflection system.
     - Written in standard and portable C++, only require C++11, and support later C++ standard.
     - Cross platforms, cross compilers.
+    - The API is designed carefully and thoughtfully, and try to be enjoyable to use.
 
 - **Language features that can be reflected**
     - Const volatile qualifiers, include top level CV, and CV in pointer, array and member function.

@@ -349,4 +349,26 @@ inline bool callableIsStatic(const Variant & callable)
 
 Shortcut for `MetaCallable::isStatic()`.
 
+## MetaCallable can cast to std::function
+
+Any `MetaCallable` can cast to `std::function` as long as the number of parameter is appropriate. The casting only checks
+parameter count, it doesn't check argument type or the result type. The user needs to ensure the argument type is cast-able.   
+For example,  
 desc*/
+
+//code
+std::string f1(const int a, const std::string & b)
+{
+	return std::to_string(a) + b;
+}
+//code
+ExampleFunc
+{
+	//code
+	metapp::Variant v(&f1);
+	// The parameters type are not exactly, but they are convertible, double can convert to int
+	using FT = std::function<std::string (double, std::string)>;
+	FT func = v.cast<FT>().get<FT &>();
+	ASSERT(func(5.3, "Hello") == "5Hello");
+	//code
+}

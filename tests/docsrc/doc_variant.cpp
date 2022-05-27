@@ -103,7 +103,8 @@ static Variant create(T value);
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
 This is similar with the constructor `template <typename T> Variant(T value)`,
-the `create` function allows to specify T explicitly, which is useful to construct reference or array.  
+the `create` function allows to specify T explicitly, which is useful to construct reference or array,
+or object with top level CV qualifiers.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
 If `value` is not copyable, it will be moved into Variant.  
@@ -116,8 +117,23 @@ ExampleFunc
 {
 	//code
 	int n = 5;
-	// The type held by v is tkReference
-	metapp::Variant v = metapp::Variant::create<int &>(n);
+
+	// The type held by v1 is tkReference
+	metapp::Variant v1 = metapp::Variant::create<int &>(n);
+	ASSERT(v1.getMetaType()->isReference());
+
+	// The type held by v2 is const int
+	metapp::Variant v2 = metapp::Variant::create<const int>(n);
+	ASSERT(v2.getMetaType()->isConst());
+
+	// On contrary, if we don't use create, the meta type is different.
+	// The type held by v3 is tkInt, not tkReference
+	metapp::Variant v3(n);
+	ASSERT(! v3.getMetaType()->isReference());
+
+	// The type held by v4 is int, not const
+	metapp::Variant v4= n;
+	ASSERT(! v4.getMetaType()->isConst());
 	//code
 }
 

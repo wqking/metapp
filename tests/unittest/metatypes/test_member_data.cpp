@@ -66,7 +66,23 @@ TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, instance constness")
 		int value;
 	};
 
-	SECTION("no cv") {
+	SECTION("no cv, object") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		TestClass obj {};
+		REQUIRE(! metapp::getNonReferenceMetaType(metapp::accessibleGet(v, obj))->isConst());
+	}
+	
+	SECTION("const, object") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		const TestClass obj { 5 };
+		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, metapp::Variant::create<const TestClass>(obj)))->isConst());
+	}
+	
+	SECTION("no cv, pointer") {
 		metapp::Variant v(&TestClass::value);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
 
@@ -75,7 +91,7 @@ TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, instance constness")
 		REQUIRE(! metapp::getNonReferenceMetaType(metapp::accessibleGet(v, ptr))->isConst());
 	}
 	
-	SECTION("const") {
+	SECTION("const, pointer") {
 		metapp::Variant v(&TestClass::value);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
 
@@ -84,6 +100,22 @@ TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, instance constness")
 		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, ptr))->isConst());
 	}
 	
+	SECTION("no cv, reference") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		TestClass obj {};
+		REQUIRE(! metapp::getNonReferenceMetaType(metapp::accessibleGet(v, metapp::Variant::reference(obj)))->isConst());
+	}
+
+	SECTION("const, reference") {
+		metapp::Variant v(&TestClass::value);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
+
+		const TestClass obj { 5 };
+		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, metapp::Variant::reference(obj)))->isConst());
+	}
+
 }
 
 } // namespace

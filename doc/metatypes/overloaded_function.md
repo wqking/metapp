@@ -19,8 +19,8 @@ public:
 ```
 The meta type for `OverloadedFunction` implements meta interface `MetaCallable`.  
 `OverloadedFunction` behaves as if it's a single function. When calling `MetaCallable::invoke` on an `OverloadedFunction`,
-it tries to find the best matched function and invoke it. If no function matched, exception `metapp::IllegalArgumentException`
-is raised.  
+it tries to find the best matched function which has the largest rank from `MetaCallable::rankInvoke` and invoke it.
+If no function matched, exception `metapp::IllegalArgumentException` is raised.  
 
 Note: when registering overload functions in MetaRepo or MetaClass, the functions are not necessary C++ overloaded function.
 The functions can be in different name, or in different type, such as one function is a free function, the other is `std::function`.   

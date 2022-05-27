@@ -33,7 +33,8 @@
 
 ## Get MetaAccessible interface
 
-We can call `MetaType::getMetaAccessible()` to get the `MetaAccessible` interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaAccessible()` to get the `MetaAccessible` interface. If the type doesn't implement the interface,
+`nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
@@ -63,7 +64,9 @@ The meaning of each functions are same as the member functions listed below.
 
 ## MetaIterable member functions
 
-The first parameter in all of the member functions is `const Variant & accessible`. It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`. The member functions operate on the data.  
+The first parameter in all of the member functions is `const Variant & accessible`.
+It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`.
+The member functions operate on the data.  
 We can treat `accessible` as the C++ object instance which class implements an interface called `MetaIndexable`.  
 `accessible` can be a value, a reference, or a pointer.  
 
@@ -106,8 +109,11 @@ Variant get(const Variant & accessible, const Variant & instance);
 
 Returns the value.  
 The parameter `instance` is the object instance, if any.  
+The returned Variant is a reference to the value.  
 For pointer `T *`, `instance` is ignored. The returned Variant is a reference to the value.  
-For member data pointer `T C::*`, `instance` is used to access the value in the object. The returned Variant is a reference to the value.  
+For member data pointer `T C::*`, `instance` is used to access the value in the object, and the returned Variant has the same
+constness as the `instance`. For example, if `instance` is a const object, or pointer to const object, the returned Variant
+is a referent to const value. The same for `volatile` and `const volatile`.  
 For Accessor, `instance` is passed to the accessor. The returned Variant is the value get from the accessor.  
 
 #### set

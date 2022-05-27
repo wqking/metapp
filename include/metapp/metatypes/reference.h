@@ -44,10 +44,8 @@ struct DeclareMetaTypeBase <T &&> : DeclareMetaTypeBase<T &>
 };
 
 template <typename T>
-struct DeclareMetaTypeBase <std::reference_wrapper<T> >
+struct DeclareMetaTypeBase <std::reference_wrapper<T> > : DeclareMetaTypeBase<T &>
 {
-	using UpType = T;
-	static constexpr TypeKind typeKind = tkReference;
 	static constexpr TypeFlags typeFlags = tfReference;
 
 	using WrapperType = std::reference_wrapper<T>;
