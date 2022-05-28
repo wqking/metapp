@@ -167,9 +167,9 @@ const void * UnifiedType::getMetaInterface(const MetaInterfaceKind kind) const
 	return nullptr;
 }
 
-void * UnifiedType::constructData(VariantData * data, const void * copyFrom) const
+void * UnifiedType::constructData(VariantData * data, const void * copyFrom, void * memory) const
 {
-	return metaMethodTable.constructData(data, copyFrom);
+	return metaMethodTable.constructData(data, copyFrom, memory);
 }
 
 void UnifiedType::destroy(void * instance) const
@@ -205,7 +205,7 @@ int compareTwoValues(T a, T b)
 } // namespace internal_
 
 
-void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/)
+void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/, void * /*memory*/)
 {
 	return nullptr;
 }
@@ -299,17 +299,27 @@ int MetaType::getUpTypeCount() const noexcept
 
 void * MetaType::construct() const
 {
-	return constructData(nullptr, nullptr);
+	return constructData(nullptr, nullptr, nullptr);
 }
 
 void * MetaType::copyConstruct(const void * copyFrom) const
 {
-	return constructData(nullptr, copyFrom);
+	return constructData(nullptr, copyFrom, nullptr);
 }
 
-void * MetaType::constructData(VariantData * data, const void * copyFrom) const
+void * MetaType::placementConstruct(void * memory) const
 {
-	return unifiedType->constructData(data, copyFrom);
+	return constructData(nullptr, nullptr, memory);
+}
+
+void * MetaType::placementCopyConstruct(const void * copyFrom, void * memory) const
+{
+	return constructData(nullptr, copyFrom, memory);
+}
+
+void * MetaType::constructData(VariantData * data, const void * copyFrom, void * memory) const
+{
+	return unifiedType->constructData(data, copyFrom, memory);
 }
 
 void MetaType::destroy(void * instance) const

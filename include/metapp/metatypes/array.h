@@ -48,8 +48,8 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 		return &metaIndexable;
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom) {
-		return doConstructData<length != internal_::unknownSize>(data, copyFrom);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
+		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory);
 	}
 
 private:
@@ -59,7 +59,8 @@ private:
 	};
 
 	template <bool hasLength>
-	static void * doConstructData(VariantData * data, const void * copyFrom, typename std::enable_if<hasLength>::type * = nullptr) {
+	static void * doConstructData(VariantData * data, const void * copyFrom, void * memory,
+		typename std::enable_if<hasLength>::type * = nullptr) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
 				data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
@@ -70,17 +71,18 @@ private:
 		}
 		else {
 			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+				return internal_::constructOnHeap<ArrayWrapper>(*(ArrayWrapper **)copyFrom, memory);
 			}
 			else {
-				return internal_::constructOnHeap<ArrayWrapper>(nullptr);
+				return internal_::constructOnHeap<ArrayWrapper>(nullptr, memory);
 			}
 		}
 		return nullptr;
 	}
 
 	template <bool hasLength>
-	static void * doConstructData(VariantData * /*data*/, const void * /*copyFrom*/, typename std::enable_if<! hasLength>::type * = nullptr) {
+	static void * doConstructData(VariantData * /*data*/, const void * /*copyFrom*/, void * /*memory*/,
+		typename std::enable_if<! hasLength>::type * = nullptr) {
 		errorNotConstructible();
 		return nullptr;
 	}

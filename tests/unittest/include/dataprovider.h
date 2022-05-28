@@ -166,9 +166,6 @@ using TestTypes_All = typename metapp::TypeListConcat<
 >::Type;
 
 using TestTypes_Pairs_Arithmetic = typename metapp::TypeListProduct<
-	// TestTypes_Arithmetic,
-	// TestTypes_Arithmetic
-	// Select several types, using TestTypes_Arithmetic will slow down compiling horribly.
 	metapp::TypeList<char, int, unsigned int, long long, double>,
 	metapp::TypeList<bool, unsigned short, int, unsigned long, float, long double>
 >::Type;

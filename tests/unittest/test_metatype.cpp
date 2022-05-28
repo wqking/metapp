@@ -222,6 +222,48 @@ TEST_CASE("MetaType, copyConstruct")
 	}
 }
 
+TEST_CASE("MetaType, placementConstruct")
+{
+	SECTION("int") {
+		int n = 5;
+		REQUIRE(n == 5);
+		metapp::getMetaType<int>()->placementConstruct(&n);
+		REQUIRE(n == 0);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		MyClass obj { 0 };
+		REQUIRE(obj.value == 0);
+		metapp::getMetaType<MyClass>()->placementConstruct(&obj);
+		REQUIRE(obj.value == 5);
+	}
+}
+
+TEST_CASE("MetaType, placementCopyConstruct")
+{
+	SECTION("int") {
+		int n = 5;
+		REQUIRE(n == 5);
+		const int from = 38;
+		metapp::getMetaType<int>()->placementCopyConstruct(&from, &n);
+		REQUIRE(n == 38);
+	}
+	SECTION("MyClass") {
+		struct MyClass
+		{
+			int value = 5;
+		};
+		MyClass obj { 0 };
+		REQUIRE(obj.value == 0);
+		const MyClass from { 38 };
+		metapp::getMetaType<MyClass>()->placementCopyConstruct(&from, &obj);
+		REQUIRE(obj.value == 38);
+	}
+}
+
 TEST_CASE("MetaType, destroy")
 {
 	struct MyClass {

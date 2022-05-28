@@ -26,45 +26,60 @@ namespace metapp {
 namespace internal_ {
 
 template <typename T>
-T * constructOnHeapDefault(std::true_type)
+T * constructOnHeapDefault(void * memory, std::true_type)
 {
-	return new T();
+	if(memory == nullptr) {
+		return new T();
+	}
+	else {
+		return new (memory) T();
+	}
 }
 
 template <typename T>
-T * constructOnHeapDefault(std::false_type)
+T * constructOnHeapDefault(void * /*memory*/, std::false_type)
 {
 	errorNotConstructible();
 	return nullptr;
 }
 
 template <typename T, typename U>
-T * constructOnHeapCopy(const void * copyFrom, std::true_type, U)
+T * constructOnHeapCopy(const void * copyFrom, void * memory, std::true_type, U)
 {
-	return new T(*(T *)copyFrom);
+	if(memory == nullptr) {
+		return new T(*(T *)copyFrom);
+	}
+	else {
+		return new (memory) T(*(T *)copyFrom);
+	}
 }
 
 template <typename T>
-T * constructOnHeapCopy(const void * copyFrom, std::false_type, std::true_type)
+T * constructOnHeapCopy(const void * copyFrom, void * memory, std::false_type, std::true_type)
 {
-	return new T(std::move(*(T *)copyFrom));
+	if(memory == nullptr) {
+		return new T(std::move(*(T *)copyFrom));
+	}
+	else {
+		return new (memory) T(std::move(*(T *)copyFrom));
+	}
 }
 
 template <typename T>
-T * constructOnHeapCopy(const void * /*copyFrom*/, std::false_type, std::false_type)
+T * constructOnHeapCopy(const void * /*copyFrom*/, void * /*memory*/, std::false_type, std::false_type)
 {
 	errorNotConstructible();
 	return nullptr;
 }
 
 template <typename T>
-T * constructOnHeap(const void * copyFrom)
+T * constructOnHeap(const void * copyFrom, void * memory)
 {
 	if(copyFrom == nullptr) {
-		return constructOnHeapDefault<T>(std::is_default_constructible<T>());
+		return constructOnHeapDefault<T>(memory, std::is_default_constructible<T>());
 	}
 	else {
-		return constructOnHeapCopy<T>(copyFrom, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+		return constructOnHeapCopy<T>(copyFrom, memory, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
 	}
 }
 

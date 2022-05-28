@@ -68,7 +68,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
 	static constexpr TypeFlags typeFlags = tfPointerWrapper;
 
-	static void * constructData(VariantData * data, const void * copyFrom) {
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
 				data->constructSharedPtr(internal_::castSharedPtrToVoid(SharedPtr()));
@@ -79,12 +79,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 			return nullptr;
 		}
 		else {
-			if(copyFrom == nullptr) {
-				return new SharedPtr();
-			}
-			else {
-				return new SharedPtr(*(SharedPtr *)copyFrom);
-			}
+			return internal_::constructOnHeap<SharedPtr>(copyFrom, memory);
 		}
 	}
 

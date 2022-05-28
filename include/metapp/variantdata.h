@@ -112,7 +112,7 @@ private:
 	template <typename T>
 	void doConstructOnObjectOrBuffer(const void * copyFrom, std::false_type) {
 		setStorageType(storageObject);
-		object = std::shared_ptr<T>(internal_::constructOnHeap<T>(copyFrom));
+		object = std::shared_ptr<T>(internal_::constructOnHeap<T>(copyFrom, nullptr));
 	}
 
 	template <typename T>

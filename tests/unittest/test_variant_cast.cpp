@@ -54,13 +54,15 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast T to U", "", TestTypes_Pairs_Arithmetic)
 {
 	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
 	using Second = typename metapp::TypeListGetAt<TestType, 1>::Type;
-	//printf("%d %d\n", metapp::getMetaType<First>()->getTypeKind(), metapp::getMetaType<Second>()->getTypeKind());
 
 	auto dataProvider = TestDataProvider<First>();
 	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
 		metapp::Variant v(dataProvider.getData(dataIndex));
 		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
 		REQUIRE(v.canCast<Second>());
+		REQUIRE(metapp::getNonReferenceMetaType(v.cast<Second>())->equal(
+			metapp::getNonReferenceMetaType(metapp::getMetaType<Second>())
+		));
 		REQUIRE(v.cast<Second>().template get<Second>() == (Second)dataProvider.getData(dataIndex));
 	}
 }

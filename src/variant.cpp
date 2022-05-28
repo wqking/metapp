@@ -81,7 +81,7 @@ Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
 		metaType(metaType)
 {
-	metaType->constructData(&data, copyFrom);
+	metaType->constructData(&data, copyFrom, nullptr);
 }
 
 Variant::Variant(const Variant & other) noexcept
@@ -165,7 +165,7 @@ Variant Variant::clone() const
 {
 	Variant result;
 	result.metaType = metaType;
-	result.metaType->constructData(&result.data, getAddress());
+	result.metaType->constructData(&result.data, getAddress(), nullptr);
 	return result;
 }
 

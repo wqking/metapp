@@ -50,7 +50,7 @@ inline Variant::Variant(T value)
 	:
 		metaType(metapp::getMetaType<T>())
 {
-	metaType->constructData(&data, &value);
+	metaType->constructData(&data, &value, nullptr);
 }
 
 template <typename T>

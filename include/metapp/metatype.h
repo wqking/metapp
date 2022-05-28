@@ -247,6 +247,8 @@ public:
 
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
+	void * placementConstruct(void * memory) const;
+	void * placementCopyConstruct(const void * copyFrom, void * memory) const;
 
 	void destroy(void * instance) const;
 
@@ -259,7 +261,7 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
-	void * constructData(VariantData * data, const void * copyFrom) const;
+	void * constructData(VariantData * data, const void * copyFrom, void * memory) const;
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
 
 	const void * getRawType() const noexcept {
@@ -308,7 +310,7 @@ public:
 		| (std::is_floating_point<T>::value ? tfFloat : 0)
 	;
 
-	static void * constructData(VariantData * data, const void * copyFrom);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
 	static void destroy(void * instance);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
@@ -338,7 +340,7 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;
 
-	static void * constructData(VariantData * data, const void * copyFrom);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
 	static void destroy(void * instance);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
@@ -361,7 +363,9 @@ extern const MetaType * voidMetaType;
 #include "metapp/implement/variant_impl.h"
 
 // Need to include the primary meta types to avoid pointer/reference can't be detected properly
+#include "metapp/metatypes/cv.h"
 #include "metapp/metatypes/pointer.h"
 #include "metapp/metatypes/reference.h"
+
 
 #endif

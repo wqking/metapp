@@ -31,7 +31,7 @@ void verifyVariantWritable(const Variant & var)
 	}
 }
 
-void * constructReference(VariantData * data, const void * copyFrom)
+void * constructReference(VariantData * data, const void * copyFrom, void * /*memory*/)
 {
 	if(data != nullptr) {
 		data->constructReference(copyFrom);
