@@ -72,37 +72,26 @@ constexpr bool typeKindIsArithmetic(const TypeKind typeKind);
 
 Returns true if the type kind is either integral or real type.  
 
-#### typeIsCharPtr
+#### isSameMetaType
 
 ```c++
-bool typeIsCharPtr(const MetaType * type);
+template <typename ...Ts>
+constexpr bool isSameMetaType(const MetaType * metaType);
 ```
 
-Returns true if the type is a pointer to char, such as `char *`, `const char *`, etc.  
-
-#### typeIsWideCharPtr
+Returns true if the `metaType` equals to any type in `Ts...`.  
+The function is similar to the pseudo code  
 
 ```c++
-bool typeIsWideCharPtr(const MetaType * type);
+return metaType->equal(metapp::getMetaType<Ts[0]>())
+	|| metaType->equal(metapp::getMetaType<Ts[1]>())
+	|| ...
+	|| metaType->equal(metapp::getMetaType<Ts[N]>());
 ```
 
-Returns true if the type is a pointer to wchar_t, such as `wchar_t *`, `const wchar_t *`, etc.  
-
-#### typeIsString
-
-```c++
-bool typeIsString(const MetaType * type);
-```
-
-Returns true if the type is either `std::string` or a pointer to char.  
-
-#### typeIsWideString
-
-```c++
-bool typeIsWideString(const MetaType * type);
-```
-
-Returns true if the type is either `std::wstring` or a pointer to wchar_t.  
+This function is useful when check if a meta type is any of certain types,
+for example, to check if a meta type is a C string (`const char *`) or `std::string`,
+we can check `isSameMetaType<char *, std::string>(metaType)`.
 
 #### depointer
 ```c++

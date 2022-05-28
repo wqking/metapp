@@ -71,3 +71,16 @@ TEST_CASE("utility, getPointer, std::unique_ptr<const int>")
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<const int>());
 }
 
+TEST_CASE("utility, isSameMetaType")
+{
+	REQUIRE(metapp::isSameMetaType<int>(metapp::getMetaType<int>()));
+	REQUIRE(metapp::isSameMetaType<long, const int>(metapp::getMetaType<int>()));
+	REQUIRE(metapp::isSameMetaType<metapp::TypeList<long, const int> >(metapp::getMetaType<int>()));
+	REQUIRE(metapp::isSameMetaType<const char *, std::string>(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::isSameMetaType<const char *, std::string>(metapp::getMetaType<volatile char *>()));
+
+	REQUIRE(! metapp::isSameMetaType<>(metapp::getMetaType<int>()));
+	REQUIRE(! metapp::isSameMetaType<long>(metapp::getMetaType<int>()));
+	REQUIRE(! metapp::isSameMetaType<unsigned int, long>(metapp::getMetaType<int>()));
+}
+

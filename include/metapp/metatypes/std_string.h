@@ -31,7 +31,7 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
 	static constexpr TypeKind typeKind = tkStdString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(typeIsCharPtr(toMetaType)) {
+		if(isSameMetaType<char *>(toMetaType)) {
 			if(result != nullptr) {
 				*result = value.get<const std::string &>().c_str();
 			}
@@ -49,7 +49,7 @@ struct DeclareMetaTypeBase <std::wstring>
 	static constexpr TypeKind typeKind = tkStdWideString;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(typeIsWideCharPtr(toMetaType)) {
+		if(isSameMetaType<wchar_t *>(toMetaType)) {
 			if(result != nullptr) {
 				*result = value.get<const std::wstring &>().c_str();
 			}

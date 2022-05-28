@@ -9,18 +9,15 @@
   * [typeKindIsIntegral](#a4_2)
   * [typeKindIsArithmetic](#a4_3)
   * [typeKindIsArithmetic](#a4_4)
-  * [typeIsCharPtr](#a4_5)
-  * [typeIsWideCharPtr](#a4_6)
-  * [typeIsString](#a4_7)
-  * [typeIsWideString](#a4_8)
-  * [depointer](#a4_9)
-  * [dereference](#a4_10)
-  * [getPointer](#a4_11)
-  * [getPointedType](#a4_12)
-  * [getPointerAndType](#a4_13)
-  * [selectOverload](#a4_14)
-  * [dumpMetaType](#a4_15)
-  * [getNameByTypeKind](#a4_16)
+  * [isSameMetaType](#a4_5)
+  * [depointer](#a4_6)
+  * [dereference](#a4_7)
+  * [getPointer](#a4_8)
+  * [getPointedType](#a4_9)
+  * [getPointerAndType](#a4_10)
+  * [selectOverload](#a4_11)
+  * [dumpMetaType](#a4_12)
+  * [getNameByTypeKind](#a4_13)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -80,42 +77,28 @@ constexpr bool typeKindIsArithmetic(const TypeKind typeKind);
 Returns true if the type kind is either integral or real type.  
 
 <a id="a4_5"></a>
-#### typeIsCharPtr
+#### isSameMetaType
 
 ```c++
-bool typeIsCharPtr(const MetaType * type);
+template <typename ...Ts>
+constexpr bool isSameMetaType(const MetaType * metaType);
 ```
 
-Returns true if the type is a pointer to char, such as `char *`, `const char *`, etc.  
+Returns true if the `metaType` equals to any type in `Ts...`.  
+The function is similar to the pseudo code  
+
+```c++
+return metaType->equal(metapp::getMetaType<Ts[0]>())
+  || metaType->equal(metapp::getMetaType<Ts[1]>())
+  || ...
+  || metaType->equal(metapp::getMetaType<Ts[N]>());
+```
+
+This function is useful when check if a meta type is any of certain types,
+for example, to check if a meta type is a C string (`const char *`) or `std::string`,
+we can check `isSameMetaType<char *, std::string>(metaType)`.
 
 <a id="a4_6"></a>
-#### typeIsWideCharPtr
-
-```c++
-bool typeIsWideCharPtr(const MetaType * type);
-```
-
-Returns true if the type is a pointer to wchar_t, such as `wchar_t *`, `const wchar_t *`, etc.  
-
-<a id="a4_7"></a>
-#### typeIsString
-
-```c++
-bool typeIsString(const MetaType * type);
-```
-
-Returns true if the type is either `std::string` or a pointer to char.  
-
-<a id="a4_8"></a>
-#### typeIsWideString
-
-```c++
-bool typeIsWideString(const MetaType * type);
-```
-
-Returns true if the type is either `std::wstring` or a pointer to wchar_t.  
-
-<a id="a4_9"></a>
 #### depointer
 ```c++
 Variant depointer(const Variant & var);
@@ -174,7 +157,7 @@ ASSERT(v3.get<int &>() == 15);
 ASSERT(r3.get<int &>() == 15);
 ```
 
-<a id="a4_10"></a>
+<a id="a4_7"></a>
 #### dereference
 ```c++
 Variant dereference(const Variant & var);
@@ -186,7 +169,7 @@ If `var` is a pointer, return the value that `var` points to.
 If `var` is a value, return `var`.  
 Note: if `var` is a reference or pointer, `dereference` will copy the underlying value to the result Variant, that may be expensive.  
 
-<a id="a4_11"></a>
+<a id="a4_8"></a>
 #### getPointer
 
 ```c++
@@ -199,7 +182,7 @@ If `var` is a pointer or reference to pointer, returns the pointer.
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
 returns the stored pointer (`std::shared_ptr<T>::get()`, or `std::unique_ptr<T>::get()`).  
 
-<a id="a4_12"></a>
+<a id="a4_9"></a>
 #### getPointedType
 
 ```c++
@@ -211,7 +194,7 @@ If `var` is value or reference to value, returns the value type.
 If `var` is a pointer or reference to pointer, returns the type that the pointer points to.  
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`, returns T.  
 
-<a id="a4_13"></a>
+<a id="a4_10"></a>
 #### getPointerAndType
 
 ```c++
@@ -221,7 +204,7 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 Returns both the pointer and pointed type in one function.  
 It's sligher better performance than calling `getPointer` and `getPointedType` respectively.  
 
-<a id="a4_14"></a>
+<a id="a4_11"></a>
 #### selectOverload
 
 ```c++
@@ -252,7 +235,7 @@ We also don't need selectOverload, just use static_cast
 metapp::Variant v2(static_cast<int (MyClass::*)(int)>(&MyClass::func));
 ```
 
-<a id="a4_15"></a>
+<a id="a4_12"></a>
 #### dumpMetaType
 
 ```c++
@@ -263,7 +246,7 @@ Dump readable information of `metaType` to `stream`.
 The meta data is obtained from `MetaRepo` `metaRepo`. If `metaRepo` is nullptr, the global `MetaRepo` is used.  
 This function is for test and learning purpose, you should not use it in any production code.  
 
-<a id="a4_16"></a>
+<a id="a4_13"></a>
 #### getNameByTypeKind
 
 ```c++

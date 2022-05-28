@@ -56,24 +56,10 @@ inline constexpr bool typeKindIsReal(const TypeKind typeKind)
 	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;
 }
 
-inline bool typeIsCharPtr(const MetaType * type)
+template <typename ...Ts>
+constexpr bool isSameMetaType(const MetaType * metaType)
 {
-	return type->isPointer() && type->getUpType()->getTypeKind() == tkChar;
-}
-
-inline bool typeIsWideCharPtr(const MetaType * type)
-{
-	return type->isPointer() && type->getUpType()->getTypeKind() == tkWideChar;
-}
-
-inline bool typeIsString(const MetaType * type)
-{
-	return type->getTypeKind() == tkStdString || typeIsCharPtr(type);
-}
-
-inline bool typeIsWideString(const MetaType * type)
-{
-	return type->getTypeKind() == tkStdWideString || typeIsWideCharPtr(type);
+	return internal_::SameMetaTypeChecker<TypeList<Ts...> >::isSame(metaType);
 }
 
 template <typename Signature, typename Class>

@@ -70,6 +70,33 @@ void * constructReference(VariantData * data, const void * copyFrom, void * memo
 const MetaType * voidMetaTypeFromVariant(const Variant & var);
 
 
+template <typename T>
+struct SameMetaTypeChecker
+{
+	static constexpr bool isSame(const MetaType * metaType) {
+		return metaType->equal(getMetaType<T>());
+	}
+};
+
+template <typename A, typename ...Ts>
+struct SameMetaTypeChecker <TypeList<A, Ts...> >
+{
+	static constexpr bool isSame(const MetaType * metaType) {
+		return SameMetaTypeChecker<A>::isSame(metaType)
+			|| SameMetaTypeChecker<TypeList<Ts...> >::isSame(metaType)
+			;
+	}
+};
+
+template <>
+struct SameMetaTypeChecker <TypeList<> >
+{
+	static constexpr bool isSame(const MetaType * /*metaType*/) {
+		return false;
+	}
+};
+
+
 } // namespace internal_
 
 } // namespace metapp
