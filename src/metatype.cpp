@@ -174,7 +174,12 @@ void * UnifiedType::constructData(VariantData * data, const void * copyFrom, voi
 
 void UnifiedType::destroy(void * instance) const
 {
-	metaMethodTable.destroy(instance);
+	metaMethodTable.destroy(instance, true);
+}
+
+void UnifiedType::dtor(void * instance) const
+{
+	metaMethodTable.destroy(instance, false);
 }
 
 bool UnifiedType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
@@ -210,7 +215,11 @@ void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void
 	return nullptr;
 }
 
-void DeclareMetaTypeVoidBase::destroy(void * /*instance*/)
+void DeclareMetaTypeVoidBase::destroy(void * /*instance*/, const bool /*freeMemory*/)
+{
+}
+
+void DeclareMetaTypeVoidBase::dtor(void * /*instance*/, const bool /*freeMemory*/)
 {
 }
 
@@ -325,6 +334,11 @@ void * MetaType::constructData(VariantData * data, const void * copyFrom, void *
 void MetaType::destroy(void * instance) const
 {
 	unifiedType->destroy(instance);
+}
+
+void MetaType::dtor(void * instance) const
+{
+	unifiedType->dtor(instance);
 }
 
 bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const

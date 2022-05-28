@@ -276,7 +276,7 @@ struct UnifiedMetaTable
 {
 	void * (*constructData)(VariantData * data, const void * copyFrom, void * memory);
 
-	void (*destroy)(void * instance);
+	void (*destroy)(void * instance, const bool freeMemory);
 
 	bool (*cast)(Variant * result, const Variant & value, const MetaType * toMetaType);
 
@@ -307,6 +307,7 @@ private:
 	void * constructData(VariantData * data, const void * copyFrom, void * memory) const;
 
 	void destroy(void * instance) const;
+	void dtor(void * instance) const;
 
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 

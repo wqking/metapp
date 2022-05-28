@@ -159,7 +159,7 @@ inline void * CommonDeclareMetaType<T>::constructData(VariantData * data, const 
 }
 
 template <typename T>
-inline void CommonDeclareMetaType<T>::destroy(void * instance)
+inline void CommonDeclareMetaType<T>::destroy(void * instance, const bool freeMemory)
 {
 #if defined(METAPP_COMPILER_GCC)
 #pragma GCC diagnostic push
@@ -169,7 +169,12 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-abstract-non-virtual-dtor"
 #endif
-	delete static_cast<Underlying *>(instance);
+	if(freeMemory) {
+		delete static_cast<Underlying *>(instance);
+	}
+	else {
+		internal_::callDtor<Underlying>((Underlying *)instance);
+	}
 #if defined(METAPP_COMPILER_CLANG)
 #pragma clang diagnostic pop
 #endif

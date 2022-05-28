@@ -251,6 +251,7 @@ public:
 	void * placementCopyConstruct(const void * copyFrom, void * memory) const;
 
 	void destroy(void * instance) const;
+	void dtor(void * instance) const;
 
 	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
 
@@ -311,7 +312,7 @@ public:
 	;
 
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
-	static void destroy(void * instance);
+	static void destroy(void * instance, const bool freeMemory);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 
@@ -341,7 +342,8 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeFlags typeFlags = 0;
 
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
-	static void destroy(void * instance);
+	static void destroy(void * instance, const bool freeMemory);
+	static void dtor(void * instance, const bool freeMemory);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
 

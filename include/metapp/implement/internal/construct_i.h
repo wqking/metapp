@@ -83,6 +83,18 @@ T * constructOnHeap(const void * copyFrom, void * memory)
 	}
 }
 
+template <typename T>
+void callDtor(T * p, typename std::enable_if<std::is_destructible<T>::value>::type * = nullptr)
+{
+	p->~T();
+}
+
+template <typename T>
+void callDtor(T * /*p*/, typename std::enable_if<! std::is_destructible<T>::value>::type * = nullptr)
+{
+}
+
+
 } // namespace internal_
 
 } // namespace metapp
