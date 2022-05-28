@@ -239,7 +239,25 @@ Variant & operator = (Variant && other) noexcept;
 ```
 Copy and move assignment.  
 The previous value held by the variant is destroyed after assigned with the new variant.  
+Example code,  
+desc*/
 
+ExampleFunc
+{
+	//code
+	metapp::Variant t(5);
+	ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
+	ASSERT(t.get<int>() == 5);
+	metapp::Variant u(38.2);
+	ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+	t = u;
+	ASSERT(t.getMetaType()->equal(metapp::getMetaType<double>())); // t is double
+	ASSERT(t.get<double>() == 38.2);
+	//code
+}
+
+/*desc
 #### getMetaType
 ```c++
 const MetaType * getMetaType() const noexcept;
@@ -425,6 +443,77 @@ Variant clone() const;
 Clone the underlying object and return a Variant that holds the cloned object.  
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
+#### assign
+
+```c++
+Variant & assign(const Variant & other);
+```
+
+Assign `other` to `this`.  
+Firstly the function casts `other` to the meta type in `this`, then copy the data in the casted Variant to the data in `this`.  
+If `this` is a Variant of reference, the referred-to object is modified.  
+This function is particular useful to set value to the referred-to object referred by a reference.  
+
+This function is complete different with the `Variant & operator = (const Variant & other) noexcept`.  
+The `operator =` is class semantic. That's to say, when using `operator =`, `this` is a fresh new Variant that's copied from `other`.  
+
+Function `assign` is C++ value assignment semantic. That's to say, it's similar to do the expression `v = u`.  
+Let's see examples, first let's see how C++ assignment works.  
+
+```c++
+T t;
+U u;
+t = u;
+```
+In above code, `u` is casted to type `T`, then assign to `t`. After the assignment, `t` still has type `T`. If `t` is reference,  
+
+```c++
+T n;
+T & t = n;
+U u;
+t = u;
+```
+In above code, after the assignment, `n` will receive the new value of `u`.  
+
+Now let's see how Variant `assign` works.  
+desc*/
+
+ExampleFunc
+{
+	{
+		//code
+		// Assign to value.
+		metapp::Variant t(5);
+		ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
+		ASSERT(t.get<int>() == 5);
+		metapp::Variant u(38.2);
+		ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+		t.assign(u);
+		ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is still int
+		ASSERT(t.get<int>() == 38); // t receives new value (int)38.2, that's 38
+		//code
+	}
+
+	{
+		//code
+		// Assign to reference.
+		int n = 5;
+		metapp::Variant t = metapp::Variant::reference(n);
+		ASSERT(t.getMetaType()->equal(metapp::getMetaType<int &>())); // t is int &
+		ASSERT(t.get<int>() == 5);
+		metapp::Variant u(38.2);
+		ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+		t.assign(u);
+		ASSERT(t.getMetaType()->equal(metapp::getMetaType<int &>())); // t is still int &
+		ASSERT(t.get<int>() == 38); // t receives new value (int)38.2, that's 38
+		ASSERT(n == 38); // n is also modified
+		//code
+	}
+}
+
+/*desc
 #### swap
 ```c++
 void swap(Variant & other) noexcept;

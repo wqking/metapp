@@ -275,8 +275,30 @@ void * copyConstruct(const void * copyFrom) const;
 ```
 
 Similar to C++ code `new T(anotherObject)`.  
-Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
+Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object,
+then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
+
+#### placementConstruct
+
+```c++
+void * placementConstruct(void * memory) const;
+```
+
+Similar to C++ code `new (memory) T()`.  
+Initialize an object on the memory pointed by `memory`, then returns the object pointer.  
+The returned pointer can be freed using `dtor`.  
+
+#### placementCopyConstruct
+
+```c++
+void * placementCopyConstruct(const void * copyFrom, void * memory) const;
+```
+
+Similar to C++ code `new (memory) T(anotherObject)`.  
+Initialize an object on the memory pointed by `memory`, copy the object pointed by `copyFrom` to the object,
+then returns the object pointer.  
+The returned pointer can be freed using `dtor`.  
 
 #### destroy
 
@@ -284,7 +306,19 @@ The returned pointer can be freed using `destroy`.
 void destroy(void * instance) const;
 ```
 
-Free an object constructed by `construct` or `copyConstruct`.  
+Invoke the destructor then free the memory.  
+`instance` must have the type of `this` MetaType.  
+It's similar to C++ `delete (Cast to proper type *)instance`.  
+The instance can be constructed by `construct` or `copyConstruct`, or constructed with `new` operator.  
+
+#### dtor
+
+```c++
+void dtor(void * instance) const;
+```
+
+Invoke the destructor but don'tfree the memory.  
+This is useful to destruct the object constructed by `placementConstruct` or `placementCopyConstruct`.  
 
 #### getModule
 

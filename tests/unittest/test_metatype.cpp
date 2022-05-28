@@ -233,12 +233,12 @@ TEST_CASE("MetaType, placementConstruct")
 	SECTION("MyClass") {
 		struct MyClass
 		{
-			int value = 5;
+			int value;
 		};
-		MyClass obj { 0 };
-		REQUIRE(obj.value == 0);
-		metapp::getMetaType<MyClass>()->placementConstruct(&obj);
+		MyClass obj { 5 };
 		REQUIRE(obj.value == 5);
+		metapp::getMetaType<MyClass>()->placementConstruct(&obj);
+		REQUIRE(obj.value == 0);
 	}
 }
 
@@ -254,7 +254,7 @@ TEST_CASE("MetaType, placementCopyConstruct")
 	SECTION("MyClass") {
 		struct MyClass
 		{
-			int value = 5;
+			int value;
 		};
 		MyClass obj { 0 };
 		REQUIRE(obj.value == 0);

@@ -18,6 +18,7 @@
   * [Use MetaType](#a3_9)
   * [Call function and accessible](#a3_10)
   * [Run time generic STL container](#a3_11)
+  * [Use reference with Variant](#a3_12)
 * [Documentations](#a2_6)
 * [Build the test code](#a2_7)
 * [Known compiler related quirks](#a2_8)
@@ -46,53 +47,54 @@ and the performance cost is kept as minimum as possible.
 ## Facts and features
 
 - **Powerful**
-    - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers,
+  - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers,
 and much more.
-    - Support runtime generic programming.
-    - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
+  - Support runtime generic programming.
+  - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 no template parameters are needed. All parameters and return values are passed via metapp::Variant.
-    - Mimic C++ reference extensively for better performance.
-    - Automatically type conversion when getting/setting fields, invoking methods, etc.
-    - Support multiple inheritance and hierarchy.
-    - Support using in dynamic library (plugins).
+  - Mimic C++ reference extensively for better performance.
+  - Automatically type conversion when getting/setting fields, invoking methods, etc.
+  - Support multiple inheritance and hierarchy.
+  - Support using in dynamic library (plugins).
 
 - **Flexible and easy to use**
-    - Building meta data doesn't require preprocessor, macros, or any external tool. Only use native C++ code, no need macros.
-    - Very easy to reflect templates.
-    - Non-intrusive. You don't need to change your code for reflection.
-    - Doesn't require C++ RTTI.
-    - Use exceptions by default, but exceptions can be disabled.
-    - No configuration, no policies, easy to use, while keeps powerful.
-    - Loose coupled design. For example, constructors and member functions can be used without coupling with the class information.
-    - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead.
+  - Building meta data doesn't require preprocessor, macros, or any external tool. Only use native C++ code, no need macros.
+  - Very easy to reflect templates.
+  - Non-intrusive. You don't need to change your code for reflection.
+  - Doesn't require C++ RTTI.
+  - Use exceptions by default, but exceptions can be disabled.
+  - No configuration, no policies, easy to use, while keeps powerful.
+  - Loose coupled design. For example, constructors and member functions can be used without coupling with the class information.
+  - You don't pay for what you don't use. If you don't build the meta data, no any memory overhead.
 If you don't use the meta data, no any performance overhead. If you build and use the meta data,
 you get trivial memory and performance overhead beside very powerful reflection system.
-    - Written in standard and portable C++, only require C++11, and support later C++ standard.
-    - Cross platforms, cross compilers.
+  - Written in standard and portable C++, only require C++11, and support later C++ standard.
+  - Cross platforms, cross compilers.
+  - The API is designed carefully and thoughtfully, and try to be enjoyable to use.
 
 - **Language features that can be reflected**
-    - Const volatile qualifiers, include top level CV, and CV in pointer, array and member function.
-    - Pointer, reference.
-    - Classes and nested inner classes.
-    - Templates.
-    - Accessibles (global variable, member data, property with getter/setter, etc).
-    - Callables (global function, member function, constructor, std::function, etc).
-    - Overloaded function.
-    - Default arguments of functions.
-    - Functions with variadic parameters.
-    - Enumerators.
-    - Constants in any data type.
-    - Namespace simulation.
-    - Array, multi-dimensional array.
+  - Const volatile qualifiers, include top level CV, and CV in pointer, array and member function.
+  - Pointer, reference.
+  - Classes and nested inner classes.
+  - Templates.
+  - Accessibles (global variable, member data, property with getter/setter, etc).
+  - Callables (global function, member function, constructor, std::function, etc).
+  - Overloaded function.
+  - Default arguments of functions.
+  - Functions with variadic parameters.
+  - Enumerators.
+  - Constants in any data type.
+  - Namespace simulation.
+  - Array, multi-dimensional array.
 
 - **Built-in reflected meta types**
-    - Primary types (void, bool, int, unsigned int, etc).
-    - STL strings (std::string, std::wstring).
-    - STL smart pointers (std::shared_ptr, std::unique_ptr, std::weak_ptr).
-    - STL containers (std::vector, std::list, std::map, etc).
-    - Callables (free function, member function, std::function, constructor, overloaded function, default arguments function, variadic function, etc).
-    - Many other meta types.
-    - Adding new meta types is easy.
+  - Primary types (void, bool, int, unsigned int, etc).
+  - STL strings (std::string, std::wstring).
+  - STL smart pointers (std::shared_ptr, std::unique_ptr, std::weak_ptr).
+  - STL containers (std::vector, std::list, std::map, etc).
+  - Callables (free function, member function, std::function, constructor, overloaded function, default arguments function, variadic function, etc).
+  - Many other meta types.
+  - Adding new meta types is easy.
 
 <a id="a2_3"></a>
 ## Basic information
@@ -130,10 +132,10 @@ In brief, MSVC, GCC, Clang that has well support for C++11, or released after 20
 <a id="a3_5"></a>
 ### C++ standard requirements
 * To Use the library  
-    * The library: C++11.  
+  * The library: C++11.  
 * To develop the library
-    * Unit tests: C++17.
-    * docsrc: C++11.
+  * Unit tests: C++17.
+  * docsrc: C++11.
 
 <a id="a2_4"></a>
 ## Quick start
@@ -264,17 +266,17 @@ ASSERT(metaType->equal(metapp::getMetaType<int *>()));
 
 ```c++
 struct MyClass {
-    int value;
+  int value;
 
-    int add(const int delta1, const int delta2) const {
-        return value + delta1 + delta2;
-    }
+  int add(const int delta1, const int delta2) const {
+    return value + delta1 + delta2;
+  }
 
-    // metapp supports smart pointers very well.
-    std::unique_ptr<MyClass> clone() const {
-        // This is C++11, so we can't use std::make_unique
-        return std::unique_ptr<MyClass>(new MyClass(*this));
-    }
+  // metapp supports smart pointers very well.
+  std::unique_ptr<MyClass> clone() const {
+    // This is C++11, so we can't use std::make_unique
+    return std::unique_ptr<MyClass>(new MyClass(*this));
+  }
 };
 
 MyClass obj { 5 };
@@ -348,18 +350,18 @@ Let's define a `concat` function that processes any Variant that implements meta
 ```c++
 std::string concat(const metapp::Variant & container)
 {
-    const metapp::Variant nonPointer = depointer(container);
-    const metapp::MetaIterable * metaIterable
-        = metapp::getNonReferenceMetaType(nonPointer)->getMetaIterable();
-    if(metaIterable == nullptr) {
-        return "";
-    }
-    std::stringstream stream;
-    metaIterable->forEach(nonPointer, [&stream](const metapp::Variant & item) {
-        stream << item;
-        return true;
-    });
-    return stream.str();
+  const metapp::Variant nonPointer = depointer(container);
+  const metapp::MetaIterable * metaIterable
+    = metapp::getNonReferenceMetaType(nonPointer)->getMetaIterable();
+  if(metaIterable == nullptr) {
+    return "";
+  }
+  std::stringstream stream;
+  metaIterable->forEach(nonPointer, [&stream](const metapp::Variant & item) {
+    stream << item;
+    return true;
+  });
+  return stream.str();
 }
 ```
 
@@ -407,6 +409,62 @@ metapp::Variant v2(&container2);
 ASSERT(concat(v2) == "123");
 ```
 
+<a id="a3_12"></a>
+### Use reference with Variant
+Declare a value to be referred to.
+
+```c++
+int n = 9;
+```
+
+rn holds a referent to n.
+C++ equivalence is `int & rn = n;`
+
+```c++
+metapp::Variant rn = metapp::Variant::reference(n);
+ASSERT(rn.get<int>() == 9);
+```
+
+Assign to rn with new value. 
+C++ equivalence is `rn = 38;`
+
+```c++
+rn.assign(38);
+```
+
+rn gets new value.
+
+```c++
+ASSERT(rn.get<int>() == 38);
+```
+
+n is modified too.
+
+```c++
+ASSERT(n == 38);
+```
+
+We can use reference to modify container elements as well.  
+vs holds a `std::vector<std::string>`.
+
+```c++
+metapp::Variant vs(std::vector<std::string> { "Hello", "world" });
+ASSERT(vs.get<const std::vector<std::string> &>()[0] == "Hello");
+```
+
+Get the first element. The element is returned as a reference.
+
+```c++
+metapp::Variant item = metapp::indexableGet(vs, 0);
+```
+
+assign to item with new value.
+
+```c++
+item.assign("Good");
+ASSERT(vs.get<const std::vector<std::string> &>()[0] == "Good");
+```
+
 Below are tutorials and documents.  
 If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
 
@@ -415,51 +473,51 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Tutorials
 
-    - [Use Variant](doc/tutorial/tutorial_variant.md)
-    - [Use MetaType](doc/tutorial/tutorial_metatype.md)
-    - [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
-    - [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
-    - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
-    - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
+  - [Use Variant](doc/tutorial/tutorial_variant.md)
+  - [Use MetaType](doc/tutorial/tutorial_metatype.md)
+  - [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
+  - [Use MetaCallable, function, member function, etc](doc/tutorial/tutorial_callable.md)
+  - [Use MetaRepo to retrieve meta data at running time](doc/tutorial/tutorial_metarepo.md)
+  - [Use classes inheritance](doc/tutorial/tutorial_metaclass_inheritance.md)
 
 - Core concepts and classes
-    - [Core concepts - type kind, meta type, up type, meta interface](doc/core_concepts.md)
-    - [Class Variant reference](doc/variant.md)
-    - [Class MetaType reference](doc/metatype.md)
+  - [Core concepts - type kind, meta type, up type, meta interface](doc/core_concepts.md)
+  - [Class Variant reference](doc/variant.md)
+  - [Class MetaType reference](doc/metatype.md)
 
 - Build and use meta data
-    - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
-    - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
-    - [MetaItem](doc/metaitem.md)
-    - [MetaItemView and BaseView](doc/views.md)
+  - [Reflect meta type at compile time using DeclareMetaType](doc/declaremetatype.md)
+  - [Register and use meta type at running time using MetaRepo](doc/metarepo.md)
+  - [MetaItem](doc/metaitem.md)
+  - [MetaItemView and BaseView](doc/views.md)
 
 - Meta interfaces
-    - [Overview and implement meta interface](doc/meta_interface_overview.md)
-    - [MetaClass](doc/interfaces/metaclass.md)
-    - [MetaCallable](doc/interfaces/metacallable.md)
-    - [MetaAccessible](doc/interfaces/metaaccessible.md)
-    - [MetaEnum](doc/interfaces/metaenum.md)
-    - [MetaIndexable](doc/interfaces/metaindexable.md)
-    - [MetaIterable](doc/interfaces/metaiterable.md)
-    - [MetaStreaming](doc/interfaces/metastreaming.md)
-    - [MetaMappable](doc/interfaces/metamappable.md)
-    - [User defined meta interface](doc/interfaces/metauser.md)
+  - [Overview and implement meta interface](doc/meta_interface_overview.md)
+  - [MetaClass](doc/interfaces/metaclass.md)
+  - [MetaCallable](doc/interfaces/metacallable.md)
+  - [MetaAccessible](doc/interfaces/metaaccessible.md)
+  - [MetaEnum](doc/interfaces/metaenum.md)
+  - [MetaIndexable](doc/interfaces/metaindexable.md)
+  - [MetaIterable](doc/interfaces/metaiterable.md)
+  - [MetaStreaming](doc/interfaces/metastreaming.md)
+  - [MetaMappable](doc/interfaces/metamappable.md)
+  - [User defined meta interface](doc/interfaces/metauser.md)
 
 - Built-in meta types
-    - [Overview](doc/metatypes/overview_metatypes.md)
-    - [List of all built-in meta types](doc/metatypes/list_all.md)
-    - [Constructor](doc/metatypes/constructor.md)
-    - [Overloaded function](doc/metatypes/overloaded_function.md)
-    - [Default arguments function](doc/metatypes/default_args_function.md)
-    - [Variadic function](doc/metatypes/variadic_function.md)
-    - [Accessor](doc/metatypes/accessor.md)
+  - [Overview](doc/metatypes/overview_metatypes.md)
+  - [List of all built-in meta types](doc/metatypes/list_all.md)
+  - [Constructor](doc/metatypes/constructor.md)
+  - [Overloaded function](doc/metatypes/overloaded_function.md)
+  - [Default arguments function](doc/metatypes/default_args_function.md)
+  - [Variadic function](doc/metatypes/variadic_function.md)
+  - [Accessor](doc/metatypes/accessor.md)
 
 - Utilities
-    - [utility.h](doc/utilities/utility.md)
+  - [utility.h](doc/utilities/utility.md)
 
 - Miscellaneous
-    - [About documentations](doc/about_document.md)
-    - Use metapp in dynamic library
+  - [About documentations](doc/about_document.md)
+  - Use metapp in dynamic library
 
 <a id="a2_7"></a>
 ## Build the test code

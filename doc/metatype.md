@@ -20,8 +20,11 @@
   * [Check meta interfaces](#a4_10)
   * [construct](#a4_11)
   * [copyConstruct](#a4_12)
-  * [destroy](#a4_13)
-  * [getModule](#a4_14)
+  * [placementConstruct](#a4_13)
+  * [placementCopyConstruct](#a4_14)
+  * [destroy](#a4_15)
+  * [dtor](#a4_16)
+  * [getModule](#a4_17)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -281,19 +284,56 @@ void * copyConstruct(const void * copyFrom) const;
 ```
 
 Similar to C++ code `new T(anotherObject)`.  
-Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object, then returns the object pointer.  
+Allocate and initialize an object on the heap, copy the object pointed by `copyFrom` to the object,
+then returns the object pointer.  
 The returned pointer can be freed using `destroy`.  
 
 <a id="a4_13"></a>
+#### placementConstruct
+
+```c++
+void * placementConstruct(void * memory) const;
+```
+
+Similar to C++ code `new (memory) T()`.  
+Initialize an object on the memory pointed by `memory`, then returns the object pointer.  
+The returned pointer can be freed using `dtor`.  
+
+<a id="a4_14"></a>
+#### placementCopyConstruct
+
+```c++
+void * placementCopyConstruct(const void * copyFrom, void * memory) const;
+```
+
+Similar to C++ code `new (memory) T(anotherObject)`.  
+Initialize an object on the memory pointed by `memory`, copy the object pointed by `copyFrom` to the object,
+then returns the object pointer.  
+The returned pointer can be freed using `dtor`.  
+
+<a id="a4_15"></a>
 #### destroy
 
 ```c++
 void destroy(void * instance) const;
 ```
 
-Free an object constructed by `construct` or `copyConstruct`.  
+Invoke the destructor then free the memory.  
+`instance` must have the type of `this` MetaType.  
+It's similar to C++ `delete (Cast to proper type *)instance`.  
+The instance can be constructed by `construct` or `copyConstruct`, or constructed with `new` operator.  
 
-<a id="a4_14"></a>
+<a id="a4_16"></a>
+#### dtor
+
+```c++
+void dtor(void * instance) const;
+```
+
+Invoke the destructor but don'tfree the memory.  
+This is useful to destruct the object constructed by `placementConstruct` or `placementCopyConstruct`.  
+
+<a id="a4_17"></a>
 #### getModule
 
 ```c++

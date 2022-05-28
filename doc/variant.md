@@ -26,14 +26,15 @@
   * [castSilently](#a4_18)
   * [isEmpty](#a4_19)
   * [clone](#a4_20)
-  * [swap](#a4_21)
+  * [assign](#a4_21)
+  * [swap](#a4_22)
 * [Free functions](#a2_5)
-  * [getTypeKind](#a4_22)
-  * [Streaming operators](#a4_23)
-  * [swap](#a4_24)
+  * [getTypeKind](#a4_23)
+  * [Streaming operators](#a4_24)
+  * [swap](#a4_25)
 * [Memory management in Variant](#a2_6)
-  * [The data storage in Variant is similar to native C++](#a4_25)
-  * [Copying variants is different from native C++](#a4_26)
+  * [The data storage in Variant is similar to native C++](#a4_26)
+  * [Copying variants is different from native C++](#a4_27)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -247,6 +248,19 @@ Variant & operator = (Variant && other) noexcept;
 ```
 Copy and move assignment.  
 The previous value held by the variant is destroyed after assigned with the new variant.  
+Example code,  
+
+```c++
+metapp::Variant t(5);
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
+ASSERT(t.get<int>() == 5);
+metapp::Variant u(38.2);
+ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+t = u;
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<double>())); // t is double
+ASSERT(t.get<double>() == 38.2);
+```
 
 <a id="a4_12"></a>
 #### getMetaType
@@ -433,6 +447,69 @@ Clone the underlying object and return a Variant that holds the cloned object.
 To understand how `clone` works, please see the section "Memory management in Variant".  
 
 <a id="a4_21"></a>
+#### assign
+
+```c++
+Variant & assign(const Variant & other);
+```
+
+Assign `other` to `this`.  
+Firstly the function casts `other` to the meta type in `this`, then copy the data in the casted Variant to the data in `this`.  
+If `this` is a Variant of reference, the referred-to object is modified.  
+This function is particular useful to set value to the referred-to object referred by a reference.  
+
+This function is complete different with the `Variant & operator = (const Variant & other) noexcept`.  
+The `operator =` is class semantic. That's to say, when using `operator =`, `this` is a fresh new Variant that's copied from `other`.  
+
+Function `assign` is C++ value assignment semantic. That's to say, it's similar to do the expression `v = u`.  
+Let's see examples, first let's see how C++ assignment works.  
+
+```c++
+T t;
+U u;
+t = u;
+```
+In above code, `u` is casted to type `T`, then assign to `t`. After the assignment, `t` still has type `T`. If `t` is reference,  
+
+```c++
+T n;
+T & t = n;
+U u;
+t = u;
+```
+In above code, after the assignment, `n` will receive the new value of `u`.  
+
+Now let's see how Variant `assign` works.  
+
+```c++
+// Assign to value.
+metapp::Variant t(5);
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
+ASSERT(t.get<int>() == 5);
+metapp::Variant u(38.2);
+ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+t.assign(u);
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is still int
+ASSERT(t.get<int>() == 38); // t receives new value (int)38.2, that's 38
+```
+
+```c++
+// Assign to reference.
+int n = 5;
+metapp::Variant t = metapp::Variant::reference(n);
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<int &>())); // t is int &
+ASSERT(t.get<int>() == 5);
+metapp::Variant u(38.2);
+ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+t.assign(u);
+ASSERT(t.getMetaType()->equal(metapp::getMetaType<int &>())); // t is still int &
+ASSERT(t.get<int>() == 38); // t receives new value (int)38.2, that's 38
+ASSERT(n == 38); // n is also modified
+```
+
+<a id="a4_22"></a>
 #### swap
 ```c++
 void swap(Variant & other) noexcept;
@@ -443,7 +520,7 @@ Swap with another variant.
 <a id="a2_5"></a>
 ## Free functions
 
-<a id="a4_22"></a>
+<a id="a4_23"></a>
 #### getTypeKind
 ```c++
 TypeKind getTypeKind(const Variant & v);
@@ -451,7 +528,7 @@ TypeKind getTypeKind(const Variant & v);
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-<a id="a4_23"></a>
+<a id="a4_24"></a>
 #### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
@@ -461,7 +538,7 @@ std::ostream & operator << (std::ostream & stream, const Variant & v);
 Variant supports input and output stream if the underlying value supports the stream.  
 If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
-<a id="a4_24"></a>
+<a id="a4_25"></a>
 #### swap
 ```c++
 void swap(Variant & a, Variant & b) noexcept;
@@ -473,7 +550,7 @@ Swap two variants.
 <a id="a2_6"></a>
 ## Memory management in Variant
 
-<a id="a4_25"></a>
+<a id="a4_26"></a>
 #### The data storage in Variant is similar to native C++
 
 If the underlying value is pointer or reference, Variant only stores the pointer or reference,
@@ -483,7 +560,7 @@ If the underlying value is function, it's decayed to function pointer.
 If the underlying value is not a pointer or reference, Variant copies the value to the internal memory,
 and destroy the value (call the destructor if the value is an object) when the Variant is destroyed, or assigned with another value.  
 
-<a id="a4_26"></a>
+<a id="a4_27"></a>
 #### Copying variants is different from native C++
 
 For value which is fundamental types such as int, long, or pointer, or any POD struct
