@@ -66,7 +66,7 @@ private:
 	static Variant metaIndexableGet(const Variant & var, const size_t index)
 	{
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		auto & list = var.get<ContainerType &>();
 		auto it = list.begin();
@@ -79,7 +79,7 @@ private:
 		internal_::verifyVariantWritable(var);
 
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		else {
 			auto & list = var.get<ContainerType &>();

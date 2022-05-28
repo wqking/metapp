@@ -211,7 +211,7 @@ MetaRepoBase::MetaRepoBase()
 MetaItem & MetaRepoBase::registerAccessible(const std::string & name, const Variant & accessible)
 {
 	if(accessible.getMetaType()->getMetaAccessible() == nullptr) {
-		errorWrongMetaType();
+		raiseException<WrongMetaTypeException>();
 	}
 
 	if(! accessibleData) {
@@ -228,7 +228,7 @@ MetaItem & MetaRepoBase::registerAccessible(const std::string & name, const Vari
 MetaItem & MetaRepoBase::registerCallable(const std::string & name, const Variant & callable)
 {
 	if(callable.getMetaType()->getMetaCallable() == nullptr) {
-		errorWrongMetaType();
+		raiseException<WrongMetaTypeException>();
 	}
 
 	if(! callableData) {

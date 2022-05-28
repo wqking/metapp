@@ -74,7 +74,7 @@ private:
 	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
 	{
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		else {
 			using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;

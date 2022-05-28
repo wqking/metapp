@@ -39,7 +39,7 @@ T * constructOnHeapDefault(void * memory, std::true_type)
 template <typename T>
 T * constructOnHeapDefault(void * /*memory*/, std::false_type)
 {
-	errorNotConstructible();
+	raiseException<NotConstructibleException>();
 	return nullptr;
 }
 
@@ -68,7 +68,7 @@ T * constructOnHeapCopy(const void * copyFrom, void * memory, std::false_type, s
 template <typename T>
 T * constructOnHeapCopy(const void * /*copyFrom*/, void * /*memory*/, std::false_type, std::false_type)
 {
-	errorNotConstructible();
+	raiseException<NotConstructibleException>();
 	return nullptr;
 }
 

@@ -42,7 +42,7 @@ inline void doStreamIn(std::istream & stream, metapp::Variant & value, std::true
 template <typename U>
 inline void doStreamIn(std::istream & /*stream*/, metapp::Variant & /*value*/, std::false_type)
 {
-	metapp::errorUnsupported("No >> input streaming operator.");
+	metapp::raiseException<metapp::UnsupportedException>("No >> input streaming operator.");
 }
 
 template <typename U>
@@ -55,7 +55,7 @@ inline void doStreamOut(std::ostream & stream, const metapp::Variant & value, st
 template <typename U>
 inline void doStreamOut(std::ostream & /*stream*/, const metapp::Variant & /*value*/, std::false_type)
 {
-	metapp::errorUnsupported("No << output streaming operator.");
+	metapp::raiseException<metapp::UnsupportedException>("No << output streaming operator.");
 }
 
 } // namespace metapp_top_internal_

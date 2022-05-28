@@ -27,7 +27,7 @@ void verifyVariantWritable(const Variant & var)
 {
 	auto metaType = getPointedType(var);
 	if(metaType->isConst()) {
-		errorUnwritable();
+		raiseException<UnwritableException>();
 	}
 }
 

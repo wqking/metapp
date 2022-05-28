@@ -83,7 +83,7 @@ private:
 	template <bool hasLength>
 	static void * doConstructData(VariantData * /*data*/, const void * /*copyFrom*/, void * /*memory*/,
 		typename std::enable_if<! hasLength>::type * = nullptr) {
-		errorNotConstructible();
+		raiseException<NotConstructibleException>();
 		return nullptr;
 	}
 
@@ -114,7 +114,7 @@ private:
 		internal_::verifyVariantWritable(var);
 
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		else {
 			internal_::assignValue(var.get<T &>()[index], value.cast<ElementType>().template get<ElementType &>());

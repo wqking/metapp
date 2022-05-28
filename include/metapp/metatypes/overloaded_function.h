@@ -128,7 +128,7 @@ public:
 		if(it != callableList.end()) {
 			return getNonReferenceMetaType(*it)->getMetaCallable()->invoke(*it, instance, arguments);
 		}
-		errorIllegalArgument();
+		raiseException<IllegalArgumentException>();
 		return Variant();
 	}
 

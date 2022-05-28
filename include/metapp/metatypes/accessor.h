@@ -142,7 +142,7 @@ public:
 	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {
 		AccessorType & accessor = accessible.get<AccessorType &>();
 		if(accessor.isReadOnly()) {
-			errorUnwritable();
+			raiseException<UnwritableException>();
 			return;
 		}
 		accessor.set(value.cast<T>().template get<T>(), getPointer(instance));

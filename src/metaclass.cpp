@@ -31,7 +31,7 @@ extern MetaItem emptyMetaItem;
 MetaItem & MetaClass::registerConstructor(const Variant & constructor)
 {
 	if(constructor.getMetaType()->getMetaCallable() == nullptr) {
-		errorWrongMetaType();
+		raiseException<WrongMetaTypeException>();
 	}
 
 	if(constructorItem.isEmpty()) {

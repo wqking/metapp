@@ -53,7 +53,10 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	UnsupportedException(const std::string & message = "Not supported")
+		: super(message)
+	{
+	}
 };
 
 class BadCastException : public MetaException
@@ -62,7 +65,10 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	BadCastException(const std::string & message = "Bad cast")
+		: super(message)
+	{
+	}
 };
 
 class IllegalArgumentException : public MetaException
@@ -71,7 +77,10 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	IllegalArgumentException(const std::string & message = "Illegal arguments")
+		: super(message)
+	{
+	}
 };
 
 class WrongMetaTypeException : public MetaException
@@ -80,16 +89,22 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	WrongMetaTypeException(const std::string & message = "Wrong meta type")
+		: super(message)
+	{
+	}
 };
 
-class InvalidIndexException : public MetaException
+class OutOfRangeException : public MetaException
 {
 private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	OutOfRangeException(const std::string & message = "Index out of range")
+		: super(message)
+	{
+	}
 };
 
 class UnwritableException : public MetaException
@@ -98,7 +113,10 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	UnwritableException(const std::string & message = "Unwritable")
+		: super(message)
+	{
+	}
 };
 
 class NotConstructibleException : public MetaException
@@ -107,81 +125,23 @@ private:
 	using super = MetaException;
 
 public:
-	using super::super;
+	NotConstructibleException(const std::string & message = "Not constructible")
+		: super(message)
+	{
+	}
 };
 
-// When calling errorXXX function, the caller should put a "return" after the call,
+// When calling raiseException, the caller should put a "return" after the call,
 // because if exception is disabled, no exception will be throw and the execute flow
 // may coninue if there is no "return".
 
+template <typename E, typename ...Args>
+void raiseException(Args && ... args)
+{
 #ifdef METAPP_EXCEPTION_ENABLED
-
-inline void errorUnsupported(const std::string & message = "Not supported")
-{
-	throw UnsupportedException(message);
-}
-
-inline void errorBadCast(const std::string & message = "Bad cast")
-{
-	throw BadCastException(message);
-}
-
-inline void errorIllegalArgument(const std::string & message = "Illegal arguments")
-{
-	throw IllegalArgumentException(message);
-}
-
-inline void errorWrongMetaType(const std::string & message = "Wrong meta type")
-{
-	throw WrongMetaTypeException(message);
-}
-
-inline void errorInvalidIndex(const std::string & message = "Invalid index")
-{
-	throw InvalidIndexException(message);
-}
-
-inline void errorUnwritable(const std::string & message = "Unwritable")
-{
-	throw UnwritableException(message);
-}
-
-inline void errorNotConstructible(const std::string & message = "Not constructible")
-{
-	throw NotConstructibleException(message);
-}
-
-#else
-
-inline void errorUnsupported(const std::string & /*message*/ = "Not supported")
-{
-}
-
-inline void errorBadCast(const std::string & /*message*/ = "Bad cast")
-{
-}
-
-inline void errorIllegalArgument(const std::string & /*message*/ = "Illegal arguments")
-{
-}
-
-inline void errorWrongMetaType(const std::string & /*message*/ = "Wrong meta type")
-{
-}
-
-inline void errorInvalidIndex(const std::string & /*message*/ = "Invalid index")
-{
-}
-
-inline void errorUnwritable(const std::string & /*message*/ = "Unwritable")
-{
-}
-
-inline void errorNotConstructible(const std::string & /*message*/ = "Not constructible")
-{
-}
-
+	throw E(std::forward<Args>(args)...);
 #endif
+}
 
 
 } // namespace metapp

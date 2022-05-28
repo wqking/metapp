@@ -61,7 +61,7 @@ private:
 			internal_::assignValue(it->second, value.get<const MappedType &>());
 		}
 		else {
-			errorUnwritable();
+			raiseException<UnwritableException>();
 		}
 	}
 

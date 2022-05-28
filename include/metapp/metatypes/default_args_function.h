@@ -151,7 +151,7 @@ public:
 	static Variant metaCallableInvoke(const Variant & func, const Variant & instance, const ArgumentSpan & arguments)
 	{
 		if(! isValidArgumentCount(func, arguments.size())) {
-			errorIllegalArgument();
+			raiseException<IllegalArgumentException>();
 			return Variant();
 		}
 

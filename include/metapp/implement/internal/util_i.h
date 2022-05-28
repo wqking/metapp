@@ -61,7 +61,7 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 	typename std::enable_if<! (std::is_assignable<ToType &, FromType>::value
 		&& std::is_copy_assignable<FromType>::value)>::type * = nullptr)
 {
-	errorUnwritable();
+	raiseException<UnwritableException>();
 }
 
 void * constructReference(VariantData * data, const void * copyFrom, void * memory);

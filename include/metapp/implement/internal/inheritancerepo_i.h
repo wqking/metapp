@@ -246,7 +246,7 @@ private:
 		&& ! internal_::CanDynamicCast<From *, To *>::value
 		>::type * = nullptr)
 	{
-		errorBadCast();
+		raiseException<BadCastException>();
 		return nullptr;
 	}
 

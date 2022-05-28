@@ -76,7 +76,7 @@ inline auto Variant::get(
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
 	if(! canGet<T>()) {
-		errorBadCast("Can't get from Variant");
+		raiseException<BadCastException>("Can't get from Variant");
 	}
 
 	using U = typename internal_::VariantReturnType<T>::Type;

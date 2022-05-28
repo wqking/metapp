@@ -138,7 +138,7 @@ const Variant & MetaItem::doGetVariant() const
 void MetaItem::doCheckType(const Type type) const
 {
 	if(getType() != type) {
-		errorIllegalArgument();
+		raiseException<WrongMetaTypeException>();
 	}
 }
 

@@ -122,7 +122,7 @@ private:
 
 	template <typename T>
 	void doConstructOnBufferDefault(std::false_type) {
-		errorNotConstructible();
+		raiseException<NotConstructibleException>();
 	}
 
 	template <typename T>
@@ -132,7 +132,7 @@ private:
 
 	template <typename T>
 	void doConstructOnBufferCopy(const void * /*copyFrom*/, std::false_type) {
-		errorNotConstructible();
+		raiseException<NotConstructibleException>();
 	}
 
 	template <typename T>

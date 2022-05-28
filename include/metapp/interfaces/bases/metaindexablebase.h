@@ -92,7 +92,7 @@ private:
 	static Variant metaIndexableGet(const Variant & indexable, const size_t index)
 	{
 		if(index >= metaIndexableGetSizeInfo(indexable).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		return Variant::create<ValueType>(indexable.get<ContainerType &>()[index]);
 	}
@@ -102,7 +102,7 @@ private:
 		internal_::verifyVariantWritable(indexable);
 
 		if(index >= metaIndexableGetSizeInfo(indexable).getSize()) {
-			errorInvalidIndex();
+			raiseException<OutOfRangeException>();
 		}
 		else {
 			internal_::assignValue(indexable.get<ContainerType &>()[index], value.cast<ValueType &>().template get<ValueType &>());
