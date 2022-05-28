@@ -120,6 +120,58 @@ TEST_CASE("Variant, clone, MyClass")
 	REQUIRE(cloned.get<MyClass &>().value == 38);
 }
 
+TEST_CASE("Variant::assign, int")
+{
+	metapp::Variant v(5);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+	REQUIRE(v.get<int>() == 5);
+	
+	v.assign(6.2);
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+	REQUIRE(v.get<int>() == 6);
+}
+
+TEST_CASE("Variant::assign, int &")
+{
+	int n = 38;
+	
+	metapp::Variant v(metapp::Variant::reference(n));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<int &>()));
+	REQUIRE(v.get<int>() == 38);
+	REQUIRE(n == 38);
+	
+	v.assign(6.2);
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<int &>()));
+	REQUIRE(v.get<int>() == 6);
+	REQUIRE(n == 6);
+}
+
+TEST_CASE("Variant::assign, MyClass")
+{
+	metapp::Variant v(MyClass { 38 });
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<MyClass>()));
+	REQUIRE(v.get<const MyClass &>().value == 38);
+
+	v.assign(MyClass { 9 });
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<MyClass>()));
+	REQUIRE(v.get<const MyClass &>().value == 9);
+}
+
+TEST_CASE("Variant::assign, MyClass &")
+{
+	MyClass obj { 5 };
+
+	metapp::Variant v(metapp::Variant::reference(obj));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<MyClass &>()));
+	REQUIRE(v.get<const MyClass &>().value == 5);
+	REQUIRE(obj.value == 5);
+
+	v.assign(MyClass { 9876 });
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<MyClass &>()));
+	REQUIRE(v.get<const MyClass &>().value == 9876);
+	REQUIRE(obj.value == 9876);
+}
+
 TEST_CASE("Variant, create")
 {
 }

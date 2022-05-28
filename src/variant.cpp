@@ -169,6 +169,16 @@ Variant Variant::clone() const
 	return result;
 }
 
+Variant & Variant::assign(const Variant & other)
+{
+	Variant casted = other.cast(metaType);
+	void * myAddress = getAddress();
+	const MetaType * mt = getNonReferenceMetaType(metaType);
+	mt->dtor(myAddress);
+	mt->placementCopyConstruct(casted.getAddress(), myAddress);
+	return *this;
+}
+
 void Variant::swap(Variant & other) noexcept
 {
 	using std::swap;

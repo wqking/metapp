@@ -112,6 +112,8 @@ public:
 
 	Variant clone() const;
 
+	Variant & assign(const Variant & other);
+
 	void swap(Variant & other) noexcept;
 
 	friend std::istream & operator >> (std::istream & stream, Variant & v);
