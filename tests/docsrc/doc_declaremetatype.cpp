@@ -25,9 +25,15 @@
 
 ## Overview
 
-Even though metapp works on any C++ type that are not known to metapp, it's useful to provide metapp more information on a certain type. The template `DeclareMetaType` is used for providing such information.  
-To provide more information of a type to metapp, specialize template `metapp::DeclareMetaType` with the type. The specialization must be in the global namespace. The specialization should inherit from `metapp::DeclareMetaTypeBase`.   
-Only the raw type should be specialized. That's to say, the type should not contain any const-volatile qualifiers, reference, pointer, array, or any containers. metapp will handle all the other cases for you. For example, if the raw type is T, metapp will handle `const T`, `T &`, `const T *`, `std::vector<T>`, etc.  
+Even though metapp works on any C++ type that are not known to metapp, it's useful to provide metapp more information
+on a certain type. The template `DeclareMetaType` is used for providing such information.  
+To provide more information of a type to metapp, we need to declare the meta type. To declare a meta type,
+just specialize template `metapp::DeclareMetaType` with the type.  
+The specialization must be in the global namespace. The specialization should inherit from `metapp::DeclareMetaTypeBase`.   
+Only the raw type should be specialized. That's to say, the type should not contain any const-volatile qualifiers, reference,
+pointer, array, or any containers. metapp will handle all the other cases for you. For example, if the raw type is T,
+metapp will handle `const T`, `T &`, `const T *`, `std::vector<T>`, etc.  
+Declaring non-raw type will mess up with metapp and cause bugs.  
 
 Function `metapp::getMetaType` gets information declared by `metapp::DeclareMetaType` as non-template class `metapp::MetaType`.  
 
@@ -71,7 +77,8 @@ struct metapp::DeclareMetaType <MyClass>
 /*desc
 The default value of `typeKind` is `metapp::tkObject`.  
 
-Each `MetaType` always has one `TypeKind`. TypeKind is a 16 bit integer that represents the meta type. For any user defined TypeKind, the value must be equal or greater than `metapp::tkUser`.  
+Each `MetaType` always has one `TypeKind`. TypeKind is a 32 bit integer that represents the meta type. For any user defined TypeKind,
+the value must be equal or greater than `metapp::tkUser`.  
 
 #### Function cast
 
@@ -118,7 +125,8 @@ If `result` is not nullptr and if the `value` can be casted, set `result` with t
 static void setup();
 ```
 
-Function `setup` is invoked on the first time when the MetaType is initialized. It will be called only once for one MetaType.  
+Function `setup` is invoked on the first time when the MetaType is initialized. It will be called only once for one MetaType
+even in multi-threading.  
 `setup` is useful when the `DeclareMetaType` needs to do initialize work. One use case is to register inheritance relationship.  
 
 **Example** 
@@ -142,23 +150,35 @@ struct metapp::DeclareMetaType <C>
 #endif
 
 /*desc
-## Members in DeclareMetaType, usually don't need to be re-implemented
-
 #### Type UpType
 desc*/
 
-#if 0
 //code
-template <>
-struct metapp::DeclareMetaType <MyClass>
-	: metapp::DeclareMetaTypeBase <MyClass>
+template <typename A, typename B>
+struct MyTemplate
 {
-	using UpType = TheUpTypeOfMyClass;
+};
+
+template <typename A, typename B>
+struct metapp::DeclareMetaType <MyTemplate<A, B> >
+	: metapp::DeclareMetaTypeBase <MyTemplate<A, B> >
+{
+	using UpType = metapp::TypeList<A, B>;
 };
 //code
-#endif
 
 /*desc
+A meta type can declare arbitrary types as `UpType`. For more than one types, wrap them in `metapp::TypeList`
+(`using UpType = metapp::TypeList<A, B>;`), for single type, we can omit `metapp::TypeList` (`using UpType = C;`).  
+A `UpType` is another `MetaType`.  
+For user defined meta types, how to define and use `UpType` is up to the user, metapp doesn't define them.  
+Usually `UpType` is useful to provide information for template arguments.  
+To obtain `UpType` information, use the functions in `MetaType`,
+```c++
+const MetaType * getUpType() const noexcept;
+const MetaType * getUpType(const int i) const;
+int getUpTypeCount() const noexcept;
+```
 
 ## Implement `cast` and `castFrom`
 
@@ -210,21 +230,21 @@ struct metapp::DeclareMetaType<Integer>
 #endif
 
 /*desc
-That's all. `CastToTypes` and `CastFromTypes` will implement `cast` and `castFrom`.  
+That's all. `CastToTypes` and `CastFromTypes` will implement `cast` and `castFrom` for you.  
 The first template parameter in `CastToTypes` and `CastFromTypes` is the type that is under DeclareMetaType,
 so it's the same parameter as metapp::DeclareMetaType.  
 The second template parameter is a `metapp::TypeList`. The template parameters in `metapp::TypeList` are a list of types.
-`metapp::CastToTypes` will check if the first parameter (here is `Text`) can cast to any type in the `TypeList`,
-and implement `cast` for the cast-able types. If `Text` can't cast to any type in the list, such as the `double` in the example code,
-it ignores the type and it doesn't cause compile error.  
+`metapp::CastToTypes` will check if the first parameter (here is `Integer`) can cast to any type in the `TypeList`,
+and implement `cast` for the cast-able types. If `Integer` can't cast to any type in the list, such as the `double`
+in the example code, it ignores the type and it doesn't cause compile error.  
 `metapp::CastFromTypes` is similar. It checks if the first parameter can cast from any type in the `TypeList`,
 and ignores any types that is not castFrom-able.  
-If `Text` can cast to and cast from the same types, we can use `CastFromToTypes` to make the code shorter, for exmaple,  
+If `Integer` can cast to and cast from the same types, we can use `CastFromToTypes` to make the code shorter, for exmaple,  
 
 ```c++
 template <>
-struct metapp::DeclareMetaType<Text>
-	: metapp::CastFromToTypes<Text, metapp::TypeList<Integer> >
+struct metapp::DeclareMetaType<Integer>
+	: metapp::CastFromToTypes<Integer, metapp::TypeList<Text> >
 {
 };
 ```
@@ -271,6 +291,8 @@ struct metapp::DeclareMetaType<Integer>
 #endif
 
 /*desc
+Note: we only need to implement `cast` or `castFrom` for non-reference type. metapp will handle reference automatically.  
+
 ### Test code
 
 No matter which method we use, we can test as,
@@ -305,4 +327,57 @@ ExampleFunc
 		ASSERT(casted.get<const Text &>().s == "3");
 		//code
 	}
+
+	{
+		//code
+		//desc The original variant can be reference too.
+		Integer i { 3 };
+		metapp::Variant v = metapp::Variant::reference(i);
+		// cast to reference
+		ASSERT(v.cast<const Text &>().get<const Text &>().s == "3");
+		// cast to value
+		ASSERT(v.cast<Text>().get<const Text &>().s == "3");
+		//code
+	}
 }
+
+/*desc
+
+### cast vs castFrom
+
+#### Q&A, what's castFrom?
+
+In core data structure `Variant`, there is only `cast` function that calls `MetaType::cast` to cast to another `Variant`.
+There is no way to cast a `Variant` from another `Variant`. That's to say, `castFrom` is not used in `Variant` nor any
+public interface.  
+`castFrom` is used by `cast` internally. When `cast` can't cast a type to another type, such as A to B, then it will
+try to `castFrom` B to A.
+
+#### Q&A, How is castFrom useful? Isn't cast enough?
+desc*/
+
+//desc Code is better than one million words,
+//code
+struct MyScalar
+{
+	MyScalar() : value() {}
+	MyScalar(const int n) : value(n) {}
+
+	int value;
+};
+//code
+
+/*desc
+`MyScalar` can construct from a `int` implicitly. Or we can say, `int` can cast to `MyScalar`.
+But apparently we can't modify the built-in meta type of `int` to add the cast.
+What we can do is to implement `castFrom` in `MyScalar`.  
+desc*/
+
+/*desc
+#### For a pair of types to cast to/from, we only need to implement either cast or castFrom, not both.
+
+Assume we are declaring two types, A and B, A can cast to B. Then we can either implement `cast` in A,
+or implement `castFrom` in B, but we don't need to implement both.  
+
+
+desc*/

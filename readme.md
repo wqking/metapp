@@ -17,7 +17,7 @@
   * [Use Variant](#a3_8)
   * [Use MetaType](#a3_9)
   * [Call function and accessible](#a3_10)
-  * [Run time generic STL container](#a3_11)
+  * [Runtime generic STL container](#a3_11)
   * [Use reference with Variant](#a3_12)
 * [Documentations](#a2_6)
 * [Build the test code](#a2_7)
@@ -344,7 +344,7 @@ ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 38);
 ```
 
 <a id="a3_11"></a>
-### Run time generic STL container
+### Runtime generic STL container
 Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 
 ```c++
@@ -472,7 +472,6 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 ## Documentations
 
 - Tutorials
-
   - [Use Variant](doc/tutorial/tutorial_variant.md)
   - [Use MetaType](doc/tutorial/tutorial_metatype.md)
   - [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
@@ -517,7 +516,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Miscellaneous
   - [About documentations](doc/about_document.md)
-  - Use metapp in dynamic library
+  - [Use metapp in dynamic library](doc/dynamic_library.md)
 
 <a id="a2_7"></a>
 ## Build the test code

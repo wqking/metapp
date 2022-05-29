@@ -28,7 +28,7 @@ It's to give you a rough idea on how metapp works. There are separate document f
 
 ## TypeKind - type kind type
 
-`metapp::TypeKind` is a 16 bit unsigned integer that represents the meta type kind.
+`metapp::TypeKind` is a 32 bit integer that represents the meta type kind.
 For example, `metapp::tkInt` is the meta type for `int`.  
 Each meta type has one and only one TypeKind, different meta types may have the same TypeKind,
 that's to say, TypeKind is not unique. For example, `metapp::tkStdSharedPtr` represents all meta types of `std::shared_ptr<T>`,
@@ -48,7 +48,7 @@ Unlike some other reflection libraries which are meta class based,
 everything in metapp is meta type. A class is a meta type, an enum is a meta type, the same for functions,
 constructors, containers, etc.  
 With MetaType, we can construct the underlying object, destroy the object, get object value, cast the type, etc.  
-A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at run time via class `MetaRepo`.  
+A MetaType can be obtained at compile time using function `metapp::getMetaType()`, or at runtime via class `MetaRepo`.  
 
 Prototype of `getMetaType()`  
 ```c++

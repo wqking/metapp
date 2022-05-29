@@ -296,7 +296,7 @@ ExampleFunc
 	//code
 }
 
-//desc ### Run time generic STL container
+//desc ### Runtime generic STL container
 //desc Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 //code
 std::string concat(const metapp::Variant & container)
@@ -385,7 +385,6 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 ## Documentations
 
 - Tutorials
-
 	- [Use Variant](doc/tutorial/tutorial_variant.md)
 	- [Use MetaType](doc/tutorial/tutorial_metatype.md)
 	- [Use MetaClass and meta data for class members](doc/tutorial/tutorial_metaclass.md)
@@ -430,7 +429,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Miscellaneous
 	- [About documentations](doc/about_document.md)
-	- Use metapp in dynamic library
+	- [Use metapp in dynamic library](doc/dynamic_library.md)
 
 ## Build the test code
 

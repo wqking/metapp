@@ -127,7 +127,10 @@ public:
 		resetListPointer();
 	}
 
-	DisjointView(DisjointView && other)
+	DisjointView(DisjointView && other) noexcept(
+			noexcept(std::move(other.smallList))
+			&& noexcept(std::move(other.largeList))
+		)
 		:
 			smallList(std::move(other.smallList)),
 			largeList(std::move(other.largeList)),

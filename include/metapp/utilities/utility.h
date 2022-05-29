@@ -22,6 +22,7 @@
 #include "metapp/metatype.h"
 #include "metapp/utilities/typelist.h"
 #include "metapp/exception.h"
+#include "metapp/implement/internal/util_i.h"
 
 #include <type_traits>
 #include <string>
