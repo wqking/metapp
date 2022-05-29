@@ -54,6 +54,7 @@ and the performance cost is kept as minimum as possible.
 	- Automatically type conversion when getting/setting fields, invoking methods, etc.
 	- Support multiple inheritance and hierarchy.
 	- Support using in dynamic library (plugins).
+	- Minimum usage on global stateful static data, be loose couple with global state as much as possible.
 
 - **Flexible and easy to use**
 	- Building meta data doesn't require preprocessor, macros, or any external tool. Only use native C++ code, no need macros.

@@ -75,6 +75,8 @@ struct C : B, B2
 	}
 };
 
+metapp::MetaRepo tmmMetaRepo1;
+
 } // namespace
 
 template <>
@@ -98,7 +100,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
-		metapp::getMetaRepo()->registerBase<B, A>();
+		tmmMetaRepo1.registerBase<B, A>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
@@ -134,7 +136,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{
-		metapp::getMetaRepo()->registerBase<C, B, B2>();
+		tmmMetaRepo1.registerBase<C, B, B2>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {

@@ -23,23 +23,19 @@
 
 ## Overview
 
-`MetaRepo` is used to register and retrieve meta types at running time. The registered meta types can be any C++ types, no matter if they are declared with [DeclareMetaType](declaremetatype.md) or not.   
+`MetaRepo` is used to register and retrieve meta data and meta types at running time.
+The registered meta types can be any C++ types, no matter if they are declared with [DeclareMetaType](declaremetatype.md) or not.  
+
+metapp doesn't provide global `MetaRepo` object because metapp tries to avoid global data whenever possible.  
+It's up to you to decide how to register the meta data. You can either define global `MetaRepo` object, or use local
+stack based `MetaRepo`, or put `MetaRepo` in some global singleton, such as a global `Application` object that most GUI
+program has.
 
 ## Header
 
 ```c++
 #include "metapp/metarepo.h"
 ```
-
-## Get global MetaRepo
-
-```c++
-MetaRepo * getMetaRepo();
-```
-
-`metapp::getMetaRepo` gets the global MetaRepo. The global MetaRepo can be used to register any types, global variables, and global functions, etc.  
-
-Note: it's possible to use MetaRepo as local variable, instead of the global instance. There is no much difference. The only difference is, the function `Variant::cast` uses the global MetaRepo to cast between base and derived classes.  
 
 ## MetaRepo member functions for registering meta data
 
@@ -62,6 +58,17 @@ MetaItem & registerCallable(const std::string & name, const Variant & callable);
 Register a callable.  
 The parameter `name` is the callable name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
 The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to free function, or even `std::function`.  
+The returned `MetaItem` can be used to add annotations to the meta data.  
+
+#### registerConstant
+
+```c++
+MetaItem & registerConstant(const std::string & name, const Variant & constant);
+```
+
+Register a constant.  
+The parameter `name` is the constant name.  
+The parameter `constant` is a Variant of any value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 #### registerType
@@ -233,17 +240,17 @@ BaseView getBases(const MetaType * classMetaType) const;
 Returns meta types of all base class for `Class`, or for `classMetaType`.  
 The first templated form is similar to `getBases(metapp::getMetaType<remove all cv and reference of Class>())`.
 
-#### getDerives
+#### getDeriveds
 
 ```c++
 template <typename Class>
-BaseView getDerives() const;
+BaseView getDeriveds() const;
 
-BaseView getDerives(const MetaType * classMetaType) const;
+BaseView getDeriveds(const MetaType * classMetaType) const;
 ```
 
 Returns meta types of all derived class for `Class`, or for `classMetaType`.  
-The first templated form is similar to `getDerives(metapp::getMetaType<remove all cv and reference of Class>())`.
+The first templated form is similar to `getDeriveds(metapp::getMetaType<remove all cv and reference of Class>())`.
 
 #### castToBase
 
@@ -257,7 +264,7 @@ void * castToBase(void * instance, const MetaType * classMetaType, const int bas
 Casts `instance` of `Class`, or of `classMetaType`, to its base class at `baseIndex` in the base list returned by `getBases`, then returns the casted pointer.  
 The first templated form is similar to `castToBase(instance, metapp::getMetaType<remove all cv and reference of Class>(), baseIndex)`.
 
-#### castToBase
+#### castToDerived
 
 ```c++
 template <typename Class>
@@ -266,7 +273,7 @@ void * castToDerived(void * instance, const int derivedIndex) const;
 void * castToDerived(void * instance, const MetaType * classMetaType, const int derivedIndex) const;
 ```
 
-Casts `instance` of `Class`, or of `classMetaType`, to its derived class at `derivedIndex` in the derived list returned by `getDerives`, then returns the casted pointer.  
+Casts `instance` of `Class`, or of `classMetaType`, to its derived class at `derivedIndex` in the derived list returned by `getDeriveds`, then returns the casted pointer.  
 The first templated form is similar to `castToDerived(instance, metapp::getMetaType<remove all cv and reference of Class>(), derivedIndex)`.
 
 #### cast
@@ -317,13 +324,63 @@ The first templated form is similar to `isClassInHierarchy(metapp::getMetaType<r
 
 ```c++
 template <typename FT>
-bool traverseBases(const MetaType * metaType, FT && callback) const;
+bool traverseBases(const MetaType * classMetaType, FT && callback) const;
 ```
 
-Traverses all base classes of `metaType`, and call `callback` on each meta type. The first meta type is always `metaType`.  
+Traverses all base classes of `classMetaType`, and call `callback` on each meta type.  
 It's guaranteed duplicated meta types are only passed to `callback` once.  
-`callback` prototype is `bool callback(const MetaType * metaType)`. If `callback` returns false, the traversing stops.
+The first meta type is always `classMetaType`. That's to say, even if there is no any base classes, `callback` will still
+be invoked with `classMetaType`.  
+`callback` prototype is `bool callback(const MetaType * metaType)`. The argument `metaType` is the class current traversing at.
+If `callback` returns false, the traversing stops.  
+`traverseBases` returns true if all calles on `callback` returns true, returns false if all calles on `callback` returns false.
 
-## TODO MetaRepoList
+## Class MetaRepoList
+
+`MetaRepoList` is a singleton class that holds all live `MetaRepo` instances.  
+We can perform common functions on `MetaRepoList` which functions are usually from `MetaRepo`.  
+Using `MetaRepoList` can release the dependence on a single global `MetaRepo` instance.  
+To get the singleton, call function `metapp::getMetaRepoList`,
+
+```c++
+const MetaRepoList * getMetaRepoList();
+```
+
+When a `MetaRepo` is constructed, no matter it's on heap or on stack, it's added to the global `MetaRepoList` automatically.  
+When a `MetaRepo` is destroyed, it's removed from the global `MetaRepoList` automatically.
+
+## MetaRepoList member functions
+
+#### begin() and end()
+
+```c++
+iterator begin() const;
+iterator end() const;
+```
+
+Returns iterator to the begin or end of the list. These two functions allow to loop over the `MetaRepoList`.  
+The `iterator` is forward iterator.  
+
+#### findMetaRepoForHierarchy
+
+```c++
+const MetaRepo * findMetaRepoForHierarchy(const MetaType * classMetaType) const;
+```
+
+Returns a pointer to the `MetaRepo` in which the `classMetaType` is registered using `MetaRepo::registerBase`.  
+If the `classMetaType` was not registered to any `MetaRepo`, nullptr is returned.  
+
+#### traverseBases
+
+```c++
+template <typename FT>
+bool traverseBases(const MetaType * classMetaType, FT && callback) const;
+```
+
+Similar to `MetaRepo::traverseBases`, this function finds the `MetaRepo` in which the `classMetaType`
+is registered using `MetaRepo::registerBase`, then call `MetaRepo::traverseBases` on the found `MetaRepo`.  
+If no `MetaRepo` is found, `callback` is invoked with `classMetaType` as if there is no any base classes.  
+If `callback` returns false, the traversing stops.  
+`traverseBases` returns true if all calles on `callback` returns true, returns false if all calles on `callback` returns false.
 
 desc*/

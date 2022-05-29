@@ -73,6 +73,9 @@ std::string concat(const int a, const bool b, const std::string & c)
 class MyClass
 {
 };
+
+//desc Define the global variable `metaRepo`, we will register all global meta data there.
+metapp::MetaRepo metaRepo;
 //code
 
 } // namespace
@@ -84,9 +87,7 @@ void tutorialMetaRepo_registerMetaData()
 	## Register meta data
 
 	To get meta data from MetaRepo, we must register meta data first.  
-	Usually the global meta data should be registered to the global MetaRepo getting from `metapp::getMetaRepo()`.
 	desc*/
-	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
 
 	/*desc
 	Register an accessible. An accessible is any meta type that implements meta interface `MetaAccessible`.  
@@ -94,20 +95,20 @@ void tutorialMetaRepo_registerMetaData()
 	The second argument in `registerAccessible` is a `metapp::Variant`. Any data can be casted to `metapp::Variant`
 	implicitly, so we don't need to specify `metapp::Variant` explicitly.
 	desc*/
-	metaRepo->registerAccessible("textList", &textList);
-	metaRepo->registerAccessible("value", metapp::createAccessor<int>(&getValue, &setValue));
+	metaRepo.registerAccessible("textList", &textList);
+	metaRepo.registerAccessible("value", metapp::createAccessor<int>(&getValue, &setValue));
 
 	/*desc
 	Register an callable. A callable is any meta type that implements meta interface `MetaCallable`.  
 	A callable can be a pointer to function, pointer to member function, or std::function, and so on.  
 	desc*/
-	metaRepo->registerCallable("concat", &concat);
+	metaRepo.registerCallable("concat", &concat);
 
 	/*desc
 	Register a C++ type, here is class MyClass.  
 	This is only to demonstrate how to use registered meta type. There is a separate completed tutorial for how to use MetaClass.  
 	desc*/
-	metaRepo->registerType("MyClass", metapp::getMetaType<MyClass>());
+	metaRepo.registerType("MyClass", metapp::getMetaType<MyClass>());
 	//code
 }
 
@@ -116,13 +117,9 @@ void tutorialMetaRepo_accessible()
 	//code
 	/*desc
 	## Use field meta data
-
-	Get the `MetaRepo` to which we registered the meta data
 	desc*/
-	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
-
 	//desc Get the meta data of field "value"
-	metapp::MetaItem fieldValue = metaRepo->getAccessible("value");
+	metapp::MetaItem fieldValue = metaRepo.getAccessible("value");
 
 	//desc Call metapp::accessibleGet to get the value of the field. The first parameter is the Variant.  
 	//desc Call getTarget() to get the underlying Variant.
@@ -136,7 +133,7 @@ void tutorialMetaRepo_accessible()
 	ASSERT(metapp::accessibleGet(fieldValue, nullptr).get<int>() == 5);
 
 	//desc Now append some new texts to textList
-	metapp::MetaItem fieldtextList = metaRepo->getAccessible("textList");
+	metapp::MetaItem fieldtextList = metaRepo.getAccessible("textList");
 	metapp::accessibleGet(fieldtextList, nullptr).get<std::vector<std::string> &>().push_back("good");
 	ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[0] == "hello");
 	ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[1] == "world");
@@ -151,10 +148,8 @@ void tutorialMetaRepo_method()
 	## Use function meta data
 	desc*/
 	
-	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
-
 	//desc Get the meta data of method "concat".
-	metapp::MetaItem methodConcat = metaRepo->getCallable("concat");
+	metapp::MetaItem methodConcat = metaRepo.getCallable("concat");
 	
 	//desc Call metapp::callableInvoke to invoke the method, and pass the arguments.  
 	//desc The return value is a metapp::Variant.
@@ -170,9 +165,7 @@ void tutorialMetaRepo_type()
 	## Use registered types
 	desc*/
 
-	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
-
-	metapp::MetaItem myClassType = metaRepo->getType("MyClass");
+	metapp::MetaItem myClassType = metaRepo.getType("MyClass");
 	ASSERT(myClassType.asMetaType() == metapp::getMetaType<MyClass>());
 	//code
 }

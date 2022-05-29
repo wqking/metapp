@@ -45,7 +45,22 @@ MetaItem::Type getType() const;
 ```
 
 Returns the type of the `MetaItem`. Each `MetaItem` has one type.  
-`MetaItem::Type` is a `enum class`. The values,  
+`MetaItem::Type` is a `enum class`.
+
+```c++
+enum class MetaItem::Type {
+	none,
+	accessible,
+	callable,
+	constant,
+	constructor,
+	metaRepo,
+	metaType,
+	enumValue
+};
+```
+
+The values,  
 
 **MetaItem::Type::none**  
 The item doesn't have any valid type. `isEmpty()` will return true.  
@@ -102,7 +117,16 @@ const Variant & asEnumValue() const;
 ```
 
 Returns the proper data.  
-If the type doesn't match the function, exception `metapp::IllegalArgumentException` is raised.  
+If the type doesn't match the function, exception `metapp::WrongMetaTypeException` is raised.  
+
+#### getTarget
+
+```c++
+const Variant & getTarget() const;
+```
+
+Return the underlying Variant of the meta item. It doesn't check if the type matches, and it doesn't convert the data
+to approperiate type such as `const MetaRepo *`.  
 
 #### Implicitly type convert
 
@@ -110,17 +134,17 @@ If the type doesn't match the function, exception `metapp::IllegalArgumentExcept
 operator const Variant & () const;
 ```
 
-Convert the item to Variant. This is useful to pass the meta item where a Variant is required. For example,  
+Convert the item to Variant implicitly. This is useful to pass the meta item where a Variant is required. For example,  
 desc*/
 
 ExampleFunc
 {
 	//code
-	metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
-	metaRepo->registerCallable("funcForMetaItem", std::function<int()>([]() {
+	metapp::MetaRepo metaRepo;
+	metaRepo.registerCallable("funcForMetaItem", std::function<int()>([]() {
 		return 5;
 	}));
-	const metapp::MetaItem & callable = metaRepo->getCallable("funcForMetaItem");
+	const metapp::MetaItem & callable = metaRepo.getCallable("funcForMetaItem");
 	//desc The first argument in `metapp::callableInvoke` is `metapp::Variant`,
 	//desc we can pass `metapp::MetaItem` to it the item will convert to `metapp::Variant`.
 	const metapp::Variant result = metapp::callableInvoke(callable, nullptr);

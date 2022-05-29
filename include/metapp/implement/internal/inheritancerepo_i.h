@@ -93,12 +93,12 @@ public:
 	BaseView getBases(const MetaType * classMetaType) const;
 
 	template <typename Class>
-	BaseView getDerives() const
+	BaseView getDeriveds() const
 	{
-		return getDerives(doGetNormalizedMetaType<Class>());
+		return getDeriveds(doGetNormalizedMetaType<Class>());
 	}
 
-	BaseView getDerives(const MetaType * classMetaType) const;
+	BaseView getDeriveds(const MetaType * classMetaType) const;
 
 	template <typename Class>
 	void * castToBase(void * instance, const int baseIndex) const
@@ -142,11 +142,11 @@ public:
 
 	template <typename FT>
 	bool traverseBases(
-		const MetaType * metaType,
+		const MetaType * classMetaType,
 		FT && callback) const
 	{
 		std::set<const MetaType *> metaTypeSet;
-		return doTraverseBases(metaType, std::forward<FT>(callback), metaTypeSet);
+		return doTraverseBases(classMetaType, std::forward<FT>(callback), metaTypeSet);
 	}
 
 	// for test purpose, don't call it in production code

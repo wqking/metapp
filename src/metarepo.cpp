@@ -32,7 +32,7 @@ BaseView InheritanceRepo::getBases(const MetaType * classMetaType) const
 	return BaseView(&doGetClassInfo(classMetaType)->baseList);
 }
 
-BaseView InheritanceRepo::getDerives(const MetaType * classMetaType) const
+BaseView InheritanceRepo::getDeriveds(const MetaType * classMetaType) const
 {
 	return BaseView(&doGetClassInfo(classMetaType)->derivedList);
 }
@@ -365,16 +365,15 @@ Variant doCombineOverloadedCallable(const Variant & target, const Variant & call
 	}
 }
 
+MetaRepoList * doGetMetaRepoList()
+{
+	static MetaRepoList metaRepoList;
+
+	return &metaRepoList;
+}
 
 } // namespace internal_
 
-
-MetaRepo * getMetaRepo()
-{
-	static MetaRepo globalRepo;
-
-	return &globalRepo;
-}
 
 MetaRepo::MetaRepo()
 	:
@@ -384,12 +383,12 @@ MetaRepo::MetaRepo()
 		previous(nullptr),
 		next(nullptr)
 {
-	getMetaRepoList()->addMetaRepo(this);
+	internal_::doGetMetaRepoList()->addMetaRepo(this);
 }
 
 MetaRepo::~MetaRepo()
 {
-	getMetaRepoList()->removeMetaRepo(this);
+	internal_::doGetMetaRepoList()->removeMetaRepo(this);
 }
 
 const MetaItem & MetaRepo::getAccessible(const std::string & name) const
@@ -473,11 +472,9 @@ const MetaItem & MetaRepo::getItem(const std::string & name) const
 }
 
 
-MetaRepoList * getMetaRepoList()
+const MetaRepoList * getMetaRepoList()
 {
-	static MetaRepoList metaRepoList;
-
-	return &metaRepoList;
+	return internal_::doGetMetaRepoList();
 }
 
 MetaRepoList::MetaRepoList()
@@ -520,7 +517,7 @@ void MetaRepoList::removeMetaRepo(MetaRepo * repo)
 	}
 }
 
-const MetaRepo * MetaRepoList::findMetaRepo(const MetaType * classMetaType) const
+const MetaRepo * MetaRepoList::findMetaRepoForHierarchy(const MetaType * classMetaType) const
 {
 	const MetaRepo * repo = head;
 	while(repo != nullptr) {

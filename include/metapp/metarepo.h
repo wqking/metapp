@@ -23,6 +23,14 @@
 
 namespace metapp {
 
+class MetaRepoList;
+
+namespace internal_ {
+
+MetaRepoList * doGetMetaRepoList();
+
+} // namespace internal_
+
 class MetaRepo : public internal_::MetaRepoBase, public internal_::InheritanceRepo
 {
 public:
@@ -54,6 +62,8 @@ public:
 
 private:
 	std::shared_ptr<ItemData> repoData;
+
+	// previous and next are used by MetaRepoList
 	MetaRepo * previous;
 	MetaRepo * next;
 
@@ -121,7 +131,6 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 public:
-	MetaRepoList();
 	~MetaRepoList();
 
 	iterator begin() const {
@@ -136,24 +145,26 @@ public:
 		return head == nullptr;
 	}
 
-	const MetaRepo * findMetaRepo(const MetaType * classMetaType) const;
+	const MetaRepo * findMetaRepoForHierarchy(const MetaType * classMetaType) const;
 
 	template <typename FT>
 	bool traverseBases(
-		const MetaType * metaType,
+		const MetaType * classMetaType,
 		FT && callback) const
 	{
-		const MetaRepo * repo = findMetaRepo(metaType);
+		const MetaRepo * repo = findMetaRepoForHierarchy(classMetaType);
 		if(repo != nullptr) {
-			return repo->traverseBases(metaType, std::forward<FT>(callback));
+			return repo->traverseBases(classMetaType, std::forward<FT>(callback));
 		}
 		else {
 			// callback is always called with metaType, even there is no base classes.
-			return callback(metaType);
+			return callback(classMetaType);
 		}
 	}
 
 private:
+	MetaRepoList();
+
 	void addMetaRepo(MetaRepo * repo);
 	void removeMetaRepo(MetaRepo * repo);
 
@@ -162,11 +173,10 @@ private:
 	MetaRepo * tail;
 
 	friend class MetaRepo;
+	friend MetaRepoList * internal_::doGetMetaRepoList();
 };
 
-MetaRepoList * getMetaRepoList();
-
-MetaRepo * getMetaRepo();
+const MetaRepoList * getMetaRepoList();
 
 } // namespace metapp
 

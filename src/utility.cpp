@@ -124,9 +124,6 @@ class MetaTypeDumper
 public:
 	explicit MetaTypeDumper(const MetaRepo * metaRepo_)
 		: metaRepo(metaRepo_) {
-		if(metaRepo == nullptr) {
-			metaRepo = getMetaRepo();
-		}
 	}
 
 	void dump(std::ostream & stream, const MetaType * metaType) {
@@ -140,7 +137,10 @@ private:
 		}
 		doDumpIndent(stream, level);
 		stream << "Type: " << metaType->getTypeKind();
-		std::string name = metaRepo->getType(metaType).getName();
+		std::string name;
+		if(metaRepo != nullptr) {
+			name = metaRepo->getType(metaType).getName();
+		}
 		if(name.empty()) {
 			name = getNameByTypeKind(metaType->getTypeKind());
 		}

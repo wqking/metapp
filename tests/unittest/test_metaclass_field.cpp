@@ -53,6 +53,8 @@ struct C : B, B2
 };
 bool C::staticValue = true;
 
+metapp::MetaRepo tmfMetaRepo;
+
 } // namespace
 
 template <>
@@ -76,7 +78,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
-		metapp::getMetaRepo()->registerBase<B, A>();
+		tmfMetaRepo.registerBase<B, A>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
@@ -112,7 +114,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{
-		metapp::getMetaRepo()->registerBase<C, B, B2>();
+		tmfMetaRepo.registerBase<C, B, B2>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {

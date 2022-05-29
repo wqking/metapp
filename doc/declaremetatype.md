@@ -126,12 +126,14 @@ struct A {};
 struct B {};
 struct C : A, B {};
 
+metapp::MetaRepo globalMetaRepo;
+
 template <>
 struct metapp::DeclareMetaType <C>
   : metapp::DeclareMetaTypeBase <C>
 {
   static void setup() {
-    metapp::getMetaRepo()->registerBase<C, A, B>();
+    globalMetaRepo.registerBase<C, A, B>();
   }
 };
 ```

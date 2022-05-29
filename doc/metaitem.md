@@ -41,7 +41,22 @@ MetaItem::Type getType() const;
 ```
 
 Returns the type of the `MetaItem`. Each `MetaItem` has one type.  
-`MetaItem::Type` is a `enum class`. The values,  
+`MetaItem::Type` is a `enum class`.
+
+```c++
+enum class MetaItem::Type {
+  none,
+  accessible,
+  callable,
+  constant,
+  constructor,
+  metaRepo,
+  metaType,
+  enumValue
+};
+```
+
+The values,  
 
 **MetaItem::Type::none**  
 The item doesn't have any valid type. `isEmpty()` will return true.  
@@ -113,11 +128,11 @@ operator const Variant & () const;
 Convert the item to Variant. This is useful to pass the meta item where a Variant is required. For example,  
 
 ```c++
-metapp::MetaRepo * metaRepo = metapp::getMetaRepo();
-metaRepo->registerCallable("funcForMetaItem", std::function<int()>([]() {
+metapp::MetaRepo metaRepo;
+metaRepo.registerCallable("funcForMetaItem", std::function<int()>([]() {
   return 5;
 }));
-const metapp::MetaItem & callable = metaRepo->getCallable("funcForMetaItem");
+const metapp::MetaItem & callable = metaRepo.getCallable("funcForMetaItem");
 ```
 
 The first argument in `metapp::callableInvoke` is `metapp::Variant`,

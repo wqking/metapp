@@ -53,7 +53,7 @@ TristateBool doCastObject(
 		return TristateBool::unknown;
 	}
 	if(fromUpType->isClass() && toUpType->isClass()) {
-		const MetaRepo * metaRepo = getMetaRepoList()->findMetaRepo(fromUpType);
+		const MetaRepo * metaRepo = getMetaRepoList()->findMetaRepoForHierarchy(fromUpType);
 		if(metaRepo != nullptr && metaRepo->isClassInHierarchy(toUpType)) {
 			if(metaRepo->getRelationship(fromUpType, toUpType) != MetaRepo::Relationship::none) {
 				if(result != nullptr) {

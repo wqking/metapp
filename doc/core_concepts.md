@@ -192,7 +192,6 @@ const void * getMetaUser() const;
 ## MetaRepo
 
 `MetaRepo` class is used to register and retrieve meta information at running time.  
-We can use function `MetaRepo * getMetaRepo();` to get the global `MetaRepo`, or we can create arbitrary `MetaRepo` instances.  
 A `MetaRepo` can contain meta types (classes, enums, etc), accessibles, callables, and other `MetaRepo` (nested repos).  
 We can use nested repos to simulate C++ `namespace`, that's to say, a repo is a namespace.  
 
