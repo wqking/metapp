@@ -23,7 +23,7 @@
 
 namespace metapp {
 
-using TypeKind = uint16_t;
+using TypeKind = int32_t;
 
 constexpr TypeKind tkVoid = 0;
 
