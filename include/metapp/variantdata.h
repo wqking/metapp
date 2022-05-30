@@ -40,7 +40,7 @@ constexpr T maxOf(T a, T b)
 class VariantData
 {
 private:
-	static constexpr size_t bufferSize = internal_::maxOf(sizeof(long long), internal_::maxOf(sizeof(long double), sizeof(void *)));
+	static constexpr std::size_t bufferSize = internal_::maxOf(sizeof(long long), internal_::maxOf(sizeof(long double), sizeof(void *)));
 	static_assert(bufferSize >= sizeof(int), "VariantData, wrong bufferSize");
 
 	template <typename T>

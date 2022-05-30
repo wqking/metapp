@@ -37,18 +37,18 @@ struct ResizeHelper
 
 	static constexpr bool resizable = true;
 
-	static void resize(const Variant & indexable, const size_t size)
+	static void resize(const Variant & indexable, const std::size_t size)
 	{
 		indexable.get<ContainerType &>().resize(size);
 	}
 };
 
-template <typename T, size_t length>
+template <typename T, std::size_t length>
 struct ResizeHelper <std::array<T, length> >
 {
 	static constexpr bool resizable = false;
 
-	static void resize(const Variant & /*indexable*/, const size_t /*size*/)
+	static void resize(const Variant & /*indexable*/, const std::size_t /*size*/)
 	{
 	}
 };
@@ -79,17 +79,17 @@ private:
 		return sizeInfo;
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const size_t /*index*/)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*indexable*/, const std::size_t /*index*/)
 	{
 		return getMetaType<ValueType>();
 	}
 
-	static void metaIndexableResize(const Variant & indexable, const size_t size)
+	static void metaIndexableResize(const Variant & indexable, const std::size_t size)
 	{
 		internal_::ResizeHelper<ContainerType>::resize(indexable, size);
 	}
 
-	static Variant metaIndexableGet(const Variant & indexable, const size_t index)
+	static Variant metaIndexableGet(const Variant & indexable, const std::size_t index)
 	{
 		if(index >= metaIndexableGetSizeInfo(indexable).getSize()) {
 			raiseException<OutOfRangeException>();
@@ -97,7 +97,7 @@ private:
 		return Variant::create<ValueType>(indexable.get<ContainerType &>()[index]);
 	}
 
-	static void metaIndexableSet(const Variant & indexable, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & indexable, const std::size_t index, const Variant & value)
 	{
 		internal_::verifyVariantWritable(indexable);
 

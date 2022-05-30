@@ -59,19 +59,19 @@ private:
 		return sizeInfo;
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t index)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const std::size_t index)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
 		return doGetValueType(index, Sequence());
 	}
 
-	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
 		return doGetAt(var, index, Sequence());
 	}
 
-	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)
 	{
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
 			raiseException<OutOfRangeException>();
@@ -82,8 +82,8 @@ private:
 		}
 	}
 
-	template <size_t ...Indexes>
-	static const MetaType * doGetValueType(const size_t index, internal_::SizeConstantList<Indexes...>)
+	template <std::size_t ...Indexes>
+	static const MetaType * doGetValueType(const std::size_t index, internal_::SizeConstantList<Indexes...>)
 	{
 		std::array<const MetaType *, sizeof...(Types)> valutTypeList {
 			getMetaType<typename std::tuple_element<Indexes, std::tuple<Types...> >::type>()...
@@ -91,8 +91,8 @@ private:
 		return valutTypeList[index];
 	}
 
-	template <size_t ...Indexes>
-	static Variant doGetAt(const Variant & var, const size_t index, internal_::SizeConstantList<Indexes...>)
+	template <std::size_t ...Indexes>
+	static Variant doGetAt(const Variant & var, const std::size_t index, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = Variant (*)(const Variant & value);
 
@@ -102,7 +102,7 @@ private:
 		return funcList[index](var);
 	}
 
-	template <size_t index>
+	template <std::size_t index>
 	static Variant doGetAtHelper(const Variant & var)
 	{
 		using TupleType = std::tuple<Types...>;
@@ -110,8 +110,8 @@ private:
 		return std::get<index>(var.get<TupleType &>());
 	}
 
-	template <size_t ...Indexes>
-	static void doSetAt(const Variant & var, const size_t index, const Variant & value, internal_::SizeConstantList<Indexes...>)
+	template <std::size_t ...Indexes>
+	static void doSetAt(const Variant & var, const std::size_t index, const Variant & value, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = void (*)(const Variant & var, const Variant & value);
 
@@ -121,7 +121,7 @@ private:
 		funcList[index](var, value);
 	}
 
-	template <size_t index>
+	template <std::size_t index>
 	static void doSetAtHelper(const Variant & var, const Variant & value)
 	{
 		using TupleType = std::tuple<Types...>;
@@ -136,7 +136,7 @@ private:
 		doForEach(var, callback, Sequence());
 	}
 
-	template <size_t ...Indexes>
+	template <std::size_t ...Indexes>
 	static void doForEach(const Variant & var, MetaIterable::Callback callback, internal_::SizeConstantList<Indexes...>)
 	{
 		using Func = bool (*)(const Variant & value, MetaIterable::Callback callback);
@@ -151,7 +151,7 @@ private:
 		}
 	}
 
-	template <size_t index>
+	template <std::size_t index>
 	static bool doForEachHelper(const Variant & var, MetaIterable::Callback callback)
 	{
 		using TupleType = std::tuple<Types...>;

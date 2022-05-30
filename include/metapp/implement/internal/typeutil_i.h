@@ -61,8 +61,8 @@ struct ConstantList
 {
 };
 
-template <size_t ...values>
-using SizeConstantList = ConstantList<size_t, values...>;
+template <std::size_t ...values>
+using SizeConstantList = ConstantList<std::size_t, values...>;
 
 template <int ...values>
 using IntConstantList = ConstantList<int, values...>;
@@ -70,7 +70,7 @@ using IntConstantList = ConstantList<int, values...>;
 template <bool ...values>
 using BoolConstantList = ConstantList<bool, values...>;
 
-template <typename T, size_t N, T ...Indexes>
+template <typename T, std::size_t N, T ...Indexes>
 struct MakeSequence : MakeSequence <T, N - 1, N - 1, Indexes...>
 {
 };
@@ -84,8 +84,8 @@ struct MakeSequence <T, 0, Indexes...>
 template <int ...Indexes>
 using MakeIntSequence = MakeSequence <int, Indexes...>;
 
-template <size_t ...Indexes>
-using MakeSizeSequence = MakeSequence <size_t, Indexes...>;
+template <std::size_t ...Indexes>
+using MakeSizeSequence = MakeSequence <std::size_t, Indexes...>;
 
 template <typename T>
 struct VariantReturnType

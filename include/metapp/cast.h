@@ -76,7 +76,7 @@ private:
 			HelperCastFrom<Types>::getCastFromItem()...,
 			CastFromItem {}
 		};
-		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
+		for(std::size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
 			if(itemList[i].fromMetaType->equal(fromMetaType)) {
 				return itemList[i];
 			}
@@ -149,7 +149,7 @@ private:
 			HelperCastTo<Types>::getCastToItem()...,
 			CastToItem {}
 		};
-		for(size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
+		for(std::size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
 			if(itemList[i].toMetaType->equal(toMetaType)) {
 				return itemList[i];
 			}

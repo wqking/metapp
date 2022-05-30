@@ -55,10 +55,10 @@ const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 ```c++
 MetaIndexable(
   SizeInfo (*getSizeInfo)(const Variant & indexable),
-  const MetaType * (*getValueType)(const Variant & indexable, const size_t index),
-  void (*resize)(const Variant & indexable, const size_t size),
-  Variant (*get)(const Variant & indexable, const size_t index),
-  void (*set)(const Variant & indexable, const size_t index, const Variant & value)
+  const MetaType * (*getValueType)(const Variant & indexable, const std::size_t index),
+  void (*resize)(const Variant & indexable, const std::size_t size),
+  Variant (*get)(const Variant & indexable, const std::size_t index),
+  void (*set)(const Variant & indexable, const std::size_t index, const Variant & value)
 );
 ```
 
@@ -94,9 +94,9 @@ class MetaIndexable::SizeInfo
 {
 public:
   SizeInfo();
-  explicit SizeInfo(const size_t size);
+  explicit SizeInfo(const std::size_t size);
 
-  size_t getSize() const;
+  std::size_t getSize() const;
   bool isResizable() const;
   bool isUnknownSize() const;
 
@@ -125,7 +125,7 @@ and resizable is true.
 #### getValueType
 
 ```c++
-const MetaType * getValueType(const Variant & indexable, const size_t index);
+const MetaType * getValueType(const Variant & indexable, const std::size_t index);
 ```
 
 Returns the meta type of the element at `index`.  
@@ -139,7 +139,7 @@ For other containers, the result is the meta type of the `value_type` in the con
 #### resize
 
 ```c++
-void resize(const Variant & indexable, const size_t size);
+void resize(const Variant & indexable, const std::size_t size);
 ```
 
 Resizes the container in the Variant to contain `size` elements.  
@@ -151,7 +151,7 @@ If the `resize` argument in MetaIndexable constructor is nullptr, the function `
 #### get
 
 ```c++
-Variant get(const Variant & indexable, const size_t index);
+Variant get(const Variant & indexable, const std::size_t index);
 ```
 
 Returns a reference to the element at `index`.  
@@ -165,7 +165,7 @@ Note, for non-random access container such as `std::list`, the function uses `st
 #### set
 
 ```c++
-void (*set)(const Variant & indexable, const size_t index, const Variant & value);
+void (*set)(const Variant & indexable, const std::size_t index, const Variant & value);
 ```
 
 Sets the element at `index` with `value`. The `value` will be casted to the element type, if the cast fails, exception `metapp::BadCastException` is thrown.  
@@ -182,17 +182,17 @@ inline SizeInfo indexableGetSizeInfo(const Variant & indexable)
   return indexable.getMetaType()->getMetaIndexable()->getSizeInfo(indexable);
 }
 
-inline void indexableResize(const Variant & indexable, const size_t size)
+inline void indexableResize(const Variant & indexable, const std::size_t size)
 {
   indexable.getMetaType()->getMetaIndexable()->resize(indexable, size);
 }
 
-inline Variant indexableGet(const Variant & indexable, const size_t index)
+inline Variant indexableGet(const Variant & indexable, const std::size_t index)
 {
   return indexable.getMetaType()->getMetaIndexable()->get(indexable, index);
 }
 
-inline void indexableSet(const Variant & indexable, const size_t index, const Variant & value)
+inline void indexableSet(const Variant & indexable, const std::size_t index, const Variant & value)
 {
   indexable.getMetaType()->getMetaIndexable()->set(indexable, index, value);
 }

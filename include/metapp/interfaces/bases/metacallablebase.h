@@ -32,7 +32,7 @@ public:
 	using ClassType = Class;
 	using ReturnType = RT;
 	using ArgumentTypeList = TypeList<Args...>;
-	static constexpr size_t argsCount = TypeListCount<ArgumentTypeList>::value;
+	static constexpr std::size_t argsCount = TypeListCount<ArgumentTypeList>::value;
 
 	static const MetaCallable * getMetaCallable() {
 		static const MetaCallable metaCallable(

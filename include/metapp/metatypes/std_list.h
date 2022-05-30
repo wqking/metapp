@@ -53,17 +53,17 @@ private:
 		return MetaIndexable::SizeInfo { var.get<ContainerType &>().size() };
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const std::size_t /*index*/)
 	{
 		return getMetaType<ValueType>();
 	}
 
-	static void metaIndexableResize(const Variant & var, const size_t size)
+	static void metaIndexableResize(const Variant & var, const std::size_t size)
 	{
 		var.get<ContainerType &>().resize(size);
 	}
 
-	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
 			raiseException<OutOfRangeException>();
@@ -74,7 +74,7 @@ private:
 		return Variant::create<ValueType>(*it);
 	}
 
-	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)
 	{
 		internal_::verifyVariantWritable(var);
 

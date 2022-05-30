@@ -9,10 +9,11 @@
   * [isEmpty](#a4_2)
   * [getName](#a4_3)
   * [asXxx functions](#a4_4)
-  * [Implicitly type convert](#a4_5)
-  * [registerAnnotation](#a4_6)
-  * [getAnnotation](#a4_7)
-  * [getAllAnnotations](#a4_8)
+  * [getTarget](#a4_5)
+  * [Implicitly type convert](#a4_6)
+  * [registerAnnotation](#a4_7)
+  * [getAnnotation](#a4_8)
+  * [getAllAnnotations](#a4_9)
 <!--endtoc-->
 
 <a id="a2_1"></a>
@@ -116,16 +117,26 @@ const Variant & asEnumValue() const;
 ```
 
 Returns the proper data.  
-If the type doesn't match the function, exception `metapp::IllegalArgumentException` is raised.  
+If the type doesn't match the function, exception `metapp::WrongMetaTypeException` is raised.  
 
 <a id="a4_5"></a>
+#### getTarget
+
+```c++
+const Variant & getTarget() const;
+```
+
+Return the underlying Variant of the meta item. It doesn't check if the type matches, and it doesn't convert the data
+to approperiate type such as `const MetaRepo *`.  
+
+<a id="a4_6"></a>
 #### Implicitly type convert
 
 ```c++
 operator const Variant & () const;
 ```
 
-Convert the item to Variant. This is useful to pass the meta item where a Variant is required. For example,  
+Convert the item to Variant implicitly. This is useful to pass the meta item where a Variant is required. For example,  
 
 ```c++
 metapp::MetaRepo metaRepo;
@@ -150,7 +161,7 @@ const metapp::Variant result2 = metapp::callableInvoke(callable.asCallable(), nu
 ASSERT(result2.get<int>() == 5);
 ```
 
-<a id="a4_6"></a>
+<a id="a4_7"></a>
 #### registerAnnotation
 
 ```c++
@@ -163,7 +174,7 @@ The user can use the annotation for any purpose.
 For example, if `metapp` is used in a property editor, an annotation may provide description,
 or indicate a property should be hidden from the editor.
 
-<a id="a4_7"></a>
+<a id="a4_8"></a>
 #### getAnnotation
 
 ```c++
@@ -172,7 +183,7 @@ const Variant & getAnnotation(const std::string & name) const;
 
 Returns the annotaion for `name`. If `name` is not registered, an empty Variant is returned (Variant::isEmpty() is true).
 
-<a id="a4_8"></a>
+<a id="a4_9"></a>
 #### getAllAnnotations
 
 ```c++

@@ -26,11 +26,11 @@ namespace metapp {
 
 namespace internal_ {
 
-constexpr size_t unknownSize = size_t(-1);
+constexpr std::size_t unknownSize = std::size_t(-1);
 
 } // namespace internal_
 
-template <typename T, size_t length>
+template <typename T, std::size_t length>
 struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::wstring> >
 {
 	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
@@ -99,17 +99,17 @@ private:
 		return sizeInfo;
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t /*index*/)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const std::size_t /*index*/)
 	{
 		return getMetaType<T>();
 	}
 
-	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
 		return Variant::create<ElementType &>(var.get<T &>()[index]);
 	}
 
-	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)
 	{
 		internal_::verifyVariantWritable(var);
 

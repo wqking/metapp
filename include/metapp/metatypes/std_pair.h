@@ -60,7 +60,7 @@ private:
 		return sizeInfo;
 	}
 
-	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const size_t index)
+	static const MetaType * metaIndexableGetValueType(const Variant & /*var*/, const std::size_t index)
 	{
 		if(index == 0) {
 			return getMetaType<T1>();
@@ -68,7 +68,7 @@ private:
 		return getMetaType<T2>();
 	}
 
-	static Variant metaIndexableGet(const Variant & var, const size_t index)
+	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
 		if(index == 0) {
 			return Variant::create<T1 &>(var.get<PairType &>().first);
@@ -76,7 +76,7 @@ private:
 		return Variant::create<T2 &>(var.get<PairType &>().second);
 	}
 
-	static void metaIndexableSet(const Variant & var, const size_t index, const Variant & value)
+	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)
 	{
 		if(index >= 2) {
 			raiseException<OutOfRangeException>();

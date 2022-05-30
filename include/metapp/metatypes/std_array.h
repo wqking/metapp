@@ -26,7 +26,7 @@
 
 namespace metapp {
 
-template <typename T, size_t length>
+template <typename T, std::size_t length>
 struct DeclareMetaTypeBase <std::array<T, length> >
 	: MetaIndexableBase<std::array<T, length> >,
 		MetaIterableBase<std::array<T, length> >

@@ -61,10 +61,10 @@ namespace {
 
 //code
 //desc Assume we have this function
-int sum(const metapp::Variant * arguments, const size_t argumentCount)
+int sum(const metapp::Variant * arguments, const std::size_t argumentCount)
 {
 	int total = 0;
-	for(size_t i = 0; i < argumentCount; ++i) {
+	for(std::size_t i = 0; i < argumentCount; ++i) {
 		total += arguments[i].cast<int>().get<int>();
 	}
 	return total;

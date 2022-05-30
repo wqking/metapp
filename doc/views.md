@@ -20,7 +20,7 @@ Below document will use both MetaItemView/BaseView as example in the pseudo code
 
 ```c++
 using value_type = const MetaItemView or BaseView;
-using size_type = int;
+using size_type = std::size_t;
 using difference_type = typename Iterator::difference_type;
 using reference = const value_type &;
 using const_reference = const value_type &;

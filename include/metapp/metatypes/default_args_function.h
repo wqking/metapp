@@ -97,7 +97,7 @@ public:
 		return &metaCallable;
 	}
 
-	static bool isValidArgumentCount(const Variant & func, const size_t argumentCount)
+	static bool isValidArgumentCount(const Variant & func, const std::size_t argumentCount)
 	{
 		return ((int)argumentCount >= argsCount - func.get<FunctionType &>().getDefaultArgsCount())
 			&& ((int)argumentCount <= argsCount)

@@ -33,7 +33,7 @@ static constexpr int invokeRankNone = 0;
 
 namespace internal_ {
 
-template <typename TL, size_t N>
+template <typename TL, std::size_t N>
 bool canCastArgument(const ArgumentSpan & arguments)
 {
 	if(N >= arguments.size()) {
@@ -42,7 +42,7 @@ bool canCastArgument(const ArgumentSpan & arguments)
 	return arguments[N].template canCast<typename TypeListGetAt<TL, N>::Type>();
 }
 
-template <typename TL, size_t N>
+template <typename TL, std::size_t N>
 int rankArgumentMatching(const ArgumentSpan & arguments)
 {
 	if(N >= arguments.size()) {
@@ -74,7 +74,7 @@ template <typename ArgList>
 struct MetaCallableInvokeChecker
 {
 	using ArgumentTypeList = ArgList;
-	static constexpr size_t argCount = TypeListCount<ArgumentTypeList>::value;
+	static constexpr std::size_t argCount = TypeListCount<ArgumentTypeList>::value;
 
 	static bool canInvoke(const ArgumentSpan & arguments) {
 		using Sequence = typename MakeIntSequence<argCount>::Type;

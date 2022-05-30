@@ -104,7 +104,7 @@ TEST_CASE("metatypes, tkStdArray, std::array<int, 5>, MetaIterable")
 	REQUIRE(v.getMetaType()->getMetaIterable() != nullptr);
 
 	std::array<int, 5> newArray;
-	size_t index = 0;
+	std::size_t index = 0;
 	v.getMetaType()->getMetaIterable()->forEach(v, [&newArray, &index](const metapp::Variant & value) {
 		REQUIRE(index < newArray.size());
 		newArray[index] = value.get<int>();

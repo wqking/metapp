@@ -62,33 +62,33 @@ struct TypeListIn
 template <typename TL>
 struct TypeListCount
 {
-	static constexpr size_t value = 0;
+	static constexpr std::size_t value = 0;
 };
 
 template <typename ...Args>
 struct TypeListCount <TypeList<Args...> >
 {
-	static constexpr size_t value = sizeof...(Args);
+	static constexpr std::size_t value = sizeof...(Args);
 };
 
-template <size_t I, size_t N, typename TL>
+template <std::size_t I, std::size_t N, typename TL>
 struct HelperTypeListGetAt
 {
 };
 
-template <size_t N, typename Arg0, typename ...Args>
+template <std::size_t N, typename Arg0, typename ...Args>
 struct HelperTypeListGetAt <N, N, TypeList<Arg0, Args...> >
 {
 	using Type = Arg0;
 };
 
-template <size_t I, size_t N, typename Arg0, typename ...Args>
+template <std::size_t I, std::size_t N, typename Arg0, typename ...Args>
 struct HelperTypeListGetAt<I, N, TypeList<Arg0, Args...> >
 {
 	using Type = typename HelperTypeListGetAt<I + 1, N, TypeList<Args...> >::Type;
 };
 
-template <typename TL, size_t N>
+template <typename TL, std::size_t N>
 struct TypeListGetAt
 {
 	using Type = typename HelperTypeListGetAt<0, N, TL>::Type;

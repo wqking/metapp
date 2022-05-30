@@ -90,7 +90,7 @@ public:
 	};
 
 	using value_type = const ValueType;
-	using size_type = int;
+	using size_type = std::size_t;
 	using difference_type = typename Iterator::difference_type;
 	using reference = const value_type &;
 	using const_reference = const value_type &;
@@ -181,7 +181,7 @@ public:
 	reference at(const size_type index) const {
 		int listIndex;
 		int itemIndex;
-		splitIndex(index, &listIndex, &itemIndex);
+		splitIndex((int)index, &listIndex, &itemIndex);
 		return listPointer[listIndex].container->at(itemIndex);
 	}
 
@@ -211,7 +211,7 @@ public:
 	}
 
 private:
-	void splitIndex(const size_type index, int * listIndex, int * itemIndex) const {
+	void splitIndex(const int index, int * listIndex, int * itemIndex) const {
 		*listIndex = 0;
 		*itemIndex = 0;
 		while(*listIndex < listCount) {
