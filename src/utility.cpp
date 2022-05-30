@@ -100,22 +100,13 @@ Variant depointer(const Variant & var)
 
 Variant dereference(const Variant & var)
 {
-	const MetaType * mt = var.getMetaType();
-	void * address = nullptr;
-	if(mt->isPointer()) {
-		mt = mt->getUpType();
-		address = var.get<void *>();
+	Variant temp = depointer(var);
+	const MetaType * mt = temp.getMetaType();
+	if(mt->isReference()) {
+		return Variant(mt->getUpType(), temp.getAddress());
 	}
-	else if(mt->isReference()) {
-		mt = mt->getUpType();
-		address = var.getAddress();
-	}
-	if(address != nullptr) {
-		return Variant(mt, address);
-	}
-	return var;
+	return temp;
 }
-
 
 namespace {
 

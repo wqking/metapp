@@ -55,7 +55,7 @@ Returns true if the type kind is integral type.
 Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `signed char`, `unsigned char`,
 `short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
 
-#### typeKindIsArithmetic
+#### typeKindIsReal
 
 ```c++
 constexpr bool typeKindIsReal(const TypeKind typeKind);
@@ -100,9 +100,9 @@ Variant depointer(const Variant & var);
 Convert a pointer in `var` to its non-pointer equivalence.  
 Return a Variant that,  
 If `var` is a value or reference, `var` is returned.  
-If `var` is a pointer, the returned reference refers to the value that the pointer points to.  
+If `var` is a pointer, the function returns a reference that refers to the value that the pointer points to.  
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
-the returned reference refers to the value that the pointer points to.  
+it returns a reference that refers to the value that the pointer points to.  
 
 `depointer` only makes reference, it doesn't copy any underlying value.  
 
@@ -162,10 +162,13 @@ Variant dereference(const Variant & var);
 ```
 Return the value that the underlying pointer or reference points to.
 This is the same semantic as the dereference operator * in C++.  
-If `var` is a reference, return the value that `var` refers to.  
-If `var` is a pointer, return the value that `var` points to.  
-If `var` is a value, return `var`.  
-Note: if `var` is a reference or pointer, `dereference` will copy the underlying value to the result Variant, that may be expensive.  
+If `var` is a value, returns `var`.  
+If `var` is a reference, returns the value that `var` refers to.  
+If `var` is a pointer, returns the value that `var` points to.  
+If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
+it returns the value that `var` points to.  
+Note: if `var` is a reference, pointer, or pointer wrapper, `dereference` will copy the underlying value to the result Variant,
+that may be expensive.  
 
 #### getPointer
 

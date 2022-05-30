@@ -7,7 +7,7 @@
 * [Functions](#a2_3)
   * [getNonReferenceMetaType](#a4_1)
   * [typeKindIsIntegral](#a4_2)
-  * [typeKindIsArithmetic](#a4_3)
+  * [typeKindIsReal](#a4_3)
   * [typeKindIsArithmetic](#a4_4)
   * [isSameMetaType](#a4_5)
   * [depointer](#a4_6)
@@ -58,7 +58,7 @@ Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `
 `short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
 
 <a id="a4_3"></a>
-#### typeKindIsArithmetic
+#### typeKindIsReal
 
 ```c++
 constexpr bool typeKindIsReal(const TypeKind typeKind);
@@ -106,9 +106,9 @@ Variant depointer(const Variant & var);
 Convert a pointer in `var` to its non-pointer equivalence.  
 Return a Variant that,  
 If `var` is a value or reference, `var` is returned.  
-If `var` is a pointer, the returned reference refers to the value that the pointer points to.  
+If `var` is a pointer, the function returns a reference that refers to the value that the pointer points to.  
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
-the returned reference refers to the value that the pointer points to.  
+it returns a reference that refers to the value that the pointer points to.  
 
 `depointer` only makes reference, it doesn't copy any underlying value.  
 
@@ -164,10 +164,13 @@ Variant dereference(const Variant & var);
 ```
 Return the value that the underlying pointer or reference points to.
 This is the same semantic as the dereference operator * in C++.  
-If `var` is a reference, return the value that `var` refers to.  
-If `var` is a pointer, return the value that `var` points to.  
-If `var` is a value, return `var`.  
-Note: if `var` is a reference or pointer, `dereference` will copy the underlying value to the result Variant, that may be expensive.  
+If `var` is a value, returns `var`.  
+If `var` is a reference, returns the value that `var` refers to.  
+If `var` is a pointer, returns the value that `var` points to.  
+If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
+it returns the value that `var` points to.  
+Note: if `var` is a reference, pointer, or pointer wrapper, `dereference` will copy the underlying value to the result Variant,
+that may be expensive.  
 
 <a id="a4_8"></a>
 #### getPointer

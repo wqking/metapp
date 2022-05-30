@@ -275,5 +275,38 @@ TEST_CASE("utility, dereference, MyClass &")
 	REQUIRE(v.get<MyClass &>().text == "world");
 }
 
+TEST_CASE("utility, dereference, std::shared_ptr<int>")
+{
+	using PTR = std::shared_ptr<int>;
+	PTR n(std::make_shared<int>(5));
+	metapp::Variant v(n);
+	REQUIRE(! v.canGet<int>());
+	REQUIRE(v.canGet<PTR>());
+	REQUIRE(*v.get<PTR>() == 5);
+
+	metapp::Variant deref(dereference(v));
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
+	REQUIRE(deref.canGet<int>());
+	REQUIRE(deref.get<int>() == 5);
+
+	*n = 38;
+	REQUIRE(deref.get<int>() == 5);
+	REQUIRE(*v.get<PTR>() == 38);
+}
+
+TEST_CASE("utility, dereference, std::unique_ptr<int>")
+{
+	using PTR = std::unique_ptr<int>;
+	metapp::Variant v(PTR(new int(5)));
+	REQUIRE(! v.canGet<int>());
+	REQUIRE(v.canGet<PTR>());
+	REQUIRE(*v.get<PTR &>() == 5);
+
+	metapp::Variant deref(dereference(v));
+	REQUIRE(metapp::getTypeKind(deref) == metapp::tkInt);
+	REQUIRE(deref.canGet<int>());
+	REQUIRE(deref.get<int>() == 5);
+}
+
 
 } // namespace

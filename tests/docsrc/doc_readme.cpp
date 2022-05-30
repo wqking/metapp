@@ -39,8 +39,8 @@ or `std::string`, or another container.
 then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
 even `std::vector<std::list<std::vector<std::string> > >`.
 - **Mimic C++ reference extensively for better performance.** For example, when getting a property (accessible, in metapp term) value,
-or get an element value from a container, a metapp::Variant of reference is returned when possible,
-and the performance cost is kept as minimum as possible.
+or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
+value is referenced instead of copying, so the performance cost is kept as minimum as possible.
 
 ## Facts and features
 
@@ -120,15 +120,9 @@ You are welcome to try the project and give feedback. Your participation will he
 
 ### Supported compilers
 
-Tested with MSVC 2022, MinGW (Msys) GCC 8.3, Ubuntu GCC 5.4.
+metapp requires C++ compiler that supports C++11 standard.  
+The library is tested with MSVC 2022, 2019, MinGW (Msys) GCC 8.3 and 11.3.0, Clang (carried by MSVC).  
 In brief, MSVC, GCC, Clang that has well support for C++11, or released after 2019, should be able to compile the library.
-
-### C++ standard requirements
-* To Use the library  
-	* The library: C++11.  
-* To develop the library
-	* Unit tests: C++17.
-	* docsrc: C++11.
 
 ## Quick start
 
@@ -380,10 +374,11 @@ ExampleFunc
 }
 
 /*desc
-Below are tutorials and documents.  
-If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
-
 ## Documentations
+Below are tutorials and documents. Don't feel upset if you find issues or missing stuff in the documents, I'm not
+native English speaker and it's not that exciting to write document. Any way, the code quality is always much better
+than the document, for ever.  
+If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
 
 - Tutorials
 	- [Use Variant](doc/tutorial/tutorial_variant.md)
@@ -427,6 +422,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Utilities
 	- [utility.h](doc/utilities/utility.md)
+	- [TypeList reference](doc/utilities/typelist.md)
 
 - Miscellaneous
 	- [About documentations](doc/about_document.md)
@@ -451,10 +447,11 @@ Go to folder `tests/build`, then run `make` with different target.
 - `make linux` #build on Linux
 - `make mingw_coverage` #build using MinGW and generate code coverage report
 
-## Known compiler related quirks
+## Known compiler related quirks in MSVC
 
 MSVC 2022 and 2019, can build the CMake generated test projects and the tests run correctly in Debug and RelWithDebugInfo
-configurations. But some tests fails in Release mode when incremental linking is disabled.  
+configurations. But some tests fail in Release mode when incremental linking is disabled.  
+Those failed tests should not fail, because they work correct in MSVC debug mode and in GCC/Clang.
 Adding /Debug option to linking which generates debug information makes the tests success.  
 Without /Debug option, but enabling incremental linking, will cause the tests success too.  
 So if metapp shows weird behavior in MSVC, try to enable incremental linking.

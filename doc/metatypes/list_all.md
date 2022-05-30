@@ -17,9 +17,9 @@
 |tkBool                |1         |bool                                                                                                          |
 |tkChar                |2         |char                                                                                                          |
 |tkWideChar            |3         |wchar_t                                                                                                       |
-|tkChar8 (C++20)       |4         |None                                                                                                          |
-|tkChar16              |5         |None                                                                                                          |
-|tkChar32              |6         |None                                                                                                          |
+|tkChar8 (C++20)       |4         |char8_t                                                                                                       |
+|tkChar16              |5         |char16_t                                                                                                      |
+|tkChar32              |6         |char32_t                                                                                                      |
 |tkSignedChar          |7         |signed char                                                                                                   |
 |tkUnsignedChar        |8         |unsigned char                                                                                                 |
 |tkShort               |9         |short                                                                                                         |

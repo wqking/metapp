@@ -9,19 +9,18 @@
   * [Version 0.1.0 and status](#a3_2)
   * [Source code](#a3_3)
   * [Supported compilers](#a3_4)
-  * [C++ standard requirements](#a3_5)
 * [Quick start](#a2_4)
-  * [Namespace](#a3_6)
-  * [Build and install, use metapp in your project](#a3_7)
+  * [Namespace](#a3_5)
+  * [Build and install, use metapp in your project](#a3_6)
 * [Example code](#a2_5)
-  * [Use Variant](#a3_8)
-  * [Use MetaType](#a3_9)
-  * [Call function and accessible](#a3_10)
-  * [Runtime generic STL container](#a3_11)
-  * [Use reference with Variant](#a3_12)
+  * [Use Variant](#a3_7)
+  * [Use MetaType](#a3_8)
+  * [Call function and accessible](#a3_9)
+  * [Runtime generic STL container](#a3_10)
+  * [Use reference with Variant](#a3_11)
 * [Documentations](#a2_6)
 * [Build the test code](#a2_7)
-* [Known compiler related quirks](#a2_8)
+* [Known compiler related quirks in MSVC](#a2_8)
 * [Motivations](#a2_9)
 <!--endtoc-->
 
@@ -40,8 +39,8 @@ or `std::string`, or another container.
 then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
 even `std::vector<std::list<std::vector<std::string> > >`.
 - **Mimic C++ reference extensively for better performance.** For example, when getting a property (accessible, in metapp term) value,
-or get an element value from a container, a metapp::Variant of reference is returned when possible,
-and the performance cost is kept as minimum as possible.
+or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
+value is referenced instead of copying, so the performance cost is kept as minimum as possible.
 
 <a id="a2_2"></a>
 ## Facts and features
@@ -127,26 +126,19 @@ You are welcome to try the project and give feedback. Your participation will he
 <a id="a3_4"></a>
 ### Supported compilers
 
-Tested with MSVC 2022, MinGW (Msys) GCC 8.3, Ubuntu GCC 5.4.
+metapp requires C++ compiler that supports C++11 standard.  
+The library is tested with MSVC 2022, 2019, MinGW (Msys) GCC 8.3 and 11.3.0, Clang (carried by MSVC).  
 In brief, MSVC, GCC, Clang that has well support for C++11, or released after 2019, should be able to compile the library.
-
-<a id="a3_5"></a>
-### C++ standard requirements
-* To Use the library  
-  * The library: C++11.  
-* To develop the library
-  * Unit tests: C++17.
-  * docsrc: C++11.
 
 <a id="a2_4"></a>
 ## Quick start
 
-<a id="a3_6"></a>
+<a id="a3_5"></a>
 ### Namespace
 
 `metapp`
 
-<a id="a3_7"></a>
+<a id="a3_6"></a>
 ### Build and install, use metapp in your project
 
 There are various methods to use metapp
@@ -190,7 +182,7 @@ To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB
 
 Here is simple code pieces. There are comprehensive tutorials documentations.
 
-<a id="a3_8"></a>
+<a id="a3_7"></a>
 ### Use Variant
 Header for Variant
 
@@ -236,7 +228,7 @@ const char * s = casted.get<const char *>();
 ASSERT(strcmp(s, "hello") == 0);
 ```
 
-<a id="a3_9"></a>
+<a id="a3_8"></a>
 ### Use MetaType
 int
 
@@ -262,7 +254,7 @@ ASSERT(metaType->equal(metapp::getMetaType<const int *>()));
 ASSERT(metaType->equal(metapp::getMetaType<int *>()));
 ```
 
-<a id="a3_10"></a>
+<a id="a3_9"></a>
 ### Call function and accessible
 
 ```c++
@@ -344,7 +336,7 @@ ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
 ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 38);
 ```
 
-<a id="a3_11"></a>
+<a id="a3_10"></a>
 ### Runtime generic STL container
 Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 
@@ -410,7 +402,7 @@ metapp::Variant v2(&container2);
 ASSERT(concat(v2) == "123");
 ```
 
-<a id="a3_12"></a>
+<a id="a3_11"></a>
 ### Use reference with Variant
 Declare a value to be referred to.
 
@@ -466,11 +458,12 @@ item.assign("Good");
 ASSERT(vs.get<const std::vector<std::string> &>()[0] == "Good");
 ```
 
-Below are tutorials and documents.  
-If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
-
 <a id="a2_6"></a>
 ## Documentations
+Below are tutorials and documents. Don't feel upset if you find issues or missing stuff in the documents, I'm not
+native English speaker and it's not that exciting to write document. Any way, the code quality is always much better
+than the document, for ever.  
+If you want to contribute to the documents, be sure to read [How to generate documentations](doc/about_document.md).  
 
 - Tutorials
   - [Use Variant](doc/tutorial/tutorial_variant.md)
@@ -514,6 +507,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Utilities
   - [utility.h](doc/utilities/utility.md)
+  - [TypeList reference](doc/utilities/typelist.md)
 
 - Miscellaneous
   - [About documentations](doc/about_document.md)
@@ -540,10 +534,11 @@ Go to folder `tests/build`, then run `make` with different target.
 - `make mingw_coverage` #build using MinGW and generate code coverage report
 
 <a id="a2_8"></a>
-## Known compiler related quirks
+## Known compiler related quirks in MSVC
 
 MSVC 2022 and 2019, can build the CMake generated test projects and the tests run correctly in Debug and RelWithDebugInfo
-configurations. But some tests fails in Release mode when incremental linking is disabled.  
+configurations. But some tests fail in Release mode when incremental linking is disabled.  
+Those failed tests should not fail, because they work correct in MSVC debug mode and in GCC/Clang.
 Adding /Debug option to linking which generates debug information makes the tests success.  
 Without /Debug option, but enabling incremental linking, will cause the tests success too.  
 So if metapp shows weird behavior in MSVC, try to enable incremental linking.

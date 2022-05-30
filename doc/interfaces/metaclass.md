@@ -42,7 +42,8 @@
 <a id="a2_3"></a>
 ## Get MetaClass interface
 
-We can call `MetaType::getMetaClass()` to get the MetaClass interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaClass()` to get the MetaClass interface.
+If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<SomeClass>();
@@ -63,7 +64,9 @@ MetaClass(const MetaType * classMetaType, FT callback);
 ```
 
 `classMetaType` is the MetaType of the class being registered. It's used when traversing in the inheritance hierarchy.  
-`callback` is a callback function. MetaClass invokes the callback in the constructor. Since the interface is usually implemented as static variable inside static function, the "callback in constructor" mechanism can guarantee thread safety.  
+`callback` is a callback function. MetaClass invokes the callback in the constructor.
+Since the interface is usually implemented as static variable inside static function,
+the "callback in constructor" mechanism can guarantee thread safety.  
 
 `callback` prototype,  
 ```c++
@@ -121,8 +124,11 @@ MetaItem & registerAccessible(const std::string & name, const Variant & field);
 ```
 
 Register a field (member or static member data).
-The parameter `name` is the field name. The field can be got from the MetaClass by the name later. If a field with the same name has already registered, `registerAccessible` doesn't register the new field and returns the previous registered field.  
-The parameter `field` is a Variant of MetaType that implements meta interface `MetaAccessible`. It can be pointer to member data, accessorpp::Accessor, or pointer to global data to simulate static member.  
+The parameter `name` is the field name. The field can be got from the MetaClass by the name later.
+If a field with the same name has already registered, `registerAccessible` doesn't register the new field
+and returns the previous registered field.  
+The parameter `field` is a Variant of MetaType that implements meta interface `MetaAccessible`.
+It can be pointer to member data, accessorpp::Accessor, or pointer to global data to simulate static member.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 **Example**  
@@ -170,8 +176,10 @@ struct metapp::DeclareMetaType<AccClass> : metapp::DeclareMetaTypeBase<AccClass>
 MetaItem & registerCallable(const std::string & name, const Variant & callable);
 ```
 Register a method (member or static member method).  
-The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,, they are treated as overloaded methods.  
-The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`. It can be a pointer to member method, a pointer to non-member free method to simulate static member, or even `std::function`.  
+The parameter `name` is the method name. metapp allows multiple methods be registered under the same name,
+they are treated as overloaded methods.  
+The parameter `callable` is a Variant of MetaType that implements meta interface `MetaCallable`.
+It can be a pointer to member method, a pointer to non-member free method to simulate static member, or even `std::function`.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 **Example**  
@@ -272,7 +280,8 @@ MetaItem & registerType(std::string name, const MetaType * metaType); // #2
 
 Register a MetaType.  
 The #1 form is equivalent to `registerType(name, getMetaType<T>())`;  
-If the parameter `name` is empty, the function tries to get the name from built-in types. If the name is not found, then the name is not used and the MetaType can't be got by name.  
+If the parameter `name` is empty, the function tries to get the name from built-in types. If the name is not found,
+then the name is not used and the MetaType can't be got by name.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 This function can be used to register nested classes, or enum in the class.  
 
@@ -305,7 +314,12 @@ struct metapp::DeclareMetaType<TyClass> : metapp::DeclareMetaTypeBase<TyClass>
 <a id="a2_7"></a>
 ## MetaClass member functions for retrieving meta data
 
-Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags` with default value of `MetaClass::flagIncludeBase`. For functions that find a certain meta data, that means if the function can't find the meta data in current meta class, it will look up all base class recursively for the meta data. For functions that get all meta data, that means the function will return all meta data in current meta class, and all meta data in base classes, recursively. If you want only current meta class be checked, pass `MetaClass::flagNone`.  
+Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags`
+with default value of `MetaClass::flagIncludeBase`. For functions that find a certain meta data,
+that means if the function can't find the meta data in current meta class, it will look up all base class recursively
+for the meta data. For functions that get all meta data, that means the function will return all meta data in current
+meta class, and all meta data in base classes, recursively. If you want only current meta class be checked,
+pass `MetaClass::flagNone`.  
 
 <a id="a4_6"></a>
 #### getConstructor

@@ -40,7 +40,7 @@
 <a id="a2_1"></a>
 ## Overview
 
-`metapp::Variant` allows to store data of any type and convert between types.  
+`metapp::Variant` is a light weight class that allows to store data of any type and convert between types.  
 Variant holds a single value of any type at the same time.
 The type can be any C++ type, such as int, class, std::string, std::vector, function pointer, etc, any type.  
 
