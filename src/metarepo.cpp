@@ -244,7 +244,7 @@ MetaItem & MetaRepoBase::registerCallable(const std::string & name, const Varian
 	return callableData->addItem(MetaItem::Type::callable, name, callable);
 }
 
-MetaItem & MetaRepoBase::registerConstant(const std::string & name, const Variant & constant)
+MetaItem & MetaRepoBase::registerVariable(const std::string & name, const Variant & variable)
 {
 	if(! constantData) {
 		constantData = std::make_shared<ItemData>();
@@ -254,7 +254,7 @@ MetaItem & MetaRepoBase::registerConstant(const std::string & name, const Varian
 	if(it != constantData->nameItemMap.end()) {
 		return *it->second;
 	}
-	return constantData->addItem(MetaItem::Type::constant, name, constant);
+	return constantData->addItem(MetaItem::Type::variable, name, variable);
 }
 
 MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaType)
@@ -298,12 +298,12 @@ const MetaItemList & MetaRepoBase::doGetCallableList() const
 	return doGetItemList(callableData);
 }
 
-const MetaItem & MetaRepoBase::doGetConstant(const std::string & name) const
+const MetaItem & MetaRepoBase::doGetVariable(const std::string & name) const
 {
 	return doFindItemByName(constantData, name);
 }
 
-const MetaItemList & MetaRepoBase::doGetConstantList() const
+const MetaItemList & MetaRepoBase::doGetVariableList() const
 {
 	return doGetItemList(constantData);
 }
@@ -411,14 +411,14 @@ MetaItemView MetaRepo::getCallableView() const
 	return MetaItemView(&doGetCallableList());
 }
 
-const MetaItem & MetaRepo::getConstant(const std::string & name) const
+const MetaItem & MetaRepo::getVariable(const std::string & name) const
 {
-	return doGetConstant(name);
+	return doGetVariable(name);
 }
 
-MetaItemView MetaRepo::getConstantView() const
+MetaItemView MetaRepo::getVariableView() const
 {
-	return MetaItemView(&doGetConstantList());
+	return MetaItemView(&doGetVariableList());
 }
 
 const MetaItem & MetaRepo::getType(const std::string & name) const

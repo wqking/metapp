@@ -11,7 +11,7 @@
   * [registerConstructor](#a4_1)
   * [registerAccessible](#a4_2)
   * [registerCallable](#a4_3)
-  * [registerConstant](#a4_4)
+  * [registerVariable](#a4_4)
   * [registerType](#a4_5)
 * [MetaClass member functions for retrieving meta data](#a2_7)
   * [getConstructor](#a4_6)
@@ -19,8 +19,8 @@
   * [getAccessibleView](#a4_8)
   * [getCallable](#a4_9)
   * [getCallableView](#a4_10)
-  * [getConstant](#a4_11)
-  * [getConstantView](#a4_12)
+  * [getVariable](#a4_11)
+  * [getVariableView](#a4_12)
   * [getType by name](#a4_13)
   * [getType by type kind](#a4_14)
   * [getType by MetaType](#a4_15)
@@ -82,7 +82,7 @@ MetaItem & registerConstructor(const Variant & constructor);
 ```
 
 Register a constructor. The parameter `constructor` is a Variant of `metapp::Constructor`.  
-The returned `MetaItem` can be used add annotations to the meta data.
+The returned `MetaItem` can be used to add annotations to the meta data.
 
 **Example**  
 
@@ -211,36 +211,47 @@ struct metapp::DeclareMetaType<CaClass> : metapp::DeclareMetaTypeBase<CaClass>
 ```
 
 <a id="a4_4"></a>
-#### registerConstant
+#### registerVariable
 
 ```c++
-MetaItem & registerConstant(const std::string & name, const Variant & constant);
+MetaItem & registerVariable(const std::string & name, const Variant & variable);
 ```
 
-Register a constant.  
-The parameter `name` is the constant name.  
-The parameter `constant` is a Variant of any value.  
+Register a variable.  
+The parameter `name` is the variable name.  
+The parameter `variable` is a Variant of any value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
+
+The difference between `accessible` and `variable` is, an `accessible` must implement meta interface `MetaAccessible`, while
+a `variable` can be any value. How to use a `variable` is up to the user.  
+The best practice to decide when to use `accessible` or `variable` is, when a Variant will be got/set value via an accessible
+such as a pointer to a variable, register it as `accessible`. If a Variant's value is not going to change, such as a constant,
+register it as `variable`.  
+Note: I'm not satisfied with the term `variable`. I've thought about constant, object, value, item, element, but none is satisfying.
 
 **Example**  
 
 ```c++
-class ConClass
+class VarClass
 {
 public:
   static const int one = 1;
+
+  int index;
 };
 
 template <>
-struct metapp::DeclareMetaType<ConClass> : metapp::DeclareMetaTypeBase<ConClass>
+struct metapp::DeclareMetaType<VarClass> : metapp::DeclareMetaTypeBase<VarClass>
 {
   static const metapp::MetaClass * getMetaClass() {
     static const metapp::MetaClass metaClass(
-      metapp::getMetaType<ConClass>(),
+      metapp::getMetaType<VarClass>(),
       [](metapp::MetaClass & mc) {
-        mc.registerConstant("one", ConClass::one);
-        // Any value can be registered as constant, not limited to members in the class
-        mc.registerConstant("name", std::string("metapp"));
+        mc.registerVariable("one", VarClass::one);
+        // Any value can be registered as variable, not limited to members in the class
+        mc.registerVariable("name", std::string("metapp"));
+        // We want to set/get the `index` field, so we register it as accessible.
+        mc.registerAccessible("index", &VarClass::index);
       }
     );
     return &metaClass;
@@ -394,34 +405,34 @@ ASSERT(callableView[1].getName() == "add");
 ```
 
 <a id="a4_11"></a>
-#### getConstant
+#### getVariable
 
 ```c++
-const MetaItem & getConstant(const std::string & name, const Flags flags = flagIncludeBase) const;
+const MetaItem & getVariable(const std::string & name, const Flags flags = flagIncludeBase) const;
 ```
 
-Get a constant of `name`. If the constant is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+Get a variable of `name`. If the variable is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 <a id="a4_12"></a>
-#### getConstantView
+#### getVariableView
 
 ```c++
-MetaItemView getConstantView(const Flags flags = flagIncludeBase) const;
+MetaItemView getVariableView(const Flags flags = flagIncludeBase) const;
 ```
 
-Returns a MetaItemView for all registered constants.  
+Returns a MetaItemView for all registered variables.  
 
 **Example**  
 
 ```c++
-const metapp::MetaType * metaType = metapp::getMetaType<ConClass>();
+const metapp::MetaType * metaType = metapp::getMetaType<VarClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-const metapp::MetaItem & one = metaClass->getConstant("one");
-ASSERT(one.asConstant().get<int>() == 1);
+const metapp::MetaItem & one = metaClass->getVariable("one");
+ASSERT(one.asVariable().get<int>() == 1);
 
-const metapp::MetaItem & name = metaClass->getConstant("name");
-ASSERT(name.asConstant().get<const std::string &>() == "metapp");
+const metapp::MetaItem & name = metaClass->getVariable("name");
+ASSERT(name.asVariable().get<const std::string &>() == "metapp");
 ```
 
 <a id="a4_13"></a>

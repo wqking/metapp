@@ -46,8 +46,8 @@ public:
 	const MetaItem & getCallable(const std::string & name) const;
 	MetaItemView getCallableView() const;
 
-	const MetaItem & getConstant(const std::string & name) const;
-	MetaItemView getConstantView() const;
+	const MetaItem & getVariable(const std::string & name) const;
+	MetaItemView getVariableView() const;
 
 	const MetaItem & getType(const std::string & name) const;
 	const MetaItem & getType(const TypeKind kind) const;

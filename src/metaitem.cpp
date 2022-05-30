@@ -66,9 +66,9 @@ const Variant & MetaItem::asCallable() const
 	return doGetVariant();
 }
 
-const Variant & MetaItem::asConstant() const
+const Variant & MetaItem::asVariable() const
 {
-	doCheckType(Type::constant);
+	doCheckType(Type::variable);
 	return doGetVariant();
 }
 

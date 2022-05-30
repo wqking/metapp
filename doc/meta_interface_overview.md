@@ -4,8 +4,13 @@
 
 ## Overview
 
-Meta interface is an optional way to extend `MetaType` functionalities. If a template specialization of `DeclareMetaType` implements a meta interface, for example, `MetaClass`, then the user can retrieve the interface `MetaClass` and use all functions provided in `MetaClass`. If the specialization doesn't implement such interface, the user can not use the interface, and thus there is no (almost) any overhead for the interface.  
-Note: the term "interface" here is an extended concept. It's not the "interface" concept in the traditional Object Oriented Programming.  
+Meta interface is an optional way to extend `MetaType` functionalities.
+If a template specialization of `DeclareMetaType` implements a meta interface, for example, `MetaClass`,
+then the user can retrieve the interface `MetaClass` and use all functions provided in `MetaClass`.
+If the specialization doesn't implement such interface, the user can not use the interface,
+and thus there is no (almost) any overhead for the interface.  
+Note: the term "interface" here is an extended concept. It's not the "interface" concept in the traditional
+Object Oriented Programming.  
 
 ## Get meta interface from MetaType
 
@@ -36,8 +41,9 @@ const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ## Implement meta interface
 
 We can implement meta interface in the specialization of DeclareMetaType for the type we want to declare.  
-An "implemented" meta interface is just a static function with exactly same prototype as the member functions in MetaType.  
-The static function defines a static instance of the meta interface with proper arguments to the constructor, then returns a pointer to the static instance.  
+An "implemented" meta interface is just a static function with exactly same name and prototype as the member functions in MetaType.  
+The static function defines a static object of the meta interface with proper arguments to the constructor,
+then returns a pointer to the static object.  
 A meta type can implement more than one meta interfaces.  
 The static function can be also a static function pointer, and it's assigned some elsewhere such as in the .cpp source file.
 That allows to decouple the interface implementation from the DeclareMetaType specialization.  

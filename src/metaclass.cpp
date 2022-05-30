@@ -69,14 +69,14 @@ MetaItemView MetaClass::getCallableView(const Flags flags) const
 	return doBuildMetaItemView(&MetaClass::doGetCallableList, flags);
 }
 
-const MetaItem & MetaClass::getConstant(const std::string & name, const Flags flags) const
+const MetaItem & MetaClass::getVariable(const std::string & name, const Flags flags) const
 {
-	return doFindItemByName(&MetaClass::doGetConstant, name, flags);
+	return doFindItemByName(&MetaClass::doGetVariable, name, flags);
 }
 
-MetaItemView MetaClass::getConstantView(const Flags flags) const
+MetaItemView MetaClass::getVariableView(const Flags flags) const
 {
-	return doBuildMetaItemView(&MetaClass::doGetConstantList, flags);
+	return doBuildMetaItemView(&MetaClass::doGetVariableList, flags);
 }
 
 const MetaItem & MetaClass::getType(const std::string & name, const Flags flags) const

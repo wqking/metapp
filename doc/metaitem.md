@@ -49,7 +49,7 @@ enum class MetaItem::Type {
   none,
   accessible,
   callable,
-  constant,
+  variable,
   constructor,
   metaRepo,
   metaType,
@@ -67,10 +67,10 @@ Don't check this type, use `isEmpty()` instead.
 The item is an accessible that implements MetaAccessible meta interface.  
 
 **MetaItem::Type::callable**  
-The item is an callable that implements MetaCallable meta interface.  
+The item is a callable that implements MetaCallable meta interface.  
 
-**MetaItem::Type::constant**  
-The item is an constant.  
+**MetaItem::Type::variable**  
+The item is a variable.  
 
 **MetaItem::Type::constructor**  
 The item is a constructor.
@@ -109,7 +109,7 @@ Returns the name. If the item doesn't have name, returns empty string.
 ```c++
 const Variant & asAccessible() const;
 const Variant & asCallable() const;
-const Variant & asConstant() const;
+const Variant & asVariable() const;
 const Variant & asConstructor() const;
 const MetaType * asMetaType() const;
 const MetaRepo * asMetaRepo() const;

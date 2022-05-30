@@ -50,8 +50,8 @@ public:
 	const MetaItem & getCallable(const std::string & name, const Flags flags = flagIncludeBase) const;
 	MetaItemView getCallableView(const Flags flags = flagIncludeBase) const;
 
-	const MetaItem & getConstant(const std::string & name, const Flags flags = flagIncludeBase) const;
-	MetaItemView getConstantView(const Flags flags = flagIncludeBase) const;
+	const MetaItem & getVariable(const std::string & name, const Flags flags = flagIncludeBase) const;
+	MetaItemView getVariableView(const Flags flags = flagIncludeBase) const;
 
 	const MetaItem & getType(const std::string & name, const Flags flags = flagIncludeBase) const;
 	const MetaItem & getType(const TypeKind kind, const Flags flags = flagIncludeBase) const;

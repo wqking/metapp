@@ -7,7 +7,7 @@
 * [MetaRepo member functions for registering meta data](#a2_3)
   * [registerAccessible](#a4_1)
   * [registerCallable](#a4_2)
-  * [registerConstant](#a4_3)
+  * [registerVariable](#a4_3)
   * [registerType](#a4_4)
   * [registerRepo, simulate namespace](#a4_5)
 * [MetaRepo member functions for retrieving meta data](#a2_4)
@@ -15,8 +15,8 @@
   * [getAccessibleView](#a4_7)
   * [getCallable](#a4_8)
   * [getCallableView](#a4_9)
-  * [getConstant](#a4_10)
-  * [getConstantView](#a4_11)
+  * [getVariable](#a4_10)
+  * [getVariableView](#a4_11)
   * [getType by name](#a4_12)
   * [getType by type kind](#a4_13)
   * [getType by MetaType](#a4_14)
@@ -69,8 +69,10 @@ program has.
 MetaItem & registerAccessible(const std::string & name, const Variant & field);
 ```
 
-Register an accessible (global variable).
-The parameter `name` is the accessible name. The accessible can be got from the MetaRepo by the name later. If a accessible with the same name has already registered, `registerAccessible` doesn't register the new accessible and returns the previous registered field.  
+Register an accessible.
+The parameter `name` is the accessible name. The accessible can be got from the MetaRepo by the name later.
+If a accessible with the same name has already registered, `registerAccessible` doesn't register the new accessible
+and returns the previous registered field.  
 The parameter `accessible` is a Variant of MetaType that implements meta interface `MetaAccessible`.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
@@ -86,16 +88,23 @@ The parameter `callable` is a Variant of MetaType that implements meta interface
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
 <a id="a4_3"></a>
-#### registerConstant
+#### registerVariable
 
 ```c++
-MetaItem & registerConstant(const std::string & name, const Variant & constant);
+MetaItem & registerVariable(const std::string & name, const Variant & variable);
 ```
 
-Register a constant.  
-The parameter `name` is the constant name.  
-The parameter `constant` is a Variant of any value.  
+Register a variable.  
+The parameter `name` is the variable name.  
+The parameter `variable` is a Variant of any value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
+
+The difference between `accessible` and `variable` is, an `accessible` must implement meta interface `MetaAccessible`, while
+a `variable` can be any value. How to use a `variable` is up to the user.  
+The best practice to decide when to use `accessible` or `variable` is, when a Variant will be got/set value via an accessible
+such as a pointer to a variable, register it as `accessible`. If a Variant's value is not going to change, such as a constant,
+register it as `variable`.  
+Note: I'm not satisfied with the term `variable`. I've thought about constant, object, value, item, element, but none is satisfying.
 
 <a id="a4_4"></a>
 #### registerType
@@ -167,19 +176,19 @@ MetaItemView getCallableView() const;
 Returns a MetaItemView for all registered callables.  
 
 <a id="a4_10"></a>
-#### getConstant
+#### getVariable
 
 ```c++
-const MetaItem & getConstant(const std::string & name) const;
+const MetaItem & getVariable(const std::string & name) const;
 ```
 
-Get a constant of `name`. If the constant is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+Get a variable of `name`. If the variable is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
 <a id="a4_11"></a>
-#### getConstantView
+#### getVariableView
 
 ```c++
-MetaItemView getConstantView() const;
+MetaItemView getVariableView() const;
 ```
 
 Returns a MetaItemView for all registered constants.  

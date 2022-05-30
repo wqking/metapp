@@ -47,7 +47,7 @@ public:
 
 	MetaItem & registerCallable(const std::string & name, const Variant & callable);
 
-	MetaItem & registerConstant(const std::string & name, const Variant & constant);
+	MetaItem & registerVariable(const std::string & name, const Variant & variable);
 
 	template <typename T>
 	MetaItem & registerType(const std::string & name = "") {
@@ -100,8 +100,8 @@ protected:
 	const MetaItem & doGetCallable(const std::string & name) const;
 	const MetaItemList & doGetCallableList() const;
 
-	const MetaItem & doGetConstant(const std::string & name) const;
-	const MetaItemList & doGetConstantList() const;
+	const MetaItem & doGetVariable(const std::string & name) const;
+	const MetaItemList & doGetVariableList() const;
 
 	const MetaItem & doGetType(const std::string & name) const;
 	const MetaItem & doGetType(const TypeKind kind) const;

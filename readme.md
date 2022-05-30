@@ -518,6 +518,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 - Miscellaneous
   - [About documentations](doc/about_document.md)
   - [Use metapp in dynamic library](doc/dynamic_library.md)
+  - [Infrequently Asked Questions](doc/faq.md)
 
 <a id="a2_7"></a>
 ## Build the test code
