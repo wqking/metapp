@@ -62,13 +62,13 @@ MetaAccessible(
 All arguments are function pointers. All pointers must point to valid function.  
 The meaning of each functions are same as the member functions listed below.
 
-## MetaIterable member functions
+## MetaAccessible member functions
 
 The first parameter in all of the member functions is `const Variant & accessible`.
-It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`.
+It's the Variant which meta type implements `MetaAccessible`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
-We can treat `accessible` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`accessible` can be a value, a reference, or a pointer.  
+We can treat `accessible` as the C++ object instance which class implements an interface called `MetaAccessible`.  
+Variant `accessible` can be value or reference.  
 
 #### getValueType
 

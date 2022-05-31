@@ -33,6 +33,7 @@ class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
 class MetaMappable;
+class MetaPointerWrapper;
 
 template <typename T, typename Enabled = void>
 struct DeclareMetaType;
@@ -58,7 +59,8 @@ static constexpr MetaInterfaceKind mikMetaIndexable = (mikStart << 4);
 static constexpr MetaInterfaceKind mikMetaIterable = (mikStart << 5);
 static constexpr MetaInterfaceKind mikMetaStreaming = (mikStart << 6);
 static constexpr MetaInterfaceKind mikMetaMappable = (mikStart << 7);
-static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 8);
+static constexpr MetaInterfaceKind mikMetaPointerWrapper = (mikStart << 8);
+static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 9);
 
 static constexpr uint32_t metaInterfaceCountMask = 0xff;
 
@@ -179,7 +181,7 @@ struct MakeMetaInterfaceItem_MetaStreaming
 	}
 };
 
-struct MakeMetaInterfaceItem_MetaMap
+struct MakeMetaInterfaceItem_MetaMappable
 {
 	static constexpr MetaInterfaceKind kind = mikMetaMappable;
 
@@ -190,6 +192,21 @@ struct MakeMetaInterfaceItem_MetaMap
 		return {
 			kind,
 			(MetaInterfaceGetter)M::getMetaMappable
+		};
+	}
+};
+
+struct MakeMetaInterfaceItem_MetaPointerWrapper
+{
+	static constexpr MetaInterfaceKind kind = mikMetaPointerWrapper;
+
+	template <typename T>
+	static constexpr MetaInterfaceItem make() {
+		using M = DeclareMetaType<T>;
+
+		return {
+			kind,
+			(MetaInterfaceGetter)M::getMetaPointerWrapper
 		};
 	}
 };
@@ -223,7 +240,8 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem_MetaIndexable,
 		MakeMetaInterfaceItem_MetaIterable,
 		MakeMetaInterfaceItem_MetaStreaming,
-		MakeMetaInterfaceItem_MetaMap,
+		MakeMetaInterfaceItem_MetaMappable,
+		MakeMetaInterfaceItem_MetaPointerWrapper,
 		MakeMetaInterfaceItem_MetaUser
 		>,
 		BoolConstantList<
@@ -235,6 +253,7 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaIterable<M>::value,
 		HasMember_getMetaStreaming<M>::value,
 		HasMember_getMetaMappable<M>::value,
+		HasMember_getMetaPointerWrapper<M>::value,
 		HasMember_getMetaUser<M>::value
 		>
 	>::Type;

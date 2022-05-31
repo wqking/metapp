@@ -19,6 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/interfaces/metaaccessible.h"
+#include "metapp/interfaces/metapointerwrapper.h"
 #include "metapp/implement/internal/util_i.h"
 
 #include <memory>
@@ -32,7 +33,6 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdUniquePtr;
-	static constexpr TypeFlags typeFlags = tfPointerWrapper;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
 		if(toMetaType->isPointer()) {
@@ -56,6 +56,15 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 		return &metaAccessible;
 	}
 
+	static const MetaPointerWrapper * getMetaPointerWrapper() {
+		static MetaPointerWrapper metaPointerWrapper(
+			&pointerWrapperGetPointer,
+			&pointerWrapperSetPointer
+		);
+		return &metaPointerWrapper;
+	}
+
+private:
 	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}
@@ -72,6 +81,16 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 		internal_::verifyVariantWritable(accessible);
 
 		internal_::assignValue(*(accessible.get<UniquePtr &>()), value.cast<T>().template get<const T &>());
+	}
+
+	static Variant pointerWrapperGetPointer(const Variant & pointerWrapper)
+	{
+		return pointerWrapper.get<UniquePtr &>().get();
+	}
+
+	static void pointerWrapperSetPointer(const Variant & pointerWrapper, const Variant & pointer)
+	{
+		pointerWrapper.get<UniquePtr &>().reset(pointer.get<T *>());
 	}
 
 };

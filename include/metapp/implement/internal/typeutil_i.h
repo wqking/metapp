@@ -121,6 +121,7 @@ METAPP_HAS_MEMBER(getMetaIndexable);
 METAPP_HAS_MEMBER(getMetaIterable);
 METAPP_HAS_MEMBER(getMetaStreaming);
 METAPP_HAS_MEMBER(getMetaMappable);
+METAPP_HAS_MEMBER(getMetaPointerWrapper);
 METAPP_HAS_MEMBER(getMetaUser);
 
 METAPP_HAS_MEMBER(constructData);

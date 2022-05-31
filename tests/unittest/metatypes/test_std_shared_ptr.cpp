@@ -57,7 +57,6 @@ TEST_CASE("metatypes, std::shared_ptr<std::string>, MetaAccessible")
 	std::shared_ptr<std::string> sp = std::make_shared<std::string>("good");
 	metapp::Variant v(sp);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdSharedPtr);
-	REQUIRE(v.getMetaType()->isPointerWrapper());
 	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
 	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
 	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());

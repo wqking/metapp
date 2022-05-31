@@ -42,6 +42,7 @@ class MetaIndexable;
 class MetaIterable;
 class MetaStreaming;
 class MetaMappable;
+class MetaPointerWrapper;
 
 template <typename T>
 constexpr const MetaType * getMetaType();
@@ -158,10 +159,6 @@ public:
 		return isIntegral() || isFloat();
 	}
 
-	constexpr bool isPointerWrapper() const noexcept {
-		return typeFlags & tfPointerWrapper;
-	}
-
 	constexpr Constness getConstness() const noexcept {
 		return Constness(typeFlags);
 	}
@@ -198,6 +195,10 @@ public:
 		return static_cast<const MetaMappable *>(unifiedType->getMetaInterface(internal_::mikMetaMappable));
 	}
 
+	const MetaPointerWrapper * getMetaPointerWrapper() const {
+		return static_cast<const MetaPointerWrapper *>(unifiedType->getMetaInterface(internal_::mikMetaPointerWrapper));
+	}
+
 	const void * getMetaUser() const {
 		return static_cast<const void *>(unifiedType->getMetaInterface(internal_::mikMetaUser));
 	}
@@ -232,6 +233,10 @@ public:
 
 	bool hasMetaMappable() const {
 		return unifiedType->hasMetaInterface(internal_::mikMetaMappable);
+	}
+
+	bool hasMetaPointerWrapper() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaPointerWrapper);
 	}
 
 	bool hasMetaUser() const {

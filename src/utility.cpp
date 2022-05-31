@@ -18,6 +18,7 @@
 #include "metapp/typekind.h"
 #include "metapp/metarepo.h"
 #include "metapp/interfaces/metaaccessible.h"
+#include "metapp/interfaces/metapointerwrapper.h"
 
 namespace metapp {
 
@@ -52,8 +53,8 @@ void * getPointer(const Variant & var)
 	if(metaType->isPointer()) {
 		return var.get<void *>();
 	}
-	if(metaType->isPointerWrapper()) {
-		return getPointer(metaType->getMetaAccessible()->get(var, nullptr));
+	if(metaType->hasMetaPointerWrapper()) {
+		return metaType->getMetaPointerWrapper()->getPointer(var).get<void *>();
 	}
 	return var.getAddress();
 }
@@ -64,7 +65,7 @@ const MetaType * getPointedType(const Variant & var)
 	if(metaType->isPointer()) {
 		return metaType->getUpType();
 	}
-	if(metaType->isPointerWrapper()) {
+	if(metaType->hasMetaPointerWrapper() && metaType->hasMetaAccessible()) {
 		return metaType->getMetaAccessible()->getValueType(var);
 	}
 	return metaType;
@@ -76,7 +77,7 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var)
 	if(metaType->isPointer()) {
 		return std::make_pair(var.get<void *>(), metaType->getUpType());
 	}
-	if(metaType->isPointerWrapper()) {
+	if(metaType->hasMetaPointerWrapper() && metaType->hasMetaAccessible()) {
 		auto metaAccessible = metaType->getMetaAccessible();
 		return std::make_pair(
 			metaAccessible->get(var, nullptr).getAddress(),
@@ -92,7 +93,7 @@ Variant depointer(const Variant & var)
 	if(metaType->isPointer()) {
 		return metaType->getMetaAccessible()->get(var, nullptr);
 	}
-	if(metaType->isPointerWrapper()) {
+	if(metaType->hasMetaPointerWrapper() && metaType->hasMetaAccessible()) {
 		return metaType->getMetaAccessible()->get(var, nullptr);
 	}
 	return var;

@@ -49,7 +49,6 @@ TEST_CASE("metatypes, std::unique_ptr<std::string>, MetaAccessible")
 	PTR up(new std::string("good"));
 	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdUniquePtr);
-	REQUIRE(v.getMetaType()->isPointerWrapper());
 	REQUIRE(metapp::accessibleGetClassType(v)->isVoid());
 	REQUIRE(metapp::accessibleGetValueType(v)->equal(metapp::getMetaType<std::string>()));
 	REQUIRE(metapp::accessibleGetValueType(v) == metapp::getMetaType<std::string>());

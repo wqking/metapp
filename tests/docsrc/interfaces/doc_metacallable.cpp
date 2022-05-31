@@ -116,8 +116,8 @@ The calling arguments count must be,
 `minParameterCount <= argument count <= maxParameterCount`.  
 For most callables, `minParameterCount` equals to `maxParameterCount`.  
 For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
-'minParameterCount' is the minimum argument count of the overloaded fucntions.
-'maxParameterCount' is the maximum argument count of the overloaded fucntions.  
+'minParameterCount' is the minimum argument count of the overloaded functions.
+'maxParameterCount' is the maximum argument count of the overloaded functions.  
 For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
 is the number of all arguments, including both non-default and default arguments.  
 For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
@@ -151,7 +151,8 @@ The return value is positive number or zero.
 If the return value is 0, then the arguments can't be used to invoke the callable.
 Otherwise, the larger the return value, the more matching.  
 
-Parameter `instance` is the object instance if `callable` is a class member function.
+Parameter `instance` is the object instance if `callable` is a class member function. `instance` can be value, pointer, or
+smart pointer.
 If `callable` is a member function, and the constness of `instance` can't access `callable`
 (for example, `instance` is a pointer to const, while `callable` is a non-const member function),
 the rank is 0, value 0 is returned, and the `arguments` are not checked.  
@@ -160,6 +161,9 @@ If `callable` is not a member function, `instance` is ignored.
 
 Parameter `arguments` is an `ArgumentSpan` object. It's used to pass the arguments. For details, please see the section
 for `ArgumentSpan` in this document.  
+
+For implementor: we may get the actual pointer from `instance` by using `metapp::getPointer`, get the pointed type
+by using `metapp::getPointedType`. See the document for `utility.h` for more details.
 
 #### canInvoke
 
@@ -196,9 +200,9 @@ The definition of `ArgumentSpan` is `metapp::span<const Variant>`.
 `metapp::span` is alias of `std::span` which is a feature in C++20.
 If the compiler doesn't support C++20, a C++11 equivalent third party library is used (github.com/tcbrindle/span).  
 That's to say, `ArgumentSpan` doesn't require C++20, it can be used in C++11.  
-In this document, the term `std::span` is exchangable with `metapp::span`.  
+In this document, the term `std::span` is exchangeable with `metapp::span`.  
 
-In case you are not familar with `std::span`, here is a quick summary how to use `ArgumentSpan`.  
+In case you are not familiar with `std::span`, here is a quick summary how to use `ArgumentSpan`.  
 `ArgumentSpan` refers to a contiguous sequence of `Variant`, which is the arguments passed to the callable.
 The first argument in `ArgumentSpan` is passed as the left-most argument. Below is some sample code,  
 desc*/
@@ -234,7 +238,7 @@ ExampleFunc
 	auto simulateUnknowSizeArray = [&myCallable, &metaCallable](metapp::Variant argumentsD[]) {
 		// Won't compile, argumentsD has unknown size.
 		//ASSERT(metaCallable->invoke(myCallable, nullptr, argumentsD).get<const std::string &>() == "d8");
-		// Compiles, we pass the size explicityly.
+		// Compiles, we pass the size explicitly.
 		ASSERT(metaCallable->invoke(myCallable, nullptr, { argumentsD, 2 }).get<const std::string &>() == "d8");
 	};
 	simulateUnknowSizeArray(temp);
