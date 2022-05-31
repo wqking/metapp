@@ -2,14 +2,46 @@
 
 # Infrequently Asked Questions
 
+#### metapp doesn't recognize the built-in types such as int, it give type kind `tkObject` instead of `tkInt` for int.
+
+Your forget to `#include "metapp/allmetatypes.h"`. The header needs to be included where ever `metapp` is used.
+
+#### When getting meta interface from a MetaType, I need to check if it's reference and skip the reference, that's cumbersome.
+
+The utility function `getNonReferenceMetaType` is our friend. The function will get the referred type if the meta type
+is a reference, otherwise it returns the meta type directly. Example code,
+
+```c++
+//Include the header for `getNonReferenceMetaType`
+#include "metapp/utilities/utility.h"
+```
+
+```c++
+const metapp::MetaType * metaType = metapp::getMetaType<Foo>();
+
+// Good
+const metapp::MetaClass * metaClass = metapp::getNonReferenceMetaType(metaType)->getMetaClass();
+
+// Bad, it's verbose and the logic is duplicated everywhere
+const metapp::MetaClass * metaClass;
+if(metaType->isReference()) {
+  metaClass = metaType->getUpType()->getMetaClass();
+}
+else {
+  metaClass = metaType->getMetaClass();
+}
+
+// Worse, don't do it. There is no MetaClass on a reference.
+const metapp::MetaClass * metaClass = metaType->getMetaClass();
+```
+
 #### What's the difference between metapp and the compile time reflection feature in coming C++ standard?
 
 metapp is runtime reflection. A program runs almost all time at "running time". With metapp, we can
 get type information from dynamical libraries, or bind meta data to script engine, or get property data
 from external file to use in a GUI property editor. Those are not easy to do at compile time.  
 
-#### When a Variant holds a container such as std::vector or std::map, isn't convenient to use array operator []
-to access the elements?
+#### When a Variant holds a container such as std::vector or std::map, isn't convenient to use array operator [] to access the elements?
 
 For example, `someVariant[1] = 5`.  
 The problem is, metapp supports `MetaIndexable` and `MetaMappable`, both of which allow to array style access.  
@@ -29,5 +61,5 @@ mc.versatileRegister(&MyClass::getName); // register as callable
 ```
 
 The problem is, it's quite confusing and error prone. How to register a Variant that implements both MetaCallable and MetaAccessible?
-`versatileRegister` may register it in wrong type without noticable error.  
+`versatileRegister` may register it in wrong type without noticeable error.  
 The API should be clear, less confusing, less implicitly operations.

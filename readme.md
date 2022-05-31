@@ -24,7 +24,8 @@
 * [Motivations](#a2_9)
 <!--endtoc-->
 
-metapp is a cross platform C++ library that adds powerful reflection feature to C++.  
+metapp is a cross platform C++ library that adds reflection feature to C++.  
+metapp is light weight, powerful, and unique.
 
 <a id="a2_1"></a>
 ## Highlight features
@@ -38,9 +39,9 @@ or `std::string`, or another container.
 - **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
 then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
 even `std::vector<std::list<std::vector<std::string> > >`.
-- **Mimic C++ reference extensively for better performance.** For example, when getting a property (accessible, in metapp term) value,
+- **Mimic C++ reference extensively for better performance.** For example, when getting a property value,
 or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
-value is referenced instead of copying, so the performance cost is kept as minimum as possible.
+value is referenced instead of copied, so the memory and performance cost is kept as minimum as possible.
 
 <a id="a2_2"></a>
 ## Facts and features
