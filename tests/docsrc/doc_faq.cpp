@@ -21,11 +21,11 @@
 /*desc
 # Infrequently Asked Questions
 
-#### metapp doesn't recognize the built-in types such as int, it give type kind `tkObject` instead of `tkInt` for int.
+### metapp doesn't recognize the built-in types such as int, it give type kind `tkObject` instead of `tkInt` for int.
 
 Your forget to `#include "metapp/allmetatypes.h"`. The header needs to be included where ever `metapp` is used.
 
-#### When getting meta interface from a MetaType, I need to check if it's reference and skip the reference, that's cumbersome.
+### When getting meta interface from a MetaType, I need to check if it's reference and skip the reference, that's cumbersome.
 
 The utility function `getNonReferenceMetaType` is our friend. The function will get the referred type if the meta type
 is a reference, otherwise it returns the meta type directly. Example code,
@@ -67,13 +67,20 @@ ExampleFunc
 }
 
 /*desc
-#### What's the difference between metapp and the compile time reflection feature in coming C++ standard?
+### How can I convert a Variant of pointer to non-pointer?
+
+The first argument in some meta interface functions, such as `MetaAccessible::get/set`, `MetaCallable::invoke`, the first argument
+is a Variant that requires to be either value or reference, but not pointer.
+If we have a pointer and want to convert it to non-pointer so that we can pass it to those functions, we can
+call function `depointer` in `utility.h` to covert it to non-pointer.
+
+### What's the difference between metapp and the compile time reflection feature in coming C++ standard?
 
 metapp is runtime reflection. A program runs almost all time at "running time". With metapp, we can
 get type information from dynamical libraries, or bind meta data to script engine, or get property data
 from external file to use in a GUI property editor. Those are not easy to do at compile time.  
 
-#### When a Variant holds a container such as std::vector or std::map, isn't convenient to use array operator [] to access the elements?
+### When a Variant holds a container such as std::vector or std::map, isn't convenient to use array operator [] to access the elements?
 
 For example, `someVariant[1] = 5`.  
 The problem is, metapp supports `MetaIndexable` and `MetaMappable`, both of which allow to array style access.  
@@ -83,7 +90,7 @@ abuse using the `[]` operator.
 Also, most likely metapp will support operators in meta type in the future, then that will conflict if `Variant` supports `[]`
 specially for now.
 
-#### To register meta data in MetaRepo and MetaClass, there are different functions such as registerAccessible, registerCallable, registerConstructor, etc, can't we make a single registering function that detects the meta data type automatically?
+### To register meta data in MetaRepo and MetaClass, there are different functions such as registerAccessible, registerCallable, registerConstructor, etc, can't we make a single registering function that detects the meta data type automatically?
 
 Yes it's possible, we can make a function, such as `versatileRegister`, then we can write,  
 

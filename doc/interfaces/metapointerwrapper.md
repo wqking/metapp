@@ -64,7 +64,7 @@ The first parameter in all of the member functions is `const Variant & pointerWr
 It's the Variant which meta type implements `MetaPointerWrapper`, and hold the proper data such as `std::shared_ptr`.
 The member functions operate on the data.  
 We can treat `pointerWrapper` as the C++ object instance which class implements an interface called `MetaPointerWrapper`.  
-Variant `pointerWrapper` can be value or reference.  
+Variant `pointerWrapper` can be value that implements `MetaPointerWrapper`, or reference that refers to value that implements `MetaPointerWrapper`.  
 
 <a id="a4_1"></a>
 #### getPointer

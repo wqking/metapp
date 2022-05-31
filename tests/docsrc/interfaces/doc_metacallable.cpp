@@ -73,7 +73,7 @@ The first parameter in all of the member functions is `const Variant & callable`
 It's the Variant which meta type implements `MetaCallable`, and hold the proper data such as function pointer.
 The member functions operate on the data.  
 We can treat `callable` as the C++ object instance which class implements an interface called `MetaCallable`.  
-`callable` can be a value, a reference, or a pointer.  
+Variant `callable` can be value that implements `MetaCallable`, or reference that refers to value that implements `MetaCallable`.  
 
 #### getClassType
 

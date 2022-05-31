@@ -72,8 +72,7 @@ The first parameter in all of the member functions is `const Variant & indexable
 It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
 We can treat `indexable` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-`indexable` can be a value, a reference. If it's pointer or smart pointer, you should call `metapp::depointer`
-to convert it to non-pointer. 
+Variant `indexable` can be value that implements `MetaIndexable`, or reference that refers to value that implements `MetaIndexable`.  
 
 For the functions that have parameter `index`, the functions don't do bound checking on `index`.
 It's the caller's responsibility to be sure the `index` is valid.

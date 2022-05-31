@@ -67,8 +67,7 @@ The first parameter in all of the member functions is `const Variant & mappable`
 It's the Variant which meta type implements `MetaMappable`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
 We can treat `mappable` as the C++ object instance which class implements an interface called `MetaMappable`.  
-`mappable` can be a value, a reference. If it's pointer or smart pointer, you should call `metapp::depointer`
-to convert it to non-pointer. 
+Variant `mappable` can be value that implements `MetaMappable`, or reference that refers to value that implements `MetaMappable`.  
 
 #### getValueType
 

@@ -70,7 +70,7 @@ The first parameter in all of the member functions is `const Variant & accessibl
 It's the Variant which meta type implements `MetaAccessible`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
 We can treat `accessible` as the C++ object instance which class implements an interface called `MetaAccessible`.  
-Variant `accessible` can be value or reference.  
+Variant `accessible` can be value that implements `MetaAccessible`, or reference that refers to value that implements `MetaAccessible`.  
 
 <a id="a4_1"></a>
 #### getValueType
@@ -121,6 +121,12 @@ For member data pointer `T C::*`, `instance` is used to access the value in the 
 constness as the `instance`. For example, if `instance` is a const object, or pointer to const object, the returned Variant
 is a referent to const value. The same for `volatile` and `const volatile`.  
 For Accessor, `instance` is passed to the accessor. The returned Variant is the value get from the accessor.  
+`instance` can be value, reference, pointer, `std::shared_ptr`, `std::unique_ptr`, etc.  
+
+For implementor: we may get the actual pointer from `instance` by using `metapp::getPointer`, get the pointed type
+by using `metapp::getPointedType`. See the document for `utility.h` for more details.  
+
+For implementor: the returned Variant should be reference whenever possible to reduce performance and memory cost.
 
 <a id="a4_5"></a>
 #### set

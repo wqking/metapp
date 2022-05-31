@@ -40,6 +40,10 @@ See [Built-in meta types document](metatypes/list_all.md) for a list of built-in
 
 `metapp::Variant` allows to store data of any type. `Variant` = `MetaType` + data instance.  
 `Variant` is used extensively in metapp library.  
+`Variant` can hold any data types. `Variant` can hold value or object that the value or object is copied to `Variant` internal memory.
+The value or object can be any type, such as int, bool, containers, smart pointers, etc.  
+`Variant` can hold pointer that the pointer points to memory that's out side the `Variant`. `Variant` can also hold
+reference that the reference refers to memory that's out of the `Variant`.
 
 ## MetaType - the core meta type
 
@@ -211,5 +215,11 @@ The term "accessible" is used for "field" or "property" in other reflection syst
 
 "Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`.
 The term "callable" is used for "method" or "function" in other reflection system.
+
+## Value, object, pointer, reference
+
+When the terms `value`, `object`, `pointer`, `reference` are used for Variant in the documents, most time they mean
+that the Variant holds a value, object, pointer, or reference, not that the Variant is a `const Variant &` (for reference), etc.  
+Just don't be confused with terms.
 
 desc*/
