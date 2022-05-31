@@ -2,7 +2,8 @@
 
 ## How the documentations are written
 
-The documentations are written in a novel way. The documentations are written in C++ source, in form of C++ comment. The sample code is real C++ code which is compilable and runnable. When converting the C++ source file to document file, the comments are converted to markdown description, and the sample code is also converted to markdown code block.  
+The documentations are written in a novel way. The documentations are written in C++ source, in form of C++ comment.
+The sample code is real C++ code which is compilable and runnable. When converting the C++ source file to document file, the comments are converted to markdown description, and the sample code is also converted to markdown code block.  
 That's to say, most sample code in the documents are compilable and runnable.
 
 ## How to generate documentations

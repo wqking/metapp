@@ -83,7 +83,7 @@ metapp::MetaRepo metaRepo;
 To get meta data from MetaRepo, we must register meta data first.  
 
 Register an accessible. An accessible is any meta type that implements meta interface `MetaAccessible`.  
-Currently the built-in meta type pointer, memember data pointer, and `metapp::Accessor` implement `MetaAccessible`.  
+Currently the built-in meta type pointer, member data pointer, and `metapp::Accessor` implement `MetaAccessible`.  
 The second argument in `registerAccessible` is a `metapp::Variant`. Any data can be casted to `metapp::Variant`
 implicitly, so we don't need to specify `metapp::Variant` explicitly.
 

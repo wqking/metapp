@@ -394,7 +394,7 @@ The first meta type is always `classMetaType`. That's to say, even if there is n
 be invoked with `classMetaType`.  
 `callback` prototype is `bool callback(const MetaType * metaType)`. The argument `metaType` is the class current traversing at.
 If `callback` returns false, the traversing stops.  
-`traverseBases` returns true if all calles on `callback` returns true, returns false if all calles on `callback` returns false.
+`traverseBases` returns true if all calls on `callback` returns true, returns false if all calls on `callback` returns false.
 
 <a id="a2_6"></a>
 ## Class MetaRepoList
@@ -447,4 +447,4 @@ Similar to `MetaRepo::traverseBases`, this function finds the `MetaRepo` in whic
 is registered using `MetaRepo::registerBase`, then call `MetaRepo::traverseBases` on the found `MetaRepo`.  
 If no `MetaRepo` is found, `callback` is invoked with `classMetaType` as if there is no any base classes.  
 If `callback` returns false, the traversing stops.  
-`traverseBases` returns true if all calles on `callback` returns true, returns false if all calles on `callback` returns false.
+`traverseBases` returns true if all calls on `callback` returns true, returns false if all calls on `callback` returns false.

@@ -383,13 +383,13 @@ We can also use std::list. Any value can convert to Variant implicitly, so we ca
 ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
 ```
 
-Isn't cool we can use std::pair as a constainer?
+Isn't cool we can use std::pair as a container?
 
 ```c++
 ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 ```
 
-std::tuple is suppported too, and we can use heterogeneous types.
+std::tuple is supported too, and we can use heterogeneous types.
 
 ```c++
 ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");

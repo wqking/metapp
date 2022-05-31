@@ -325,9 +325,9 @@ ExampleFunc
 	//desc We can also use std::list. Any value can convert to Variant implicitly, so we can pass the container std::list on the fly.
 	ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
 
-	//desc Isn't cool we can use std::pair as a constainer?
+	//desc Isn't cool we can use std::pair as a container?
 	ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
-	//desc std::tuple is suppported too, and we can use heterogeneous types.
+	//desc std::tuple is supported too, and we can use heterogeneous types.
 	ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
 
 	//desc we can even pass a pointer to the container to `concat`.

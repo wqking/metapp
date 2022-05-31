@@ -326,7 +326,7 @@ The instance can be constructed by `construct` or `copyConstruct`, or constructe
 void dtor(void * instance) const;
 ```
 
-Invoke the destructor but don'tfree the memory.  
+Invoke the destructor but don't free the memory.  
 This is useful to destruct the object constructed by `placementConstruct` or `placementCopyConstruct`.  
 
 <a id="a4_17"></a>

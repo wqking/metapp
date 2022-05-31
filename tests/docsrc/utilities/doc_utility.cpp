@@ -200,7 +200,7 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 ```
 
 Returns both the pointer and pointed type in one function.  
-It's sligher better performance than calling `getPointer` and `getPointedType` respectively.  
+It's slighter better performance than calling `getPointer` and `getPointedType` respectively.  
 
 #### selectOverload
 

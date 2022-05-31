@@ -127,7 +127,7 @@ const Variant & getTarget() const;
 ```
 
 Return the underlying Variant of the meta item. It doesn't check if the type matches, and it doesn't convert the data
-to approperiate type such as `const MetaRepo *`.  
+to appropriate type such as `const MetaRepo *`.  
 
 <a id="a4_6"></a>
 #### Implicitly type convert
@@ -181,7 +181,7 @@ or indicate a property should be hidden from the editor.
 const Variant & getAnnotation(const std::string & name) const;
 ```
 
-Returns the annotaion for `name`. If `name` is not registered, an empty Variant is returned (Variant::isEmpty() is true).
+Returns the annotation for `name`. If `name` is not registered, an empty Variant is returned (Variant::isEmpty() is true).
 
 <a id="a4_9"></a>
 #### getAllAnnotations

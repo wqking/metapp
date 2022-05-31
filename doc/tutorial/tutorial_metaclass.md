@@ -235,7 +235,7 @@ If the MetaType doesn't implement MetaClass, the return value is nullptr.
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
-Declare an instace of TmClass, we will use the field meta data to access its member data.
+Declare an instance of TmClass, we will use the field meta data to access its member data.
 
 ```c++
 TmClass obj;

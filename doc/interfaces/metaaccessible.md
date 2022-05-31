@@ -102,9 +102,9 @@ const MetaType * getClassType(const Variant & accessible);
 
 Returns the meta type of the class that the accessible belongs to, or to say, the class declares the accessible. 
 If the function returns meta type of `void` (MetaType::isVoid() is true), the accessible doesn't belong to any class,
-or the accessible is a static member. When getting/setting value in the accessble, the `instance` can be nullptr.  
+or the accessible is a static member. When getting/setting value in the accessible, the `instance` can be nullptr.  
 If the function returns non-void meta type, the accessible belongs to the class of the meta type.
-When getting/setting value in the accessble, the `instance` must be pointer to a valid object.  
+When getting/setting value in the accessible, the `instance` must be pointer to a valid object.  
 
 <a id="a4_4"></a>
 #### get
@@ -138,7 +138,7 @@ Set a new value.
 bool isStatic(const Variant & accessible) const;
 ```
 
-Returns true if the accessible is static or non-member, false if the accessbile is class member.  
+Returns true if the accessible is static or non-member, false if the accessible is class member.  
 The function is equivalent to `return getClassType(accessible)->isVoid();`.  
 
 <a id="a2_7"></a>

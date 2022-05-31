@@ -2,7 +2,7 @@
 
 # Meta type default arguments function (tkDefaultArgsFunction)
 
-Template `metapp::DefaultArgsFunction` is used to create a defautl arguments function.  
+Template `metapp::DefaultArgsFunction` is used to create a default arguments function.  
 
 ```c++
 template <typename FT>

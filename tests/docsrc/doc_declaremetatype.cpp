@@ -241,7 +241,7 @@ and implement `cast` for the cast-able types. If `Integer` can't cast to any typ
 in the example code, it ignores the type and it doesn't cause compile error.  
 `metapp::CastFromTypes` is similar. It checks if the first parameter can cast from any type in the `TypeList`,
 and ignores any types that is not castFrom-able.  
-If `Integer` can cast to and cast from the same types, we can use `CastFromToTypes` to make the code shorter, for exmaple,  
+If `Integer` can cast to and cast from the same types, we can use `CastFromToTypes` to make the code shorter, for example,  
 
 ```c++
 template <>

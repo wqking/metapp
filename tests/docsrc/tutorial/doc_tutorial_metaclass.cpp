@@ -231,7 +231,7 @@ TEST_CASE("tutorialMetaClass_accessible")
 	//desc If the MetaType doesn't implement MetaClass, the return value is nullptr.
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	//desc Declare an instace of TmClass, we will use the field meta data to access its member data.
+	//desc Declare an instance of TmClass, we will use the field meta data to access its member data.
 	TmClass obj;
 
 	//desc Get the meta data of field "value".
