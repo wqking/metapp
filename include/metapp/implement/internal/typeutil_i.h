@@ -119,7 +119,7 @@ METAPP_HAS_MEMBER(getMetaAccessible);
 METAPP_HAS_MEMBER(getMetaEnum);
 METAPP_HAS_MEMBER(getMetaIndexable);
 METAPP_HAS_MEMBER(getMetaIterable);
-METAPP_HAS_MEMBER(getMetaStreaming);
+METAPP_HAS_MEMBER(getMetaStreamable);
 METAPP_HAS_MEMBER(getMetaMappable);
 METAPP_HAS_MEMBER(getMetaPointerWrapper);
 METAPP_HAS_MEMBER(getMetaUser);

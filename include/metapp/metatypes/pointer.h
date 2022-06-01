@@ -20,7 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaaccessible.h"
-#include "metapp/interfaces/bases/metastreamingbase.h"
+#include "metapp/interfaces/bases/metastreamablebase.h"
 #include "metapp/utilities/utility.h"
 #include "metapp/implement/internal/util_i.h"
 
@@ -28,7 +28,7 @@ namespace metapp {
 
 template <typename T>
 struct DeclareMetaTypePointerBase
-	: CastFromToTypes<T, TypeList<std::string, std::wstring> >, MetaStreamingBase<T>
+	: CastFromToTypes<T, TypeList<std::string, std::wstring> >, MetaStreamableBase<T>
 {
 	using UpType = typename std::remove_pointer<T>::type;
 

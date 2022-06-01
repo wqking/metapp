@@ -40,7 +40,7 @@ class MetaArray;
 class MetaEnum;
 class MetaIndexable;
 class MetaIterable;
-class MetaStreaming;
+class MetaStreamable;
 class MetaMappable;
 class MetaPointerWrapper;
 
@@ -187,8 +187,8 @@ public:
 		return static_cast<const MetaIterable *>(unifiedType->getMetaInterface(internal_::mikMetaIterable));
 	}
 
-	const MetaStreaming * getMetaStreaming() const {
-		return static_cast<const MetaStreaming *>(unifiedType->getMetaInterface(internal_::mikMetaStreaming));
+	const MetaStreamable * getMetaStreamable() const {
+		return static_cast<const MetaStreamable *>(unifiedType->getMetaInterface(internal_::mikMetaStreamable));
 	}
 
 	const MetaMappable * getMetaMappable() const {
@@ -227,8 +227,8 @@ public:
 		return unifiedType->hasMetaInterface(internal_::mikMetaIterable);
 	}
 
-	bool hasMetaStreaming() const {
-		return unifiedType->hasMetaInterface(internal_::mikMetaStreaming);
+	bool hasMetaStreamable() const {
+		return unifiedType->hasMetaInterface(internal_::mikMetaStreamable);
 	}
 
 	bool hasMetaMappable() const {

@@ -18,7 +18,7 @@
 #define METAPP_STD_STRING_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/interfaces/bases/metastreamingbase.h"
+#include "metapp/interfaces/bases/metastreamablebase.h"
 #include "metapp/utilities/utility.h"
 
 #include <string>
@@ -26,7 +26,7 @@
 namespace metapp {
 
 template <>
-struct DeclareMetaTypeBase <std::string> : MetaStreamingBase <std::string>
+struct DeclareMetaTypeBase <std::string> : MetaStreamableBase <std::string>
 {
 	static constexpr TypeKind typeKind = tkStdString;
 

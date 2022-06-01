@@ -30,7 +30,7 @@
   * [swap](#a4_22)
 * [Free functions](#a2_5)
   * [getTypeKind](#a4_23)
-  * [Streaming operators](#a4_24)
+  * [Streamable operators](#a4_24)
   * [swap](#a4_25)
 * [Memory management in Variant](#a2_6)
   * [The data storage in Variant is similar to native C++](#a4_26)
@@ -529,7 +529,7 @@ TypeKind getTypeKind(const Variant & v);
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
 <a id="a4_24"></a>
-#### Streaming operators
+#### Streamable operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
 std::ostream & operator << (std::ostream & stream, const Variant & v);

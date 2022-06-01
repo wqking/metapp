@@ -19,24 +19,24 @@
 #include "metapp/allmetatypes.h"
 
 /*desc
-# MetaStreaming interface
+# MetaStreamable interface
 
 ## Overview
 
-`MetaStreaming` is a meta interface to support input/output streaming operators `<<` and `>>`.  
-A `Variant` that meta type implementing `MetaStreaming` can be used in I/O streaming operators.  
+`MetaStreamable` is a meta interface to support input/output streaming operators `<<` and `>>`.  
+A `Variant` that meta type implementing `MetaStreamable` can be used in I/O streaming operators.  
 
-## Implement MetaStreaming
+## Implement MetaStreamable
 
-Usually you don't need to construct `MetaStreaming` directly. You should inherit the declared meta type from `MetaStreamingBase`.  
+Usually you don't need to construct `MetaStreamable` directly. You should inherit the declared meta type from `MetaStreamableBase`.  
 For example, assume `MyClass` supports I/O streaming, then we can `DeclareMetaType` MyClass as below,  
 
 ```c++
-// the header for MetaStreamingBase
-#include "metapp/interfaces/bases/metastreamingbase.h"
+// the header for MetaStreamableBase
+#include "metapp/interfaces/bases/metastreamablebase.h"
 
 template <>
-struct metapp::DeclareMetaType <MyClass> : metapp::MetaStreamingBase <MyClass>
+struct metapp::DeclareMetaType <MyClass> : metapp::MetaStreamableBase <MyClass>
 {
 };
 ```

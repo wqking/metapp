@@ -16,7 +16,7 @@
 
 #include "metapp/variant.h"
 #include "metapp/utilities/utility.h"
-#include "metapp/interfaces/metastreaming.h"
+#include "metapp/interfaces/metastreamable.h"
 #include "metapp/interfaces/metaaccessible.h"
 
 namespace metapp {
@@ -189,23 +189,23 @@ void Variant::swap(Variant & other) noexcept
 
 std::istream & operator >> (std::istream & stream, Variant & value)
 {
-	auto metaStreaming = getNonReferenceMetaType(value.metaType)->getMetaStreaming();
-	if(metaStreaming == nullptr) {
+	auto metaStreamable = getNonReferenceMetaType(value.metaType)->getMetaStreamable();
+	if(metaStreamable == nullptr) {
 		raiseException<UnsupportedException>("No >> input streaming operator.");
 		return stream;
 	}
-	metaStreaming->streamIn(stream, value);
+	metaStreamable->streamIn(stream, value);
 	return stream;
 }
 
 std::ostream & operator << (std::ostream & stream, const Variant & value)
 {
-	auto metaStreaming = getNonReferenceMetaType(value.metaType)->getMetaStreaming();
-	if(metaStreaming == nullptr) {
+	auto metaStreamable = getNonReferenceMetaType(value.metaType)->getMetaStreamable();
+	if(metaStreamable == nullptr) {
 		raiseException<UnsupportedException>("No << output streaming operator.");
 		return stream;
 	}
-	metaStreaming->streamOut(stream, value);
+	metaStreamable->streamOut(stream, value);
 	return stream;
 }
 

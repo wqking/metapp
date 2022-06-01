@@ -14,11 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METASTREAMINGBASE_H_969872685611
-#define METAPP_METASTREAMINGBASE_H_969872685611
+#ifndef METAPP_METASTREAMABLEBASE_H_969872685611
+#define METAPP_METASTREAMABLEBASE_H_969872685611
 
 #include "metapp/metatype.h"
-#include "metapp/interfaces/metastreaming.h"
+#include "metapp/interfaces/metastreamable.h"
 #include "metapp/implement/internal/typeutil_i.h"
 #include "metapp/exception.h"
 
@@ -63,24 +63,24 @@ inline void doStreamOut(std::ostream & /*stream*/, const metapp::Variant & /*val
 namespace metapp {
 
 template <typename T, typename Enabled = void>
-struct MetaStreamingBase
+struct MetaStreamableBase
 {
 };
 
 template <typename T>
-struct MetaStreamingBase <T, typename std::enable_if<
+struct MetaStreamableBase <T, typename std::enable_if<
 		! std::is_reference<T>::value
 		&& (internal_::HasInputStreamOperator<T>::value
 		|| internal_::HasOutputStreamOperator<T>::value)
 	>::type>
 {
 public:
-	static const metapp::MetaStreaming * getMetaStreaming() {
-		static metapp::MetaStreaming metaStreaming(
+	static const metapp::MetaStreamable * getMetaStreamable() {
+		static metapp::MetaStreamable metaStreamable(
 			&streamIn,
 			&streamOut
 		);
-		return &metaStreaming;
+		return &metaStreamable;
 	}
 
 private:

@@ -31,7 +31,7 @@ class MetaArray;
 class MetaEnum;
 class MetaIndexable;
 class MetaIterable;
-class MetaStreaming;
+class MetaStreamable;
 class MetaMappable;
 class MetaPointerWrapper;
 
@@ -57,7 +57,7 @@ static constexpr MetaInterfaceKind mikMetaAccessible = (mikStart << 2);
 static constexpr MetaInterfaceKind mikMetaEnum = (mikStart << 3);
 static constexpr MetaInterfaceKind mikMetaIndexable = (mikStart << 4);
 static constexpr MetaInterfaceKind mikMetaIterable = (mikStart << 5);
-static constexpr MetaInterfaceKind mikMetaStreaming = (mikStart << 6);
+static constexpr MetaInterfaceKind mikMetaStreamable = (mikStart << 6);
 static constexpr MetaInterfaceKind mikMetaMappable = (mikStart << 7);
 static constexpr MetaInterfaceKind mikMetaPointerWrapper = (mikStart << 8);
 static constexpr MetaInterfaceKind mikMetaUser = (mikStart << 9);
@@ -166,9 +166,9 @@ struct MakeMetaInterfaceItem_MetaIterable
 	}
 };
 
-struct MakeMetaInterfaceItem_MetaStreaming
+struct MakeMetaInterfaceItem_MetaStreamable
 {
-	static constexpr MetaInterfaceKind kind = mikMetaStreaming;
+	static constexpr MetaInterfaceKind kind = mikMetaStreamable;
 
 	template <typename T>
 	static constexpr MetaInterfaceItem make() {
@@ -176,7 +176,7 @@ struct MakeMetaInterfaceItem_MetaStreaming
 
 		return {
 			kind,
-			(MetaInterfaceGetter)M::getMetaStreaming
+			(MetaInterfaceGetter)M::getMetaStreamable
 		};
 	}
 };
@@ -239,7 +239,7 @@ struct MakeMetaInterfaceData
 		MakeMetaInterfaceItem_MetaEnum,
 		MakeMetaInterfaceItem_MetaIndexable,
 		MakeMetaInterfaceItem_MetaIterable,
-		MakeMetaInterfaceItem_MetaStreaming,
+		MakeMetaInterfaceItem_MetaStreamable,
 		MakeMetaInterfaceItem_MetaMappable,
 		MakeMetaInterfaceItem_MetaPointerWrapper,
 		MakeMetaInterfaceItem_MetaUser
@@ -251,7 +251,7 @@ struct MakeMetaInterfaceData
 		HasMember_getMetaEnum<M>::value,
 		HasMember_getMetaIndexable<M>::value,
 		HasMember_getMetaIterable<M>::value,
-		HasMember_getMetaStreaming<M>::value,
+		HasMember_getMetaStreamable<M>::value,
 		HasMember_getMetaMappable<M>::value,
 		HasMember_getMetaPointerWrapper<M>::value,
 		HasMember_getMetaUser<M>::value

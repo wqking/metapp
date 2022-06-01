@@ -530,7 +530,7 @@ TypeKind getTypeKind(const Variant & v);
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-#### Streaming operators
+#### Streamable operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
 std::ostream & operator << (std::ostream & stream, const Variant & v);

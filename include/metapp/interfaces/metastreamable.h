@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef METAPP_METASTREAMING_H_969872685611
-#define METAPP_METASTREAMING_H_969872685611
+#ifndef METAPP_METASTREAMABLE_H_969872685611
+#define METAPP_METASTREAMABLE_H_969872685611
 
 #include <iostream>
 
@@ -23,10 +23,10 @@ namespace metapp {
 
 class Variant;
 
-class MetaStreaming
+class MetaStreamable
 {
 public:
-	MetaStreaming(
+	MetaStreamable(
 		void (*streamIn)(std::istream & stream, Variant & value),
 		void (*streamOut)(std::ostream & stream, const Variant & value)
 	)

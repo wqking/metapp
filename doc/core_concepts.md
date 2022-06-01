@@ -188,7 +188,7 @@ const MetaAccessible * getMetaAccessible() const;
 const MetaEnum * getMetaEnum() const;
 const MetaIndexable * getMetaIndexable() const;
 const MetaIterable * getMetaIterable() const;
-const MetaStreaming * getMetaStreaming() const;
+const MetaStreamable * getMetaStreamable() const;
 const MetaMappable * getMetaMappable() const;
 const void * getMetaUser() const;
 ```
