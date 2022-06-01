@@ -55,16 +55,19 @@ TristateBool doCastObject(
 	if(fromUpType->isClass() && toUpType->isClass()) {
 		const MetaRepo * metaRepo = getMetaRepoList()->findMetaRepoForHierarchy(fromUpType);
 		if(metaRepo != nullptr && metaRepo->isClassInHierarchy(toUpType)) {
-			if(metaRepo->getRelationship(fromUpType, toUpType) != MetaRepo::Relationship::none) {
-				if(result != nullptr) {
-					void * instance = nullptr;
-					if(fromMetaType->isPointer()) {
-						instance = value.get<void *>();
-					}
-					else {
-						instance = value.getAddress();
-					}
+			if(result != nullptr) {
+				void * instance = nullptr;
+				// Should not use getPointer() in utility
+				if(fromMetaType->isPointer()) {
+					instance = value.get<void *>();
+				}
+				else {
+					instance = value.getAddress();
+				}
+				if(instance != nullptr) {
 					instance = metaRepo->cast(instance, fromUpType, toUpType);
+				}
+				if(instance != nullptr) {
 					if(toMetaType->isReference()) {
 						Variant temp = Variant::create<int &>(*(int *)instance);
 						*result = Variant::retype(toMetaType, temp);
@@ -73,9 +76,15 @@ TristateBool doCastObject(
 						Variant temp = Variant::create<void *>(instance);
 						*result = Variant::retype(toMetaType, temp);
 					}
+					return TristateBool::yes;
 				}
-				return TristateBool::yes;
 			}
+			else {
+				if(metaRepo->getRelationship(fromUpType, toUpType) != MetaRepo::Relationship::none) {
+					return TristateBool::yes;
+				}
+			}
+			return TristateBool::no;
 		}
 	}
 	return TristateBool::unknown;
@@ -88,37 +97,13 @@ TristateBool doCastPointerReference(
 	const MetaType * toMetaType
 )
 {
-	if((fromMetaType->isReference() && toMetaType->isReference())
-		|| (fromMetaType->isPointer() && toMetaType->isPointer())) {
-		const MetaType * fromUpType = fromMetaType->getUpType();
-		const MetaType * toUpType = toMetaType->getUpType();
-		bool matched = false;
-		while(fromUpType != nullptr && toUpType != nullptr) {
-			if(fromUpType->equal(toUpType)) {
-				matched = true;
-				break;
-			}
-			if(fromUpType->isPointer() && toUpType->isPointer()) {
-				fromUpType = fromUpType->getUpType();
-				toUpType = toUpType->getUpType();
-				continue;
-			}
-			break;
+	if(fromMetaType->equal(toMetaType)) {
+		if(result != nullptr) {
+			// We need to `retype` instead of returning value directly even though fromMetaType equals to toMetaType.
+			// Because fromMetaType may have different CV qualifiers with toMetaType.
+			*result = Variant::retype(toMetaType, value);
 		}
-		if(matched) {
-			if(result != nullptr) {
-				*result = Variant::retype(toMetaType, value);
-			}
-			return TristateBool::yes;
-		}
-	}
-
-	// This must be after the previous reference/pointer checking,
-	// because retype is prefered to cast when the up type is the same
-	if(fromMetaType->isReference() && toMetaType->isReference()) {
-		if(fromMetaType->getUpType()->cast(result, value, toMetaType->getUpType())) {
-			return TristateBool::yes;
-		}
+		return TristateBool::yes;
 	}
 
 	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
@@ -126,24 +111,11 @@ TristateBool doCastPointerReference(
 		return tristateResult;
 	}
 
-	if(! fromMetaType->isReference() && toMetaType->isReference()
-		) {
-		if(fromMetaType->cast(result, value, toMetaType->getUpType())) {
+	if(fromMetaType->isReference() || toMetaType->isReference()) {
+		if(getNonReferenceMetaType(fromMetaType)->cast(
+			result, value, getNonReferenceMetaType(toMetaType))) {
 			return TristateBool::yes;
 		}
-	}
-	if(fromMetaType->isReference() && ! toMetaType->isReference()
-		) {
-		if(fromMetaType->getUpType()->cast(result, value, toMetaType)) {
-			return TristateBool::yes;
-		}
-	}
-
-	if(getNonReferenceMetaType(fromMetaType)->equal(getNonReferenceMetaType(toMetaType))) {
-		if(result != nullptr) {
-			*result = Variant::retype(toMetaType, value);
-		}
-		return TristateBool::yes;
 	}
 
 	return TristateBool::unknown;
