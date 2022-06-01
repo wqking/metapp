@@ -15,6 +15,7 @@
 // limitations under the License.
 
 #include "test.h"
+#include "include/testclasses.h"
 
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
@@ -81,5 +82,55 @@ TEST_CASE("metatypes, std::shared_ptr<const std::string>, MetaAccessible")
 	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
 	REQUIRE_THROWS(metapp::accessibleSet(v, nullptr, "hello"));
 	REQUIRE(metapp::accessibleGet(v, nullptr).get<const std::string &>() == "good");
+}
+
+TEST_CASE("metatypes, std::shared_ptr<LifeCounter>, MetaPointerWrapper")
+{
+	using PTR = std::shared_ptr<LifeCounter>;
+	int counter1 = 0;
+	int counter2 = 0;
+	// This is not exception safe, but it should be fine in unit test
+	LifeCounter * obj1 = new LifeCounter(&counter1);
+	metapp::Variant v = PTR(obj1);
+	REQUIRE(counter1 == 1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).get<LifeCounter *>() == obj1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->equal(metapp::getMetaType<LifeCounter *>()));
+	REQUIRE(! metapp::pointerWrapperGetPointer(v).getMetaType()->getUpType()->isConst());
+
+	LifeCounter * obj2 = new LifeCounter(&counter2);
+	metapp::pointerWrapperSetPointer(v, obj2);
+	REQUIRE(counter1 == 0);
+	REQUIRE(counter2 == 1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).get<LifeCounter *>() == obj2);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->equal(metapp::getMetaType<LifeCounter *>()));
+	REQUIRE(! metapp::pointerWrapperGetPointer(v).getMetaType()->getUpType()->isConst());
+
+	v = 5;
+	REQUIRE(counter2 == 0);
+}
+
+TEST_CASE("metatypes, std::shared_ptr<const LifeCounter>, MetaPointerWrapper")
+{
+	using PTR = std::shared_ptr<const LifeCounter>;
+	int counter1 = 0;
+	int counter2 = 0;
+	// This is not exception safe, but it should be fine in unit test
+	LifeCounter * obj1 = new LifeCounter(&counter1);
+	metapp::Variant v = PTR(obj1);
+	REQUIRE(counter1 == 1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).get<LifeCounter *>() == obj1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->equal(metapp::getMetaType<LifeCounter *>()));
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->getUpType()->isConst());
+
+	LifeCounter * obj2 = new LifeCounter(&counter2);
+	metapp::pointerWrapperSetPointer(v, obj2);
+	REQUIRE(counter1 == 0);
+	REQUIRE(counter2 == 1);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).get<LifeCounter *>() == obj2);
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->equal(metapp::getMetaType<LifeCounter *>()));
+	REQUIRE(metapp::pointerWrapperGetPointer(v).getMetaType()->getUpType()->isConst());
+
+	v = 5;
+	REQUIRE(counter2 == 0);
 }
 
