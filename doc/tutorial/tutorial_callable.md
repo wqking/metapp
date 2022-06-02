@@ -28,7 +28,11 @@ Header for metapp::Variant
 
 ```c++
 #include "metapp/variant.h"
-// To use all declared meta types, include this header
+```
+
+To use all declared meta types, include this header
+
+```c++
 #include "metapp/allmetatypes.h"
 ```
 
@@ -110,6 +114,10 @@ ASSERT(result.get<const std::string &>() == "Hello world");
 <a id="a2_5"></a>
 ## Use overloaded functions
 
+This example shows how to use `metapp::OverloadedFunction` to construct overloaded function explicitly.  
+Usually we don't need to do so. When registering callable in `MetaRepo` or `MetaClass`, the functions
+registered under the same will be combined to a `metapp::OverloadedFunction` automatically.
+
 ```c++
 metapp::Variant callable = metapp::OverloadedFunction();
 metapp::OverloadedFunction & overloadedFunction = callable.get<metapp::OverloadedFunction &>();
@@ -144,7 +152,7 @@ std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
 }
 ```
 
-Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.  
+Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by `metapp::createDefaultArgsFunction`.  
 The first argument is the function, it can be any meta callable, such as free function, member function, constructor, etc.  
 The second argument is a list of default arguments, it must be specified
 in the right to left order in the function prototype

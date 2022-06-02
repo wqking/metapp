@@ -33,7 +33,7 @@ metapp is light weight, powerful, and unique.
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
 const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * (&)[][8])())[]` easily?
 metapp can understand it, including every CV, pointer, array, function, etc, in no time!   
-- **Allow runtime generic programming.** For example, we can access elements in a container, without knowing whether
+- **Allow runtime generic programming.** For example, we can access elements in a container without knowing whether
 the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`,
 or `std::string`, or another container.  
 - **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
@@ -212,7 +212,7 @@ ASSERT(v.get<int>() == 5);
 Now v contains std::string.
 
 ```c++
-metapp::Variant v = std::string("hello");
+v = std::string("hello");
 ```
 
 Get as reference to avoid copy.
@@ -257,6 +257,7 @@ ASSERT(metaType->equal(metapp::getMetaType<int *>()));
 
 <a id="a3_9"></a>
 ### Call function and accessible
+Define a class to be used later.
 
 ```c++
 struct MyClass {
@@ -272,31 +273,48 @@ struct MyClass {
     return std::unique_ptr<MyClass>(new MyClass(*this));
   }
 };
+```
 
+Define a class instance.
+
+```c++
 MyClass obj { 5 };
+```
 
+Define an accessible.
+
+```c++
 metapp::Variant accessible(&MyClass::value);
+```
 
+Define a callable.
+
+```c++
 metapp::Variant funcAdd(&MyClass::add);
 ```
 
-The second argument is the object instance, it's required when invoking member function.
+Invoke the callable, the second argument is the object instance, it's required when invoking member function.
 
 ```c++
 metapp::Variant resultOfAdd = metapp::callableInvoke(funcAdd, &obj, 3, 9);
 ASSERT(resultOfAdd.get<int>() == 17);
+```
 
+Another callable.
+
+```c++
 metapp::Variant funcClone(&MyClass::clone);
 metapp::Variant cloned = metapp::callableInvoke(funcClone, &obj);
 ```
 
-`cloned` holds std::unique_ptr<MyClass>
+`cloned` holds `std::unique_ptr<MyClass>`.
 
 ```c++
 ASSERT(cloned.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<MyClass>>()));
 ```
 
-We can pass the cloned Variant as the instance.
+We can pass the cloned Variant as the instance. This is similar to that
+we can call member function using `std::unique_ptr`.
 
 ```c++
 ASSERT(metapp::callableInvoke(funcAdd, cloned, 5, 9).get<int>() == 19);
@@ -344,7 +362,9 @@ Let's define a `concat` function that processes any Variant that implements meta
 ```c++
 std::string concat(const metapp::Variant & container)
 {
-  const metapp::Variant nonPointer = depointer(container);
+  // `container` may contains a pointer such as T *. We use `metapp::depointer` to convert it to equivalent
+  // non-pointer such as T &, that eases the algorithm because we don't care pointer any more.
+  const metapp::Variant nonPointer = metapp::depointer(container);
   const metapp::MetaIterable * metaIterable
     = metapp::getNonReferenceMetaType(nonPointer)->getMetaIterable();
   if(metaIterable == nullptr) {
@@ -383,19 +403,19 @@ We can also use std::list. Any value can convert to Variant implicitly, so we ca
 ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
 ```
 
-Isn't cool we can use std::pair as a container?
-
-```c++
-ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
-```
-
 std::tuple is supported too, and we can use heterogeneous types.
 
 ```c++
 ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
 ```
 
-we can even pass a pointer to the container to `concat`.
+Isn't cool we can use std::pair as a container?
+
+```c++
+ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
+```
+
+We can even pass a pointer to the container to `concat`.
 
 ```c++
 std::deque<int> container2 { 1, 2, 3 };

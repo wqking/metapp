@@ -32,7 +32,7 @@ desc*/
 #include "metapp/interfaces/metacallable.h"
 //desc Header for metapp::Variant
 #include "metapp/variant.h"
-// To use all declared meta types, include this header
+//desc To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
 //code
 
@@ -118,6 +118,10 @@ TEST_CASE("tutorialCallable_stdFunction")
 
 /*desc
 ## Use overloaded functions
+
+This example shows how to use `metapp::OverloadedFunction` to construct overloaded function explicitly.  
+Usually we don't need to do so. When registering callable in `MetaRepo` or `MetaClass`, the functions
+registered under the same will be combined to a `metapp::OverloadedFunction` automatically.
 desc*/
 
 TEST_CASE("tutorialCallable_overloaded")
@@ -161,7 +165,7 @@ std::string myDefaultArgsFunc(const int a, const bool b, const std::string & c)
 TEST_CASE("tutorialCallable_defaultArgs")
 {
 	/*desc
-	Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by metapp::createDefaultArgsFunction.  
+	Create a metapp::DefaultArgsFunction<FT>, the FT is deduced by `metapp::createDefaultArgsFunction`.  
 	The first argument is the function, it can be any meta callable, such as free function, member function, constructor, etc.  
 	The second argument is a list of default arguments, it must be specified
 	in the right to left order in the function prototype

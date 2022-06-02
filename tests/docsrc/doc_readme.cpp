@@ -33,7 +33,7 @@ metapp is light weight, powerful, and unique.
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
 const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * (&)[][8])())[]` easily?
 metapp can understand it, including every CV, pointer, array, function, etc, in no time!   
-- **Allow runtime generic programming.** For example, we can access elements in a container, without knowing whether
+- **Allow runtime generic programming.** For example, we can access elements in a container without knowing whether
 the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`,
 or `std::string`, or another container.  
 - **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
@@ -184,27 +184,21 @@ desc*/
 
 ExampleFunc
 {
-	{
-		//code
-		//desc v contains int.
-		metapp::Variant v(5);
-		//desc Get the value
-		ASSERT(v.get<int>() == 5);
-		//code
-	}
+	//code
+	//desc v contains int.
+	metapp::Variant v(5);
+	//desc Get the value
+	ASSERT(v.get<int>() == 5);
 
-	{
-		//code
-		//desc Now v contains std::string.
-		metapp::Variant v = std::string("hello");
-		//desc Get as reference to avoid copy.
-		ASSERT(v.get<const std::string &>() == "hello");
-		//desc Cast to const char *.
-		metapp::Variant casted = v.cast<const char *>();
-		const char * s = casted.get<const char *>();
-		ASSERT(strcmp(s, "hello") == 0);
-		//code
-	}
+	//desc Now v contains std::string.
+	v = std::string("hello");
+	//desc Get as reference to avoid copy.
+	ASSERT(v.get<const std::string &>() == "hello");
+	//desc Cast to const char *.
+	metapp::Variant casted = v.cast<const char *>();
+	const char * s = casted.get<const char *>();
+	ASSERT(strcmp(s, "hello") == 0);
+	//code
 }
 
 //desc ### Use MetaType
@@ -242,6 +236,7 @@ ExampleFunc
 ExampleFunc
 {
 	//code
+	//desc Define a class to be used later.
 	struct MyClass {
 		int value;
 
@@ -256,20 +251,24 @@ ExampleFunc
 		}
 	};
 
+	//desc Define a class instance.
 	MyClass obj { 5 };
 
+	//desc Define an accessible.
 	metapp::Variant accessible(&MyClass::value);
-
+	//desc Define a callable.
 	metapp::Variant funcAdd(&MyClass::add);
-	//desc The second argument is the object instance, it's required when invoking member function.
+	//desc Invoke the callable, the second argument is the object instance, it's required when invoking member function.
 	metapp::Variant resultOfAdd = metapp::callableInvoke(funcAdd, &obj, 3, 9);
 	ASSERT(resultOfAdd.get<int>() == 17);
 
+	//desc Another callable.
 	metapp::Variant funcClone(&MyClass::clone);
 	metapp::Variant cloned = metapp::callableInvoke(funcClone, &obj);
-	//desc `cloned` holds std::unique_ptr<MyClass>
+	//desc `cloned` holds `std::unique_ptr<MyClass>`.
 	ASSERT(cloned.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<MyClass>>()));
-	//desc We can pass the cloned Variant as the instance.
+	//desc We can pass the cloned Variant as the instance. This is similar to that
+	//desc we can call member function using `std::unique_ptr`.
 	ASSERT(metapp::callableInvoke(funcAdd, cloned, 5, 9).get<int>() == 19);
 
 	//desc Get the value from accessible, which is MyClass::value.
@@ -297,7 +296,9 @@ ExampleFunc
 //code
 std::string concat(const metapp::Variant & container)
 {
-	const metapp::Variant nonPointer = depointer(container);
+	// `container` may contains a pointer such as T *. We use `metapp::depointer` to convert it to equivalent
+	// non-pointer such as T &, that eases the algorithm because we don't care pointer any more.
+	const metapp::Variant nonPointer = metapp::depointer(container);
 	const metapp::MetaIterable * metaIterable
 		= metapp::getNonReferenceMetaType(nonPointer)->getMetaIterable();
 	if(metaIterable == nullptr) {
@@ -325,12 +326,12 @@ ExampleFunc
 	//desc We can also use std::list. Any value can convert to Variant implicitly, so we can pass the container std::list on the fly.
 	ASSERT(concat(std::list<std::string>{ "Hello", "World", "Good" }) == "HelloWorldGood");
 
-	//desc Isn't cool we can use std::pair as a container?
-	ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 	//desc std::tuple is supported too, and we can use heterogeneous types.
 	ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
+	//desc Isn't cool we can use std::pair as a container?
+	ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 
-	//desc we can even pass a pointer to the container to `concat`.
+	//desc We can even pass a pointer to the container to `concat`.
 	std::deque<int> container2 { 1, 2, 3 };
 	metapp::Variant v2(&container2);
 	ASSERT(concat(v2) == "123");
