@@ -56,12 +56,14 @@ private:
 	static void metaMapSet(const Variant & mappable, const Variant & key, const Variant & value)
 	{
 		auto & container = mappable.get<ContainerType &>();
-		auto it = container.find(key.get<const KeyType &>());
+		const KeyType & nativeKey = key.get<const KeyType &>();
+		const MappedType & nativeValue = value.get<const MappedType &>();
+		auto it = container.find(nativeKey);
 		if(it != container.end()) {
-			internal_::assignValue(it->second, value.get<const MappedType &>());
+			internal_::assignValue(it->second, nativeValue);
 		}
 		else {
-			raiseException<UnwritableException>();
+			container.insert(std::make_pair(nativeKey, nativeValue));
 		}
 	}
 
