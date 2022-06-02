@@ -180,11 +180,11 @@ The function must accept two arguments, the first is a pointer to Variant, which
 the arguments array. The second argument is the number of Variant in the array.
 
 ```c++
-int myVariadicFunc(const metapp::Variant * arguments, const int argumentCount)
+int myVariadicFunc(const metapp::ArgumentSpan & arguments)
 {
   int total = 0;
-  for(int i = 0; i < argumentCount; ++i) {
-    total += arguments[i].cast<int>().get<int>();
+  for(const auto & argument : arguments) {
+    total += argument.cast<int>().get<int>();
   }
   return total;
 }

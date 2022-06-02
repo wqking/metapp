@@ -23,11 +23,11 @@
 
 namespace {
 
-int sum(const metapp::Variant * arguments, const std::size_t argumentCount)
+int sum(const metapp::ArgumentSpan & arguments)
 {
 	int total = 0;
-	for(std::size_t i = 0; i < argumentCount; ++i) {
-		total += arguments[i].cast<int>().get<int>();
+	for(const auto & argument : arguments) {
+		total += argument.cast<int>().get<int>();
 	}
 	return total;
 }
@@ -56,11 +56,11 @@ TEST_CASE("metatypes, VariadicFunction, sum")
 
 struct ClassForVariadicFunc
 {
-	std::string join(const metapp::Variant * arguments, const std::size_t argumentCount)
+	std::string join(const metapp::ArgumentSpan & arguments)
 	{
 		std::string result(value);
-		for(std::size_t i = 0; i < argumentCount; ++i) {
-			result += arguments[i].cast<std::string>().get<std::string>();
+		for(const auto & argument : arguments) {
+			result += argument.cast<std::string>().get<std::string>();
 		}
 		return result;
 	}

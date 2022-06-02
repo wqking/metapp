@@ -36,12 +36,12 @@ It can be constructor, function pointer, member function pointer, etc.
 The callable must have the prototype as,  
 
 ```c++
-ResultType callable(const metapp::Variant * arguments, const int argumentCount)
+ResultType callable(const metapp::ArgumentSpan & arguments)
 ```
 
 The function can have any result type.  
-Parameter `arguments` is a pointer to Variant. It contains the arguments array.    
-Parameter `argumentCount` is the number of Variant in the array.  
+Parameter `arguments` is an `ArgumentSpan` object. It's used to pass the arguments.  
+For more details on `ArgumentSpan`, please see [document for MetaCallable](../interfaces/metacallable.md)
 
 The arguments are passed from lef to right order.
 
@@ -61,11 +61,11 @@ namespace {
 
 //code
 //desc Assume we have this function
-int sum(const metapp::Variant * arguments, const std::size_t argumentCount)
+int sum(const metapp::ArgumentSpan & arguments)
 {
 	int total = 0;
-	for(std::size_t i = 0; i < argumentCount; ++i) {
-		total += arguments[i].cast<int>().get<int>();
+	for(const auto & argument : arguments) {
+		total += argument.cast<int>().get<int>();
 	}
 	return total;
 }

@@ -282,6 +282,26 @@ auto simulateUnknowSizeArray = [&myCallable, &metaCallable](metapp::Variant argu
 simulateUnknowSizeArray(temp);
 ```
 
+Here is how to use metapp::ArgumentSpan if we want to implement MetaCallable or variadic function.  
+Assume we implement below function.
+
+```c++
+void demoArgumentSpan(const metapp::ArgumentSpan & arguments)
+{
+  // for..loop
+  for(const metapp::Variant & argument : arguments) {
+    // use argument here
+  }
+
+  // Get size and use operator[] to access the elements.
+  const std::size_t count = arguments.size();
+  for(std::size_t i = 0; i < count; ++i) {
+    const metapp::Variant & argument = arguments[i];
+    // use argument here
+  }
+}
+```
+
 <a id="a2_8"></a>
 ## Non-member utility functions
 

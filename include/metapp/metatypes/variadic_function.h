@@ -115,8 +115,7 @@ public:
 
 	static Variant metaCallableInvoke(const Variant & func, const Variant & instance, const ArgumentSpan & arguments)
 	{
-		Variant newArguments[2] = { arguments.data(), arguments.size() };
-
+		Variant newArguments[] = { Variant::reference(arguments) };
 		const FunctionType & variadicFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = variadicFunc.getFunc();
 		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments);
