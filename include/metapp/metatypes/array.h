@@ -21,6 +21,7 @@
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaindexable.h"
 #include "metapp/implement/internal/util_i.h"
+#include "metapp/metatypes/std_string.h"
 
 namespace metapp {
 
