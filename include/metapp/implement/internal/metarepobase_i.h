@@ -82,7 +82,7 @@ protected:
 	static bool doFindItemByName(const std::shared_ptr<T> & data, const std::string & name, const MetaItem * & result)
 	{
 		result = &doFindItemByName(data, name);
-		return !result->isEmpty();
+		return ! result->isEmpty();
 	}
 
 	template <typename T>

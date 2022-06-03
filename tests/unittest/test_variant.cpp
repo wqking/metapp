@@ -284,6 +284,9 @@ TEST_CASE("Variant, get/canGet")
 		REQUIRE(v.get<int &>() == 5);
 		REQUIRE(v.get<const int &>() == 5);
 		REQUIRE(v.get<volatile int &>() == 5);
+
+		REQUIRE(! v.canGet<int *>());
+		REQUIRE_THROWS(v.get<int *>());
 	}
 
 	SECTION("int &") {

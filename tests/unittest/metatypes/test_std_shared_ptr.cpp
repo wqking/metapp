@@ -27,8 +27,7 @@ TEST_CASE("metatypes, std::shared_ptr<int>")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdSharedPtr);
 	REQUIRE(v.canGet<std::shared_ptr<int> >());
 	REQUIRE(*(v.get<std::shared_ptr<int> >()) == 38);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdSharedPtr, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::shared_ptr<int> >()));
 }
 
 TEST_CASE("metatypes, std::shared_ptr<int>, cast to pointer")

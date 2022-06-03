@@ -27,8 +27,7 @@ TEST_CASE("metatypes, std::weak_ptr<int>")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdWeakPtr);
 	REQUIRE(v.canGet<std::weak_ptr<int> >());
 	REQUIRE(*(v.get<std::weak_ptr<int> >().lock()) == 38);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdWeakPtr, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::weak_ptr<int> >()));
 }
 
 TEST_CASE("metatypes, std::weak_ptr<int>, cast to std::shared_ptr")

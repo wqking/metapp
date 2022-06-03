@@ -332,6 +332,30 @@ we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a
 instead of copy the value. That helps to improve the performance.  
 We should always getting as reference to avoid copying, unless you do want to copy the value.  
 
+Note: `canGet` and `get` are not type safe when either types (T and the type inside the Variant)
+are pointer and reference. The reason is `canGet` and `get` assume the user have knowledge on the type
+held by the Variant and they provide a fast way to access the underlying pointer and reference.  
+If you pursuit better type safety, use `canCast` and `cast`.  
+If you want to `get` with strong type safety when there are pointers or reference, you can compare
+the types before `get`, for example,  
+desc*/
+
+ExampleFunc
+{
+	//code
+	metapp::Variant v;
+	if(metapp::getNonReferenceMetaType(v)->equal(metapp::getMetaType<int *>())) {
+		// We are sure v holds a pointer to int, such as `int *`, or `const int *`, etc.
+		int * p = v.get<int *>(); // safe
+		*p = 5;
+	}
+	// Below check is not safe, `canGet` returns true even if v holds a `double *`.
+	if(v.canGet<int *>()) {
+	}
+	//code
+}
+
+/*desc
 #### getAddress
 ```c++
 void * getAddress() const;
@@ -363,7 +387,7 @@ ExampleFunc
 
 	int m = 10;
 	// reference, equivalent native C++: int & v3 = m;
-	metapp::Variant v3(metapp::Variant::create<int &>(m));
+	metapp::Variant v3(metapp::Variant::reference(m));
 	ASSERT(m == 10);
 	// equivalent native C++: *&v3 = 15;
 	*(int *)v3.getAddress() = 15;

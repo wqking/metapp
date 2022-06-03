@@ -24,54 +24,30 @@
 #include <iostream>
 #include <climits>
 
-struct BaseFirst
+struct TestClass_63575107
 {
-	BaseFirst() : first(0) {
+	TestClass_63575107() : value(0) {}
+	explicit TestClass_63575107(const int value) : value(value) {}
+
+	int value;
+
+	int add(const int n) const {
+		return n + value;
 	}
-
-	explicit BaseFirst(const int value) : first(value) {
-	}
-
-	int first;
 };
-
-struct BaseSecond
-{
-	BaseSecond() : second(0) {
-	}
-
-	explicit BaseSecond(const int value) : second(value) {
-	}
-
-	int second;
-};
-
-struct SonFirst : BaseFirst
-{
-};
-
-struct SonFirstSecond : BaseFirst, BaseSecond
-{
-};
-
-
-constexpr metapp::TypeKind tkBaseFirst = metapp::tkUser;
-constexpr metapp::TypeKind tkBaseSecond = metapp::tkUser + 1;
-constexpr metapp::TypeKind tkSonFirst = metapp::tkUser + 10;
-constexpr metapp::TypeKind tkSonFirstSecond = metapp::tkUser + 11;
 
 template <>
-struct metapp::DeclareMetaType <BaseFirst> : metapp::DeclareMetaTypeBase <BaseFirst>
+struct metapp::DeclareMetaType <TestClass_63575107> : metapp::DeclareMetaTypeBase <TestClass_63575107>
 {
-	static constexpr metapp::TypeKind typeKind = tkBaseFirst;
-
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<BaseFirst>(),
+			metapp::getMetaType<TestClass_63575107>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerConstructor(metapp::Constructor<BaseFirst()>());
-				mc.registerConstructor(metapp::Constructor<BaseFirst(int)>());
-				mc.registerAccessible("first", &BaseFirst::first);
+				mc.registerConstructor(metapp::Constructor<TestClass_63575107()>());
+				mc.registerConstructor(metapp::Constructor<TestClass_63575107(int)>());
+				mc.registerAccessible("value", &TestClass_63575107::value);
+				mc.registerCallable("add", &TestClass_63575107::add);
+				mc.registerVariable("fakeVar", "ThisIsVariable");
 			}
 		);
 		return &metaClass;
@@ -79,40 +55,12 @@ struct metapp::DeclareMetaType <BaseFirst> : metapp::DeclareMetaTypeBase <BaseFi
 
 };
 
-template <>
-struct metapp::DeclareMetaType <SonFirst> : metapp::DeclareMetaTypeBase <SonFirst>
+TEST_CASE("MetaClass, TestClass_63575107, getItem")
 {
-	static constexpr metapp::TypeKind typeKind = tkSonFirst;
-
-	static const metapp::MetaClass * getMetaClass() {
-		static metapp::MetaClass metaClass(
-			metapp::getMetaType<SonFirst>(),
-			[](metapp::MetaClass & mc) {
-			}
-		);
-		return &metaClass;
-	}
-
-};
-
-template <>
-struct metapp::DeclareMetaType <SonFirstSecond> : metapp::DeclareMetaTypeBase <SonFirstSecond>
-{
-	static constexpr metapp::TypeKind typeKind = tkSonFirstSecond;
-
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<SonFirstSecond>(),
-			[](metapp::MetaClass & mc) {
-			}
-		);
-		return &metaClass;
-	}
-
-};
-
-
-TEST_CASE("MetaClass, cast")
-{
+	auto metaType = metapp::getMetaType<TestClass_63575107>();
+	auto metaClass = metaType->getMetaClass();
+	TestClass_63575107 obj {6};
+	auto metaItem = metaClass->getItem("add");
+	REQUIRE(metapp::callableInvoke(metaItem, &obj, 5).get<int>() == 11);
 }
 

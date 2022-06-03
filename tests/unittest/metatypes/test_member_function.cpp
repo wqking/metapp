@@ -46,9 +46,10 @@ TEST_CASE("metatypes, tkMemberFunction, types")
 	auto metaType = v.getMetaType();
 	REQUIRE(metaType->isConst());
 	REQUIRE(metaType->getMetaCallable()->getParameterCountInfo(v).getMinParameterCount() == 2);
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getReturnType(v), { tkPointer, tkVoid }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 0), { tkInt }));
-	REQUIRE(matchUpTypeKinds(metaType->getMetaCallable()->getParameterType(v, 1), { tkReference, tkStdVector, tkInt }));
+	REQUIRE(metaType->getMetaCallable()->getReturnType(v)->equal(metapp::getMetaType<void *>()));
+	REQUIRE(metaType->getMetaCallable()->getParameterType(v, 0)->equal(metapp::getMetaType<int>()));
+	REQUIRE(metaType->getMetaCallable()->getParameterType(v, 1)->equal(metapp::getMetaType<std::vector<int> &>()));
+	REQUIRE(metaType->getMetaCallable()->getClassType(v)->equal(metapp::getMetaType<Class1>()));
 }
 
 struct Base

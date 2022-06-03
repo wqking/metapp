@@ -28,8 +28,7 @@ TEST_CASE("metatypes, std::deque<std::string>")
 	REQUIRE(v.get<Type>()[0] == "perfect");
 	v.get<Type &>().push_back("good");
 	REQUIRE(v.get<Type &>().back() == "good");
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdDeque, tkStdString }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::deque<std::string> >()));
 }
 
 TEST_CASE("metatypes, std::deque<std::string>, MetaIndexable")

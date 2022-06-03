@@ -37,6 +37,9 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 	REQUIRE(v.getMetaType()->getUpType(1)->getTypeKind() == metapp::tkInt);
 	REQUIRE(v.getMetaType()->getUpType(2)->getTypeKind() == metapp::tkReference);
 
+	REQUIRE(metapp::callableGetParameterType(v, 0)->equal(metapp::getMetaType<int>()));
+	REQUIRE(metapp::callableGetParameterType(v, 1)->equal(metapp::getMetaType<std::string &>()));
+
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, arguments));

@@ -29,8 +29,7 @@ TEST_CASE("metatypes, std::list<std::string>")
 	REQUIRE(v.get<const Type &>().back() == "world");
 	v.get<Type &>().push_back("good");
 	REQUIRE(v.get<const Type &>().back() == "good");
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdList, tkStdString }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::list<std::string> >()));
 }
 
 TEST_CASE("metatypes, std::list<int>, MetaIndexable")

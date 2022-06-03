@@ -28,8 +28,7 @@ TEST_CASE("metatypes, std::vector<int>")
 	REQUIRE(v.get<Type>()[0] == 5);
 	v.get<Type &>().push_back(10);
 	REQUIRE(v.get<Type>().back() == 10);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdVector, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::vector<int> >()));
 }
 
 TEST_CASE("metatypes, std::vector<std::string>, MetaIndexable")

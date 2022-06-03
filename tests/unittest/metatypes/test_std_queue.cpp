@@ -29,8 +29,7 @@ TEST_CASE("metatypes, std::queue<std::string>")
 	v.get<Type &>().push("great");
 	REQUIRE(v.get<Type &>().front() == "good");
 	REQUIRE(v.get<Type &>().back() == "great");
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdQueue, tkStdString }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::queue<std::string> >()));
 }
 
 TEST_CASE("metatypes, std::priority_queue<int>")
@@ -42,7 +41,6 @@ TEST_CASE("metatypes, std::priority_queue<int>")
 	v.get<Type &>().push(1);
 	v.get<Type &>().push(5);
 	REQUIRE(v.get<Type &>().top() == 5);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdPriorityQueue, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::priority_queue<int> >()));
 }
 

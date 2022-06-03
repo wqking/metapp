@@ -26,8 +26,7 @@ TEST_CASE("metatypes, tkReference, int &") {
 	SECTION("get") {
 		REQUIRE(v.canGet<int>());
 		REQUIRE(v.get<int>() == 5);
-		using namespace metapp;
-		REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkReference, tkInt }));
+		REQUIRE(v.getMetaType()->equal(metapp::getMetaType<int &>()));
 	}
 	SECTION("set") {
 		REQUIRE(v.canGet<int &>());
@@ -52,8 +51,7 @@ TEST_CASE("metatypes, tkReference, std::string &") {
 	SECTION("get") {
 		REQUIRE(v.canGet<std::string>());
 		REQUIRE(v.get<std::string>() == "hello");
-		using namespace metapp;
-		REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkReference, tkStdString }));
+		REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::string &>()));
 	}
 	SECTION("set") {
 		REQUIRE(v.canGet<std::string &>());
@@ -78,8 +76,7 @@ TEST_CASE("metatypes, tkReference, int &&") {
 	SECTION("get") {
 		REQUIRE(v.canGet<int>());
 		REQUIRE(v.get<int>() == 5);
-		using namespace metapp;
-		REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkReference, tkInt }));
+		REQUIRE(v.getMetaType()->equal(metapp::getMetaType<int &&>()));
 	}
 	SECTION("set") {
 		REQUIRE(v.canGet<int &>());
@@ -106,7 +103,6 @@ TEST_CASE("metatypes, tkReference, std::reference_wrapper<int>") {
 	REQUIRE(v.get<int &>() == 5);
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkReference, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::reference_wrapper<int> >()));
 }
 

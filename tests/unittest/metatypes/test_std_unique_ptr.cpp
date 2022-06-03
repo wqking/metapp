@@ -30,8 +30,7 @@ TEST_CASE("metatypes, std::unique_ptr<int>")
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdUniquePtr);
 	REQUIRE(v.canGet<PTR &>());
 	REQUIRE(*(v.get<PTR &>()) == 38);
-	using namespace metapp;
-	REQUIRE(matchUpTypeKinds(v.getMetaType(), { tkStdUniquePtr, tkInt }));
+	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<int> >()));
 }
 
 TEST_CASE("metatypes, std::unique_ptr<int>, cast to pointer")
