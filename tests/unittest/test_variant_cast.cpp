@@ -228,6 +228,16 @@ TEST_CASE("Variant, cast char[6] to std::string")
 	REQUIRE(v.cast<std::string>().get<const std::string &>() == "hello");
 }
 
+TEST_CASE("Variant, cast char[6] to const char *")
+{
+	char s[6] = "hello";
+	metapp::Variant v(metapp::Variant::create<char[6]>(s));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
+
+	REQUIRE(v.canCast<const char *>());
+	REQUIRE(v.cast<const char *>().get<const char *>() == std::string("hello"));
+}
+
 TEST_CASE("Variant, cast wchar_t * to std::wstring")
 {
 	const wchar_t * s = L"hello";

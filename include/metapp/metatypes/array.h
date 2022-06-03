@@ -31,7 +31,7 @@ constexpr std::size_t unknownSize = std::size_t(-1);
 } // namespace internal_
 
 template <typename T, std::size_t length>
-struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::wstring> >
+struct DeclareMetaTypeArrayBase
 {
 	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
 
@@ -50,6 +50,30 @@ struct DeclareMetaTypeArrayBase : CastFromToTypes<T, TypeList<std::string, std::
 
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
 		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory);
+	}
+
+	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+		const MetaType * upType = getMetaType<UpType>();
+		if(toMetaType->equal(getMetaType<std::string>()) && upType->equal(getMetaType<char>())) {
+			if(result != nullptr) {
+				*result = std::string((const char *)(value.getAddress()));
+			}
+			return true;
+		}
+		if(toMetaType->equal(getMetaType<std::wstring>()) && upType->equal(getMetaType<wchar_t>())) {
+			if(result != nullptr) {
+				*result = std::wstring((const wchar_t *)(value.getAddress()));
+			}
+			return true;
+		}
+		if(toMetaType->isPointer() && toMetaType->getUpType()->equal(upType)) {
+			if(result != nullptr) {
+				*result = (UpType *)(value.getAddress());
+			}
+			return true;
+		}
+
+		return commonCast(result, value, getMetaType<T>(), toMetaType);
 	}
 
 private:
