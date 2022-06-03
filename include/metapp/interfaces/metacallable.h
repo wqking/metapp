@@ -19,6 +19,7 @@
 
 #include "metapp/metatype.h"
 #include "metapp/utilities/span.h"
+#include "metapp/utilities/utility.h"
 
 namespace metapp {
 
@@ -128,7 +129,7 @@ Iterator findCallable(
 	int maxRank = 0;
 	for(; first != last; ++first) {
 		const Variant & callable = (const Variant &)*first;
-		const int rank = callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, arguments);
+		const int rank = getNonReferenceMetaType(callable)->getMetaCallable()->rankInvoke(callable, instance, arguments);
 		if(rank > maxRank) {
 			maxRank = rank;
 			result = first;
@@ -142,102 +143,103 @@ Iterator findCallable(
 	return result;
 }
 
-template <typename ...Args>
-struct CallableInvoker;
+namespace internal_ {
 
-template <typename Arg0, typename ...Args>
-struct CallableInvoker <Arg0, Args...>
+template <std::size_t ArgCount>
+struct CallableInvoker
 {
-	static Variant invoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
+	template <typename ...Args>
+	static Variant invoke(const Variant & callable, const Variant & instance, Args && ... args)
 	{
-		Variant arguments[sizeof...(Args) + 1] = {
-			arg0,
-			args...
+		Variant arguments[sizeof...(Args)] = {
+			Variant::reference(args)...
 		};
-		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, arguments);
+		return getNonReferenceMetaType(callable)->getMetaCallable()->invoke(callable, instance, arguments);
 	}
 
-	static int rankInvoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
+	template <typename ...Args>
+	static int rankInvoke(const Variant & callable, const Variant & instance, Args && ... args)
 	{
-		Variant arguments[sizeof...(Args) + 1] = {
-			arg0,
-			args...
+		Variant arguments[sizeof...(Args)] = {
+			Variant::reference(args)...
 		};
-		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, arguments);
+		return getNonReferenceMetaType(callable)->getMetaCallable()->rankInvoke(callable, instance, arguments);
 	}
 
-	static bool canInvoke(const Variant & callable, const Variant & instance, Arg0 arg0, Args ...args)
+	template <typename ...Args>
+	static bool canInvoke(const Variant & callable, const Variant & instance, Args && ... args)
 	{
-		Variant arguments[sizeof...(Args) + 1] = {
-			arg0,
-			args...
+		Variant arguments[sizeof...(Args)] = {
+			Variant::reference(args)...
 		};
-		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, instance, arguments);
+		return getNonReferenceMetaType(callable)->getMetaCallable()->canInvoke(callable, instance, arguments);
 	}
 
 };
 
 template <>
-struct CallableInvoker <>
+struct CallableInvoker <0>
 {
 	static Variant invoke(const Variant & callable, const Variant & instance)
 	{
-		return callable.getMetaType()->getMetaCallable()->invoke(callable, instance, {});
+		return getNonReferenceMetaType(callable)->getMetaCallable()->invoke(callable, instance, {});
 	}
 
 	static int rankInvoke(const Variant & callable, const Variant & instance)
 	{
-		return callable.getMetaType()->getMetaCallable()->rankInvoke(callable, instance, {});
+		return getNonReferenceMetaType(callable)->getMetaCallable()->rankInvoke(callable, instance, {});
 	}
 
 	static bool canInvoke(const Variant & callable, const Variant & instance)
 	{
-		return callable.getMetaType()->getMetaCallable()->canInvoke(callable, instance, {});
+		return getNonReferenceMetaType(callable)->getMetaCallable()->canInvoke(callable, instance, {});
 	}
 
 };
 
+} //namespace internal_
+
 inline const MetaType * callableGetClassType(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->getClassType(callable);
+	return getNonReferenceMetaType(callable)->getMetaCallable()->getClassType(callable);
 }
 
 inline MetaCallable::ParameterCountInfo callableGetParameterCountInfo(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->getParameterCountInfo(callable);
+	return getNonReferenceMetaType(callable)->getMetaCallable()->getParameterCountInfo(callable);
 }
 
 inline const MetaType * callableGetReturnType(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->getReturnType(callable);
+	return getNonReferenceMetaType(callable)->getMetaCallable()->getReturnType(callable);
 }
 
 inline const MetaType * callableGetParameterType(const Variant & callable, const int index)
 {
-	return callable.getMetaType()->getMetaCallable()->getParameterType(callable, index);
+	return getNonReferenceMetaType(callable)->getMetaCallable()->getParameterType(callable, index);
 }
 
 template <typename ...Args>
-inline int callableRankInvoke(const Variant & callable, const Variant & instance, Args ...args)
+inline int callableRankInvoke(const Variant & callable, const Variant & instance, Args && ... args)
 {
-	return CallableInvoker<Args...>::rankInvoke(callable, instance, args...);
+	return internal_::CallableInvoker<sizeof...(Args)>::rankInvoke(callable, instance, std::forward<Args>(args)...);
 }
 
 template <typename ...Args>
-inline bool callableCanInvoke(const Variant & callable, const Variant & instance, Args ...args)
+inline bool callableCanInvoke(const Variant & callable, const Variant & instance, Args && ... args)
 {
-	return CallableInvoker<Args...>::canInvoke(callable, instance, args...);
+	return internal_::CallableInvoker<sizeof...(Args)>::canInvoke(callable, instance, std::forward<Args>(args)...);
 }
 
 template <typename ...Args>
-inline Variant callableInvoke(const Variant & callable, const Variant & instance, Args ...args)
+inline Variant callableInvoke(const Variant & callable, const Variant & instance, Args && ... args)
 {
-	return CallableInvoker<Args...>::invoke(callable, instance, args...);
+	return internal_::CallableInvoker<sizeof...(Args)>::invoke(callable, instance, std::forward<Args>(args)...);
 }
 
 inline bool callableIsStatic(const Variant & callable)
 {
-	return callable.getMetaType()->getMetaCallable()->isStatic(callable);
+	return getNonReferenceMetaType(callable)->getMetaCallable()->isStatic(callable);
 }
 
 

@@ -364,7 +364,7 @@ Shortcut for `MetaCallable::getParameterType()`.
 
 ```c++
 template <typename ...Args>
-int callableRankInvoke(const Variant & callable, const Variant & instance, Args ...args);
+int callableRankInvoke(const Variant & callable, const Variant & instance, Args && ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and returns the result.
@@ -374,7 +374,7 @@ Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and ret
 
 ```c++
 template <typename ...Args>
-bool callableCanInvoke(const Variant & callable, const Variant & instance, Args ...args);
+bool callableCanInvoke(const Variant & callable, const Variant & instance, Args && ...args);
 ```
 
 Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and returns the result.
@@ -384,10 +384,32 @@ Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and retu
 
 ```c++
 template <typename ...Args>
-Variant callableInvoke(const Variant & callable, const Variant & instance, Args ...args);
+Variant callableInvoke(const Variant & callable, const Variant & instance, Args && ...args);
 ```
 
-Converts `args` to Variant array then calls `MetaCallable::invoke()` and returns the result.
+Converts `args` to Variant array then calls `MetaCallable::invoke()` and returns the result.  
+
+Note: the converted Variant holds reference to each `args`. When invoking the underlying C++ function held by `callable`,
+the Variant will be converted to the type of target argument type. If the argument type is `Variant`, the Variant
+will passed to the argument directly. The argument will be a Variant that holds a reference to `args`, which may be on
+the stack. If the callable stores the Variant for later use, the reference will become dangling address and cause crash.  
+In such case, you should construct the Variant arguments explicitly instead of relying on the template deduction.  
+Here is the example code for the potential issue,
+
+```c++
+metapp::Variant storedVar;
+metapp::Variant callable(std::function<void (const metapp::Variant &)>([&storedVar](const metapp::Variant & var) {
+  ASSERT(var.getMetaType()->isReference());
+  ASSERT(var.get<const std::string &>() == "good");
+  // Wrong! storedVar will container invalid address
+  storedVar = var;
+  ASSERT(storedVar.get<const std::string &>() == "good");
+  // After the function returns, storedVar may refer to invalid address
+}));
+metapp::callableInvoke(callable, nullptr, std::string("good"));
+// Below line won't work, it either assert fail or crash.
+// ASSERT(storedVar.get<const std::string &>() == "good");
+```
 
 <a id="a4_16"></a>
 #### findCallable

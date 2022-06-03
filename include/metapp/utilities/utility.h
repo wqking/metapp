@@ -18,7 +18,6 @@
 #define METAPP_UTILITY_H_969872685611
 
 #include "metapp/variant.h"
-#include "metapp/interfaces/metacallable.h"
 #include "metapp/metatype.h"
 #include "metapp/utilities/typelist.h"
 #include "metapp/exception.h"

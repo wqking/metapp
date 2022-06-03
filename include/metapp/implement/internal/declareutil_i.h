@@ -49,7 +49,7 @@ int rankArgumentMatching(const ArgumentSpan & arguments)
 		return invokeRankMatch;
 	}
 	using To = typename TypeListGetAt<TL, N>::Type;
-	if(arguments[N].template canGet<To>()) {
+	if(getNonReferenceMetaType(arguments[N])->equal(getNonReferenceMetaType(getMetaType<To>()))) {
 		return invokeRankMatch;
 	}
 	if(arguments[N].template canCast<To>()) {

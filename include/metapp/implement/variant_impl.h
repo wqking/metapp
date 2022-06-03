@@ -90,7 +90,7 @@ inline auto Variant::get(
 		>::value>::type *
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
-	if(canGet<T>()) {
+	if(canGet<Variant>()) {
 		using U = typename internal_::VariantReturnType<T>::Type;
 		return (U)(*(typename std::remove_reference<U>::type *)(getAddress()));
 	}
