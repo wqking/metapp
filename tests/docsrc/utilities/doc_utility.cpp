@@ -39,10 +39,10 @@ desc*/
 
 ```c++
 const MetaType * getNonReferenceMetaType(const MetaType * metaType);
-const MetaType * getNonReferenceMetaType(const Variant & value);
+const MetaType * getNonReferenceMetaType(const Variant & var);
 ```
 
-If the `metaType`, or meta type in the Variant `value`, is a reference, returns the meta type the reference refers to.  
+If the `metaType`, or meta type in the Variant `var`, is a reference, returns the meta type the reference refers to.  
 If the meta type is not a reference, returns the meta type.
 
 #### typeKindIsIntegral

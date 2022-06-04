@@ -28,8 +28,25 @@
 The first argument in some meta interface functions, such as `MetaAccessible::get/set`, `MetaCallable::invoke`, the first argument
 is a Variant that requires to be either value or reference, but not pointer.
 If we have a pointer and want to convert it to non-pointer so that we can pass it to those functions, we can
-call function `depointer` in `utility.h` to covert it to non-pointer.
+call function `depointer` in `utility.h` to covert it to equivalent non-pointer. For example,  
+desc*/
 
+ExampleFunc
+{
+	//code
+	int n = 5;
+	// pn is a pointer to n
+	metapp::Variant pn = &n;
+	// Convert pn to non-pointer. Now rn is a referent to n.
+	metapp::Variant rn = metapp::depointer(pn);
+	REQUIRE(rn.get<int>() == 5);
+	// Since rn is a reference, changing n will also change rn.
+	n = 38;
+	REQUIRE(rn.get<int>() == 38);
+	//code
+}
+
+/*desc
 ### What's the difference between metapp::Variant and std::variant?
 
 `std::variant` requires you to know the contained types beforehand. You don't need to know any type when using `metapp::Variant`.  
@@ -47,7 +64,7 @@ better, you can use meta interface to perform runtime generic operations without
 
 For example, `someVariant[1] = 5`.  
 The problem is, metapp supports `MetaIndexable` and `MetaMappable`, both of which allow to array style access.  
-To support the `[]` operator, `Variant` will first try to get `MetaMappable`, then if not it tries to get `MetaIndexable`.
+To support the `[]` operator, `Variant` has to try to get `MetaMappable` at first, then if not it tries to get `MetaIndexable`.
 Such kinds of "trials", or to say, "guess", is not only having performance cost, but also is error prone and the user may
 abuse using the `[]` operator.  
 Also, most likely metapp will support operators in meta type in the future, then that will conflict if `Variant` supports `[]`
@@ -55,7 +72,7 @@ specially for now.
 
 ## MetaType
 
-### metapp doesn't recognize the built-in types such as int, it give type kind `tkObject` instead of `tkInt` for int.
+### metapp doesn't recognize the built-in types such as int, it gives type kind `tkObject` instead of `tkInt` to `int`.
 
 Your forget to `#include "metapp/allmetatypes.h"`. The header needs to be included where ever `metapp` is used.
 

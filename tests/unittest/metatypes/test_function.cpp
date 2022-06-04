@@ -50,7 +50,10 @@ void myFunc(int & a, std::string & b)
 
 std::string myFunc2(const int a, const metapp::Variant & b)
 {
-	return b.cast<const std::string &>().get<const std::string &>() + std::to_string(a);
+	return b.cast<const std::string &>().get<const std::string &>()
+		+ std::to_string(a)
+		+ (b.getMetaType()->isReference() ? "R" : "NR")
+	;
 }
 
 int myFunc3()
@@ -74,8 +77,9 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 	{
 		metapp::Variant v(&myFunc2);
 		metapp::Variant arguments[] = { 5, "hello" };
-		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 2 }).get<std::string>() == "hello5");
-		REQUIRE(metapp::callableInvoke(v, nullptr, 6, "world").get<std::string>() == "world6");
+		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, { arguments, 2 }).get<std::string>() == "hello5NR");
+		// metapp::callableInvoke passes Variant of reference to any argument of type Variant
+		REQUIRE(metapp::callableInvoke(v, nullptr, 6, "world").get<std::string>() == "world6R");
 	}
 	{
 		metapp::Variant v(&myFunc3);
