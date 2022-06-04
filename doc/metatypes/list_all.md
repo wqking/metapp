@@ -152,7 +152,7 @@
 |TypeKind              |Cast to                                                                                           |
 |----------------------|--------------------------------------------------------------------------------------------------|
 |tkVoid                |None                                                                                              |
-|tkBool                |All arithmetic types.<br />Any types that can cast arithmetic types to.                           |
+|tkBool                |All arithmetic types.                                                                             |
 |tkChar                |Ditto                                                                                             |
 |tkWideChar            |Ditto                                                                                             |
 |tkChar8 (C++20)       |Ditto                                                                                             |
@@ -172,8 +172,8 @@
 |tkDouble              |Ditto                                                                                             |
 |tkLongDouble          |Ditto                                                                                             |
 |tkObject              |None                                                                                              |
-|tkPointer             |Any pointers.<br />char * can cast to std::string.<br />wchar_t * can cast to std::wstring.       |
-|tkReference           |None                                                                                              |
+|tkPointer             |Cast to pointer.<br />char * can cast to std::string.<br />wchar_t * can cast to std::wstring.    |
+|tkReference           |Cast to reference.                                                                                |
 |tkFunction            |None                                                                                              |
 |tkMemberFunction      |None                                                                                              |
 |tkMemberPointer       |None                                                                                              |
@@ -189,8 +189,8 @@
 |tkMetaRepo            |None                                                                                              |
 |tkStdString           |char *                                                                                            |
 |tkStdWideString       |wchar_t *                                                                                         |
-|tkStdSharedPtr        |T *<br />std::weak_ptr<T>                                                                         |
-|tkStdUniquePtr        |T *                                                                                               |
+|tkStdSharedPtr        |std::weak_ptr<T>                                                                                  |
+|tkStdUniquePtr        |None                                                                                              |
 |tkStdWeakPtr          |std::shared_ptr<T>                                                                                |
 |tkStdFunction         |Any MetaCallable can cast to std::function, as long as the argument count matches.                |
 |tkStdVector           |None                                                                                              |
@@ -224,9 +224,9 @@
 |tkBool                |0                     |None                                                                                                                                    |
 |tkChar                |0                     |None                                                                                                                                    |
 |tkWideChar            |0                     |None                                                                                                                                    |
-|tkChar8 (C++20)       |None                  |None                                                                                                                                    |
-|tkChar16              |None                  |None                                                                                                                                    |
-|tkChar32              |None                  |None                                                                                                                                    |
+|tkChar8 (C++20)       |0                     |None                                                                                                                                    |
+|tkChar16              |0                     |None                                                                                                                                    |
+|tkChar32              |0                     |None                                                                                                                                    |
 |tkSignedChar          |0                     |None                                                                                                                                    |
 |tkUnsignedChar        |0                     |None                                                                                                                                    |
 |tkShort               |0                     |None                                                                                                                                    |
@@ -240,22 +240,22 @@
 |tkFloat               |0                     |None                                                                                                                                    |
 |tkDouble              |0                     |None                                                                                                                                    |
 |tkLongDouble          |0                     |None                                                                                                                                    |
-|tkObject              |None                  |None                                                                                                                                    |
+|tkObject              |0                     |None                                                                                                                                    |
 |tkPointer             |1                     |T                                                                                                                                       |
 |tkReference           |1                     |T                                                                                                                                       |
 |tkFunction            |1+ParameterCount      |Up0: the return type<br />Up1: the first parameter<br />Up2: the second parameter<br />UpN: the Nth parameter                           |
 |tkMemberFunction      |2+ParameterCount      |Up0: the class type<br />Up1: the return type<br />Up2: the first parameter<br />Up3: the second parameter<br />UpN: the N-1th parameter|
 |tkMemberPointer       |2                     |Up0: the class type<br />Up1: the value type                                                                                            |
 |tkConstructor         |1+ParameterCount      |Up0: the class type<br />Up1: the first parameter<br />Up2: the second parameter<br />UpN: the Nth parameter                            |
-|tkOverloadedFunction  |None                  |None                                                                                                                                    |
+|tkOverloadedFunction  |0                     |None                                                                                                                                    |
 |tkDefaultArgsFunction |as the underlying type|None                                                                                                                                    |
 |tkVariadicFunction    |0                     |None                                                                                                                                    |
 |tkArray               |1                     |the type removed by one extent                                                                                                          |
 |tkEnum                |1                     |the underlying type                                                                                                                     |
 |tkAccessor            |1                     |the value type                                                                                                                          |
 |tkVariant             |0                     |None                                                                                                                                    |
-|tkMetaType            |None                  |None                                                                                                                                    |
-|tkMetaRepo            |None                  |None                                                                                                                                    |
+|tkMetaType            |0                     |None                                                                                                                                    |
+|tkMetaRepo            |0                     |None                                                                                                                                    |
 |tkStdString           |0                     |None                                                                                                                                    |
 |tkStdWideString       |0                     |None                                                                                                                                    |
 |tkStdSharedPtr        |1                     |T                                                                                                                                       |
@@ -282,4 +282,4 @@
 |tkStdTuple            |sizeof...(Types)      |Up0: first type in Types<br />Up1: second type in Types<br />UpN: Nth type in Types                                                     |
 |tkStdAny              |0                     |None                                                                                                                                    |
 |tkStdVariant          |sizeof...(Types)      |Up0: first type in Types<br />Up1: second type in Types<br />UpN: Nth type in Types                                                     |
-|tkUser                |None                  |None                                                                                                                                    |
+|tkUser                |0                     |None                                                                                                                                    |

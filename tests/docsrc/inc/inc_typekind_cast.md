@@ -1,7 +1,7 @@
 |TypeKind              |Cast to                                                                                           |
 |----------------------|--------------------------------------------------------------------------------------------------|
 |tkVoid                |None                                                                                              |
-|tkBool                |All arithmetic types.<br />Any types that can cast arithmetic types to.                           |
+|tkBool                |All arithmetic types.                                                                             |
 |tkChar                |Ditto                                                                                             |
 |tkWideChar            |Ditto                                                                                             |
 |tkChar8 (C++20)       |Ditto                                                                                             |
@@ -21,8 +21,8 @@
 |tkDouble              |Ditto                                                                                             |
 |tkLongDouble          |Ditto                                                                                             |
 |tkObject              |None                                                                                              |
-|tkPointer             |Any pointers.<br />char * can cast to std::string.<br />wchar_t * can cast to std::wstring.       |
-|tkReference           |None                                                                                              |
+|tkPointer             |Cast to pointer.<br />char * can cast to std::string.<br />wchar_t * can cast to std::wstring.    |
+|tkReference           |Cast to reference.                                                                                |
 |tkFunction            |None                                                                                              |
 |tkMemberFunction      |None                                                                                              |
 |tkMemberPointer       |None                                                                                              |
@@ -38,8 +38,8 @@
 |tkMetaRepo            |None                                                                                              |
 |tkStdString           |char *                                                                                            |
 |tkStdWideString       |wchar_t *                                                                                         |
-|tkStdSharedPtr        |T *<br />std::weak_ptr<T>                                                                         |
-|tkStdUniquePtr        |T *                                                                                               |
+|tkStdSharedPtr        |std::weak_ptr<T>                                                                                  |
+|tkStdUniquePtr        |None                                                                                              |
 |tkStdWeakPtr          |std::shared_ptr<T>                                                                                |
 |tkStdFunction         |Any MetaCallable can cast to std::function, as long as the argument count matches.                |
 |tkStdVector           |None                                                                                              |

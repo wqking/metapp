@@ -34,17 +34,6 @@ struct DeclareMetaTypeBase <std::unique_ptr<T> >
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdUniquePtr;
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->isPointer()) {
-			if(result != nullptr) {
-				*result = value.get<UniquePtr &>().get();
-			}
-			return true;
-		}
-
-		return commonCast(result, value, getMetaType<UniquePtr>(), toMetaType);
-	}
-
 	static const MetaAccessible * getMetaAccessible() {
 		static MetaAccessible metaAccessible(
 			&accessibleGetValueType,

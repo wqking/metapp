@@ -33,16 +33,6 @@ TEST_CASE("metatypes, std::unique_ptr<int>")
 	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<int> >()));
 }
 
-TEST_CASE("metatypes, std::unique_ptr<int>, cast to pointer")
-{
-	using PTR = std::unique_ptr<int>;
-	PTR up = PTR(new int{38});
-	REQUIRE(up);
-	metapp::Variant v(metapp::Variant::create<PTR>(std::move(up)));
-	REQUIRE(! up);
-	REQUIRE(*v.cast<const int *>().get<const int *>() == 38);
-}
-
 TEST_CASE("metatypes, std::unique_ptr<std::string>, MetaAccessible")
 {
 	using PTR = std::unique_ptr<std::string>;

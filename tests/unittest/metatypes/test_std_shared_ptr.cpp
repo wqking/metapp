@@ -30,18 +30,6 @@ TEST_CASE("metatypes, std::shared_ptr<int>")
 	REQUIRE(v.getMetaType()->equal(metapp::getMetaType<std::shared_ptr<int> >()));
 }
 
-TEST_CASE("metatypes, std::shared_ptr<int>, cast to pointer")
-{
-	std::shared_ptr<int> sp = std::make_shared<int>(5);
-	metapp::Variant v(sp);
-	REQUIRE(*sp == 5);
-	REQUIRE(v.cast<const int *>().get<const int *>() == sp.get());
-	REQUIRE(*v.cast<const int *>().get<const int *>() == 5);
-	*v.cast<int *>().get<int *>() = 38;
-	REQUIRE(*sp == 38);
-	REQUIRE(*v.cast<const int *>().get<const int *>() == 38);
-}
-
 TEST_CASE("metatypes, std::shared_ptr<int>, cast to std::weak_ptr")
 {
 	std::shared_ptr<int> sp = std::make_shared<int>(9);
