@@ -85,6 +85,7 @@ TEST_CASE("metatypes, tkFunction, free function, invoke")
 		metapp::Variant v(&myFunc3);
 		REQUIRE(v.getMetaType()->getMetaCallable()->invoke(v, nullptr, {}).get<int>() == 38);
 		REQUIRE(metapp::callableInvoke(v, nullptr).get<int>() == 38);
+		REQUIRE_THROWS(metapp::callableInvoke(v, nullptr, 1));
 	}
 }
 

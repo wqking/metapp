@@ -144,6 +144,9 @@ MAKE_CONTAINER_DATA_PROVIDER((std::unordered_multiset<std::string>), metapp::tkS
 MAKE_CONTAINER_DATA_PROVIDER((std::map<std::string, int>), metapp::tkStdMap, metapp::tkStdPair,
 	({ { "hello", -5 }, { "", 0 }, { "world", 123456789 }, { "This is great!", 38 }, { "Very good", -98765 } }))
 
+MAKE_CONTAINER_DATA_PROVIDER((std::map<int, int>), metapp::tkStdMap, metapp::tkStdPair,
+	({ { 19, -5 }, { 91, 0 }, { 38, 123456789 }, { 83, 38 }, { 5, -98765 } }))
+
 MAKE_CONTAINER_DATA_PROVIDER((std::unordered_map<std::string, int>), metapp::tkStdUnorderedMap, metapp::tkStdPair,
 	({ { "hello", -5 }, { "", 0 }, { "world", 123456789 }, { "This is great!", 38 }, { "Very good", -98765 } }))
 
@@ -185,6 +188,15 @@ using TestTypes_Iterables = metapp::TypeList<
 	std::unordered_multiset<std::string>,
 
 	std::map<std::string, int>,
+	std::map<int, int>,
+	std::unordered_map<std::string, int>,
+	std::multimap<std::string, int>,
+	std::unordered_multimap<std::string, int>
+>;
+
+using TestTypes_Mappable = metapp::TypeList<
+	std::map<std::string, int>,
+	std::map<int, int>,
 	std::unordered_map<std::string, int>,
 	std::multimap<std::string, int>,
 	std::unordered_multimap<std::string, int>

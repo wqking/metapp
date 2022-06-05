@@ -26,11 +26,13 @@
 `MetaMappable` is a meta interface to get and set elements in associative containers.  
 
 ## Header
+desc*/
 
-```c++
+//code
 #include "metapp/interfaces/metamappable.h"
-```
+//code
 
+/*desc
 ## Get MetaMappable interface
 
 We can call `MetaType::getMetaMappable()` to get the `MetaMappable` interface.
@@ -52,7 +54,7 @@ const metapp::MetaMappable * metaMappable = metaType->getMetaMappable();
 
 ```c++
 MetaMappable(
-	std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & mappable),
+	const MetaType * (*getValueType)(const Variant & mappable),
 	Variant (*get)(const Variant & mappable, const Variant & key),
 	void (*set)(const Variant & mappable, const Variant & key, const Variant & value)
 );
@@ -72,12 +74,26 @@ Variant `mappable` can be value that implements `MetaMappable`, or reference tha
 #### getValueType
 
 ```c++
-std::pair<const MetaType *, const MetaType *> getValueType(const Variant & mappable);
+const MetaType * getValueType(const Variant & mappable);
 ```
 
-Returns the meta type of key/value. The `first` in the returned `std::pair` is the meta type for the key,
-the `second` in the returned `std::pair` is the meta type for the value.  
+Returns the meta type of the value type. The returned meta type is a type of `std::pair`, the up type at 0 is the key type,
+the up type at 1 is the value type. Example,  
+desc*/
 
+ExampleFunc
+{
+	//code
+	metapp::Variant v{ std::unordered_map<std::string, int>() };
+	const metapp::MetaMappable * metaMappable = metapp::getNonReferenceMetaType(v)->getMetaMappable();
+	const metapp::MetaType * valueType = metaMappable->getValueType(v);
+	ASSERT(valueType->getTypeKind() == metapp::tkStdPair);
+	ASSERT(valueType->getUpType(0)->equal(metapp::getMetaType<std::string>()));
+	ASSERT(valueType->getUpType(1)->equal(metapp::getMetaType<int>()));
+	//code
+}
+
+/*desc
 #### get
 
 ```c++
@@ -107,7 +123,7 @@ you may store `mappable.getMetaType()->getMetaMappable()` to a local variable, t
 This is because `getMetaMappable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
-inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
+inline const MetaType * mappableGetValueType(const Variant & mappable)
 {
 	return mappable.getMetaType()->getMetaMappable()->getValueType(mappable);
 }

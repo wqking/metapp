@@ -26,7 +26,7 @@ class MetaMappable
 {
 public:
 	MetaMappable(
-		std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & mappable),
+		const MetaType * (*getValueType)(const Variant & mappable),
 		Variant (*get)(const Variant & mappable, const Variant & key),
 		void (*set)(const Variant & mappable, const Variant & key, const Variant & value)
 	)
@@ -37,12 +37,12 @@ public:
 	{
 	}
 
-	std::pair<const MetaType *, const MetaType *> (*getValueType)(const Variant & mappable);
+	const MetaType * (*getValueType)(const Variant & mappable);
 	Variant (*get)(const Variant & mappable, const Variant & key);
 	void (*set)(const Variant & mappable, const Variant & key, const Variant & value);
 };
 
-inline std::pair<const MetaType *, const MetaType *> mappableGetValueType(const Variant & mappable)
+inline const MetaType * mappableGetValueType(const Variant & mappable)
 {
 	return getNonReferenceMetaType(mappable)->getMetaMappable()->getValueType(mappable);
 }

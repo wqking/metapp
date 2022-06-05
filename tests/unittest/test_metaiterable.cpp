@@ -18,7 +18,7 @@
 #include "include/containerdataprovider.h"
 
 #include "metapp/variant.h"
-#include "metapp/interfaces/metaclass.h"
+#include "metapp/interfaces/metaiterable.h"
 #include "metapp/allmetatypes.h"
 
 #include <string>

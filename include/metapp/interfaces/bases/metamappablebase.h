@@ -37,10 +37,11 @@ struct MetaMappableBase
 private:
 	using KeyType = typename ContainerType::key_type;
 	using MappedType = typename ContainerType::mapped_type;
+	using ValueType = typename ContainerType::value_type;
 
-	static std::pair<const MetaType *, const MetaType *> metaMapGetValueType(const Variant & /*mappable*/)
+	static const MetaType * metaMapGetValueType(const Variant & /*mappable*/)
 	{
-		return std::make_pair(getMetaType<KeyType>(), getMetaType<MappedType>());
+		return getMetaType<ValueType>();
 	}
 
 	static Variant metaMapGet(const Variant & mappable, const Variant & key)
