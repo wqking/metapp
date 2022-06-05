@@ -107,7 +107,7 @@ ExampleFunc
 	else {
 		metaClass = metaType->getMetaClass();
 	}
-	} //nocode
+	(void)metaClass; } //nocode
 
 	{ //nocode
 	// Worse, don't do it. There is no MetaClass on a reference.

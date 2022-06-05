@@ -34,16 +34,14 @@ desc*/
 //code
 
 //desc ## Examples
-ExampleFunc
-{
-	//code
-	//desc TL1 is a type list of `int` and `char`.
-	using TL1 = metapp::TypeList<int, char>;
 
-	//desc TL2 is a type list of `std::string`, `std::vector<int>`, `bool`, `long`, and `double`.
-	using TL2 = metapp::TypeList<std::string, std::vector<int>, bool, long, double>;
-	//code
-}
+//code
+//desc TL1 is a type list of `int` and `char`.
+using TL1 = metapp::TypeList<int, char>;
+
+//desc TL2 is a type list of `std::string`, `std::vector<int>`, `bool`, `long`, and `double`.
+using TL2 = metapp::TypeList<std::string, std::vector<int>, bool, long, double>;
+//code
 
 /*desc
 ## Use cases

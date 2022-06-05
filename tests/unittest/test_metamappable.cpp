@@ -51,17 +51,15 @@ TEMPLATE_LIST_TEST_CASE("MetaMappable get", "", TestTypes_Mappable)
 	auto nonPointer = metapp::depointer(v);
 	REQUIRE(metaMappable->getValueType(nonPointer)->equal(metapp::getMetaType<ValueType>()));
 	REQUIRE(metaMappable->getValueType(nonPointer)->getTypeKind() == metapp::tkStdPair);
-	for(const auto item : container) {
-		REQUIRE(metaMappable->get(nonPointer, item.first).get<const MappedType &>() == item.second);
-		REQUIRE(metapp::mappableGet(nonPointer, item.first).get<const MappedType &>() == item.second);
+	for(const auto & item : container) {
+		REQUIRE(metaMappable->get(nonPointer, item.first).template get<const MappedType &>() == item.second);
+		REQUIRE(metapp::mappableGet(nonPointer, item.first).template get<const MappedType &>() == item.second);
 	}
 }
 
 TEMPLATE_LIST_TEST_CASE("MetaMappable set", "", TestTypes_Mappable)
 {
 	using Container = TestType;
-	using KeyType = typename Container::key_type;
-	using ValueType = typename Container::value_type;
 	using MappedType = typename Container::mapped_type;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container sample = dataProvider.getContainer();
@@ -78,15 +76,15 @@ TEMPLATE_LIST_TEST_CASE("MetaMappable set", "", TestTypes_Mappable)
 	}
 
 	auto nonPointer = metapp::depointer(v);
-	for(const auto item : sample) {
+	for(const auto & item : sample) {
 		REQUIRE(metapp::mappableGet(nonPointer, item.first).isEmpty());
 		metapp::mappableSet(nonPointer, item.first, item.second);
-		REQUIRE(metapp::mappableGet(nonPointer, item.first).get<const MappedType &>() == item.second);
+		REQUIRE(metapp::mappableGet(nonPointer, item.first).template get<const MappedType &>() == item.second);
 
 		const auto newValue = TestDataProvider<MappedType>().getData(2);
-		REQUIRE(metapp::mappableGet(nonPointer, item.first).get<const MappedType &>() != newValue);
+		REQUIRE(metapp::mappableGet(nonPointer, item.first).template get<const MappedType &>() != newValue);
 		metapp::mappableSet(nonPointer, item.first, newValue);
-		REQUIRE(metapp::mappableGet(nonPointer, item.first).get<const MappedType &>() == newValue);
+		REQUIRE(metapp::mappableGet(nonPointer, item.first).template get<const MappedType &>() == newValue);
 	}
 }
 

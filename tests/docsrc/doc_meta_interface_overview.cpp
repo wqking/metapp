@@ -60,6 +60,7 @@ ExampleFunc
 	const metapp::MetaType * metaType = metapp::getMetaType<MyClass>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 	//code
+	(void)metaClass;
 }
 
 /*desc
@@ -80,7 +81,7 @@ desc*/
 class MyClass
 {
 public:
-	explicit MyClass(const std::string & message) {}
+	explicit MyClass(const std::string & /*message*/) {}
 	void sayHello() const {}
 };
 
