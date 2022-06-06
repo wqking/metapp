@@ -30,17 +30,6 @@ struct DeclareMetaTypeBase <std::string> : MetaStreamableBase <std::string>
 {
 	static constexpr TypeKind typeKind = tkStdString;
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(isSameMetaType<char *>(toMetaType)) {
-			if(result != nullptr) {
-				*result = value.get<const std::string &>().c_str();
-			}
-			return true;
-		}
-		else {
-			return commonCast(result, value, getMetaType<std::string>(), toMetaType);
-		}
-	}
 };
 
 template <>
@@ -48,17 +37,6 @@ struct DeclareMetaTypeBase <std::wstring>
 {
 	static constexpr TypeKind typeKind = tkStdWideString;
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(isSameMetaType<wchar_t *>(toMetaType)) {
-			if(result != nullptr) {
-				*result = value.get<const std::wstring &>().c_str();
-			}
-			return true;
-		}
-		else {
-			return commonCast(result, value, getMetaType<std::wstring>(), toMetaType);
-		}
-	}
 };
 
 

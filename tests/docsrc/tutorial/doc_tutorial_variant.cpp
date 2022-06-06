@@ -62,14 +62,13 @@ TEST_CASE("tutorialVariant")
 	v.get<std::string &>() = "world";
 	ASSERT(v.get<const std::string &>() == "world");
 
-	//desc Cast to const char *.
-	metapp::Variant casted = v.cast<const char *>();
-	const char * s = casted.get<const char *>();
-	ASSERT(strcmp(s, "world") == 0);
-
 	//desc Now v contains char *.
 	v = "great";
 	ASSERT(strcmp(v.get<const char *>(), "great") == 0);
+
+	//desc Cast to const char *.
+	metapp::Variant casted = v.cast<std::string>();
+	ASSERT(casted.get<const std::string &>() == "great");
 
 	//desc Let's see how Variant works with array
 	int array[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };

@@ -67,19 +67,18 @@ v.get<std::string &>() = "world";
 ASSERT(v.get<const std::string &>() == "world");
 ```
 
-Cast to const char *.
-
-```c++
-metapp::Variant casted = v.cast<const char *>();
-const char * s = casted.get<const char *>();
-ASSERT(strcmp(s, "world") == 0);
-```
-
 Now v contains char *.
 
 ```c++
 v = "great";
 ASSERT(strcmp(v.get<const char *>(), "great") == 0);
+```
+
+Cast to const char *.
+
+```c++
+metapp::Variant casted = v.cast<std::string>();
+ASSERT(casted.get<const std::string &>() == "great");
 ```
 
 Let's see how Variant works with array

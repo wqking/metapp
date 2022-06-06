@@ -187,8 +187,8 @@
 |tkVariant             |Use the cast rules of Variant                                                                     |
 |tkMetaType            |None                                                                                              |
 |tkMetaRepo            |None                                                                                              |
-|tkStdString           |char *                                                                                            |
-|tkStdWideString       |wchar_t *                                                                                         |
+|tkStdString           |None                                                                                              |
+|tkStdWideString       |None                                                                                              |
 |tkStdSharedPtr        |std::weak_ptr<T>                                                                                  |
 |tkStdUniquePtr        |None                                                                                              |
 |tkStdWeakPtr          |std::shared_ptr<T>                                                                                |
