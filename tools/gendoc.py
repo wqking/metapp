@@ -34,6 +34,11 @@ fileConfigs = {
 		#'generateToc' : False,
 	},
 
+	'document_readme' : {
+		'targetFileName' : '../doc/readme.md',
+		'postCommand' : 'replaceTextInFile({file}, "doc/", "")',
+	},
+
 	'list_all' : {
 		'tocMinHeadings' : 2
 	}
@@ -59,6 +64,11 @@ def isWindows() :
 def normalizeCommand(command) :
 	return shlex.split(command, posix = not isWindows())
 
+def replaceTextInFile(fileName, oldText, newText) :
+	content = cpp2md.readFile(fileName)
+	content = content.replace(oldText, newText)
+	cpp2md.writeFile(fileName, content)
+
 def doPostProcessMarkdown(fileName, config) :
 	#header = [ "<!--Auto generated file, don't modify this file.-->", '' ]
 	# The invisible text trick is from here
@@ -71,11 +81,16 @@ def doPostProcessMarkdown(fileName, config) :
 	lineList = header + lineList
 	cpp2md.writeLines(fileName, lineList)
 
+	fileName = fileName.replace('\\', '/')
 	if config['generateToc'] :
-		fileName = fileName.replace('\\', '/')
 		command = 'python markdown-toc.py update --max-level=4 --min-headings=%d --file %s' % (config['tocMinHeadings'], fileName)
 		command = normalizeCommand(command)
 		subprocess.run(command)
+
+	if config['postCommand'] is not None :
+		command = config['postCommand']
+		command = command.replace('{file}', '"%s"' % (fileName))
+		eval(command)
 
 def doGetFileConfig(sourceFile) :
 	matches = re.search(r'doc_([^\\\/]+)\.(\w+)$', sourceFile)
@@ -84,14 +99,18 @@ def doGetFileConfig(sourceFile) :
 		return None
 	fileName = matches.group(1)
 	fileType = matches.group(2)
+
 	relativePath = os.path.abspath(sourceFile)[len(sourcePath) : ]
 	relativePath = re.sub(r'^[\\\/]', '', relativePath)
 	relativePath = os.path.dirname(relativePath)
+
 	targetFileName = os.path.join(docPath, relativePath, fileName + '.md')
 	specialConfig = getDictValue(fileConfigs, fileName)
 	targetFileName = getDictValue(specialConfig, 'targetFileName', targetFileName)
 	generateToc = getDictValue(specialConfig, 'generateToc', True)
 	tocMinHeadings = getDictValue(specialConfig, 'tocMinHeadings', 6)
+	postCommand = getDictValue(specialConfig, 'postCommand', None)
+
 	os.makedirs(os.path.dirname(targetFileName), exist_ok = True)
 	config = {
 		'fileName' : fileName,
@@ -99,6 +118,7 @@ def doGetFileConfig(sourceFile) :
 		'targetFileName' : targetFileName,
 		'generateToc' : generateToc,
 		'tocMinHeadings' : tocMinHeadings,
+		'postCommand' : postCommand,
 	}
 	return config
 
