@@ -50,6 +50,7 @@ value is referenced instead of copied, so the memory and performance cost is kep
 	- Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers,
 		and much more.
 	- Support runtime generic programming.
+	- Unreflected types can be inspected. Reflection only provides more information, but not a must.
 	- True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 		no template parameters are needed. All parameters and return values are passed via metapp::Variant.
 	- Mimic C++ reference extensively for better performance.
@@ -439,11 +440,12 @@ struct metapp::DeclareMetaType<MyPet> : metapp::DeclareMetaTypeBase<MyPet>
 ExampleFunc
 {
 	//code
-	//desc Obtain the meta type for MyPet, then get the meta class.
+	//desc Obtain the meta type for MyPet, then get the meta class. If we've registered the meta type of MyPet
+	//desc to MetaRepo, we can get it at runtime instead of depending on the compile time `getMetaType`.
 	const metapp::MetaType * metaType = metapp::getMetaType<MyPet>();
 	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-	//desc `getConstructor`, then invoke the constructor as if it's a normal callable, with property arguments.
+	//desc `getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
 	//desc Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.
 	std::shared_ptr<MyPet> myPet(metapp::callableInvoke(metaClass->getConstructor(), nullptr,
 		"Lovely", 3).get<MyPet *>());
@@ -468,6 +470,55 @@ ExampleFunc
 	const auto & methodCalculate = metaClass->getCallable("calculate");
 	// Pass arguments 2 and 3 to `calculate`, the result is 2+3=5.
 	ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
+	//code
+}
+
+//desc ### Work with unreflected types
+//code
+//desc Assume we have two classes that we don't reflect for.
+struct UnreflectedFoo { int f = 5; };
+struct UnreflectedBar { int b = 6; };
+//desc Surely we can't get any member function or property information for the classes since they are not reflected.
+//desc But at least we can,  
+//code
+ExampleFunc
+{
+	//code
+	//desc 1, Construct the object using default constructor.
+	std::unique_ptr<UnreflectedFoo> foo(static_cast<UnreflectedFoo *>(
+		metapp::getMetaType<UnreflectedFoo>()->construct()));
+	ASSERT(foo->f == 5);
+
+	//desc 2, Copy construct the object.
+	foo->f = 38; // Change member value to prove the value is copied.
+	std::unique_ptr<UnreflectedFoo> copiedFoo(static_cast<UnreflectedFoo *>(
+		metapp::getMetaType<UnreflectedFoo>()->copyConstruct(foo.get())));
+	ASSERT(copiedFoo->f == 38);
+
+	//desc 3, Construct the object inplace.
+	UnreflectedFoo foo2;
+	foo2.f = 9;
+	ASSERT(foo2.f == 9);
+	metapp::getMetaType<UnreflectedFoo>()->placementConstruct(&foo2);
+	ASSERT(foo2.f == 5);
+
+	//desc 4, Copy construct the object inplace.
+	foo2.f = 38;
+	UnreflectedFoo foo3;
+	foo3.f = 19;
+	ASSERT(foo3.f == 19);
+	metapp::getMetaType<UnreflectedFoo>()->placementCopyConstruct(&foo3, &foo2);
+	ASSERT(foo3.f == 38);
+
+	//desc 5, Identify the meta type
+	const UnreflectedFoo * fooPtr = &foo3;
+	metapp::Variant varFoo = fooPtr;
+	metapp::Variant varBar = UnreflectedBar();
+	ASSERT(varBar.getMetaType()->equal(metapp::getMetaType<UnreflectedBar>()));
+	ASSERT(varFoo.getMetaType()->isPointer());
+	ASSERT(varFoo.getMetaType()->getUpType()->isConst());
+	ASSERT(varFoo.getMetaType()->equal(metapp::getMetaType<const UnreflectedFoo *>()));
+	ASSERT(varFoo.getMetaType()->getUpType()->equal(metapp::getMetaType<const UnreflectedFoo>()));
 	//code
 }
 

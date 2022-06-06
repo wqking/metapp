@@ -19,6 +19,7 @@
   - [Runtime generic STL container](#mdtoc_5243b8d0)
   - [Use reference with Variant](#mdtoc_b8048b76)
   - [Reflect a class (declare meta type)](#mdtoc_19cc9779)
+  - [Work with unreflected types](#mdtoc_5095655f)
 - [Documentations](#mdtoc_aa76f386)
 - [Build the test code](#mdtoc_460948ff)
 - [Known compiler related quirks in MSVC](#mdtoc_2f938cf5)
@@ -51,6 +52,7 @@ value is referenced instead of copied, so the memory and performance cost is kep
   - Support any C++ type information, such as primary, pointer, reference, function, template, const-volatile qualifiers,
 and much more.
   - Support runtime generic programming.
+  - Unreflected types can be inspected. Reflection only provides more information, but not a must.
   - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 no template parameters are needed. All parameters and return values are passed via metapp::Variant.
   - Mimic C++ reference extensively for better performance.
@@ -543,14 +545,15 @@ struct metapp::DeclareMetaType<MyPet> : metapp::DeclareMetaTypeBase<MyPet>
 ```
 
 Now let's use the reflected meta class.
-Obtain the meta type for MyPet, then get the meta class.
+Obtain the meta type for MyPet, then get the meta class. If we've registered the meta type of MyPet
+to MetaRepo, we can get it at runtime instead of depending on the compile time `getMetaType`.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyPet>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
-`getConstructor`, then invoke the constructor as if it's a normal callable, with property arguments.
+`getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
 Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.
 
 ```c++
@@ -586,6 +589,68 @@ ASSERT(metapp::callableInvoke(methodBark, myPet).get<const std::string &>() == "
 const auto & methodCalculate = metaClass->getCallable("calculate");
 // Pass arguments 2 and 3 to `calculate`, the result is 2+3=5.
 ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
+```
+
+<a id="mdtoc_5095655f"></a>
+### Work with unreflected types
+Assume we have two classes that we don't reflect for.
+
+```c++
+struct UnreflectedFoo { int f = 5; };
+struct UnreflectedBar { int b = 6; };
+```
+
+Surely we can't get any member function or property information for the classes since they are not reflected.
+But at least we can,  
+1, Construct the object using default constructor.
+
+```c++
+std::unique_ptr<UnreflectedFoo> foo(static_cast<UnreflectedFoo *>(
+  metapp::getMetaType<UnreflectedFoo>()->construct()));
+ASSERT(foo->f == 5);
+```
+
+2, Copy construct the object.
+
+```c++
+foo->f = 38; // Change member value to prove the value is copied.
+std::unique_ptr<UnreflectedFoo> copiedFoo(static_cast<UnreflectedFoo *>(
+  metapp::getMetaType<UnreflectedFoo>()->copyConstruct(foo.get())));
+ASSERT(copiedFoo->f == 38);
+```
+
+3, Construct the object inplace.
+
+```c++
+UnreflectedFoo foo2;
+foo2.f = 9;
+ASSERT(foo2.f == 9);
+metapp::getMetaType<UnreflectedFoo>()->placementConstruct(&foo2);
+ASSERT(foo2.f == 5);
+```
+
+4, Copy construct the object inplace.
+
+```c++
+foo2.f = 38;
+UnreflectedFoo foo3;
+foo3.f = 19;
+ASSERT(foo3.f == 19);
+metapp::getMetaType<UnreflectedFoo>()->placementCopyConstruct(&foo3, &foo2);
+ASSERT(foo3.f == 38);
+```
+
+5, Identify the meta type
+
+```c++
+const UnreflectedFoo * fooPtr = &foo3;
+metapp::Variant varFoo = fooPtr;
+metapp::Variant varBar = UnreflectedBar();
+ASSERT(varBar.getMetaType()->equal(metapp::getMetaType<UnreflectedBar>()));
+ASSERT(varFoo.getMetaType()->isPointer());
+ASSERT(varFoo.getMetaType()->getUpType()->isConst());
+ASSERT(varFoo.getMetaType()->equal(metapp::getMetaType<const UnreflectedFoo *>()));
+ASSERT(varFoo.getMetaType()->getUpType()->equal(metapp::getMetaType<const UnreflectedFoo>()));
 ```
 
 <a id="mdtoc_aa76f386"></a>
