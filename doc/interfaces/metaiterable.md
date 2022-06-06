@@ -2,30 +2,30 @@
 
 # MetaIterable interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaIterable interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaIterable constructor](#a2_5)
-* [MetaIterable member functions](#a2_6)
-  * [forEach](#a4_1)
-* [Non-member utility functions](#a2_7)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaIterable interface](#mdtoc_fc50b916)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaIterable constructor](#mdtoc_9b04a5dc)
+- [MetaIterable member functions](#mdtoc_c8ed3fbe)
+  - [forEach](#mdtoc_47eedfa9)
+- [Non-member utility functions](#mdtoc_e4e47ded)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaIterable` is a meta interface to loop through a container.  
 It's the metapp version of C++ "range-based for loop".  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metaiterable.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_fc50b916"></a>
 ## Get MetaIterable interface
 
 We can call `MetaType::getMetaIterable()` to get the `MetaIterable` interface. If the type doesn't implement the interface, `nullptr` is returned.
@@ -35,7 +35,7 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaIterable * metaIterable = metaType->getMetaIterable();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 `std::array` (tkStdArray)  
@@ -53,7 +53,7 @@ const metapp::MetaIterable * metaIterable = metaType->getMetaIterable();
 `std::unordered_multiset` (tkStdUnorderedMultiset)  
 `std::tuple` (tkStdTuple)  
 
-<a id="a2_5"></a>
+<a id="mdtoc_9b04a5dc"></a>
 ## MetaIterable constructor
 
 ```c++
@@ -65,10 +65,10 @@ explicit MetaIterable(
 Parameter `forEach` is a function pointer. It must point to valid function.  
 The meaning of `forEach` is same as the member function listed below.
 
-<a id="a2_6"></a>
+<a id="mdtoc_c8ed3fbe"></a>
 ## MetaIterable member functions
 
-<a id="a4_1"></a>
+<a id="mdtoc_47eedfa9"></a>
 #### forEach
 
 ```c++
@@ -89,7 +89,7 @@ until there is no more elements. If `callback` returns false, `forEach` will sto
 Note: for STL containers, the element is the `value_type` in the container.
 That means for associative containers such as `std::map`, the element is a `std::pair` of the key and value.  
 
-<a id="a2_7"></a>
+<a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIterable`.  
@@ -104,3 +104,4 @@ inline void iterableForEach(const Variant & iterable, MetaIterable::Callback cal
   iterable.getMetaType()->getMetaIterable()->forEach(iterable, callback);
 }
 ```
+

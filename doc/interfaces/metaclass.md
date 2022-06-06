@@ -2,44 +2,44 @@
 
 # MetaClass interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaClass interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaClass constructor](#a2_5)
-* [MetaClass member functions for registering meta data](#a2_6)
-  * [registerConstructor](#a4_1)
-  * [registerAccessible](#a4_2)
-  * [registerCallable](#a4_3)
-  * [registerVariable](#a4_4)
-  * [registerType](#a4_5)
-* [MetaClass member functions for retrieving meta data](#a2_7)
-  * [getConstructor](#a4_6)
-  * [getAccessible](#a4_7)
-  * [getAccessibleView](#a4_8)
-  * [getCallable](#a4_9)
-  * [getCallableView](#a4_10)
-  * [getVariable](#a4_11)
-  * [getVariableView](#a4_12)
-  * [getType by name](#a4_13)
-  * [getType by type kind](#a4_14)
-  * [getType by MetaType](#a4_15)
-  * [getTypeView](#a4_16)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaClass interface](#mdtoc_c21a61aa)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaClass constructor](#mdtoc_b121f60e)
+- [MetaClass member functions for registering meta data](#mdtoc_dc0eb96c)
+  - [registerConstructor](#mdtoc_4b1f3e7b)
+  - [registerAccessible](#mdtoc_30ec3922)
+  - [registerCallable](#mdtoc_3d0e0e3a)
+  - [registerVariable](#mdtoc_f869ddee)
+  - [registerType](#mdtoc_1d950cb0)
+- [MetaClass member functions for retrieving meta data](#mdtoc_4e4583f8)
+  - [getConstructor](#mdtoc_1a65243d)
+  - [getAccessible](#mdtoc_94f64513)
+  - [getAccessibleView](#mdtoc_7f840db2)
+  - [getCallable](#mdtoc_e4e1e48a)
+  - [getCallableView](#mdtoc_32f06161)
+  - [getVariable](#mdtoc_2186375e)
+  - [getVariableView](#mdtoc_d5bb0f99)
+  - [getType by name](#mdtoc_9a1b8fa6)
+  - [getType by type kind](#mdtoc_643f972)
+  - [getType by MetaType](#mdtoc_1cc22aee)
+  - [getTypeView](#mdtoc_5c4ae446)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaClass` is a meta interface to provide meta information of a class, such as constructors, member functions, member fields, etc.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metaclass.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_c21a61aa"></a>
 ## Get MetaClass interface
 
 We can call `MetaType::getMetaClass()` to get the MetaClass interface.
@@ -50,12 +50,12 @@ const metapp::MetaType * metaType = metapp::getMetaType<SomeClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 None
 
-<a id="a2_5"></a>
+<a id="mdtoc_b121f60e"></a>
 ## MetaClass constructor
 
 ```c++
@@ -74,10 +74,10 @@ void callback(metapp::MetaClass & mc);
 ```
 The MetaClass instance under constructing is passed as the parameter. The callback should register all meta data to `mc`.
 
-<a id="a2_6"></a>
+<a id="mdtoc_dc0eb96c"></a>
 ## MetaClass member functions for registering meta data
 
-<a id="a4_1"></a>
+<a id="mdtoc_4b1f3e7b"></a>
 #### registerConstructor
 
 ```c++
@@ -116,7 +116,7 @@ struct metapp::DeclareMetaType<CtorClass> : metapp::DeclareMetaTypeBase<CtorClas
 };
 ```
 
-<a id="a4_2"></a>
+<a id="mdtoc_30ec3922"></a>
 #### registerAccessible
 
 ```c++
@@ -169,7 +169,7 @@ struct metapp::DeclareMetaType<AccClass> : metapp::DeclareMetaTypeBase<AccClass>
 };
 ```
 
-<a id="a4_3"></a>
+<a id="mdtoc_3d0e0e3a"></a>
 #### registerCallable
 
 ```c++
@@ -218,7 +218,7 @@ struct metapp::DeclareMetaType<CaClass> : metapp::DeclareMetaTypeBase<CaClass>
 };
 ```
 
-<a id="a4_4"></a>
+<a id="mdtoc_f869ddee"></a>
 #### registerVariable
 
 ```c++
@@ -267,7 +267,7 @@ struct metapp::DeclareMetaType<VarClass> : metapp::DeclareMetaTypeBase<VarClass>
 };
 ```
 
-<a id="a4_5"></a>
+<a id="mdtoc_1d950cb0"></a>
 #### registerType
 
 ```c++
@@ -311,7 +311,7 @@ struct metapp::DeclareMetaType<TyClass> : metapp::DeclareMetaTypeBase<TyClass>
 };
 ```
 
-<a id="a2_7"></a>
+<a id="mdtoc_4e4583f8"></a>
 ## MetaClass member functions for retrieving meta data
 
 Most functions to retrieve meta data has a parameter `const MetaClass::Flags flags`
@@ -321,7 +321,7 @@ for the meta data. For functions that get all meta data, that means the function
 meta class, and all meta data in base classes, recursively. If you want only current meta class be checked,
 pass `MetaClass::flagNone`.  
 
-<a id="a4_6"></a>
+<a id="mdtoc_1a65243d"></a>
 #### getConstructor
 
 ```c++
@@ -348,7 +348,7 @@ ASSERT(ptr->n == 5);
 delete ptr;
 ```
 
-<a id="a4_7"></a>
+<a id="mdtoc_94f64513"></a>
 #### getAccessible
 
 ```c++
@@ -357,7 +357,7 @@ const MetaItem & getAccessible(const std::string & name, const MetaClass::Flags 
 
 Get a field of `name`. If the field is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_8"></a>
+<a id="mdtoc_7f840db2"></a>
 #### getAccessibleView
 
 ```c++
@@ -381,7 +381,7 @@ ASSERT(accessibleView[0].getName() == "text");
 ASSERT(accessibleView[1].getName() == "value");
 ```
 
-<a id="a4_9"></a>
+<a id="mdtoc_e4e1e48a"></a>
 #### getCallable
 
 ```c++
@@ -390,7 +390,7 @@ const MetaItem & getCallable(const std::string & name, const Flags flags = flagI
 
 Get a method of `name`. If the method is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_10"></a>
+<a id="mdtoc_32f06161"></a>
 #### getCallableView
 
 ```c++
@@ -418,7 +418,7 @@ ASSERT(callableView[0].getName() == "greeting");
 ASSERT(callableView[1].getName() == "add");
 ```
 
-<a id="a4_11"></a>
+<a id="mdtoc_2186375e"></a>
 #### getVariable
 
 ```c++
@@ -427,7 +427,7 @@ const MetaItem & getVariable(const std::string & name, const Flags flags = flagI
 
 Get a variable of `name`. If the variable is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_12"></a>
+<a id="mdtoc_d5bb0f99"></a>
 #### getVariableView
 
 ```c++
@@ -449,7 +449,7 @@ const metapp::MetaItem & name = metaClass->getVariable("name");
 ASSERT(name.asVariable().get<const std::string &>() == "metapp");
 ```
 
-<a id="a4_13"></a>
+<a id="mdtoc_9a1b8fa6"></a>
 #### getType by name
 
 ```c++
@@ -458,7 +458,7 @@ const MetaItem & getType(const std::string & name, const Flags flags = flagInclu
 
 Get a MetaItem of `name`. If the type name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_14"></a>
+<a id="mdtoc_643f972"></a>
 #### getType by type kind
 
 ```c++
@@ -467,7 +467,7 @@ const MetaItem & getType(const TypeKind kind, const Flags flags = flagIncludeBas
 
 Get a MetaItem of `kind`. If the type kind is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
 
-<a id="a4_15"></a>
+<a id="mdtoc_1cc22aee"></a>
 #### getType by MetaType
 
 ```c++
@@ -477,7 +477,7 @@ const MetaItem & getType(const MetaType * metaType, const Flags flags = flagIncl
 Get a MetaItem of `metaType`. If the meta type is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).   
 This function is useful to get the name of a registered meta type.
 
-<a id="a4_16"></a>
+<a id="mdtoc_5c4ae446"></a>
 #### getTypeView
 
 ```c++
@@ -485,3 +485,4 @@ MetaItemView getTypeView(const Flags flags = flagIncludeBase) const;
 ```
 
 Returns a MetaItemView for all registered types.  
+

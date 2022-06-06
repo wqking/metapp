@@ -73,7 +73,7 @@ def doPostProcessMarkdown(fileName, config) :
 
 	if config['generateToc'] :
 		fileName = fileName.replace('\\', '/')
-		command = 'perl addtoc2md.pl --max-level=4 --min-headings=%d "%s"' % (config['tocMinHeadings'], fileName)
+		command = 'python markdown-toc.py update --max-level=4 --min-headings=%d --file %s' % (config['tocMinHeadings'], fileName)
 		command = normalizeCommand(command)
 		subprocess.run(command)
 

@@ -2,13 +2,13 @@
 
 # Tutorial for invoking callables
 <!--begintoc-->
-* [Include headers](#a2_1)
-* [Invoke non-member function](#a2_2)
-* [Invoke class member function](#a2_3)
-* [Invoke std::function](#a2_4)
-* [Use overloaded functions](#a2_5)
-* [Use default arguments](#a2_6)
-* [Use variadic function](#a2_7)
+- [Include headers](#mdtoc_e1acc517)
+- [Invoke non-member function](#mdtoc_ca04390c)
+- [Invoke class member function](#mdtoc_6b6c86f9)
+- [Invoke std::function](#mdtoc_da835b5a)
+- [Use overloaded functions](#mdtoc_16c84820)
+- [Use default arguments](#mdtoc_7001e1e)
+- [Use variadic function](#mdtoc_79d66ab1)
 <!--endtoc-->
 
 `MetaCallable` is the core meta interface for invoking callables
@@ -16,7 +16,7 @@ and get type information from a callable.
 Use the member function `MetaType::getMetaCallable()` to get the meta interface.
 If the meta type doesn't implement the interface, `nullptr` is returned.
 
-<a id="a2_1"></a>
+<a id="mdtoc_e1acc517"></a>
 ## Include headers
 Header for MetaCallable
 
@@ -36,7 +36,7 @@ To use all declared meta types, include this header
 #include "metapp/allmetatypes.h"
 ```
 
-<a id="a2_2"></a>
+<a id="mdtoc_ca04390c"></a>
 ## Invoke non-member function
 
 Let's see how to invoke non-member (free) function.
@@ -75,7 +75,7 @@ result = metapp::callableInvoke(v, nullptr, 38);
 ASSERT(result.get<std::string>() == "38");
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_6b6c86f9"></a>
 ## Invoke class member function
 
 Now let's invoke class member function
@@ -96,7 +96,7 @@ metapp::Variant result = metapp::callableInvoke(v, &obj, 3, 9);
 ASSERT(result.get<int>() == 17);
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_da835b5a"></a>
 ## Invoke std::function
 
 We can also invoke `std::function`
@@ -111,7 +111,7 @@ metapp::Variant result = metapp::callableInvoke(v, nullptr, "Hello ", "world");
 ASSERT(result.get<const std::string &>() == "Hello world");
 ```
 
-<a id="a2_5"></a>
+<a id="mdtoc_16c84820"></a>
 ## Use overloaded functions
 
 This example shows how to use `metapp::OverloadedFunction` to construct overloaded function explicitly.  
@@ -138,7 +138,7 @@ ASSERT(metapp::callableInvoke(callable, nullptr, 5).get<int>() == 10);
 ASSERT(metapp::callableInvoke(callable, nullptr, 5L).get<int>() == 15);
 ```
 
-<a id="a2_6"></a>
+<a id="mdtoc_7001e1e"></a>
 ## Use default arguments
 
 We also support default arguments.  
@@ -172,7 +172,7 @@ ASSERT(metapp::callableInvoke(v, nullptr, 38, false).get<const std::string &>() 
 ASSERT(metapp::callableInvoke(v, nullptr, 19, false, "GOOD").get<const std::string &>() == "19falseGOOD");
 ```
 
-<a id="a2_7"></a>
+<a id="mdtoc_79d66ab1"></a>
 ## Use variadic function
 
 We can also use variadic function.  

@@ -14,3 +14,4 @@ When we use metapp within a single module (a single program or a single dynamic 
 metapp compares meta types using a unique pointer, so whether `typeKind` is unique doesn't matter.  
 
 To assign each meta type a unique `typeKind`, we need to [DeclareMetaType](declaremetatype.md)
+

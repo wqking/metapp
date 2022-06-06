@@ -54,7 +54,7 @@ For example, to implement meta interface `MetaClass` for `MyClass`,
 class MyClass
 {
 public:
-  explicit MyClass(const std::string & message) {}
+  explicit MyClass(const std::string & /*message*/) {}
   void sayHello() const {}
 };
 

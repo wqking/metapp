@@ -2,40 +2,40 @@
 
 # Utility reference
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Functions](#a2_3)
-  * [getNonReferenceMetaType](#a4_1)
-  * [typeKindIsIntegral](#a4_2)
-  * [typeKindIsReal](#a4_3)
-  * [typeKindIsArithmetic](#a4_4)
-  * [isSameMetaType](#a4_5)
-  * [depointer](#a4_6)
-  * [dereference](#a4_7)
-  * [getPointer](#a4_8)
-  * [getPointedType](#a4_9)
-  * [getPointerAndType](#a4_10)
-  * [selectOverload](#a4_11)
-  * [dumpMetaType](#a4_12)
-  * [getNameByTypeKind](#a4_13)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Functions](#mdtoc_43ac2d0c)
+  - [getNonReferenceMetaType](#mdtoc_4bdd99f)
+  - [typeKindIsIntegral](#mdtoc_9d1d5f7b)
+  - [typeKindIsReal](#mdtoc_5fce48b8)
+  - [typeKindIsArithmetic](#mdtoc_e7c716be)
+  - [isSameMetaType](#mdtoc_f760704)
+  - [depointer](#mdtoc_d0e5dd0f)
+  - [dereference](#mdtoc_f4eec6df)
+  - [getPointer](#mdtoc_41379b28)
+  - [getPointedType](#mdtoc_666234f9)
+  - [getPointerAndType](#mdtoc_f8216508)
+  - [selectOverload](#mdtoc_9637f10c)
+  - [dumpMetaType](#mdtoc_556c8b)
+  - [getNameByTypeKind](#mdtoc_ce758620)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `utility.h` provides some utility functions.
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/utilities/utility.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_43ac2d0c"></a>
 ## Functions
 
-<a id="a4_1"></a>
+<a id="mdtoc_4bdd99f"></a>
 #### getNonReferenceMetaType
 
 ```c++
@@ -46,7 +46,7 @@ const MetaType * getNonReferenceMetaType(const Variant & var);
 If the `metaType`, or meta type in the Variant `var`, is a reference, returns the meta type the reference refers to.  
 If the meta type is not a reference, returns the meta type.
 
-<a id="a4_2"></a>
+<a id="mdtoc_9d1d5f7b"></a>
 #### typeKindIsIntegral
 
 ```c++
@@ -57,7 +57,7 @@ Returns true if the type kind is integral type.
 Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `signed char`, `unsigned char`,
 `short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
 
-<a id="a4_3"></a>
+<a id="mdtoc_5fce48b8"></a>
 #### typeKindIsReal
 
 ```c++
@@ -67,7 +67,7 @@ constexpr bool typeKindIsReal(const TypeKind typeKind);
 Returns true if the type kind is real (float point) type.  
 Real type is `float`, `double`, `long double`.
 
-<a id="a4_4"></a>
+<a id="mdtoc_e7c716be"></a>
 #### typeKindIsArithmetic
 
 ```c++
@@ -76,7 +76,7 @@ constexpr bool typeKindIsArithmetic(const TypeKind typeKind);
 
 Returns true if the type kind is either integral or real type.  
 
-<a id="a4_5"></a>
+<a id="mdtoc_f760704"></a>
 #### isSameMetaType
 
 ```c++
@@ -98,7 +98,7 @@ This function is useful when check if a meta type is any of certain types,
 for example, to check if a meta type is a C string (`const char *`) or `std::string`,
 we can check `isSameMetaType<char *, std::string>(metaType)`.
 
-<a id="a4_6"></a>
+<a id="mdtoc_d0e5dd0f"></a>
 #### depointer
 ```c++
 Variant depointer(const Variant & var);
@@ -157,7 +157,7 @@ ASSERT(v3.get<int &>() == 15);
 ASSERT(r3.get<int &>() == 15);
 ```
 
-<a id="a4_7"></a>
+<a id="mdtoc_f4eec6df"></a>
 #### dereference
 ```c++
 Variant dereference(const Variant & var);
@@ -172,7 +172,7 @@ it returns the value that `var` points to.
 Note: if `var` is a reference, pointer, or pointer wrapper, `dereference` will copy the underlying value to the result Variant,
 that may be expensive.  
 
-<a id="a4_8"></a>
+<a id="mdtoc_41379b28"></a>
 #### getPointer
 
 ```c++
@@ -185,7 +185,7 @@ If `var` is a pointer or reference to pointer, returns the pointer.
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`,
 returns the stored pointer (`std::shared_ptr<T>::get()`, or `std::unique_ptr<T>::get()`).  
 
-<a id="a4_9"></a>
+<a id="mdtoc_666234f9"></a>
 #### getPointedType
 
 ```c++
@@ -197,7 +197,7 @@ If `var` is value or reference to value, returns the value type.
 If `var` is a pointer or reference to pointer, returns the type that the pointer points to.  
 If `var` is pointer wrapper such as `std::shared_ptr<T>` or `std::unique_ptr<T>`, returns T.  
 
-<a id="a4_10"></a>
+<a id="mdtoc_f8216508"></a>
 #### getPointerAndType
 
 ```c++
@@ -207,7 +207,7 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 Returns both the pointer and pointed type in one function.  
 It's slighter better performance than calling `getPointer` and `getPointedType` respectively.  
 
-<a id="a4_11"></a>
+<a id="mdtoc_9637f10c"></a>
 #### selectOverload
 
 ```c++
@@ -238,7 +238,7 @@ We also don't need selectOverload, just use static_cast
 metapp::Variant v2(static_cast<int (MyClass::*)(int)>(&MyClass::func));
 ```
 
-<a id="a4_12"></a>
+<a id="mdtoc_556c8b"></a>
 #### dumpMetaType
 
 ```c++
@@ -249,7 +249,7 @@ Dump readable information of `metaType` to `stream`.
 The meta data is obtained from `MetaRepo` `metaRepo`. If `metaRepo` is nullptr, the global `MetaRepo` is used.  
 This function is for test and learning purpose, you should not use it in any production code.  
 
-<a id="a4_13"></a>
+<a id="mdtoc_ce758620"></a>
 #### getNameByTypeKind
 
 ```c++
@@ -257,3 +257,4 @@ std::string getNameByTypeKind(const TypeKind typeKind);
 ```
 
 Get the built-in name of `typeKind`. Note: the name doesn't depend on `MetaRepo`.
+

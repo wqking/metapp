@@ -2,18 +2,18 @@
 
 # Tutorial for using MetaRepo and runtime meta data
 <!--begintoc-->
-* [Include headers](#a2_1)
-* [Define some C++ variables and types to reflect for](#a2_2)
-* [Register meta data](#a2_3)
-* [Use field meta data](#a2_4)
-* [Use function meta data](#a2_5)
-* [Use registered types](#a2_6)
+- [Include headers](#mdtoc_e1acc517)
+- [Define some C++ variables and types to reflect for](#mdtoc_8d30d5aa)
+- [Register meta data](#mdtoc_7b306e77)
+- [Use field meta data](#mdtoc_8cd7c280)
+- [Use function meta data](#mdtoc_13307b6)
+- [Use registered types](#mdtoc_eb7aec57)
 <!--endtoc-->
 
 `MetaRepo` is used to register and retrieve meta types at running time.
 The registered meta types can be any C++ types, no matter if they are declared with DeclareMetaType or not.   
 
-<a id="a2_1"></a>
+<a id="mdtoc_e1acc517"></a>
 ## Include headers
 Header for MetaRepo
 
@@ -27,7 +27,7 @@ To use the built-in meta types, we must include "metapp/allmetatypes.h"
 #include "metapp/allmetatypes.h"
 ```
 
-<a id="a2_2"></a>
+<a id="mdtoc_8d30d5aa"></a>
 ## Define some C++ variables and types to reflect for
 
 Global variable
@@ -77,7 +77,7 @@ Define the global variable `metaRepo`, we will register all global meta data the
 metapp::MetaRepo metaRepo;
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_7b306e77"></a>
 ## Register meta data
 
 To get meta data from MetaRepo, we must register meta data first.  
@@ -106,7 +106,7 @@ This is only to demonstrate how to use registered meta type. There is a separate
   metaRepo.registerType("MyClass", metapp::getMetaType<MyClass>());
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_8cd7c280"></a>
 ## Use field meta data
 
 Get the meta data of field "value"
@@ -146,7 +146,7 @@ ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::
 ASSERT(metapp::accessibleGet(fieldtextList, nullptr).get<const std::vector<std::string> &>()[2] == "good");
 ```
 
-<a id="a2_5"></a>
+<a id="mdtoc_13307b6"></a>
 ## Use function meta data
 
 Get the meta data of method "concat".
@@ -163,7 +163,7 @@ metapp::Variant result = metapp::callableInvoke(methodConcat, nullptr, 38, true,
 ASSERT(result.get<const std::string &>() == "38trueGreat");
 ```
 
-<a id="a2_6"></a>
+<a id="mdtoc_eb7aec57"></a>
 ## Use registered types
 
 ```c++

@@ -2,13 +2,13 @@
 
 # List of all built-in meta types
 <!--begintoc-->
-* [List of type kinds and equivalent C++ types](#a2_1)
-* [List of implemented meta interfaces](#a2_2)
-* [List of cast-abilities](#a2_3)
-* [List of UpTypes](#a2_4)
+- [List of type kinds and equivalent C++ types](#mdtoc_567cf31f)
+- [List of implemented meta interfaces](#mdtoc_70882b35)
+- [List of cast-abilities](#mdtoc_7f714096)
+- [List of UpTypes](#mdtoc_99a0987)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_567cf31f"></a>
 ## List of type kinds and equivalent C++ types
 
 |TypeKind              |Value     |C++ type                                                                                                      |
@@ -77,7 +77,7 @@
 |tkStdVariant          |125       |std::variant<Types...>                                                                                        |
 |tkUser                |1024      |None                                                                                                          |
 
-<a id="a2_2"></a>
+<a id="mdtoc_70882b35"></a>
 ## List of implemented meta interfaces
 
 |TypeKind              |Implemented meta interfaces           |
@@ -146,7 +146,7 @@
 |tkStdVariant          |None                                  |
 |tkUser                |None                                  |
 
-<a id="a2_3"></a>
+<a id="mdtoc_7f714096"></a>
 ## List of cast-abilities
 
 |TypeKind              |Cast to                                                                                           |
@@ -215,7 +215,7 @@
 |tkStdVariant          |None                                                                                              |
 |tkUser                |None                                                                                              |
 
-<a id="a2_4"></a>
+<a id="mdtoc_99a0987"></a>
 ## List of UpTypes
 
 |TypeKind              |UpCount               |UpTypes                                                                                                                                 |
@@ -283,3 +283,4 @@
 |tkStdAny              |0                     |None                                                                                                                                    |
 |tkStdVariant          |sizeof...(Types)      |Up0: first type in Types<br />Up1: second type in Types<br />UpN: Nth type in Types                                                     |
 |tkUser                |0                     |None                                                                                                                                    |
+

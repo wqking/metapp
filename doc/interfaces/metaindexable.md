@@ -2,33 +2,33 @@
 
 # MetaIndexable interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaIndexable interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaIndexable constructor](#a2_5)
-* [MetaIndexable member functions](#a2_6)
-  * [getSizeInfo](#a4_1)
-  * [getValueType](#a4_2)
-  * [resize](#a4_3)
-  * [get](#a4_4)
-  * [set](#a4_5)
-* [Non-member utility functions](#a2_7)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaIndexable interface](#mdtoc_b9e3e5c5)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaIndexable constructor](#mdtoc_dd15cb12)
+- [MetaIndexable member functions](#mdtoc_d0508714)
+  - [getSizeInfo](#mdtoc_a5bec82e)
+  - [getValueType](#mdtoc_8d778ce1)
+  - [resize](#mdtoc_707e0e22)
+  - [get](#mdtoc_fd3b2e70)
+  - [set](#mdtoc_e61425dc)
+- [Non-member utility functions](#mdtoc_e4e47ded)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaIndexable` is a meta interface to get and set element values by index.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metaindexable.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_b9e3e5c5"></a>
 ## Get MetaIndexable interface
 
 We can call `MetaType::getMetaIndexable()` to get the `MetaIndexable` interface. If the type doesn't implement the interface, `nullptr` is returned.
@@ -38,7 +38,7 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 `std::array` (tkStdArray)  
@@ -49,7 +49,7 @@ const metapp::MetaIndexable * metaIndexable = metaType->getMetaIndexable();
 `std::tuple` (tkStdTuple)  
 `C style array` (tkArray)  
 
-<a id="a2_5"></a>
+<a id="mdtoc_dd15cb12"></a>
 ## MetaIndexable constructor
 
 ```c++
@@ -65,7 +65,7 @@ MetaIndexable(
 All arguments are function pointers. All pointers must point to valid function, except that `resize` can be nullptr.  
 The meaning of each functions are same as the member functions listed below.
 
-<a id="a2_6"></a>
+<a id="mdtoc_d0508714"></a>
 ## MetaIndexable member functions
 
 The first parameter in all of the member functions is `const Variant & indexable`.
@@ -77,7 +77,7 @@ Variant `indexable` can be value that implements `MetaIndexable`, or reference t
 For the functions that have parameter `index`, the functions don't do bound checking on `index`.
 It's the caller's responsibility to be sure the `index` is valid.
 
-<a id="a4_1"></a>
+<a id="mdtoc_a5bec82e"></a>
 #### getSizeInfo
 
 ```c++
@@ -120,7 +120,7 @@ For `std::array<T, N>`, size is N, resizable is false.
 For other containers such as `std::vector`, `std::deque`, `std::list`, the function returns the size of the container,
 and resizable is true.  
 
-<a id="a4_2"></a>
+<a id="mdtoc_8d778ce1"></a>
 #### getValueType
 
 ```c++
@@ -134,7 +134,7 @@ For `std::tuple`, index is the index in the tuple elements.
 For `T[]` and `T[N]`, the result is the meta type of T.  
 For other containers, the result is the meta type of the `value_type` in the container.  
 
-<a id="a4_3"></a>
+<a id="mdtoc_707e0e22"></a>
 #### resize
 
 ```c++
@@ -146,7 +146,7 @@ For types that the size is fixed, such as `std::pair`, `std::tuple`, `T[]`, and 
 For other containers, the function resizes the container.  
 If the `resize` argument in MetaIndexable constructor is nullptr, the function `resize` is still valid function, and it doesn't do any action.  
 
-<a id="a4_4"></a>
+<a id="mdtoc_fd3b2e70"></a>
 #### get
 
 ```c++
@@ -160,7 +160,7 @@ For `T[]` and `T[N]`, returns T[index].
 For other containers, returns the element at index in the container.  
 Note, for non-random access container such as `std::list`, the function uses `std::advance(list.begin(), index)` to access the element, the time complexity is linear.  
 
-<a id="a4_5"></a>
+<a id="mdtoc_e61425dc"></a>
 #### set
 
 ```c++
@@ -169,7 +169,7 @@ void (*set)(const Variant & indexable, const std::size_t index, const Variant & 
 
 Sets the element at `index` with `value`. The `value` will be casted to the element type, if the cast fails, exception `metapp::BadCastException` is thrown.  
 
-<a id="a2_7"></a>
+<a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIndexable`.  
@@ -196,3 +196,4 @@ inline void indexableSet(const Variant & indexable, const std::size_t index, con
   indexable.getMetaType()->getMetaIndexable()->set(indexable, index, value);
 }
 ```
+

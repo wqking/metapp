@@ -2,26 +2,26 @@
 
 # Core concepts and mechanism
 <!--begintoc-->
-* [Overview](#a2_1)
-* [TypeKind - type kind type](#a2_2)
-* [Variant - the core data](#a2_3)
-* [MetaType - the core meta type](#a2_4)
-* [UpType - the most powerful concept in the meta type system](#a2_5)
-* [DeclareMetaType](#a2_6)
-* [Meta interface](#a2_7)
-* [MetaRepo](#a2_8)
-* [Accessible](#a2_9)
-* [Callable](#a2_10)
-* [Value, object, pointer, reference](#a2_11)
+- [Overview](#mdtoc_e7c3d1bb)
+- [TypeKind - type kind type](#mdtoc_f96da61d)
+- [Variant - the core data](#mdtoc_14b0a72)
+- [MetaType - the core meta type](#mdtoc_b2ae0bb2)
+- [UpType - the most powerful concept in the meta type system](#mdtoc_97cdf911)
+- [DeclareMetaType](#mdtoc_f787c2bb)
+- [Meta interface ](#mdtoc_547951f6)
+- [MetaRepo](#mdtoc_bebb7c88)
+- [Accessible](#mdtoc_f5828d88)
+- [Callable](#mdtoc_92a5459)
+- [Value, object, pointer, reference](#mdtoc_5646cf6d)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 This document gives an overview on the core concepts and core design in metapp.
 It's to give you a rough idea on how metapp works. There are separate document for each topics.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_f96da61d"></a>
 ## TypeKind - type kind type
 
 `metapp::TypeKind` is a 32 bit integer that represents the meta type kind.
@@ -32,7 +32,7 @@ in which T can be any C++ type.
 
 See [Built-in meta types document](metatypes/list_all.md) for a list of built-in type kinds.
 
-<a id="a2_3"></a>
+<a id="mdtoc_14b0a72"></a>
 ## Variant - the core data
 
 `metapp::Variant` allows to store data of any type. `Variant` = `MetaType` + data instance.  
@@ -42,7 +42,7 @@ The value or object can be any type, such as int, bool, containers, smart pointe
 `Variant` can hold pointer that the pointer points to memory that's out side the `Variant`. `Variant` can also hold
 reference that the reference refers to memory that's out of the `Variant`.
 
-<a id="a2_4"></a>
+<a id="mdtoc_b2ae0bb2"></a>
 ## MetaType - the core meta type
 
 `metapp::MetaType` is the core class to represent the meta type.
@@ -78,7 +78,7 @@ to compare MetaType pointers. Both `equal` and `compare` ignore any CV qualifier
 
 **Note**: `getMetaType()` can be used on any C++ type, the tye doesn't need to be declared or registered to metapp.  
 
-<a id="a2_5"></a>
+<a id="mdtoc_97cdf911"></a>
 ## UpType - the most powerful concept in the meta type system
 
 A MetaType has 0, 1, or multiple UpTypes. An UpType is a MetaType object.  
@@ -145,7 +145,7 @@ UpType represents complicated C++ type recursively. With UpType, metapp can repr
 
 See [Built-in meta types document](built-in-meta-types.md) for the UpTypes for each TypeKind.
 
-<a id="a2_6"></a>
+<a id="mdtoc_f787c2bb"></a>
 ## DeclareMetaType
 
 Even though metapp works on any C++ type which are not known to metapp,
@@ -169,7 +169,7 @@ struct metapp::DeclareMetaType <MyClass> : public metapp::DeclareMetaTypeBase <M
 ASSERT(metapp::getMetaType<MyClass>()->getTypeKind() == tkMyClass);
 ```
 
-<a id="a2_7"></a>
+<a id="mdtoc_547951f6"></a>
 ## Meta interface 
 
 The core class MetaType only has very few public functions, and provides very few functions.
@@ -193,29 +193,30 @@ const MetaMappable * getMetaMappable() const;
 const void * getMetaUser() const;
 ```
 
-<a id="a2_8"></a>
+<a id="mdtoc_bebb7c88"></a>
 ## MetaRepo
 
 `MetaRepo` class is used to register and retrieve meta information at running time.  
 A `MetaRepo` can contain meta types (classes, enums, etc), accessibles, callables, and other `MetaRepo` (nested repos).  
 We can use nested repos to simulate C++ `namespace`, that's to say, a repo is a namespace.  
 
-<a id="a2_9"></a>
+<a id="mdtoc_f5828d88"></a>
 ## Accessible
 
 "Accessible" can be pointer to global variable, member data, the object created by metapp::createAccessor,
 or anything that implements meta interface `MetaAccessible`.
 The term "accessible" is used for "field" or "property" in other reflection system.  
 
-<a id="a2_10"></a>
+<a id="mdtoc_92a5459"></a>
 ## Callable
 
 "Callable" can be global free function, member function, std::function, or anything that implements meta interface `MetaCallable`.
 The term "callable" is used for "method" or "function" in other reflection system.
 
-<a id="a2_11"></a>
+<a id="mdtoc_5646cf6d"></a>
 ## Value, object, pointer, reference
 
 When the terms `value`, `object`, `pointer`, `reference` are used for Variant in the documents, most time they mean
 that the Variant holds a value, object, pointer, or reference, not that the Variant is a `const Variant &` (for reference), etc.  
 Just don't be confused with terms.
+

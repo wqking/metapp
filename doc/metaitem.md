@@ -2,28 +2,28 @@
 
 # MetaItem
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [MetaItem member functions](#a2_3)
-  * [getType](#a4_1)
-  * [isEmpty](#a4_2)
-  * [getName](#a4_3)
-  * [asXxx functions](#a4_4)
-  * [getTarget](#a4_5)
-  * [Implicitly type convert](#a4_6)
-  * [registerAnnotation](#a4_7)
-  * [getAnnotation](#a4_8)
-  * [getAllAnnotations](#a4_9)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [MetaItem member functions](#mdtoc_1a3b32fe)
+  - [getType](#mdtoc_2a8cfdc6)
+  - [isEmpty](#mdtoc_a01163fe)
+  - [getName](#mdtoc_f871d4e9)
+  - [asXxx functions](#mdtoc_e1cbbfa0)
+  - [getTarget](#mdtoc_a98a2c7b)
+  - [Implicitly type convert](#mdtoc_698b050a)
+  - [registerAnnotation](#mdtoc_eb2a8a58)
+  - [getAnnotation](#mdtoc_4f30f669)
+  - [getAllAnnotations](#mdtoc_de77b03c)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaItem` represents the meta data registered in `MetaRepo` and `MetaClass`.  
 When registering any meta data in `MetaRepo` and `MetaClass`, the register function returns a `MetaItem`.  
 When retrieving any meta data from `MetaRepo` and `MetaClass`, the returned data is either `MetaItem` or `MetaItemView`.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 
@@ -31,10 +31,10 @@ When retrieving any meta data from `MetaRepo` and `MetaClass`, the returned data
 #include "metapp/metaitem.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_1a3b32fe"></a>
 ## MetaItem member functions
 
-<a id="a4_1"></a>
+<a id="mdtoc_2a8cfdc6"></a>
 #### getType
 
 ```c++
@@ -84,7 +84,7 @@ The item is a MetaType.
 **MetaItem::Type::enumValue**  
 The item is a value in `MetaEnum`.  
 
-<a id="a4_2"></a>
+<a id="mdtoc_a01163fe"></a>
 #### isEmpty
 
 ```c++
@@ -93,7 +93,7 @@ bool isEmpty() const;
 
 Returns true if the item doesn't hold any valid data.  
 
-<a id="a4_3"></a>
+<a id="mdtoc_f871d4e9"></a>
 #### getName
 
 ```c++
@@ -103,7 +103,7 @@ const std::string & getName() const
 Returns the name. If the item doesn't have name, returns empty string.  
 `MetaItem::Type::constructor` always has empty name.  
 
-<a id="a4_4"></a>
+<a id="mdtoc_e1cbbfa0"></a>
 #### asXxx functions
 
 ```c++
@@ -119,7 +119,7 @@ const Variant & asEnumValue() const;
 Returns the proper data.  
 If the type doesn't match the function, exception `metapp::WrongMetaTypeException` is raised.  
 
-<a id="a4_5"></a>
+<a id="mdtoc_a98a2c7b"></a>
 #### getTarget
 
 ```c++
@@ -129,7 +129,7 @@ const Variant & getTarget() const;
 Return the underlying Variant of the meta item. It doesn't check if the type matches, and it doesn't convert the data
 to appropriate type such as `const MetaRepo *`.  
 
-<a id="a4_6"></a>
+<a id="mdtoc_698b050a"></a>
 #### Implicitly type convert
 
 ```c++
@@ -161,7 +161,7 @@ const metapp::Variant result2 = metapp::callableInvoke(callable.asCallable(), nu
 ASSERT(result2.get<int>() == 5);
 ```
 
-<a id="a4_7"></a>
+<a id="mdtoc_eb2a8a58"></a>
 #### registerAnnotation
 
 ```c++
@@ -174,7 +174,7 @@ The user can use the annotation for any purpose.
 For example, if `metapp` is used in a property editor, an annotation may provide description,
 or indicate a property should be hidden from the editor.
 
-<a id="a4_8"></a>
+<a id="mdtoc_4f30f669"></a>
 #### getAnnotation
 
 ```c++
@@ -183,7 +183,7 @@ const Variant & getAnnotation(const std::string & name) const;
 
 Returns the annotation for `name`. If `name` is not registered, an empty Variant is returned (Variant::isEmpty() is true).
 
-<a id="a4_9"></a>
+<a id="mdtoc_de77b03c"></a>
 #### getAllAnnotations
 
 ```c++
@@ -191,3 +191,4 @@ const std::map<std::string, Variant> & getAllAnnotations() const;
 ```
 
 Returns all registered annotations in a `std::map`.
+

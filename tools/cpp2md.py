@@ -34,7 +34,7 @@ def readFile(fileName) :
 		return file.read()
 
 def readLines(fileName) :
-	return readFile(fileName).splitlines()
+	return (readFile(fileName) + "\n").splitlines()
 
 def writeLines(fileName, lineList) :
 	writeFile(fileName, "\n".join(lineList))

@@ -18,7 +18,7 @@ Assume we have `DcClass`,
 class DcClass
 {
 public:
-  DcClass(const std::string & a, const int b) {}
+  DcClass(const std::string &, const int) {}
 
   std::string greeting(const std::string & message) {
     return "Hello, " + message;

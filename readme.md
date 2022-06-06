@@ -2,32 +2,32 @@
 
 # metapp -- C++ library for runtime reflection, introspection and meta types
 <!--begintoc-->
-* [Highlight features](#a2_1)
-* [Facts and features](#a2_2)
-* [Basic information](#a2_3)
-  * [License](#a3_1)
-  * [Version 0.1.0 and status](#a3_2)
-  * [Source code](#a3_3)
-  * [Supported compilers](#a3_4)
-* [Quick start](#a2_4)
-  * [Namespace](#a3_5)
-  * [Build and install, use metapp in your project](#a3_6)
-* [Example code](#a2_5)
-  * [Use Variant](#a3_7)
-  * [Use MetaType](#a3_8)
-  * [Call function and accessible](#a3_9)
-  * [Runtime generic STL container](#a3_10)
-  * [Use reference with Variant](#a3_11)
-* [Documentations](#a2_6)
-* [Build the test code](#a2_7)
-* [Known compiler related quirks in MSVC](#a2_8)
-* [Motivations](#a2_9)
+- [Highlight features](#mdtoc_335bd232)
+- [Facts and features](#mdtoc_21927030)
+- [Basic information](#mdtoc_abc52c05)
+  - [License](#mdtoc_5768f419)
+  - [Version 0.1.0 and status](#mdtoc_54c2c4cb)
+  - [Source code](#mdtoc_6b8a2c23)
+  - [Supported compilers](#mdtoc_215a5bea)
+- [Quick start](#mdtoc_ea7b0a9)
+  - [Namespace](#mdtoc_33e16b56)
+  - [Build and install, use metapp in your project](#mdtoc_7785483e)
+- [Example code](#mdtoc_3bb166c4)
+  - [Use Variant](#mdtoc_cee017b6)
+  - [Use MetaType](#mdtoc_e463fa1a)
+  - [Call function and accessible](#mdtoc_eb620ae3)
+  - [Runtime generic STL container](#mdtoc_5243b8d0)
+  - [Use reference with Variant](#mdtoc_b8048b76)
+- [Documentations](#mdtoc_aa76f386)
+- [Build the test code](#mdtoc_460948ff)
+- [Known compiler related quirks in MSVC](#mdtoc_2f938cf5)
+- [Motivations](#mdtoc_c55531bd)
 <!--endtoc-->
 
 metapp is a cross platform C++ library that adds reflection feature to C++.  
 metapp is light weight, powerful, and unique.
 
-<a id="a2_1"></a>
+<a id="mdtoc_335bd232"></a>
 ## Highlight features
 
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
@@ -43,7 +43,7 @@ even `std::vector<std::list<std::vector<std::string> > >`.
 or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
 value is referenced instead of copied, so the memory and performance cost is kept as minimum as possible.
 
-<a id="a2_2"></a>
+<a id="mdtoc_21927030"></a>
 ## Facts and features
 
 - **Powerful**
@@ -97,15 +97,15 @@ you get trivial memory and performance overhead beside very powerful reflection 
   - Many other meta types.
   - Adding new meta types is easy.
 
-<a id="a2_3"></a>
+<a id="mdtoc_abc52c05"></a>
 ## Basic information
 
-<a id="a3_1"></a>
+<a id="mdtoc_5768f419"></a>
 ### License
 
 Apache License, Version 2.0  
 
-<a id="a3_2"></a>
+<a id="mdtoc_54c2c4cb"></a>
 ### Version 0.1.0 and status
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
@@ -119,27 +119,27 @@ To put the library to first release, we need to,
 
 You are welcome to try the project and give feedback. Your participation will help to make the development faster and better.
 
-<a id="a3_3"></a>
+<a id="mdtoc_6b8a2c23"></a>
 ### Source code
 
 [https://github.com/wqking/metapp](https://github.com/wqking/metapp)
 
-<a id="a3_4"></a>
+<a id="mdtoc_215a5bea"></a>
 ### Supported compilers
 
 metapp requires C++ compiler that supports C++11 standard.  
 The library is tested with MSVC 2022, 2019, MinGW (Msys) GCC 8.3 and 11.3.0, Clang (carried by MSVC).  
 In brief, MSVC, GCC, Clang that has well support for C++11, or released after 2019, should be able to compile the library.
 
-<a id="a2_4"></a>
+<a id="mdtoc_ea7b0a9"></a>
 ## Quick start
 
-<a id="a3_5"></a>
+<a id="mdtoc_33e16b56"></a>
 ### Namespace
 
 `metapp`
 
-<a id="a3_6"></a>
+<a id="mdtoc_7785483e"></a>
 ### Build and install, use metapp in your project
 
 There are various methods to use metapp
@@ -178,12 +178,12 @@ Note: when using the method 2 with MingW on Windows, by default CMake will insta
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
 
-<a id="a2_5"></a>
+<a id="mdtoc_3bb166c4"></a>
 ## Example code
 
 Here is simple code pieces. There are comprehensive tutorials documentations.
 
-<a id="a3_7"></a>
+<a id="mdtoc_cee017b6"></a>
 ### Use Variant
 Header for Variant
 
@@ -229,7 +229,7 @@ const char * s = casted.get<const char *>();
 ASSERT(strcmp(s, "hello") == 0);
 ```
 
-<a id="a3_8"></a>
+<a id="mdtoc_e463fa1a"></a>
 ### Use MetaType
 int
 
@@ -255,7 +255,7 @@ ASSERT(metaType->equal(metapp::getMetaType<const int *>()));
 ASSERT(metaType->equal(metapp::getMetaType<int *>()));
 ```
 
-<a id="a3_9"></a>
+<a id="mdtoc_eb620ae3"></a>
 ### Call function and accessible
 Define a class to be used later.
 
@@ -355,7 +355,7 @@ ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
 ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 38);
 ```
 
-<a id="a3_10"></a>
+<a id="mdtoc_5243b8d0"></a>
 ### Runtime generic STL container
 Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 
@@ -423,7 +423,7 @@ metapp::Variant v2(&container2);
 ASSERT(concat(v2) == "123");
 ```
 
-<a id="a3_11"></a>
+<a id="mdtoc_b8048b76"></a>
 ### Use reference with Variant
 Declare a value to be referred to.
 
@@ -479,7 +479,7 @@ item.assign("Good");
 ASSERT(vs.get<const std::vector<std::string> &>()[0] == "Good");
 ```
 
-<a id="a2_6"></a>
+<a id="mdtoc_aa76f386"></a>
 ## Documentations
 Below are tutorials and documents. Don't feel upset if you find issues or missing stuff in the documents, I'm not
 native English speaker and it's not that exciting to write document. Any way, the code quality is always much better
@@ -536,7 +536,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
   - [Use metapp in dynamic library](doc/dynamic_library.md)
   - [Infrequently Asked Questions](doc/faq.md)
 
-<a id="a2_7"></a>
+<a id="mdtoc_460948ff"></a>
 ## Build the test code
 
 There are two parts of code to test the library,
@@ -555,7 +555,7 @@ Go to folder `tests/build`, then run `make` with different target.
 - `make linux` #build on Linux
 - `make mingw_coverage` #build using MinGW and generate code coverage report
 
-<a id="a2_8"></a>
+<a id="mdtoc_2f938cf5"></a>
 ## Known compiler related quirks in MSVC
 
 MSVC 2022 and 2019, can build the CMake generated test projects and the tests run correctly in Debug and RelWithDebugInfo
@@ -565,7 +565,7 @@ Adding /Debug option to linking which generates debug information makes the test
 Without /Debug option, but enabling incremental linking, will cause the tests success too.  
 So if metapp shows weird behavior in MSVC, try to enable incremental linking.
 
-<a id="a2_9"></a>
+<a id="mdtoc_c55531bd"></a>
 ## Motivations
 
 I (wqking) developed `cpgf` library in more than 12 years ago. `cpgf` works, but it has several serious problems.
@@ -573,3 +573,4 @@ The first problem is it was written in C++03, the code is verbose and difficult 
 it includes too many features in a single library -- reflection, serialization, script binding (Lua, Python, JavaScript).  
 `metapp` is a modern version of `cpgf`, and it will only include reflection feature. Other features, such as serialization,
 script binding, will be in separated projects, if they are developed.
+

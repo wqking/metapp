@@ -2,31 +2,31 @@
 
 # MetaMappable interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaMappable interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaMappable constructor](#a2_5)
-* [MetaMappable member functions](#a2_6)
-  * [getValueType](#a4_1)
-  * [get](#a4_2)
-  * [set](#a4_3)
-* [Non-member utility functions](#a2_7)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaMappable interface](#mdtoc_85ad9838)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaMappable constructor](#mdtoc_dc6ac553)
+- [MetaMappable member functions](#mdtoc_26c6c0e9)
+  - [getValueType](#mdtoc_8d778ce1)
+  - [get](#mdtoc_fd3b2e70)
+  - [set](#mdtoc_e61425dc)
+- [Non-member utility functions](#mdtoc_e4e47ded)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaMappable` is a meta interface to get and set elements in associative containers.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metamappable.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_85ad9838"></a>
 ## Get MetaMappable interface
 
 We can call `MetaType::getMetaMappable()` to get the `MetaMappable` interface.
@@ -37,7 +37,7 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaMappable * metaMappable = metaType->getMetaMappable();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 `std::map` (tkStdMap)  
@@ -45,7 +45,7 @@ const metapp::MetaMappable * metaMappable = metaType->getMetaMappable();
 `std::unordered_map` (tkStdUnorderedMap)  
 `std::unordered_multimap` (tkStdUnorderedMultimap)  
 
-<a id="a2_5"></a>
+<a id="mdtoc_dc6ac553"></a>
 ## MetaMappable constructor
 
 ```c++
@@ -59,7 +59,7 @@ MetaMappable(
 All arguments are function pointers. All pointers must point to valid function.  
 The meaning of each functions are same as the member functions listed below.  
 
-<a id="a2_6"></a>
+<a id="mdtoc_26c6c0e9"></a>
 ## MetaMappable member functions
 
 The first parameter in all of the member functions is `const Variant & mappable`.
@@ -68,7 +68,7 @@ The member functions operate on the data.
 We can treat `mappable` as the C++ object instance which class implements an interface called `MetaMappable`.  
 Variant `mappable` can be value that implements `MetaMappable`, or reference that refers to value that implements `MetaMappable`.  
 
-<a id="a4_1"></a>
+<a id="mdtoc_8d778ce1"></a>
 #### getValueType
 
 ```c++
@@ -87,7 +87,7 @@ ASSERT(valueType->getUpType(0)->equal(metapp::getMetaType<std::string>()));
 ASSERT(valueType->getUpType(1)->equal(metapp::getMetaType<int>()));
 ```
 
-<a id="a4_2"></a>
+<a id="mdtoc_fd3b2e70"></a>
 #### get
 
 ```c++
@@ -98,7 +98,7 @@ Returns a reference to the mapped value of the element with `key`.
 If no such element exists, an empty Variant (Variant::isEmpty() is true) is returned.  
 `key` is casted to the key type in the container.  
 
-<a id="a4_3"></a>
+<a id="mdtoc_e61425dc"></a>
 #### set
 
 ```c++
@@ -109,7 +109,7 @@ Set the mapped value of the element with `key` with `value`.
 `key` is casted to the key type in the container.  
 `value` is casted to the value type in the container.  
 
-<a id="a2_7"></a>
+<a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaMappable`.  
@@ -134,3 +134,4 @@ inline void mappableSet(const Variant & mappable, const Variant & key, const Var
   mappable.getMetaType()->getMetaMappable()->set(mappable, key, value);
 }
 ```
+

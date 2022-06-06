@@ -2,47 +2,47 @@
 
 # MetaCallable interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaCallable interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaCallable constructor](#a2_5)
-* [MetaCallable member functions](#a2_6)
-  * [getClassType](#a4_1)
-  * [getParameterCountInfo](#a4_2)
-  * [getReturnType](#a4_3)
-  * [getParameterType](#a4_4)
-  * [rankInvoke](#a4_5)
-  * [canInvoke](#a4_6)
-  * [invoke](#a4_7)
-  * [isStatic](#a4_8)
-* [ArgumentSpan](#a2_7)
-* [Non-member utility functions](#a2_8)
-  * [callableGetClassType](#a4_9)
-  * [callableGetParameterCountInfo](#a4_10)
-  * [callableGetReturnType](#a4_11)
-  * [callableGetParameterType](#a4_12)
-  * [callableRankInvoke](#a4_13)
-  * [callableCanInvoke](#a4_14)
-  * [callableInvoke](#a4_15)
-  * [findCallable](#a4_16)
-  * [callableIsStatic](#a4_17)
-* [MetaCallable can cast to std::function](#a2_9)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaCallable interface](#mdtoc_8959fb44)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaCallable constructor](#mdtoc_8b5bcfbf)
+- [MetaCallable member functions](#mdtoc_84aa785a)
+  - [getClassType](#mdtoc_a80b7ef1)
+  - [getParameterCountInfo](#mdtoc_9a56d2a7)
+  - [getReturnType](#mdtoc_3d8ebc96)
+  - [getParameterType](#mdtoc_60a0b869)
+  - [rankInvoke](#mdtoc_a909c1fa)
+  - [canInvoke](#mdtoc_fbd8fd0a)
+  - [invoke](#mdtoc_e3562fb)
+  - [isStatic](#mdtoc_460427c9)
+- [ArgumentSpan](#mdtoc_b0381b3f)
+- [Non-member utility functions](#mdtoc_e4e47ded)
+  - [callableGetClassType](#mdtoc_35629588)
+  - [callableGetParameterCountInfo](#mdtoc_a73a92b5)
+  - [callableGetReturnType](#mdtoc_14ca1ce5)
+  - [callableGetParameterType](#mdtoc_e9a15729)
+  - [callableRankInvoke](#mdtoc_3e98474f)
+  - [callableCanInvoke](#mdtoc_b887c001)
+  - [callableInvoke](#mdtoc_2879261a)
+  - [findCallable](#mdtoc_358ac861)
+  - [callableIsStatic](#mdtoc_70d046a1)
+- [MetaCallable can cast to std::function](#mdtoc_4f2a2173)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaCallable` is a meta interface to invoke meta callable (function, member function, constructor, std::function, etc).  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metacallable.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_8959fb44"></a>
 ## Get MetaCallable interface
 
 We can call `MetaType::getMetaCallable()` to get the `MetaCallable` interface.
@@ -53,7 +53,7 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaCallable * metaCallable = metaType->getMetaCallable();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 Constructor (tkConstructor)  
@@ -63,7 +63,7 @@ Member function pointer, T (C::*)(arguments...) (tkMemberPointer)
 Default arguments function (tkDefaultArgsFunction)  
 Variadic function (tkVariadicFunction)  
 
-<a id="a2_5"></a>
+<a id="mdtoc_8b5bcfbf"></a>
 ## MetaCallable constructor
 
 ```c++
@@ -81,7 +81,7 @@ MetaCallable(
 All arguments are function pointers. All pointers must point to valid function.  
 The meaning of each functions are same as the member functions listed below.
 
-<a id="a2_6"></a>
+<a id="mdtoc_84aa785a"></a>
 ## MetaCallable member functions
 
 The first parameter in all of the member functions is `const Variant & callable`.
@@ -90,7 +90,7 @@ The member functions operate on the data.
 We can treat `callable` as the C++ object instance which class implements an interface called `MetaCallable`.  
 Variant `callable` can be value that implements `MetaCallable`, or reference that refers to value that implements `MetaCallable`.  
 
-<a id="a4_1"></a>
+<a id="mdtoc_a80b7ef1"></a>
 #### getClassType
 
 ```c++
@@ -103,7 +103,7 @@ or the callable is a static member function. When invoking the callable, the `in
 If the function returns non-void meta type, the callable belongs to the class of the meta type.
 When invoking the callable, the `instance` must be pointer to a valid object.  
 
-<a id="a4_2"></a>
+<a id="mdtoc_9a56d2a7"></a>
 #### getParameterCountInfo
 
 ```c++
@@ -139,7 +139,7 @@ For default args function (tkDefaultArgsFunction), 'minParameterCount' is the nu
 is the number of all arguments, including both non-default and default arguments.  
 For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
 
-<a id="a4_3"></a>
+<a id="mdtoc_3d8ebc96"></a>
 #### getReturnType
 
 ```c++
@@ -149,7 +149,7 @@ const MetaType * getReturnType(const Variant & callable);
 Returns meta type of the callable return type.  
 For constructor (tkConstructor), the return type is pointer to the class.  
 
-<a id="a4_4"></a>
+<a id="mdtoc_60a0b869"></a>
 #### getParameterType
 
 ```c++
@@ -159,7 +159,7 @@ const MetaType * getParameterType(const Variant & callable, const int index);
 Returns the meta type of parameter at `index`.  
 For variadic function (tkVariadicFunction), the function always returns nullptr.  
 
-<a id="a4_5"></a>
+<a id="mdtoc_a909c1fa"></a>
 #### rankInvoke
 
 ```c++
@@ -185,7 +185,7 @@ for `ArgumentSpan` in this document.
 For implementor: we may get the actual pointer from `instance` by using `metapp::getPointer`, get the pointed type
 by using `metapp::getPointedType`. See the document for `utility.h` for more details.
 
-<a id="a4_6"></a>
+<a id="mdtoc_fbd8fd0a"></a>
 #### canInvoke
 
 ```c++
@@ -195,7 +195,7 @@ bool canInvoke(const Variant & callable, const Variant & instance, const Argumen
 Returns true if the `arguments` can be used to invoke the callable, false if not.  
 This is similar to check if the result of `rankInvoke` is larger than 0, but it's more efficient than `rankInvoke`.
 
-<a id="a4_7"></a>
+<a id="mdtoc_e3562fb"></a>
 #### invoke
 
 ```c++
@@ -206,7 +206,7 @@ Invokes the callable, returns the result of the callable. If the callable doesn'
 then empty Variant is returned (Variant::isEmpty() is true).  
 Parameter `instance` can be value, reference, pointer, `std::shared_ptr`, `std::unique_ptr`, etc.  
 
-<a id="a4_8"></a>
+<a id="mdtoc_460427c9"></a>
 #### isStatic
 
 ```c++
@@ -216,7 +216,7 @@ bool isStatic(const Variant & callable) const;
 Returns true if the callable is static or non-member, false if the callable is class member.  
 The function is equivalent to `return getClassType(callable)->isVoid();`.  
 
-<a id="a2_7"></a>
+<a id="mdtoc_b0381b3f"></a>
 ## ArgumentSpan
 
 `ArgumentSpan` is used to pass arguments to MetaCallable.  
@@ -302,7 +302,7 @@ void demoArgumentSpan(const metapp::ArgumentSpan & arguments)
 }
 ```
 
-<a id="a2_8"></a>
+<a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
@@ -311,7 +311,7 @@ However, if you need to call functions on a single `MetaCallable` more than one 
 you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions.
 This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
 
-<a id="a4_9"></a>
+<a id="mdtoc_35629588"></a>
 #### callableGetClassType
 
 ```c++
@@ -323,7 +323,7 @@ inline const MetaType * callableGetClassType(const Variant & callable)
 
 Shortcut for `MetaCallable::getClassType()`.
 
-<a id="a4_10"></a>
+<a id="mdtoc_a73a92b5"></a>
 #### callableGetParameterCountInfo
 
 ```c++
@@ -335,7 +335,7 @@ inline int callableGetParameterCountInfo(const Variant & callable)
 
 Shortcut for `MetaCallable::getParameterCountInfo()`.
 
-<a id="a4_11"></a>
+<a id="mdtoc_14ca1ce5"></a>
 #### callableGetReturnType
 
 ```c++
@@ -347,7 +347,7 @@ inline const MetaType * callableGetReturnType(const Variant & callable)
 
 Shortcut for `MetaCallable::getReturnType()`.
 
-<a id="a4_12"></a>
+<a id="mdtoc_e9a15729"></a>
 #### callableGetParameterType
 
 ```c++
@@ -359,7 +359,7 @@ inline const MetaType * callableGetParameterType(const Variant & callable, const
 
 Shortcut for `MetaCallable::getParameterType()`.
 
-<a id="a4_13"></a>
+<a id="mdtoc_3e98474f"></a>
 #### callableRankInvoke
 
 ```c++
@@ -369,7 +369,7 @@ int callableRankInvoke(const Variant & callable, const Variant & instance, Args 
 
 Converts `args` to Variant array then calls `MetaCallable::rankInvoke()` and returns the result.
 
-<a id="a4_14"></a>
+<a id="mdtoc_b887c001"></a>
 #### callableCanInvoke
 
 ```c++
@@ -379,7 +379,7 @@ bool callableCanInvoke(const Variant & callable, const Variant & instance, Args 
 
 Converts `args` to Variant array then calls `MetaCallable::canInvoke()` and returns the result.
 
-<a id="a4_15"></a>
+<a id="mdtoc_2879261a"></a>
 #### callableInvoke
 
 ```c++
@@ -411,7 +411,7 @@ metapp::callableInvoke(callable, nullptr, std::string("good"));
 // ASSERT(storedVar.get<const std::string &>() == "good");
 ```
 
-<a id="a4_16"></a>
+<a id="mdtoc_358ac861"></a>
 #### findCallable
 
 ```c++
@@ -429,7 +429,7 @@ Returns an iterator to the element that's best matched to `arguments` in the ran
 If no matched callable, `last` is returned.  
 `Iterator` must be the iterator to `Variant`, `MetaItem`, or `MetaItem`.
 
-<a id="a4_17"></a>
+<a id="mdtoc_70d046a1"></a>
 #### callableIsStatic
 
 ```c++
@@ -441,7 +441,7 @@ inline bool callableIsStatic(const Variant & callable)
 
 Shortcut for `MetaCallable::isStatic()`.
 
-<a id="a2_9"></a>
+<a id="mdtoc_4f2a2173"></a>
 ## MetaCallable can cast to std::function
 
 Any `MetaCallable` can cast to `std::function` as long as the number of parameter is appropriate. The casting only checks

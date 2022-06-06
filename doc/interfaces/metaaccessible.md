@@ -2,34 +2,34 @@
 
 # MetaAccessible interface
 <!--begintoc-->
-* [Overview](#a2_1)
-* [Header](#a2_2)
-* [Get MetaAccessible interface](#a2_3)
-* [Implemented built-in meta types](#a2_4)
-* [MetaAccessible constructor](#a2_5)
-* [MetaAccessible member functions](#a2_6)
-  * [getValueType](#a4_1)
-  * [isReadOnly](#a4_2)
-  * [getClassType](#a4_3)
-  * [get](#a4_4)
-  * [set](#a4_5)
-  * [isStatic](#a4_6)
-* [Non-member utility functions](#a2_7)
+- [Overview](#mdtoc_e7c3d1bb)
+- [Header](#mdtoc_6e72a8c1)
+- [Get MetaAccessible interface](#mdtoc_e35d724c)
+- [Implemented built-in meta types](#mdtoc_ed7f0e2e)
+- [MetaAccessible constructor](#mdtoc_ee0c31d2)
+- [MetaAccessible member functions](#mdtoc_3a9e571a)
+  - [getValueType](#mdtoc_8d778ce1)
+  - [isReadOnly](#mdtoc_5e2aac4d)
+  - [getClassType](#mdtoc_a80b7ef1)
+  - [get](#mdtoc_fd3b2e70)
+  - [set](#mdtoc_e61425dc)
+  - [isStatic](#mdtoc_460427c9)
+- [Non-member utility functions](#mdtoc_e4e47ded)
 <!--endtoc-->
 
-<a id="a2_1"></a>
+<a id="mdtoc_e7c3d1bb"></a>
 ## Overview
 
 `MetaAccessible` is a meta interface to get and set value.  
 
-<a id="a2_2"></a>
+<a id="mdtoc_6e72a8c1"></a>
 ## Header
 
 ```c++
 #include "metapp/interfaces/metaaccessible.h"
 ```
 
-<a id="a2_3"></a>
+<a id="mdtoc_e35d724c"></a>
 ## Get MetaAccessible interface
 
 We can call `MetaType::getMetaAccessible()` to get the `MetaAccessible` interface. If the type doesn't implement the interface,
@@ -40,14 +40,14 @@ const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
 const metapp::MetaAccessible * metaAccessible = metaType->getMetaAccessible();
 ```
 
-<a id="a2_4"></a>
+<a id="mdtoc_ed7f0e2e"></a>
 ## Implemented built-in meta types
 
 Pointer, T * (tkPointer)  
 Member data pointer, T C::* (tkMemberPointer)  
 Accessor (tkAccessor)  
 
-<a id="a2_5"></a>
+<a id="mdtoc_ee0c31d2"></a>
 ## MetaAccessible constructor
 
 ```c++
@@ -63,7 +63,7 @@ MetaAccessible(
 All arguments are function pointers. All pointers must point to valid function.  
 The meaning of each functions are same as the member functions listed below.
 
-<a id="a2_6"></a>
+<a id="mdtoc_3a9e571a"></a>
 ## MetaAccessible member functions
 
 The first parameter in all of the member functions is `const Variant & accessible`.
@@ -72,7 +72,7 @@ The member functions operate on the data.
 We can treat `accessible` as the C++ object instance which class implements an interface called `MetaAccessible`.  
 Variant `accessible` can be value that implements `MetaAccessible`, or reference that refers to value that implements `MetaAccessible`.  
 
-<a id="a4_1"></a>
+<a id="mdtoc_8d778ce1"></a>
 #### getValueType
 
 ```c++
@@ -82,7 +82,7 @@ const MetaType * getValueType(const Variant & accessible);
 Returns the meta type of the value.  
 For Accessor, returns the meta type of `Accessor::ValueType`.  
 
-<a id="a4_2"></a>
+<a id="mdtoc_5e2aac4d"></a>
 #### isReadOnly
 
 ```c++
@@ -93,7 +93,7 @@ Returns `true` if the value is read only.
 For pointer `T *` and member data pointer `T C::*`, returns `true` if T is const.  
 For Accessor, returns `Accessor::isReadOnly()`.  
 
-<a id="a4_3"></a>
+<a id="mdtoc_a80b7ef1"></a>
 #### getClassType
 
 ```c++
@@ -106,7 +106,7 @@ or the accessible is a static member. When getting/setting value in the accessib
 If the function returns non-void meta type, the accessible belongs to the class of the meta type.
 When getting/setting value in the accessible, the `instance` must be pointer to a valid object.  
 
-<a id="a4_4"></a>
+<a id="mdtoc_fd3b2e70"></a>
 #### get
 
 ```c++
@@ -128,7 +128,7 @@ by using `metapp::getPointedType`. See the document for `utility.h` for more det
 
 For implementor: the returned Variant should be reference whenever possible to reduce performance and memory cost.
 
-<a id="a4_5"></a>
+<a id="mdtoc_e61425dc"></a>
 #### set
 
 ```c++
@@ -137,7 +137,7 @@ void set(const Variant & accessible, const Variant & instance, const Variant & v
 
 Set a new value.  
 
-<a id="a4_6"></a>
+<a id="mdtoc_460427c9"></a>
 #### isStatic
 
 ```c++
@@ -147,7 +147,7 @@ bool isStatic(const Variant & accessible) const;
 Returns true if the accessible is static or non-member, false if the accessible is class member.  
 The function is equivalent to `return getClassType(accessible)->isVoid();`.  
 
-<a id="a2_7"></a>
+<a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaAccessible`.  
@@ -184,3 +184,4 @@ inline bool accessibleIsStatic(const Variant & accessible)
   return accessible.getMetaType()->getMetaAccessible()->isStatic(accessible);
 }
 ```
+
