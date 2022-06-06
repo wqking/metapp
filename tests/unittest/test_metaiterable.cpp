@@ -45,18 +45,34 @@ TEMPLATE_LIST_TEST_CASE("MetaIterable forEach", "", TestTypes_Iterables)
 		v = metapp::Variant::reference(container);
 	}
 
-	std::vector<ValueType> resultList;
 	auto metaIterable = metapp::getPointedType(v)->getMetaIterable();
 	REQUIRE(metaIterable != nullptr);
 
 	auto nonPointer = metapp::depointer(v);
-	metaIterable->forEach(nonPointer, [&resultList](const metapp::Variant & value) -> bool {
-		resultList.push_back(value.get<ValueType &>());
-		return true;
-	});
-	REQUIRE((int)resultList.size() == getContainerSize(container));
-	for(auto & resultItem : resultList) {
-		REQUIRE(std::find(container.begin(), container.end(), resultItem) != container.end());
+
+	// Use CATCH2 SECTION here will cause `REQUIRE(metaIterable != nullptr)` fail
+	{
+		std::vector<ValueType> resultList;
+		metaIterable->forEach(nonPointer, [&resultList](const metapp::Variant & value) -> bool {
+			resultList.push_back(value.get<ValueType &>());
+			return true;
+			});
+		REQUIRE((int)resultList.size() == getContainerSize(container));
+		for(auto & resultItem : resultList) {
+			REQUIRE(std::find(container.begin(), container.end(), resultItem) != container.end());
+		}
+	}
+	
+	{
+		std::vector<ValueType> resultList;
+		metaIterable->forEach(nonPointer, [&resultList](const metapp::Variant & value) -> bool {
+			resultList.push_back(value.get<ValueType &>());
+			return false;
+		});
+		REQUIRE((int)resultList.size() == 1);
+		for(auto & resultItem : resultList) {
+			REQUIRE(std::find(container.begin(), container.end(), resultItem) != container.end());
+		}
 	}
 }
 
