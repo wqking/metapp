@@ -248,7 +248,7 @@ TEST_CASE("MetaType, placementCopyConstruct")
 		int n = 5;
 		REQUIRE(n == 5);
 		const int from = 38;
-		metapp::getMetaType<int>()->placementCopyConstruct(&from, &n);
+		metapp::getMetaType<int>()->placementCopyConstruct(&n, &from);
 		REQUIRE(n == 38);
 	}
 	SECTION("MyClass") {
@@ -259,7 +259,7 @@ TEST_CASE("MetaType, placementCopyConstruct")
 		MyClass obj { 0 };
 		REQUIRE(obj.value == 0);
 		const MyClass from { 38 };
-		metapp::getMetaType<MyClass>()->placementCopyConstruct(&from, &obj);
+		metapp::getMetaType<MyClass>()->placementCopyConstruct(&obj, &from);
 		REQUIRE(obj.value == 38);
 	}
 }

@@ -299,7 +299,7 @@ The returned pointer can be freed using `dtor`.
 #### placementCopyConstruct
 
 ```c++
-void * placementCopyConstruct(const void * copyFrom, void * memory) const;
+void * placementCopyConstruct(void * memory, const void * copyFrom) const;
 ```
 
 Similar to C++ code `new (memory) T(anotherObject)`.  

@@ -293,7 +293,7 @@ void * MetaType::placementConstruct(void * memory) const
 	return constructData(nullptr, nullptr, memory);
 }
 
-void * MetaType::placementCopyConstruct(const void * copyFrom, void * memory) const
+void * MetaType::placementCopyConstruct(void * memory, const void * copyFrom) const
 {
 	return constructData(nullptr, copyFrom, memory);
 }

@@ -175,7 +175,7 @@ Variant & Variant::assign(const Variant & other)
 	void * myAddress = getAddress();
 	const MetaType * mt = getNonReferenceMetaType(metaType);
 	mt->dtor(myAddress);
-	mt->placementCopyConstruct(casted.getAddress(), myAddress);
+	mt->placementCopyConstruct(myAddress, casted.getAddress());
 	return *this;
 }
 

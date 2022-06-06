@@ -253,7 +253,7 @@ public:
 	void * construct() const;
 	void * copyConstruct(const void * copyFrom) const;
 	void * placementConstruct(void * memory) const;
-	void * placementCopyConstruct(const void * copyFrom, void * memory) const;
+	void * placementCopyConstruct(void * memory, const void * copyFrom) const;
 
 	void destroy(void * instance) const;
 	void dtor(void * instance) const;
