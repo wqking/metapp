@@ -6,7 +6,7 @@
 - [Header](#mdtoc_6e72a8c1)
 - [Obtain the MetaType for given C++ type](#mdtoc_d959a9aa)
   - [Use getMetaType at compile time](#mdtoc_fe7cfc87)
-  - [Use MetaRepo at runtime](#mdtoc_13daedce)
+  - [Use MetaType at runtime](#mdtoc_ad0f02a7)
 - [Member functions](#mdtoc_9ab1cb86)
   - [Not constructible](#mdtoc_609b9aed)
   - [equal](#mdtoc_2eab15f7)
@@ -53,7 +53,7 @@ const MetaType * getMetaType();
 ```
 
 `getMetaType` is a non-member free function.  
-Return a MetaType pointer of type T.  
+`getMetaType` returns a MetaType pointer of type T.  
 `getMetaType` can be used on any C++ type, the type doesn't need any registering or preprocessing.  
 
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
@@ -73,10 +73,11 @@ ASSERT(metapp::getMetaType<std::string>() != metapp::getMetaType<volatile std::s
 
 To identify CV-unaware meta type, use `MetaType::equal()` or `MetaType::compare()`.  
 
-<a id="mdtoc_13daedce"></a>
-### Use MetaRepo at runtime
+<a id="mdtoc_ad0f02a7"></a>
+### Use MetaType at runtime
 
-The class `metapp::MetaRepo` holds all registered meta types.
+The class `metapp::MetaRepo` is used to register and retrieve meta types at runtime.  
+Please refer to the document for `metapp::MetaRepo` for details.
 
 <a id="mdtoc_9ab1cb86"></a>
 ## Member functions
@@ -101,6 +102,7 @@ bool equal(const MetaType * other) const;
 
 Returns true if `this` equals to `other`.  
 The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
+The CV qualifiers in template arguments, or function arguments, are not ignored.
 
 ```c++
 // A type equals to itself.
@@ -123,6 +125,9 @@ ASSERT(metapp::getMetaType<int[]>()->equal(metapp::getMetaType<const int[]>()));
 ASSERT(! metapp::getMetaType<int>()->equal(metapp::getMetaType<long>()));
 // Different pointers are different types.
 ASSERT(! metapp::getMetaType<int *>()->equal(metapp::getMetaType<int **>()));
+
+// Different CV in template argument causes different meta type.
+ASSERT(! metapp::getMetaType<std::map<int, long> >()->equal(metapp::getMetaType<std::map<const int, long> >()));
 ```
 
 <a id="mdtoc_bdc9085d"></a>
@@ -133,10 +138,10 @@ int compare(const MetaType * other) const;
 ```
 
 Compares `this` with `other`.  
-The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
 Returns negative value if `this` is before `other`.  
 Returns zero if `this` equals to `other`.  
 Returns positive value if `this` is after `other`.  
+The rule on CV qualifiers is same as `equal`.  
 This function is useful when putting `MetaType` in ordered containers, such as `std::map`, `std::set`, etc.
 
 <a id="mdtoc_518056ac"></a>

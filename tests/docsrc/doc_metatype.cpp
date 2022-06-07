@@ -43,7 +43,7 @@ const MetaType * getMetaType();
 ```
 
 `getMetaType` is a non-member free function.  
-Return a MetaType pointer of type T.  
+`getMetaType` returns a MetaType pointer of type T.  
 `getMetaType` can be used on any C++ type, the type doesn't need any registering or preprocessing.  
 
 The pointer returned by `getMetaType()` is always the same for the same T. For example,  
@@ -73,9 +73,10 @@ ExampleFunc
 /*desc
 To identify CV-unaware meta type, use `MetaType::equal()` or `MetaType::compare()`.  
 
-### Use MetaRepo at runtime
+### Use MetaType at runtime
 
-The class `metapp::MetaRepo` holds all registered meta types.
+The class `metapp::MetaRepo` is used to register and retrieve meta types at runtime.  
+Please refer to the document for `metapp::MetaRepo` for details.
 
 ## Member functions
 
@@ -97,6 +98,7 @@ bool equal(const MetaType * other) const;
 
 Returns true if `this` equals to `other`.  
 The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
+The CV qualifiers in template arguments, or function arguments, are not ignored.
 desc*/
 
 ExampleFunc
@@ -122,6 +124,9 @@ ExampleFunc
 	ASSERT(! metapp::getMetaType<int>()->equal(metapp::getMetaType<long>()));
 	// Different pointers are different types.
 	ASSERT(! metapp::getMetaType<int *>()->equal(metapp::getMetaType<int **>()));
+
+	// Different CV in template argument causes different meta type.
+	ASSERT(! metapp::getMetaType<std::map<int, long> >()->equal(metapp::getMetaType<std::map<const int, long> >()));
 	//code
 }
 
@@ -133,10 +138,10 @@ int compare(const MetaType * other) const;
 ```
 
 Compares `this` with `other`.  
-The comparison ignores any CV qualifiers in the types, include top level CV, or CV in the pointer or reference.  
 Returns negative value if `this` is before `other`.  
 Returns zero if `this` equals to `other`.  
 Returns positive value if `this` is after `other`.  
+The rule on CV qualifiers is same as `equal`.  
 This function is useful when putting `MetaType` in ordered containers, such as `std::map`, `std::set`, etc.
 
 #### getUpType

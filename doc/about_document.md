@@ -19,7 +19,6 @@ python gendoc.py
 ```
 The tool requires Python 3 to convert .cpp to .md files.  
 It requires Python package `pip install openpyxl` to convert Excel to markdown tables.  
-It requires Perl 5 to generate Table Of Content. Note: it works with Perl 5.26, but it doesn't work with Perl 5.32.   
 
 In folder `metapp/tests/docsrc`, all files that name starts with "doc_" are the documentation source files. There are different source file types.  
 For .cpp file, the comment and code in the file are parsed and converted to .md file.  
@@ -30,4 +29,6 @@ So, to modify the documentation, DON'T modify the files in doc folder. You shoul
 
 The folder structure in `docsrc` is same as `doc`. The files in `docsrc` are created in the same sub folder in `doc`. There are some files create in special folders.  
 
-doc_readme.cpp -> metapp/readme.md # the main readme
+doc_readme.cpp -> metapp/readme.md # the main readme  
+doc_document_readme.cpp -> metapp/doc/readme.md  
+

@@ -30,7 +30,7 @@
   - [swap](#mdtoc_25938561)
 - [Free functions](#mdtoc_dafb9086)
   - [getTypeKind](#mdtoc_9973f311)
-  - [Streamable operators](#mdtoc_ed4136d1)
+  - [Streaming operators](#mdtoc_c136ecac)
   - [swap](#mdtoc_25938562)
 - [Memory management in Variant](#mdtoc_246aa466)
   - [The data storage in Variant is similar to native C++](#mdtoc_a4e1bd2)
@@ -85,7 +85,7 @@ Variant(T value);
 Construct a Variant of type T and copy value into Variant.  
 Since there is no way to specify the template parameter T explicitly when calling a constructor,
 we can't construct reference (tkReference) or C array (tkArray) using this constructor,
-because the type T is either removed reference, or decayed for array. To specify T explicitly, use `Variant::create`.  
+because the type T is either removed reference, or decayed for pointer. To specify T explicitly, use `Variant::create`.  
 If `value` is not copyable, it will be moved into Variant.  
 If `value` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
 
@@ -198,8 +198,10 @@ The returned `Variant` is a value object, not a pointer.
 **Example**  
 
 ```c++
-std::string * instance = new std::string();
+std::string * instance = new std::string("Hello");
 metapp::Variant v = metapp::Variant::takeFrom(metapp::getMetaType<std::string>(), instance);
+// v is a value, so we should get as value or reference, but not pointer
+ASSERT(v.get<const std::string &>() == "Hello");
 // Now v will free instance when v is destroyed
 ```
 
@@ -445,7 +447,8 @@ Similar to `cast`, the only difference is that if `canCast<T>()` returns false,
 **Hint**: when to use `canCast`, `cast`, and `castSilently`   
 If you only want to check if it's cast-able, but don't need to perform the cast, use `canCast`.  
 If you want a variant must be casted, and throw exception if it can't be casted,
-use `cast` without checking `canCast` because 'canCast` is almost as expensive on performance as `cast`.  
+use `cast` without checking `canCast` explicitly because `cast` will check `canCast`, and `canCast` is almost
+as expensive on performance as `cast`.  
 If you want a variant be casted, and allow the cast fail, use `castSilently`, then check if the result is empty.  
 
 <a id="mdtoc_a01163fe"></a>
@@ -474,12 +477,11 @@ Variant & assign(const Variant & other);
 
 Assign `other` to `this`.  
 Firstly the function casts `other` to the meta type in `this`, then copy the data in the casted Variant to the data in `this`.  
-If `this` is a Variant of reference, the referred-to object is modified.  
+If `this` is a Variant of reference, the referred-to object is modified. Otherwise, the object contained by the Variant is modified.
 This function is particular useful to set value to the referred-to object referred by a reference.  
 
 This function is complete different with the `Variant & operator = (const Variant & other) noexcept`.  
 The `operator =` is class semantic. That's to say, when using `operator =`, `this` is a fresh new Variant that's copied from `other`.  
-
 Function `assign` is C++ value assignment semantic. That's to say, it's similar to do the expression `v = u`.  
 Let's see examples, first let's see how C++ assignment works.  
 
@@ -547,15 +549,15 @@ TypeKind getTypeKind(const Variant & v);
 
 Get the TypeKind held by the variant. This is a shortcut function for `v.getMetaType()->getTypeKind()`.
 
-<a id="mdtoc_ed4136d1"></a>
-#### Streamable operators
+<a id="mdtoc_c136ecac"></a>
+#### Streaming operators
 ```c++
 std::istream & operator >> (std::istream & stream, Variant & v);
 std::ostream & operator << (std::ostream & stream, const Variant & v);
 ```
 
 Variant supports input and output stream if the underlying value supports the stream.  
-If the underlying value doesn't support the stream, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
+If the underlying value doesn't support streaming, invoking the I/O streaming operators wll throw `metapp::UnsupportedException`.
 
 <a id="mdtoc_25938562"></a>
 #### swap

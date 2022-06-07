@@ -27,7 +27,7 @@
 # metapp -- C++ library for runtime reflection, introspection and meta types
 
 metapp is a cross platform C++ runtime reflection library.  
-metapp is light weight, powerful, and unique.  
+metapp is light weight, powerful, unique, non-intrusive, no macros, and easy to use.  
 Even if you don't need reflection, you may use `metapp::Variant` with any C++ types, and you can enjoy the large amount of
 built-in meta types.
 
@@ -110,16 +110,18 @@ value is referenced instead of copied, so the memory and performance cost is kep
 
 Apache License, Version 2.0  
 
-### Version 0.1.0 and status
+### Version 0.1.0
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
 The first stable release will be v1.0.0. 
 
 To put the library to first release, we need to,   
-1. Add more test.
+1. Add more tests.
 2. Finish the metapp based Lua bind project (under development).
 3. Complete the documentations.
+
+Any significant features such as supporting operators reflection will be developed after v1.0.0 is released.
 
 You are welcome to try the project and give feedback. Your participation will help to make the development faster and better.
 
@@ -179,7 +181,7 @@ To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB
 
 ## Example code
 
-Here is simple code pieces. There are comprehensive tutorials documentations.
+Here are some simple code pieces. There are comprehensive tutorials in the documentations.
 desc*/
 //desc ### Use Variant
 
@@ -195,8 +197,9 @@ ExampleFunc
 	//code
 	//desc v contains int.
 	metapp::Variant v { 5 };
-	//desc Get the value
+	// Get the value
 	ASSERT(v.get<int>() == 5);
+	//desc cast v to double
 	metapp::Variant casted = v.cast<double>();
 	ASSERT(casted.get<double>() == 5.0);
 
@@ -205,7 +208,7 @@ ExampleFunc
 	ASSERT(strcmp(v.get<char *>(), "hello") == 0);
 	//desc Cast to std::string.
 	casted = v.cast<std::string>();
-	//desc Get as reference to avoid copy.
+	// Get as reference to avoid copy.
 	ASSERT(casted.get<const std::string &>() == "hello");
 	//code
 }
@@ -351,7 +354,7 @@ ExampleFunc
 	//code
 	//desc A std::vector of int.
 	std::vector<int> container1 { 1, 5, 9, 6, 7 };
-	//desc Construct a Variant with the vector. To avoid container1 being coped, we use reference.
+	//desc Construct a Variant with the vector. To avoid container1 being copied, we use reference.
 	metapp::Variant v1 = metapp::Variant::reference(container1);
 	//desc Concat the items in the vector.
 	ASSERT(concat(v1) == "15967");
@@ -364,7 +367,7 @@ ExampleFunc
 	//desc Isn't cool we can use std::pair as a container?
 	ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 
-	//desc We can even pass a pointer to the container to `concat`.
+	//desc We can even pass a pointer to container to `concat`.
 	std::deque<int> container2 { 1, 2, 3 };
 	metapp::Variant v2(&container2);
 	ASSERT(concat(v2) == "123");
@@ -384,8 +387,8 @@ ExampleFunc
 		metapp::Variant rn = metapp::Variant::reference(n);
 		ASSERT(rn.get<int>() == 9);
 		//desc Assign to rn with new value. C++ equivalence is `rn = 38;` where rn is `int &`.
-		//desc We can't write `rn = 38;` where rn is `Variant`, that's different meaning that assign rn with
-		//desc a Variant of value 38. See Variant document for details.
+		//desc Here we can't user `rn = 38;` where rn is `Variant`, that's different meaning.
+		//desc See Variant document for details.
 		rn.assign(38); // different with rn = 38
 		//desc rn gets new value.
 		ASSERT(rn.get<int>() == 38);
@@ -444,7 +447,12 @@ ExampleFunc
 	metapp::getMetaType<UnreflectedFoo>()->placementCopyConstruct(&foo3, &foo2);
 	ASSERT(foo3.f == 38);
 
-	//desc 5, Identify the meta type
+	//desc 5, Destroy the object, if we dont' use RAII
+	void * foo5 = metapp::getMetaType<UnreflectedFoo>()->construct();
+	// `destroy` knows the type of foo5 and can destroy the `void *` properly.
+	metapp::getMetaType<UnreflectedFoo>()->destroy(foo5);
+
+	//desc 6, Identify the meta type
 	const UnreflectedFoo * fooPtr = &foo3;
 	metapp::Variant varFoo = fooPtr;
 	metapp::Variant varBar = UnreflectedBar();

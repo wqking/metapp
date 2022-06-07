@@ -6,7 +6,7 @@
 - [Facts and features](#mdtoc_21927030)
 - [Basic information](#mdtoc_abc52c05)
   - [License](#mdtoc_5768f419)
-  - [Version 0.1.0 and status](#mdtoc_54c2c4cb)
+  - [Version 0.1.0](#mdtoc_c3ac4dae)
   - [Source code](#mdtoc_6b8a2c23)
   - [Supported compilers](#mdtoc_215a5bea)
 - [Quick start](#mdtoc_ea7b0a9)
@@ -26,7 +26,7 @@
 <!--endtoc-->
 
 metapp is a cross platform C++ runtime reflection library.  
-metapp is light weight, powerful, and unique.  
+metapp is light weight, powerful, unique, non-intrusive, no macros, and easy to use.  
 Even if you don't need reflection, you may use `metapp::Variant` with any C++ types, and you can enjoy the large amount of
 built-in meta types.
 
@@ -113,17 +113,19 @@ you get trivial memory and performance overhead beside very powerful reflection 
 
 Apache License, Version 2.0  
 
-<a id="mdtoc_54c2c4cb"></a>
-### Version 0.1.0 and status
+<a id="mdtoc_c3ac4dae"></a>
+### Version 0.1.0
 ![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
 The first stable release will be v1.0.0. 
 
 To put the library to first release, we need to,   
-1. Add more test.
+1. Add more tests.
 2. Finish the metapp based Lua bind project (under development).
 3. Complete the documentations.
+
+Any significant features such as supporting operators reflection will be developed after v1.0.0 is released.
 
 You are welcome to try the project and give feedback. Your participation will help to make the development faster and better.
 
@@ -189,7 +191,7 @@ To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB
 <a id="mdtoc_3bb166c4"></a>
 ## Example code
 
-Here is simple code pieces. There are comprehensive tutorials documentations.
+Here are some simple code pieces. There are comprehensive tutorials in the documentations.
 
 <a id="mdtoc_cee017b6"></a>
 ### Use Variant
@@ -209,12 +211,13 @@ v contains int.
 
 ```c++
 metapp::Variant v { 5 };
+// Get the value
+ASSERT(v.get<int>() == 5);
 ```
 
-Get the value
+cast v to double
 
 ```c++
-ASSERT(v.get<int>() == 5);
 metapp::Variant casted = v.cast<double>();
 ASSERT(casted.get<double>() == 5.0);
 ```
@@ -230,11 +233,7 @@ Cast to std::string.
 
 ```c++
 casted = v.cast<std::string>();
-```
-
-Get as reference to avoid copy.
-
-```c++
+// Get as reference to avoid copy.
 ASSERT(casted.get<const std::string &>() == "hello");
 ```
 
@@ -396,7 +395,7 @@ A std::vector of int.
 std::vector<int> container1 { 1, 5, 9, 6, 7 };
 ```
 
-Construct a Variant with the vector. To avoid container1 being coped, we use reference.
+Construct a Variant with the vector. To avoid container1 being copied, we use reference.
 
 ```c++
 metapp::Variant v1 = metapp::Variant::reference(container1);
@@ -426,7 +425,7 @@ Isn't cool we can use std::pair as a container?
 ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 ```
 
-We can even pass a pointer to the container to `concat`.
+We can even pass a pointer to container to `concat`.
 
 ```c++
 std::deque<int> container2 { 1, 2, 3 };
@@ -451,8 +450,8 @@ ASSERT(rn.get<int>() == 9);
 ```
 
 Assign to rn with new value. C++ equivalence is `rn = 38;` where rn is `int &`.
-We can't write `rn = 38;` where rn is `Variant`, that's different meaning that assign rn with
-a Variant of value 38. See Variant document for details.
+Here we can't user `rn = 38;` where rn is `Variant`, that's different meaning.
+See Variant document for details.
 
 ```c++
 rn.assign(38); // different with rn = 38
@@ -538,7 +537,15 @@ metapp::getMetaType<UnreflectedFoo>()->placementCopyConstruct(&foo3, &foo2);
 ASSERT(foo3.f == 38);
 ```
 
-5, Identify the meta type
+5, Destroy the object, if we dont' use RAII
+
+```c++
+void * foo5 = metapp::getMetaType<UnreflectedFoo>()->construct();
+// `destroy` knows the type of foo5 and can destroy the `void *` properly.
+metapp::getMetaType<UnreflectedFoo>()->destroy(foo5);
+```
+
+6, Identify the meta type
 
 ```c++
 const UnreflectedFoo * fooPtr = &foo3;

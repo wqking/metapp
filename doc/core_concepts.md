@@ -39,8 +39,8 @@ See [Built-in meta types document](metatypes/list_all.md) for a list of built-in
 `Variant` is used extensively in metapp library.  
 `Variant` can hold any data types. `Variant` can hold value or object that the value or object is copied to `Variant` internal memory.
 The value or object can be any type, such as int, bool, containers, smart pointers, etc.  
-`Variant` can hold pointer that the pointer points to memory that's out side the `Variant`. `Variant` can also hold
-reference that the reference refers to memory that's out of the `Variant`.
+`Variant` can hold pointer that points to memory that's outside of the `Variant`.  
+`Variant` can also hold reference that refers to memory that's outside of the `Variant`.
 
 <a id="mdtoc_b2ae0bb2"></a>
 ## MetaType - the core meta type
