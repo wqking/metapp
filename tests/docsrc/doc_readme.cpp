@@ -235,65 +235,92 @@ ExampleFunc
 	//code
 }
 
-//desc ### Call function and access property
+//desc ### Reflect a class (declare meta type)
+//code
+//desc Here is the class we are going to reflect for.
+class MyPet
+{
+public:
+	MyPet() : name(), age() {}
+	MyPet(const std::string & name, const int age) : name(name), age(age) {}
+
+	int getAge() const { return age; }
+	void setAge(const int newAge) { age = newAge; }
+
+	std::string bark() const { return "Bow-wow, " + name; }
+	int calculate(const int a, const int b) const { return a + b; }
+
+	std::string name; // I don't like public field in non-POD, here is only for demo
+private:
+	int age;
+};
+
+//desc Now let's `DeclareMetaType` for MyPet. We `DeclareMetaType` for all kinds of types,
+//desc not only classes, but also enumerators, templates, etc.
+template <>
+struct metapp::DeclareMetaType<MyPet> : metapp::DeclareMetaTypeBase<MyPet>
+{
+	// Reflect the class information via MetaClass.
+	static const metapp::MetaClass * getMetaClass() {
+		static const metapp::MetaClass metaClass(
+			metapp::getMetaType<MyPet>(),
+			[](metapp::MetaClass & mc) {
+				// Register constructors
+				mc.registerConstructor(metapp::Constructor<MyPet ()>());
+				mc.registerConstructor(metapp::Constructor<MyPet (const std::string &, int)>());
+
+				// Register field with getter/setter function
+				mc.registerAccessible("age",
+					metapp::createAccessor(&MyPet::getAge, &MyPet::setAge));
+				// Register another field
+				mc.registerAccessible("name", &MyPet::name);
+
+				// Register member functions
+				mc.registerCallable("bark", &MyPet::bark);
+				mc.registerCallable("calculate", &MyPet::calculate);
+			}
+		);
+		return &metaClass;
+	}
+};
+
+//code
+//desc Now let's use the reflected meta class.  
 ExampleFunc
 {
 	//code
-	//desc Define a class to be used later.
-	struct MyClass {
-		int value;
+	//desc Obtain the meta type for MyPet, then get the meta class. If we've registered the meta type of MyPet
+	//desc to MetaRepo, we can get it at runtime instead of depending on the compile time `getMetaType`.
+	const metapp::MetaType * metaType = metapp::getMetaType<MyPet>();
+	const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
-		int add(const int delta1, const int delta2) const {
-			return value + delta1 + delta2;
-		}
-
-		// metapp supports smart pointers very well.
-		std::unique_ptr<MyClass> clone() const {
-			// This is C++11, so we can't use std::make_unique
-			return std::unique_ptr<MyClass>(new MyClass(*this));
-		}
-	};
-
-	//desc Define a class instance.
-	MyClass obj { 5 };
-
-	//desc Define a callable.
-	metapp::Variant funcAdd(&MyClass::add);
-	//desc Invoke the callable, the second argument is the object instance, it's required when invoking member function.
-	metapp::Variant resultOfAdd = metapp::callableInvoke(funcAdd, &obj, 3, 9);
-	ASSERT(resultOfAdd.get<int>() == 17);
-
-	//desc Another callable, note the instance here is the object reference.
-	//desc metapp supports instance of pointer, reference, value, or even smart pointers.
-	metapp::Variant funcClone(&MyClass::clone);
-	metapp::Variant cloned = metapp::callableInvoke(funcClone, metapp::Variant::reference(obj));
-
-	//desc `cloned` holds `std::unique_ptr<MyClass>`.
-	ASSERT(cloned.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<MyClass>>()));
+	//desc `getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
+	//desc Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.  
+	//desc The constructor is an overloaded callable since there are two constructors registgerd,
+	//desc `metapp::callableInvoke` will choose the proper callable to invoke.
+	std::shared_ptr<MyPet> myPet(metapp::callableInvoke(metaClass->getConstructor(), nullptr,
+		"Lovely", 3).get<MyPet *>());
+	// Verify the object is constructed properly.
+	ASSERT(myPet->name == "Lovely");
+	ASSERT(myPet->getAge() == 3);
 	
-	//desc We can pass the cloned Variant as the instance. This is similar to that
-	//desc we can call member function using `std::unique_ptr`.
-	ASSERT(metapp::callableInvoke(funcAdd, cloned, 5, 9).get<int>() == 19);
+	//desc Get field by name then get the value.
+	const auto & propertyName = metaClass->getAccessible("name");
+	ASSERT(metapp::accessibleGet(propertyName, myPet).get<const std::string &>() == "Lovely");
+	const auto & propertyAge = metaClass->getAccessible("age");
+	ASSERT(metapp::accessibleGet(propertyAge, myPet).get<int>() == 3);
 
-	//desc Define an accessible.
-	metapp::Variant accessible(&MyClass::value);
-	//desc Get the value from accessible, which is MyClass::value.
-	//desc The second argument is the object instance.
-	//desc Since `cloned` is cloned freshly, both obj and cloned hold the same value.
-	ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 5);
-	ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 5);
+	//desc Set field `name` with new value.
+	metapp::accessibleSet(propertyName, myPet, "Cute");
+	ASSERT(metapp::accessibleGet(propertyName, myPet).get<const std::string &>() == "Cute");
 
-	//desc Change value in obj
-	obj.value = 6;
-	ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
-	//desc `cloned` is not affected.
-	ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 5);
+	//desc Get member function then invoke it.
+	const auto & methodBark = metaClass->getCallable("bark");
+	ASSERT(metapp::callableInvoke(methodBark, myPet).get<const std::string &>() == "Bow-wow, Cute");
 
-	//desc Set value in `cloned`.
-	metapp::accessibleSet(accessible, cloned, 38);
-	//desc `obj` is not affected.
-	ASSERT(metapp::accessibleGet(accessible, &obj).get<int>() == 6);
-	ASSERT(metapp::accessibleGet(accessible, cloned).get<int>() == 38);
+	const auto & methodCalculate = metaClass->getCallable("calculate");
+	// Pass arguments 2 and 3 to `calculate`, the result is 2+3=5.
+	ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
 	//code
 }
 
@@ -380,93 +407,6 @@ ExampleFunc
 		ASSERT(vs.get<const std::vector<std::string> &>()[0] == "Good");
 		//code
 	}
-}
-
-//desc ### Reflect a class (declare meta type)
-//code
-//desc Here is the class we are going to reflect for.
-class MyPet
-{
-public:
-	MyPet() : name(), age() {}
-	MyPet(const std::string & name, const int age) : name(name), age(age) {}
-
-	int getAge() const { return age; }
-	void setAge(const int newAge) { age = newAge; }
-
-	std::string bark() const { return "Bow-wow, " + name; }
-	int calculate(const int a, const int b) const { return a + b; }
-
-	std::string name; // I don't like public field in non-POD, here is only for demo
-private:
-	int age;
-};
-
-//desc Now let's `DeclareMetaType` for MyPet. We `DeclareMetaType` for all kinds of types,
-//desc not only classes, but also enumerators, templates, etc.
-template <>
-struct metapp::DeclareMetaType<MyPet> : metapp::DeclareMetaTypeBase<MyPet>
-{
-	// Reflect the class information via MetaClass.
-	static const metapp::MetaClass * getMetaClass() {
-		static const metapp::MetaClass metaClass(
-			metapp::getMetaType<MyPet>(),
-			[](metapp::MetaClass & mc) {
-				// Register constructors
-				mc.registerConstructor(metapp::Constructor<MyPet ()>());
-				mc.registerConstructor(metapp::Constructor<MyPet (const std::string &, int)>());
-
-				// Register field with getter/setter function
-				mc.registerAccessible("age",
-					metapp::createAccessor(&MyPet::getAge, &MyPet::setAge));
-				// Register another field
-				mc.registerAccessible("name", &MyPet::name);
-
-				// Register member functions
-				mc.registerCallable("bark", &MyPet::bark);
-				mc.registerCallable("calculate", &MyPet::calculate);
-			}
-		);
-		return &metaClass;
-	}
-};
-
-//code
-//desc Now let's use the reflected meta class.
-ExampleFunc
-{
-	//code
-	//desc Obtain the meta type for MyPet, then get the meta class. If we've registered the meta type of MyPet
-	//desc to MetaRepo, we can get it at runtime instead of depending on the compile time `getMetaType`.
-	const metapp::MetaType * metaType = metapp::getMetaType<MyPet>();
-	const metapp::MetaClass * metaClass = metaType->getMetaClass();
-
-	//desc `getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
-	//desc Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.
-	std::shared_ptr<MyPet> myPet(metapp::callableInvoke(metaClass->getConstructor(), nullptr,
-		"Lovely", 3).get<MyPet *>());
-	// Verify the object is constructed properly.
-	ASSERT(myPet->name == "Lovely");
-	ASSERT(myPet->getAge() == 3);
-	
-	//desc Get field by name then get the value.
-	const auto & propertyName = metaClass->getAccessible("name");
-	ASSERT(metapp::accessibleGet(propertyName, myPet).get<const std::string &>() == "Lovely");
-	const auto & propertyAge = metaClass->getAccessible("age");
-	ASSERT(metapp::accessibleGet(propertyAge, myPet).get<int>() == 3);
-
-	//desc Set field `name` with new value.
-	metapp::accessibleSet(propertyName, myPet, "Cute");
-	ASSERT(metapp::accessibleGet(propertyName, myPet).get<const std::string &>() == "Cute");
-
-	//desc Get member function then invoke it.
-	const auto & methodBark = metaClass->getCallable("bark");
-	ASSERT(metapp::callableInvoke(methodBark, myPet).get<const std::string &>() == "Bow-wow, Cute");
-
-	const auto & methodCalculate = metaClass->getCallable("calculate");
-	// Pass arguments 2 and 3 to `calculate`, the result is 2+3=5.
-	ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
-	//code
 }
 
 //desc ### Work with unreflected types
