@@ -135,6 +135,12 @@ metapp is runtime reflection. A program runs almost all time at "running time". 
 get type information from dynamical libraries, or bind meta data to script engine, or get property data
 from external file to use in a GUI property editor. Those are not easy to do at compile time.  
 
+### Declaring meta type manually is boring!
+
+I agree! I believe there should be a tool to generate the meta types from source code automatically.
+Ideally the tool should be Clang based. (In my old cpgf library, there was a Doxygen based tool that works pretty well).  
+Since I'm not Clang expert, I wish someone else can start such a project then let's develop it together.  
+
 ### To register meta data in MetaRepo and MetaClass, there are different functions such as registerAccessible, registerCallable, registerConstructor, etc, can't we make a single registering function that detects the meta data type automatically?
 
 Yes it's possible, we can make a function, such as `versatileRegister`, then we can write,  

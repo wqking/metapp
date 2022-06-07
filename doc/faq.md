@@ -13,6 +13,7 @@
   - [Why can't I get the type name from MetaType?](#mdtoc_d00ee4b9)
 - [Miscellaneous](#mdtoc_427b45fe)
   - [What's the difference between metapp and the compile time reflection feature in coming C++ standard?](#mdtoc_5e7363e0)
+  - [Declaring meta type manually is boring!](#mdtoc_3a7bbcef)
   - [To register meta data in MetaRepo and MetaClass, there are different functions such as registerAccessible, registerCallable, registerConstructor, etc, can't we make a single registering function that detects the meta data type automatically?](#mdtoc_2919fd91)
 <!--endtoc-->
 
@@ -122,6 +123,13 @@ There are various reasons that there is no type name in `metapp::MetaType`,
 metapp is runtime reflection. A program runs almost all time at "running time". With metapp, we can
 get type information from dynamical libraries, or bind meta data to script engine, or get property data
 from external file to use in a GUI property editor. Those are not easy to do at compile time.  
+
+<a id="mdtoc_3a7bbcef"></a>
+### Declaring meta type manually is boring!
+
+I agree! I believe there should be a tool to generate the meta types from source code automatically.
+Ideally the tool should be Clang based. (In my old cpgf library, there was a Doxygen based tool that works pretty well).  
+Since I'm not Clang expert, I wish someone else can start such a project then let's develop it together.  
 
 <a id="mdtoc_2919fd91"></a>
 ### To register meta data in MetaRepo and MetaClass, there are different functions such as registerAccessible, registerCallable, registerConstructor, etc, can't we make a single registering function that detects the meta data type automatically?

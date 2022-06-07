@@ -14,8 +14,8 @@
   - [Build and install, use metapp in your project](#mdtoc_7785483e)
 - [Example code](#mdtoc_3bb166c4)
   - [Use Variant](#mdtoc_cee017b6)
-  - [Use MetaType](#mdtoc_e463fa1a)
-  - [Call function and accessible](#mdtoc_eb620ae3)
+  - [Inspect MetaType](#mdtoc_3aaa429b)
+  - [Call function and access property](#mdtoc_9bb3943e)
   - [Runtime generic STL container](#mdtoc_5243b8d0)
   - [Use reference with Variant](#mdtoc_b8048b76)
   - [Reflect a class (declare meta type)](#mdtoc_19cc9779)
@@ -26,22 +26,24 @@
 - [Motivations](#mdtoc_c55531bd)
 <!--endtoc-->
 
-metapp is a cross platform C++ library that adds reflection feature to C++.  
-metapp is light weight, powerful, and unique.
+metapp is a cross platform C++ runtime reflection library.  
+metapp is light weight, powerful, and unique.  
+Even if you don't need reflection, you may use `metapp::Variant` with any C++ types, and you can enjoy the large amount of
+built-in meta types.
 
 <a id="mdtoc_24681dca"></a>
 ## Highlight and unique features
 
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
 const-volatile qualifiers, and much more.** Can you understand the type `char const *(*(* volatile * (&)[][8])())[]` easily?
-metapp can understand it, including every CV, pointer, array, function, etc, in no time!   
+metapp can understand it, including every CV, pointer, array, function, etc, in no time!
 - **Allow runtime generic programming.** For example, we can access elements in a container without knowing whether
 the container is `std::vector` or `std::deque` or `std::list`, and without knowing whether the value type is `int`,
-or `std::string`, or another container.  
+`std::string`, `MyFancyClass`, or another container.
 - **Very easy to reflect templates.** For example, we only need to reflect `std::vector` or `std::list` once,
 then we can get meta information for `std::vector<int>`, `std::vector<std::string>`, or
 even `std::vector<std::list<std::vector<std::string> > >`.
-- **Mimic C++ reference extensively for better performance.** For example, when getting a property value,
+- **Imitate C++ reference extensively for better performance.** For example, when getting a property value,
 or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
 value is referenced instead of copied, so the memory and performance cost is kept as minimum as possible.
 
@@ -55,7 +57,7 @@ and much more.
   - Unreflected types can be inspected. Reflection only provides more information, but not a must.
   - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 no template parameters are needed. All parameters and return values are passed via metapp::Variant.
-  - Mimic C++ reference extensively for better performance.
+  - Imitate C++ reference extensively for better performance.
   - Automatically type conversion when getting/setting fields, invoking methods, etc.
   - Support multiple inheritance and hierarchy.
   - Support using in dynamic library (plugins).
@@ -181,7 +183,7 @@ message(FATAL_ERROR "metapp library is not found")
 endif(metapp_FOUND)
 ```
 
-Note: when using the method 2 with MingW on Windows, by default CMake will install metapp in system folder which is not writable.
+Note: when using the method 2 with MinGW on Windows, by default CMake will install metapp in system folder which is not writable.
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
 
@@ -237,34 +239,32 @@ Get as reference to avoid copy.
 ASSERT(casted.get<const std::string &>() == "hello");
 ```
 
-<a id="mdtoc_e463fa1a"></a>
-### Use MetaType
-int
+<a id="mdtoc_3aaa429b"></a>
+### Inspect MetaType
+Let's inspect the type `const std::map<int, std::string> * volatile *`
 
 ```c++
-const metapp::MetaType * metaType = metapp::getMetaType<int>();
-ASSERT(metaType->getTypeKind() == metapp::tkInt);
+const metapp::MetaType * metaType = metapp::getMetaType<const std::map<const int, std::string> * volatile *>();
+ASSERT(metaType->isPointer()); // The type is pointer
+
+// Second level pointer
+const metapp::MetaType * secondLevelPointer = metaType->getUpType();
+ASSERT(secondLevelPointer->isPointer());
+ASSERT(secondLevelPointer->isVolatile()); //second level pointer is volatile
+
+// The pointed type (std::map<int, std::string>).
+const metapp::MetaType * pointed = secondLevelPointer->getUpType();
+ASSERT(pointed->isConst());
+ASSERT(pointed->getTypeKind() == metapp::tkStdMap);
+// Key type
+ASSERT(pointed->getUpType(0)->getTypeKind() == metapp::tkInt);
+ASSERT(pointed->getUpType(0)->isConst()); //key is const
+// Mapped type.
+ASSERT(pointed->getUpType(1)->getTypeKind() == metapp::tkStdString);
 ```
 
-constness
-
-```c++
-auto metaType = metapp::getMetaType<const int>();
-ASSERT(metaType->getTypeKind() == metapp::tkInt);
-ASSERT(metaType->isConst());
-```
-
-equivalence
-
-```c++
-auto metaType = metapp::getMetaType<const int *>();
-ASSERT(metaType->equal(metapp::getMetaType<const int *>()));
-// Equivalence checking ignores all CV qualifiers.
-ASSERT(metaType->equal(metapp::getMetaType<int *>()));
-```
-
-<a id="mdtoc_eb620ae3"></a>
-### Call function and accessible
+<a id="mdtoc_9bb3943e"></a>
+### Call function and access property
 Define a class to be used later.
 
 ```c++
@@ -593,11 +593,11 @@ ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
 
 <a id="mdtoc_5095655f"></a>
 ### Work with unreflected types
-Assume we have two classes that we don't reflect for.
+Assume we have two types that we don't reflect for.
 
 ```c++
-struct UnreflectedFoo { int f = 5; };
-struct UnreflectedBar { int b = 6; };
+struct UnreflectedFoo { int f; };
+enum class UnreflectedBar { one, two };
 ```
 
 Surely we can't get any member function or property information for the classes since they are not reflected.
@@ -607,7 +607,7 @@ But at least we can,
 ```c++
 std::unique_ptr<UnreflectedFoo> foo(static_cast<UnreflectedFoo *>(
   metapp::getMetaType<UnreflectedFoo>()->construct()));
-ASSERT(foo->f == 5);
+ASSERT(foo->f == 0);
 ```
 
 2, Copy construct the object.
@@ -622,19 +622,17 @@ ASSERT(copiedFoo->f == 38);
 3, Construct the object inplace.
 
 ```c++
-UnreflectedFoo foo2;
-foo2.f = 9;
+UnreflectedFoo foo2 { 9 };
 ASSERT(foo2.f == 9);
 metapp::getMetaType<UnreflectedFoo>()->placementConstruct(&foo2);
-ASSERT(foo2.f == 5);
+ASSERT(foo2.f == 0);
 ```
 
 4, Copy construct the object inplace.
 
 ```c++
 foo2.f = 38;
-UnreflectedFoo foo3;
-foo3.f = 19;
+UnreflectedFoo foo3 { 19 };
 ASSERT(foo3.f == 19);
 metapp::getMetaType<UnreflectedFoo>()->placementCopyConstruct(&foo3, &foo2);
 ASSERT(foo3.f == 38);
@@ -747,6 +745,6 @@ I (wqking) developed `cpgf` library since more than 12 years ago. `cpgf` works, 
 The first problem is it was written in C++03, the code is verbose and difficult to write. The second problem is that
 it includes too many features in a single library -- reflection, serialization, script binding (Lua, Python, JavaScript).
 `cpgf` became unmanageable and can't be developed in an elegant way.  
-`metapp` is a modern version of `cpgf`, and it will only include reflection feature. Other features, such as serialization,
+`metapp` is a fresh library that only focuses on reflection. Other features, such as serialization,
 script binding, will be in separated projects, if they are developed.
 
