@@ -37,6 +37,9 @@ template <typename T>
 class TestDataProviderBase
 {
 public:
+	using DataType = T;
+
+public:
 	TestDataProviderBase(const metapp::TypeKind typeKind, std::initializer_list<T> dataList)
 		: typeKind(typeKind), dataList(dataList)
 	{

@@ -37,7 +37,7 @@ TEST_CASE("Variant, ctor Variant()")
 {
 	metapp::Variant v;
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkVoid);
-	REQUIRE(! v.canCast<void>());
+	REQUIRE(v.canCast<void>());
 	REQUIRE(! v.canCast<int>());
 	REQUIRE(! v.canCast<void *>());
 }

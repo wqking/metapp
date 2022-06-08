@@ -137,11 +137,17 @@ bool Variant::canGet(const MetaType * toMetaType) const
 
 bool Variant::canCast(const MetaType * toMetaType) const
 {
+	if(getNonReferenceMetaType(toMetaType)->equal(getNonReferenceMetaType(metaType))) {
+		return true;
+	}
 	return metaType->cast(nullptr, *this, toMetaType);
 }
 
 Variant Variant::cast(const MetaType * toMetaType) const
 {
+	if(getNonReferenceMetaType(toMetaType)->equal(getNonReferenceMetaType(metaType))) {
+		return *this;
+	}
 	Variant result;
 	if(! metaType->cast(&result, *this, toMetaType)) {
 		raiseException<BadCastException>();

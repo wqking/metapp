@@ -50,6 +50,33 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast T to T &", "", TestTypes_All)
 	}
 }
 
+TEMPLATE_LIST_TEST_CASE("Variant, cast T to const T &", "", TestTypes_All)
+{
+	auto dataProvider = TestDataProvider<TestType>();
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		metapp::Variant v(dataProvider.getData(dataIndex));
+		REQUIRE(metapp::getTypeKind(v) == dataProvider.getTypeKind());
+
+		REQUIRE(v.canCast<const TestType &>());
+		metapp::Variant casted = v.cast<const TestType &>();
+		REQUIRE(casted.get<const TestType &>() == dataProvider.getData(dataIndex));
+	}
+}
+
+TEMPLATE_LIST_TEST_CASE("Variant, cast T & to T", "", TestTypes_All)
+{
+	auto dataProvider = TestDataProvider<TestType>();
+	using T = typename TestDataProvider<TestType>::DataType;
+	for(int dataIndex = 0; dataIndex < dataProvider.getDataCount(); ++dataIndex) {
+		T data = dataProvider.getData(dataIndex);
+		metapp::Variant v = metapp::Variant::reference(data);
+		REQUIRE(metapp::getNonReferenceMetaType(v)->getTypeKind() == dataProvider.getTypeKind());
+
+		REQUIRE(v.canCast<TestType>());
+		REQUIRE(v.cast<TestType>().template get<TestType>() == dataProvider.getData(dataIndex));
+	}
+}
+
 TEMPLATE_LIST_TEST_CASE("Variant, cast T to U", "", TestTypes_Pairs_Arithmetic)
 {
 	using First = typename metapp::TypeListGetAt<TestType, 0>::Type;
@@ -82,9 +109,26 @@ TEMPLATE_LIST_TEST_CASE("Variant, cast const T & to U", "", TestTypes_Pairs_Arit
 		REQUIRE(v.canCast<Second>());
 		auto casted = v.cast<Second>();
 		auto castedDataProvider = TestDataProvider<Second>();
-		REQUIRE(casted.getMetaType()->getTypeKind() == castedDataProvider.getTypeKind());
+		REQUIRE(metapp::getNonReferenceMetaType(casted)->getTypeKind() == castedDataProvider.getTypeKind());
 		REQUIRE(casted.template get<Second>() == (Second)dataProvider.getData(dataIndex));
 	}
+}
+
+TEST_CASE("Variant, cast int to int &")
+{
+	metapp::Variant v(5);
+	metapp::Variant casted = v.cast<int &>();
+	const int m = casted.get<int>();
+	REQUIRE(m == 5);
+}
+
+TEST_CASE("Variant, cast int & to int")
+{
+	int n = 38;
+	metapp::Variant v = metapp::Variant::reference(n);
+	metapp::Variant casted = v.cast<int>();
+	const int m = casted.get<int>();
+	REQUIRE(m == 38);
 }
 
 TEST_CASE("Variant, cast int ** to int ** and int ** &")
@@ -195,8 +239,7 @@ TEST_CASE("Variant, cast std::string to const std::string &")
 	REQUIRE(v.canCast<const std::string &>());
 	auto casted = v.cast<const std::string &>();
 	REQUIRE(casted.get<const std::string &>() == "hello");
-	REQUIRE(casted.getMetaType()->getTypeKind() == metapp::tkStdString);
-	REQUIRE(casted.getMetaType()->isConst());
+	REQUIRE(metapp::getNonReferenceMetaType(casted)->getTypeKind() == metapp::tkStdString);
 }
 
 TEST_CASE("Variant, cast char * to std::string")
