@@ -19,6 +19,8 @@
 
 #include "metapp/variant.h"
 
+#include <array>
+
 namespace metapp {
 
 template <typename MyType, typename FromTypes>
@@ -50,18 +52,24 @@ private:
 
 	using CastFromFunc = Variant (*)(const Variant & value);
 
-	template <typename ...Types>
-	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<Types...>)
+	static CastFromFunc doFindCastFromFuncHelper(const MetaType * /*fromMetaType*/, TypeList<>)
 	{
-		const MetaType * const fromMetaTypeList[] = {
-			getMetaType<Types>()...,
-			nullptr
+		return nullptr;
+	}
+
+	template <typename T, typename ...Types>
+	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<T, Types...>)
+	{
+		constexpr std::size_t typeCount = sizeof...(Types) + 1;
+		std::array<const MetaType *, typeCount> fromMetaTypeList = {
+			getMetaType<T>(),
+			getMetaType<Types>()...
 		};
-		const CastFromFunc castFromFuncList[] = {
+		std::array<CastFromFunc, typeCount> castFromFuncList = {
+			&HelperCastFrom<T>::castFrom,
 			&HelperCastFrom<Types>::castFrom...,
-			nullptr
 		};
-		for(std::size_t i = 0; i < sizeof(fromMetaTypeList) / sizeof(fromMetaTypeList[0]) - 1; ++i) {
+		for(std::size_t i = 0; i < typeCount; ++i) {
 			if(fromMetaTypeList[i]->equal(fromMetaType)) {
 				return castFromFuncList[i];
 			}
@@ -115,19 +123,25 @@ private:
 
 	using CastToFunc = Variant (*)(const Variant & value);
 
-	template <typename ...Types>
-	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<Types...>)
+	static CastToFunc doFindCastToFuncHelper(const MetaType * /*toMetaType*/, TypeList<>)
 	{
-		const MetaType * const toMetaTypeList[] = {
-			getMetaType<Types>()...,
-			nullptr
+		return nullptr;
+	}
+
+	template <typename T, typename ...Types>
+	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<T, Types...>)
+	{
+		constexpr std::size_t typeCount = sizeof...(Types) + 1;
+		const std::array<const MetaType *, typeCount> toMetaTypeList {
+			getMetaType<T>(),
+			getMetaType<Types>()...
 		};
-		const CastToFunc castToFuncList[] = {
+		const std::array<CastToFunc, typeCount> castToFuncList = {
+			&HelperCastTo<T>::castTo,
 			&HelperCastTo<Types>::castTo...,
-			nullptr
 		};
 
-		for(std::size_t i = 0; i < sizeof(toMetaTypeList) / sizeof(toMetaTypeList[0]) - 1; ++i) {
+		for(std::size_t i = 0; i < typeCount; ++i) {
 			if(toMetaTypeList[i]->equal(toMetaType)) {
 				return castToFuncList[i];
 			}
