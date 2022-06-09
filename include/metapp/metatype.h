@@ -246,19 +246,45 @@ public:
 	bool equal(const MetaType * other) const;
 	int compare(const MetaType * other) const;
 
-	const MetaType * getUpType() const;
-	const MetaType * getUpType(const int i) const;
-	int getUpTypeCount() const noexcept;
+	const MetaType * getUpType() const {
+		return unifiedType->upTypeData.count == 0 ? nullptr : unifiedType->upTypeData.upTypeList[0];
+	}
 
-	void * construct() const;
-	void * copyConstruct(const void * copyFrom) const;
-	void * placementConstruct(void * memory) const;
-	void * placementCopyConstruct(void * memory, const void * copyFrom) const;
+	const MetaType * getUpType(const int i) const {
+		return unifiedType->upTypeData.upTypeList[i];
+	}
 
-	void destroy(void * instance) const;
-	void dtor(void * instance) const;
+	int getUpTypeCount() const noexcept {
+		return unifiedType->upTypeData.count;
+	}
 
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
+	void * construct() const {
+		return constructData(nullptr, nullptr, nullptr);
+	}
+
+	void * copyConstruct(const void * copyFrom) const {
+		return constructData(nullptr, copyFrom, nullptr);
+	}
+
+	void * placementConstruct(void * memory) const {
+		return constructData(nullptr, nullptr, memory);
+	}
+
+	void * placementCopyConstruct(void * memory, const void * copyFrom) const {
+		return constructData(nullptr, copyFrom, memory);
+	}
+
+	void destroy(void * instance) const {
+		unifiedType->destroy(instance);
+	}
+
+	void dtor(void * instance) const {
+		unifiedType->dtor(instance);
+	}
+
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
+		return unifiedType->cast(result, value, toMetaType);
+	}
 
 private:
 	MetaType(
@@ -267,8 +293,13 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
-	void * constructData(VariantData * data, const void * copyFrom, void * memory) const;
-	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
+	void * constructData(VariantData * data, const void * copyFrom, void * memory) const {
+		return unifiedType->constructData(data, copyFrom, memory);
+	}
+
+	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
+		return unifiedType->castFrom(result, value, fromMetaType);
+	}
 
 	const void * getRawType() const noexcept {
 		return (const void *)metaTable.doGetUnifiedData;

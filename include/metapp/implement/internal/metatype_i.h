@@ -323,14 +323,28 @@ private:
 		return typeKind;
 	}
 
-	void * constructData(VariantData * data, const void * copyFrom, void * memory) const;
+	void * constructData(VariantData * data, const void * copyFrom, void * memory) const {
+		return metaMethodTable.constructData(data, copyFrom, memory);
+	}
 
-	void destroy(void * instance) const;
-	void dtor(void * instance) const;
+	void destroy(void * instance) const {
+		metaMethodTable.destroy(instance, true);
+	}
 
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const;
+	void dtor(void * instance) const {
+		metaMethodTable.destroy(instance, false);
+	}
 
-	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const;
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
+		return metaMethodTable.cast(result, value, toMetaType);
+	}
+
+	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
+		if(metaMethodTable.castFrom == nullptr) {
+			return false;
+		}
+		return metaMethodTable.castFrom(result, value, fromMetaType);
+	}
 
 	const void * getMetaInterface(const MetaInterfaceKind kind) const;
 

@@ -139,34 +139,6 @@ const void * UnifiedType::getMetaInterface(const MetaInterfaceKind kind) const
 	return nullptr;
 }
 
-void * UnifiedType::constructData(VariantData * data, const void * copyFrom, void * memory) const
-{
-	return metaMethodTable.constructData(data, copyFrom, memory);
-}
-
-void UnifiedType::destroy(void * instance) const
-{
-	metaMethodTable.destroy(instance, true);
-}
-
-void UnifiedType::dtor(void * instance) const
-{
-	metaMethodTable.destroy(instance, false);
-}
-
-bool UnifiedType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
-{
-	return metaMethodTable.cast(result, value, toMetaType);
-}
-
-bool UnifiedType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
-{
-	if(metaMethodTable.castFrom == nullptr) {
-		return false;
-	}
-	return metaMethodTable.castFrom(result, value, fromMetaType);
-}
-
 template <typename T>
 int compareTwoValues(T a, T b)
 {
@@ -261,66 +233,6 @@ int MetaType::compare(const MetaType * other) const
 		}
 	}
 	return 0;
-}
-
-const MetaType * MetaType::getUpType() const
-{
-	return unifiedType->upTypeData.count == 0 ? nullptr : unifiedType->upTypeData.upTypeList[0];
-}
-
-const MetaType * MetaType::getUpType(const int i) const
-{
-	return unifiedType->upTypeData.upTypeList[i];
-}
-
-int MetaType::getUpTypeCount() const noexcept
-{
-	return unifiedType->upTypeData.count;
-}
-
-void * MetaType::construct() const
-{
-	return constructData(nullptr, nullptr, nullptr);
-}
-
-void * MetaType::copyConstruct(const void * copyFrom) const
-{
-	return constructData(nullptr, copyFrom, nullptr);
-}
-
-void * MetaType::placementConstruct(void * memory) const
-{
-	return constructData(nullptr, nullptr, memory);
-}
-
-void * MetaType::placementCopyConstruct(void * memory, const void * copyFrom) const
-{
-	return constructData(nullptr, copyFrom, memory);
-}
-
-void * MetaType::constructData(VariantData * data, const void * copyFrom, void * memory) const
-{
-	return unifiedType->constructData(data, copyFrom, memory);
-}
-
-void MetaType::destroy(void * instance) const
-{
-	unifiedType->destroy(instance);
-}
-
-void MetaType::dtor(void * instance) const
-{
-	unifiedType->dtor(instance);
-}
-
-bool MetaType::cast(Variant * result, const Variant & value, const MetaType * toMetaType) const
-{
-	return unifiedType->cast(result, value, toMetaType);
-}
-
-bool MetaType::castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const
-{
-	return unifiedType->castFrom(result, value, fromMetaType);
 }
 
 bool commonCast(
