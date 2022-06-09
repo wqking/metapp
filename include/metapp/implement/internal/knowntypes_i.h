@@ -57,17 +57,6 @@ using ArithmeticTypeList = typename TypeListConcat<
 	FloatTypeList
 >::Type;
 
-using OtherKnowTypeList = TypeList<
-#ifdef METAPP_SUPPORT_STANDARD_17
-	std::any,
-#endif
-	std::string, std::wstring,
-	const char *, const wchar_t *,
-	char *, wchar_t *,
-	char[], wchar_t[]
->;
-
-using AllKnownTypeList = typename TypeListConcat<ArithmeticTypeList, OtherKnowTypeList>::Type;
 
 
 } // namespace internal_

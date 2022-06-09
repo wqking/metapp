@@ -41,5 +41,20 @@ BenchmarkFunc
 	printResult(t, iterations, "Accessible, get `TestClass::int`");
 }
 
+BenchmarkFunc
+{
+	constexpr int iterations = 1000 * 1000;
+	const auto t = measureElapsedTime([iterations]() {
+		metapp::Variant v = &TestClass::value;
+		TestClass obj;
+		metapp::Variant instance = &obj;
+		const metapp::MetaAccessible * metaAccessible = v.getMetaType()->getMetaAccessible();
+		for(int i = 0; i < iterations; ++i) {
+			metaAccessible->set(v, instance, i);
+		}
+	});
+	printResult(t, iterations, "Accessible, set `TestClass::int`");
+}
+
 
 } //namespace

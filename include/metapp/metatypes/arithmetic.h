@@ -25,10 +25,35 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+// Since CastFromToTypes loops through the TypeList for matching type,
+// putting the most used types earlier will improve `cast` performance.
+using ArithmeticCastTypeList = TypeList<
+	bool,
+	int,
+	char,
+	long,
+	float, double,
+	long long,
+	unsigned int,
+	unsigned long,
+	unsigned long long,
+	short,
+	wchar_t,
+	metappChar8_t,
+	char16_t, char32_t,
+	signed char, unsigned char,
+	unsigned short,
+	long double
+>;
+
+} // namespace internal_
+
 template <typename T>
 struct DeclareMetaTypeBase <T,
 	typename std::enable_if<TypeListIn<internal_::ArithmeticTypeList, T>::value>::type>
-	: CastFromToTypes<T, internal_::ArithmeticTypeList>, MetaStreamableBase<T>
+	: CastFromToTypes<T, internal_::ArithmeticCastTypeList>, MetaStreamableBase<T>
 {
 	static constexpr TypeKind typeKind = TypeKind(tkFundamentalBegin + TypeListIndexOf<internal_::ArithmeticTypeList, T>::value);
 
