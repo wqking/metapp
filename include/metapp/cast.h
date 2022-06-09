@@ -21,22 +21,16 @@
 
 namespace metapp {
 
-struct CastFromItem
-{
-	const MetaType * fromMetaType;
-	Variant (*castFrom)(const Variant & value);
-};
-
 template <typename MyType, typename FromTypes>
 struct CastFromChecker
 {
 public:
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
-		auto castFromItem = findCastFromItem(fromMetaType);
-		if(castFromItem.fromMetaType != nullptr) {
+		auto castFromFunc = findCastFromFunc(fromMetaType);
+		if(castFromFunc != nullptr) {
 			if(result != nullptr) {
-				*result = castFromItem.castFrom(value);
+				*result = castFromFunc(value);
 			}
 			return true;
 		}
@@ -47,64 +41,49 @@ private:
 	template <typename FromType>
 	struct HelperCastFrom
 	{
-		static CastFromItem getCastFromItem() {
-			return CastFromItem {
-				getMetaType<FromType>(),
-				&castFrom
-			};
-		}
-
-	private:
 		using ToType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
 		static Variant castFrom(const Variant & value) {
-			// If ToType is a class which is constructible from F, but the argument in its constructor
-			// is narrower than F, warning C4244 will be issued on MSVC.
-			// std::unordered_map is such an example, because it can be constructed from size_type,
-			// and cause warning when F is long double.
-			// Current to avoid the warning, we may choose not to allow narrowing casting to class,
-			// But that can't suppress warning when ToType is container with element of metapp::Variant,
-			// such as std::vector<metapp::Variant>
 			return static_cast<ToType>(*(FromType *)(value.getAddress()));
 		}
 	};
 
+	using CastFromFunc = Variant (*)(const Variant & value);
+
 	template <typename ...Types>
-	static CastFromItem doFindCastFromItemHelper(const MetaType * fromMetaType, TypeList<Types...>)
+	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		const CastFromItem itemList[] = {
-			HelperCastFrom<Types>::getCastFromItem()...,
-			CastFromItem {}
+		const MetaType * const fromMetaTypeList[] = {
+			getMetaType<Types>()...,
+			nullptr
 		};
-		for(std::size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
-			if(itemList[i].fromMetaType->equal(fromMetaType)) {
-				return itemList[i];
+		const CastFromFunc castFromFuncList[] = {
+			&HelperCastFrom<Types>::castFrom...,
+			nullptr
+		};
+		for(std::size_t i = 0; i < sizeof(fromMetaTypeList) / sizeof(fromMetaTypeList[0]) - 1; ++i) {
+			if(fromMetaTypeList[i]->equal(fromMetaType)) {
+				return castFromFuncList[i];
 			}
 		}
-		return CastFromItem {};
+		return nullptr;
 	}
 
 	template <typename ...Types>
-	static CastFromItem doFindCastFromItem(const MetaType * fromMetaType, TypeList<Types...>)
+	static CastFromFunc doFindCastFromFunc(const MetaType * fromMetaType, TypeList<Types...>)
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
 			internal_::BoolConstantList<internal_::CanStaticCast<Types, MyType>::value...>
 		>::Type;
-		return doFindCastFromItemHelper(fromMetaType, TL());
+		return doFindCastFromFuncHelper(fromMetaType, TL());
 	}
 
-	static CastFromItem findCastFromItem(const MetaType * fromMetaType)
+	static CastFromFunc findCastFromFunc(const MetaType * fromMetaType)
 	{
-		return doFindCastFromItem(fromMetaType, FromTypes());
+		return doFindCastFromFunc(fromMetaType, FromTypes());
 	}
 
-};
-
-struct CastToItem
-{
-	const MetaType * toMetaType;
-	Variant (*castTo)(const Variant & value);
 };
 
 template <typename MyType, typename ToTypes>
@@ -113,10 +92,10 @@ struct CastToChecker
 public:
 	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
-		auto castToItem = findCastToItem(toMetaType);
-		if(castToItem.toMetaType != nullptr) {
+		auto castToFunc = findCastToFunc(toMetaType);
+		if(castToFunc != nullptr) {
 			if(result != nullptr) {
-				*result = castToItem.castTo(value);
+				*result = castToFunc(value);
 			}
 			return true;
 		}
@@ -127,14 +106,6 @@ private:
 	template <typename ToType>
 	struct HelperCastTo
 	{
-		static CastToItem getCastToItem() {
-			return CastToItem {
-				getMetaType<ToType>(),
-				&castTo
-			};
-		}
-
-	private:
 		using FromType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
 		static Variant castTo(const Variant & value) {
@@ -142,34 +113,41 @@ private:
 		}
 	};
 
+	using CastToFunc = Variant (*)(const Variant & value);
+
 	template <typename ...Types>
-	static CastToItem doFindCastToItemHelper(const MetaType * toMetaType, TypeList<Types...>)
+	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		const CastToItem itemList[] = {
-			HelperCastTo<Types>::getCastToItem()...,
-			CastToItem {}
+		const MetaType * const toMetaTypeList[] = {
+			getMetaType<Types>()...,
+			nullptr
 		};
-		for(std::size_t i = 0; i < sizeof(itemList) / sizeof(itemList[0]) - 1; ++i) {
-			if(itemList[i].toMetaType->equal(toMetaType)) {
-				return itemList[i];
+		const CastToFunc castToFuncList[] = {
+			&HelperCastTo<Types>::castTo...,
+			nullptr
+		};
+
+		for(std::size_t i = 0; i < sizeof(toMetaTypeList) / sizeof(toMetaTypeList[0]) - 1; ++i) {
+			if(toMetaTypeList[i]->equal(toMetaType)) {
+				return castToFuncList[i];
 			}
 		}
-		return CastToItem {};
+		return nullptr;
 	}
 
 	template <typename ...Types>
-	static CastToItem doFindCastToItem(const MetaType * toMetaType, TypeList<Types...>)
+	static CastToFunc doFindCastToFunc(const MetaType * toMetaType, TypeList<Types...>)
 	{
 		using TL = typename internal_::FilterTypes<
 			TypeList<Types...>,
 			internal_::BoolConstantList<internal_::CanStaticCast<MyType, Types>::value...>
 		>::Type;
-		return doFindCastToItemHelper(toMetaType, TL());
+		return doFindCastToFuncHelper(toMetaType, TL());
 	}
 
-	static CastToItem findCastToItem(const MetaType * toMetaType)
+	static CastToFunc findCastToFunc(const MetaType * toMetaType)
 	{
-		return doFindCastToItem(toMetaType, ToTypes());
+		return doFindCastToFunc(toMetaType, ToTypes());
 	}
 
 };
