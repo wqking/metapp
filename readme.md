@@ -619,10 +619,11 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 <a id="mdtoc_460948ff"></a>
 ## Build the test code
 
-There are two parts of code to test the library,
+There are several parts of code to test the library,
 
 - unittests: tests the library.
 - docsrc: documentation source code, and sample code to demonstrate how to use the library. 
+- benchmark: measure the performance.
 
 All parts are in the `tests` folder.
 
