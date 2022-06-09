@@ -63,7 +63,8 @@ class UnifiedType;
 
 struct MetaTable
 {
-	const void * (*doGetUnifiedData)();
+	const void * rawType;
+	const void * module;
 };
 
 } // namespace internal_
@@ -104,7 +105,7 @@ public:
 	~MetaType() = default;
 
 	const void * getModule() const noexcept {
-		return metaTable.doGetUnifiedData();
+		return metaTable.module;
 	}
 
 	TypeKind getTypeKind() const noexcept {
@@ -302,7 +303,7 @@ private:
 	}
 
 	const void * getRawType() const noexcept {
-		return (const void *)metaTable.doGetUnifiedData;
+		return metaTable.rawType;
 	}
 
 	template <typename T>

@@ -83,9 +83,8 @@ template <typename T> struct DeepRemoveCv <T &> { using Type = typename DeepRemo
 template <typename T> struct DeepRemoveCv <T &&> { using Type = typename DeepRemoveCv<T>::Type &&; };
 
 template <typename T>
-const void * unifiedDataGetter()
+void addressRawType()
 {
-	return (const void *)&commonCast;
 }
 
 template <typename T>
@@ -95,7 +94,8 @@ const MetaType * doGetMetaTypeStorage()
 
 	static const MetaType metaType(
 		MetaTable {
-			&unifiedDataGetter<typename DeepRemoveCv<T>::Type>,
+			(const void *)&addressRawType<typename DeepRemoveCv<T>::Type>,
+			(const void *)&commonCast
 		},
 		doGetUnifiedType<typename std::remove_cv<T>::type>(),
 		SelectDeclareClass<T, HasMember_typeFlags<M>::value>::typeFlags | CommonDeclareMetaType<T>::typeFlags
