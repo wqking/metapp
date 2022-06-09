@@ -244,7 +244,16 @@ public:
 		return unifiedType->hasMetaInterface(internal_::mikMetaUser);
 	}
 
-	bool equal(const MetaType * other) const;
+	bool equal(const MetaType * other) const {
+		if(getRawType() == other->getRawType()) {
+			return true;
+		}
+		if(getModule() == other->getModule()) {
+			return false;
+		}
+		return doDeepEqual(other);
+	}
+
 	int compare(const MetaType * other) const;
 
 	const MetaType * getUpType() const {
@@ -305,6 +314,8 @@ private:
 	const void * getRawType() const noexcept {
 		return metaTable.rawType;
 	}
+
+	bool doDeepEqual(const MetaType * other) const;
 
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();

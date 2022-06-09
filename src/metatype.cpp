@@ -190,20 +190,8 @@ MetaType::MetaType(
 {
 }
 
-bool MetaType::equal(const MetaType * other) const
+bool MetaType::doDeepEqual(const MetaType * other) const
 {
-	if(this == other) {
-		return true;
-	}
-	if(other == nullptr) {
-		return false;
-	}
-	if(getRawType() == other->getRawType()) {
-		return true;
-	}
-	if(getModule() == other->getModule()) {
-		return false;
-	}
 	if(getTypeKind() != other->getTypeKind() || getUpTypeCount() != other->getUpTypeCount()) {
 		return false;
 	}
