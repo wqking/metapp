@@ -27,7 +27,7 @@
 # metapp -- C++ library for runtime reflection, introspection and meta types
 
 metapp is a cross platform C++ runtime reflection library.  
-metapp is light weight, powerful, unique, non-intrusive, no macros, and easy to use.  
+metapp is light weight, powerful, fast, unique, non-intrusive, no macros, and easy to use.  
 Even if you don't need reflection, you may use `metapp::Variant` with any C++ types, and you can enjoy the large amount of
 built-in meta types.
 
@@ -56,6 +56,7 @@ value is referenced instead of copied, so the memory and performance cost is kep
 	- True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 		no template parameters are needed. All parameters and return values are passed via metapp::Variant.
 	- Imitate C++ reference extensively for better performance.
+	- Good performance. The performance is roughly similar to Qt meta system.
 	- Automatically type conversion when getting/setting fields, invoking methods, etc.
 	- Support multiple inheritance and hierarchy.
 	- Support using in dynamic library (plugins).

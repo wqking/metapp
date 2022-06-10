@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "test.h"
+#include "benchmark.h"
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 
@@ -22,7 +22,23 @@ namespace {
 
 BenchmarkFunc
 {
-	constexpr int iterations = 1000 * 1000;
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v = 5;
+			v = 38.0;
+			v = (long long)38;
+			v = (unsigned short)9;
+			v = true;
+			v = 1.5f;
+		}
+	});
+	printResult(t, iterations, "Variant construct and assignment, with fundamental");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		for(int i = 0; i < iterations; ++i) {
 			metapp::Variant v = 5;
@@ -31,12 +47,12 @@ BenchmarkFunc
 			v = std::string("def");
 		}
 	});
-	printResult(t, iterations, "Variant");
+	printResult(t, iterations, "Variant construct and assignment, with string");
 }
 
 BenchmarkFunc
 {
-	constexpr int iterations = 1000 * 1000;
+	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		metapp::Variant v = 5;
 		for(int i = 0; i < iterations; ++i) {

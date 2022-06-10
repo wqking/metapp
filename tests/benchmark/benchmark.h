@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TEST_H
-#define TEST_H
+#ifndef BENCHMARK_H
+#define BENCHMARK_H
 
 #include "../catch.hpp"
 
@@ -24,6 +24,8 @@
 #include <string>
 #include <sstream>
 #include <locale>
+
+constexpr int generalIterations = 10 * 1000 * 1000;
 
 template <typename F>
 uint64_t measureElapsedTime(F f)

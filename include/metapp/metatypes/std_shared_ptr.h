@@ -84,7 +84,7 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	}
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->equal(getMetaType<std::weak_ptr<T> >())) {
+		if(getNonReferenceMetaType(toMetaType)->equal(getMetaType<std::weak_ptr<T> >())) {
 			if(result != nullptr) {
 				*result = std::weak_ptr<T>(value.get<SharedPtr &>());
 			}

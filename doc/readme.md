@@ -48,7 +48,8 @@
   - [TypeList reference](utilities/typelist.md)
 
 - Miscellaneous
-  - [About documentations](about_document.md)
   - [Use metapp in dynamic library](dynamic_library.md)
+  - [Performance benchmark](benchmark.md)
   - [Infrequently Asked Questions](faq.md)
+  - [About documentations](about_document.md)
 

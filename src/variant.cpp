@@ -157,6 +157,9 @@ Variant Variant::cast(const MetaType * toMetaType) const
 
 Variant Variant::castSilently(const MetaType * toMetaType) const
 {
+	if(getNonReferenceMetaType(toMetaType)->equal(getNonReferenceMetaType(metaType))) {
+		return *this;
+	}
 	Variant result;
 	metaType->cast(&result, *this, toMetaType);
 	return result;

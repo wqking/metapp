@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "test.h"
+#include "benchmark.h"
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 #include "metapp/interfaces/metacallable.h"
@@ -31,7 +31,7 @@ struct TestClass
 
 BenchmarkFunc
 {
-	constexpr int iterations = 1000 * 1000;
+	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		metapp::Variant v = &TestClass::add;
 		TestClass obj;
@@ -47,7 +47,7 @@ BenchmarkFunc
 
 BenchmarkFunc
 {
-	constexpr int iterations = 1000 * 1000;
+	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		metapp::Variant v = &TestClass::add;
 		TestClass obj;

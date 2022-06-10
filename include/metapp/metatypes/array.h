@@ -55,19 +55,20 @@ struct DeclareMetaTypeArrayBase
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
 		const MetaType * upType = getMetaType<UpType>();
-		if(toMetaType->equal(getMetaType<std::string>()) && upType->equal(getMetaType<char>())) {
+		const MetaType * nonRef = getNonReferenceMetaType(toMetaType);
+		if(nonRef->equal(getMetaType<std::string>()) && upType->equal(getMetaType<char>())) {
 			if(result != nullptr) {
 				*result = std::string((const char *)(value.getAddress()));
 			}
 			return true;
 		}
-		if(toMetaType->equal(getMetaType<std::wstring>()) && upType->equal(getMetaType<wchar_t>())) {
+		if(nonRef->equal(getMetaType<std::wstring>()) && upType->equal(getMetaType<wchar_t>())) {
 			if(result != nullptr) {
 				*result = std::wstring((const wchar_t *)(value.getAddress()));
 			}
 			return true;
 		}
-		if(toMetaType->isPointer() && toMetaType->getUpType()->equal(upType)) {
+		if(nonRef->isPointer() && nonRef->getUpType()->equal(upType)) {
 			if(result != nullptr) {
 				*result = (UpType *)(value.getAddress());
 			}

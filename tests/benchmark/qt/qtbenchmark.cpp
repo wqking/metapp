@@ -5,6 +5,8 @@
 #include <memory>
 #include <chrono>
 
+constexpr int generalIterations = 10 * 1000 * 1000;
+
 template <typename F>
 uint64_t measureElapsedTime(F f)
 {
@@ -33,7 +35,7 @@ void benchmarkMethod()
     QByteArray normalizedSignature = QMetaObject::normalizedSignature("add(int, int)");
     const int index = obj.metaObject()->indexOfMethod(normalizedSignature);
     QMetaMethod method = obj.metaObject()->method(index);
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([&method, &obj]() {
         int result = 0;
         for(int i = 0; i < iterations; ++i) {
@@ -50,7 +52,7 @@ void benchmarkMethodCast()
     QByteArray normalizedSignature = QMetaObject::normalizedSignature("add(int, int)");
     const int index = obj.metaObject()->indexOfMethod(normalizedSignature);
     QMetaMethod method = obj.metaObject()->method(index);
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([&method, &obj]() {
         int result = 0;
         for(int i = 0; i < iterations; ++i) {
@@ -68,7 +70,7 @@ void benchmarkPropertyGet()
     TestClass obj;
     const int index = obj.metaObject()->indexOfProperty("value");
     QMetaProperty property = obj.metaObject()->property(index);
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([&property, &obj]() {
         for(int i = 0; i < iterations; ++i) {
             property.read(&obj);
@@ -82,7 +84,7 @@ void benchmarkPropertySet()
     TestClass obj;
     const int index = obj.metaObject()->indexOfProperty("value");
     QMetaProperty property = obj.metaObject()->property(index);
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([&property, &obj]() {
         for(int i = 0; i < iterations; ++i) {
             property.write(&obj, i);
@@ -91,9 +93,26 @@ void benchmarkPropertySet()
     std::cout << "Property set: " << t1 << std::endl;
 }
 
-void benchmarkVariant()
+void benchmarkVariantWithFundamental()
 {
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
+    const auto t1 = measureElapsedTime([]() {
+        for(int i = 0; i < iterations; ++i) {
+            QVariant v = 5;
+            v = 38.0;
+            v = (long long)38;
+            v = (unsigned short)9;
+            v = true;
+            v = 1.5f;
+        }
+
+    });
+    std::cout << "Variant construct and assignment, with fundamental: " << t1 << std::endl;
+}
+
+void benchmarkVariantWithString()
+{
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([]() {
         for(int i = 0; i < iterations; ++i) {
             QVariant v = 5;
@@ -103,12 +122,12 @@ void benchmarkVariant()
         }
 
     });
-    std::cout << "Variant: " << t1 << std::endl;
+    std::cout << "Variant construct and assignment, with string: " << t1 << std::endl;
 }
 
 void benchmarkVariantCast()
 {
-    constexpr int iterations = 1000 * 1000;
+    constexpr int iterations = generalIterations;
     const auto t1 = measureElapsedTime([]() {
         QVariant v = 5;
         for(int i = 0; i < iterations; ++i) {
@@ -127,7 +146,8 @@ int main(int /*argc*/, char */*argv*/[])
     benchmarkMethodCast();
     benchmarkPropertyGet();
     benchmarkPropertySet();
-    benchmarkVariant();
+    benchmarkVariantWithFundamental();
+    benchmarkVariantWithString();
     benchmarkVariantCast();
 
     return 0;

@@ -32,7 +32,8 @@ struct DeclareMetaTypeBase <std::weak_ptr<T> >
 	static constexpr TypeKind typeKind = tkStdWeakPtr;
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(toMetaType->getTypeKind() == tkStdSharedPtr && getMetaType<WeakPtr>()->getUpType()->equal(toMetaType->getUpType())) {
+		const MetaType * nonRef = getNonReferenceMetaType(toMetaType);
+		if(nonRef->getTypeKind() == tkStdSharedPtr && getMetaType<WeakPtr>()->getUpType()->equal(nonRef->getUpType())) {
 			if(result != nullptr) {
 				*result = std::shared_ptr<T>(value.get<WeakPtr &>());
 			}
