@@ -241,6 +241,11 @@ and implement `cast` for the cast-able types. If `Integer` can't cast to any typ
 in the example code, it ignores the type and it doesn't cause compile error.  
 `metapp::CastFromTypes` is similar. It checks if the first parameter can cast from any type in the `TypeList`,
 and ignores any types that is not castFrom-able.  
+
+Note: `CastToTypes` and `CastFromTypes` use linear search on the target type list, the time complexity is O(N).
+If the target type list is large, there may be performance issue. In such case, we should implement `cast` and `castFrom`
+manually using better algorithm.
+
 If `Integer` can cast to and cast from the same types, we can use `CastFromToTypes` to make the code shorter, for example,  
 
 ```c++

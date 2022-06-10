@@ -33,7 +33,7 @@ namespace internal_ {
 #ifdef METAPP_SUPPORT_CHAR8_T
 using metappChar8_t = char8_t;
 #else
-struct metappChar8_t {};
+using metappChar8_t = char;
 #endif
 
 using IntegralTypeList = TypeList<
