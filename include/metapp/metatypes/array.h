@@ -20,6 +20,7 @@
 #include "metapp/metatype.h"
 #include "metapp/cast.h"
 #include "metapp/interfaces/metaindexable.h"
+#include "metapp/interfaces/bases/metastreamablebase.h"
 #include "metapp/implement/internal/util_i.h"
 #include "metapp/metatypes/std_string.h"
 
@@ -32,7 +33,7 @@ constexpr std::size_t unknownSize = std::size_t(-1);
 } // namespace internal_
 
 template <typename T, std::size_t length>
-struct DeclareMetaTypeArrayBase
+struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 {
 	using UpType = typename std::remove_extent<typename std::remove_cv<T>::type>::type;
 
@@ -89,7 +90,7 @@ private:
 		typename std::enable_if<hasLength>::type * = nullptr) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
-				data->construct<ArrayWrapper>(*(ArrayWrapper **)copyFrom);
+				data->construct<ArrayWrapper>((ArrayWrapper *)copyFrom);
 			}
 			else {
 				data->construct<ArrayWrapper>(nullptr);
@@ -97,7 +98,7 @@ private:
 		}
 		else {
 			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<ArrayWrapper>(*(ArrayWrapper **)copyFrom, memory);
+				return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory);
 			}
 			else {
 				return internal_::constructOnHeap<ArrayWrapper>(nullptr, memory);

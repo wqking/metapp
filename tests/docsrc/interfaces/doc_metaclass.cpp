@@ -236,10 +236,11 @@ desc*/
 class VarClass
 {
 public:
-	static const int one = 1;
+	static const int one;
 
 	int index;
 };
+const int VarClass::one = 1;
 
 template <>
 struct metapp::DeclareMetaType<VarClass> : metapp::DeclareMetaTypeBase<VarClass>

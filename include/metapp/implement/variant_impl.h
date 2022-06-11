@@ -20,21 +20,29 @@
 namespace metapp {
 
 template <typename T>
-inline Variant Variant::create(T value,
-	typename std::enable_if<
-		std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-	>::type *)
+inline Variant Variant::create(const T & value,
+	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
 {
-	// The ugly pointer castings are to avoid compile error
-	// when value is const volatile Variant &, or any type involved volatile
 	return *(Variant *)(void *)&value;
 }
 
 template <typename T>
-inline Variant Variant::create(T value,
-	typename std::enable_if<
-		! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-	>::type *)
+inline Variant Variant::create(const T & value,
+	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
+{
+	return Variant(metapp::getMetaType<T>(), (const void *)&value);
+}
+
+template <typename T>
+inline Variant Variant::create(T && value,
+	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
+{
+	return *(Variant *)(void *)&value;
+}
+
+template <typename T>
+inline Variant Variant::create(T && value,
+	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	return Variant(metapp::getMetaType<T>(), (const void *)&value);
 }
@@ -46,11 +54,28 @@ inline Variant Variant::reference(T && value)
 }
 
 template <typename T>
-inline Variant::Variant(T value)
+inline Variant::Variant(T && value)
 	:
-		metaType(metapp::getMetaType<T>())
+		metaType(),
+		data()
 {
-	metaType->constructData(&data, &value, nullptr);
+	doConstruct(std::forward<T>(value));
+}
+
+template <typename T>
+void Variant::doConstruct(T && value,
+	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
+{
+	metaType = value.metaType;
+	data = value.data;
+}
+
+template <typename T>
+void Variant::doConstruct(T && value,
+	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
+{
+	metaType = metapp::getMetaType<typename std::remove_reference<T>::type>();
+	metaType->constructData(&data, (const void *)&value, nullptr);
 }
 
 template <typename T>

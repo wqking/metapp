@@ -271,7 +271,7 @@ MetaItem & MetaRepoBase::registerType(std::string name, const MetaType * metaTyp
 	if(it != typeData->typeTypeMap.end()) {
 		return *it->second;
 	}
-	MetaItem & registeredType = typeData->addItem(MetaItem::Type::metaType, name, Variant::create(metaType));
+	MetaItem & registeredType = typeData->addItem(MetaItem::Type::metaType, name, Variant::create<const MetaType *>(metaType));
 	typeData->kindTypeMap[metaType->getTypeKind()] = &registeredType;
 	typeData->typeTypeMap[metaType] = &registeredType;
 

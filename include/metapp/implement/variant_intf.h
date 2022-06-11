@@ -28,22 +28,35 @@
 namespace metapp {
 
 class MetaType;
-
 class MetaItem;
+class Variant;
+
+namespace internal_ {
+
+template <typename T>
+struct IsVariant
+{
+	static constexpr bool value = std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value;
+};
+
+} // namespace internal_
 
 class Variant
 {
 public:
 	template <typename T>
-	static Variant create(T value,
-		typename std::enable_if<
-			std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-		>::type * = nullptr);
+	static Variant create(const T & value,
+		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
 	template <typename T>
-	static Variant create(T value,
-		typename std::enable_if<
-			! std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value
-		>::type * = nullptr);
+	static Variant create(const T & value,
+		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
+	template <typename T>
+	static Variant create(T && value,
+		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
+	template <typename T>
+	static Variant create(T && value,
+		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
+
 	template <typename T>
 	static Variant reference(T && value);
 	static Variant retype(const MetaType * metaType, const Variant & var);
@@ -54,7 +67,7 @@ public:
 	~Variant() = default;
 
 	template <typename T>
-	Variant(T value);
+	Variant(T && value);
 
 	Variant(const MetaType * metaType, const void * copyFrom);
 
@@ -118,6 +131,14 @@ public:
 
 	friend std::istream & operator >> (std::istream & stream, Variant & v);
 	friend std::ostream & operator << (std::ostream & stream, const Variant & v);
+
+private:
+	template <typename T>
+	void doConstruct(T && value,
+		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
+	template <typename T>
+	void doConstruct(T && value,
+		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
 
 private:
 	const MetaType * metaType;

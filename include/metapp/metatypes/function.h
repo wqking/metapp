@@ -26,16 +26,42 @@ template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (*)(Args...)>
 	: MetaCallableBase<RT (*)(Args...), void, RT, Args...>
 {
-public:
+	using FullType = RT (*)(Args...);
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkFunction;
+	static constexpr TypeFlags typeFlags = tfPointer;
 
 };
 
 template <typename RT, typename ...Args>
 struct DeclareMetaTypeBase <RT (Args...)>
-	: DeclareMetaTypeBase <RT (*)(Args...)>
+	: MetaCallableBase<RT (*)(Args...), void, RT, Args...>
 {
+	using FullType = RT (Args...);
+	using UpType = TypeList<RT, Args...>;
+	static constexpr TypeKind typeKind = tkFunction;
+	static constexpr TypeFlags typeFlags = tfPointer;
+
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
+		if(data != nullptr) {
+			if(copyFrom != nullptr) {
+				data->construct<FullType *>(&copyFrom);
+			}
+			else {
+				data->construct<FullType *>(nullptr);
+			}
+		}
+		else {
+			if(copyFrom != nullptr) {
+				return internal_::constructOnHeap<FullType *>(&copyFrom, memory);
+}
+			else {
+				return internal_::constructOnHeap<FullType *>(nullptr, memory);
+			}
+}
+		return nullptr;
+	}
+
 };
 
 #ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE
