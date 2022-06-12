@@ -30,7 +30,11 @@ template <typename T>
 inline Variant Variant::create(const T & value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
-	return Variant(metapp::getMetaType<T>(), (const void *)&value);
+	return Variant(
+		metapp::getMetaType<T>(),
+		(const void *)&value,
+		CopyStrategy::autoDetect
+	);
 }
 
 template <typename T>
@@ -44,7 +48,11 @@ template <typename T>
 inline Variant Variant::create(T && value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
-	return Variant(metapp::getMetaType<T>(), (const void *)&value);
+	return Variant(
+		metapp::getMetaType<T>(),
+		(const void *)&value,
+		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+	);
 }
 
 template <typename T>
@@ -75,7 +83,12 @@ void Variant::doConstruct(T && value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	metaType = metapp::getMetaType<typename std::remove_reference<T>::type>();
-	metaType->constructData(&data, (const void *)&value, nullptr);
+	metaType->constructData(
+		&data,
+		(const void *)&value,
+		nullptr,
+		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+	);
 }
 
 template <typename T>

@@ -42,21 +42,21 @@ struct DeclareMetaTypeBase <RT (Args...)>
 	static constexpr TypeKind typeKind = tkFunction;
 	static constexpr TypeFlags typeFlags = tfPointer;
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
-				data->construct<FullType *>(&copyFrom);
+				data->construct<FullType *>(&copyFrom, copyStrategy);
 			}
 			else {
-				data->construct<FullType *>(nullptr);
+				data->construct<FullType *>(nullptr, copyStrategy);
 			}
 		}
 		else {
 			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<FullType *>(&copyFrom, memory);
+				return internal_::constructOnHeap<FullType *>(&copyFrom, memory, copyStrategy);
 }
 			else {
-				return internal_::constructOnHeap<FullType *>(nullptr, memory);
+				return internal_::constructOnHeap<FullType *>(nullptr, memory, copyStrategy);
 			}
 }
 		return nullptr;

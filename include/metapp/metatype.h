@@ -269,19 +269,19 @@ public:
 	}
 
 	void * construct() const {
-		return constructData(nullptr, nullptr, nullptr);
+		return constructData(nullptr, nullptr, nullptr, CopyStrategy::copy);
 	}
 
 	void * copyConstruct(const void * copyFrom) const {
-		return constructData(nullptr, copyFrom, nullptr);
+		return constructData(nullptr, copyFrom, nullptr, CopyStrategy::copy);
 	}
 
 	void * placementConstruct(void * memory) const {
-		return constructData(nullptr, nullptr, memory);
+		return constructData(nullptr, nullptr, memory, CopyStrategy::copy);
 	}
 
 	void * placementCopyConstruct(void * memory, const void * copyFrom) const {
-		return constructData(nullptr, copyFrom, memory);
+		return constructData(nullptr, copyFrom, memory, CopyStrategy::copy);
 	}
 
 	void destroy(void * instance) const {
@@ -303,8 +303,8 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
-	void * constructData(VariantData * data, const void * copyFrom, void * memory) const {
-		return unifiedType->constructData(data, copyFrom, memory);
+	void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) const {
+		return unifiedType->constructData(data, copyFrom, memory, copyStrategy);
 	}
 
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
@@ -359,7 +359,7 @@ public:
 		| (std::is_floating_point<T>::value ? tfFloat : 0)
 	;
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 	static void destroy(void * instance, const bool freeMemory);
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
@@ -389,7 +389,7 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 	static void destroy(void * instance, const bool freeMemory);
 	static void dtor(void * instance, const bool freeMemory);
 

@@ -27,16 +27,6 @@
 
 namespace metapp {
 
-namespace internal_ {
-
-template <typename T>
-constexpr T maxOf(T a, T b)
-{
-	return a > b ? a : b;
-}
-
-} // namespace internal_
-
 class VariantData
 {
 private:
@@ -63,8 +53,8 @@ public:
 	}
 
 	template <typename T>
-	void construct(const void * copyFrom) {
-		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>());
+	void construct(const void * copyFrom, const CopyStrategy copyStrategy) {
+		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>(), copyStrategy);
 	}
 
 	void constructObject(const std::shared_ptr<void> & obj) {
@@ -96,7 +86,7 @@ public:
 
 private:
 	template <typename T>
-	void doConstructOnObjectOrBuffer(const void * copyFrom, std::true_type) {
+	void doConstructOnObjectOrBuffer(const void * copyFrom, std::true_type, const CopyStrategy /*copyStrategy*/) {
 		setStorageType(storageBuffer);
 
 		if(copyFrom == nullptr) {
@@ -110,9 +100,9 @@ private:
 	}
 
 	template <typename T>
-	void doConstructOnObjectOrBuffer(const void * copyFrom, std::false_type) {
+	void doConstructOnObjectOrBuffer(const void * copyFrom, std::false_type, const CopyStrategy copyStrategy) {
 		setStorageType(storageObject);
-		object = std::shared_ptr<T>(internal_::constructOnHeap<T>(copyFrom, nullptr));
+		object = std::shared_ptr<T>(internal_::constructOnHeap<T>(copyFrom, nullptr, copyStrategy));
 	}
 
 	template <typename T>
@@ -132,6 +122,7 @@ private:
 
 	template <typename T>
 	void doConstructOnBufferCopy(const void * /*copyFrom*/, std::false_type) {
+		// For POD, we don't need to check move-able. If it's not copy-able, just raise error.
 		raiseException<NotConstructibleException>();
 	}
 

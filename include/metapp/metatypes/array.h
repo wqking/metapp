@@ -50,8 +50,8 @@ struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 		return &metaIndexable;
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory) {
-		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory);
+	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
+		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory, copyStrategy);
 	}
 
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
@@ -86,30 +86,40 @@ private:
 	};
 
 	template <bool hasLength>
-	static void * doConstructData(VariantData * data, const void * copyFrom, void * memory,
-		typename std::enable_if<hasLength>::type * = nullptr) {
+	static void * doConstructData(
+			VariantData * data,
+			const void * copyFrom,
+			void * memory,
+			const CopyStrategy copyStrategy,
+			typename std::enable_if<hasLength>::type * = nullptr
+		) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
-				data->construct<ArrayWrapper>((ArrayWrapper *)copyFrom);
+				data->construct<ArrayWrapper>((ArrayWrapper *)copyFrom, copyStrategy);
 			}
 			else {
-				data->construct<ArrayWrapper>(nullptr);
+				data->construct<ArrayWrapper>(nullptr, copyStrategy);
 			}
 		}
 		else {
 			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory);
+				return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory, copyStrategy);
 			}
 			else {
-				return internal_::constructOnHeap<ArrayWrapper>(nullptr, memory);
+				return internal_::constructOnHeap<ArrayWrapper>(nullptr, memory, copyStrategy);
 			}
 		}
 		return nullptr;
 	}
 
 	template <bool hasLength>
-	static void * doConstructData(VariantData * /*data*/, const void * /*copyFrom*/, void * /*memory*/,
-		typename std::enable_if<! hasLength>::type * = nullptr) {
+	static void * doConstructData(
+			VariantData * /*data*/,
+			const void * /*copyFrom*/,
+			void * /*memory*/,
+			const CopyStrategy /*copyStrategy*/,
+			typename std::enable_if<! hasLength>::type * = nullptr
+		) {
 		raiseException<NotConstructibleException>();
 		return nullptr;
 	}

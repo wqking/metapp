@@ -64,8 +64,6 @@ inline void assignValue(ToType & /*to*/, const FromType & /*from*/,
 	raiseException<UnwritableException>();
 }
 
-void * constructReference(VariantData * data, const void * copyFrom, void * memory);
-
 // Used by MetaAccessible::getClassType that returns void meta type
 const MetaType * voidMetaTypeFromVariant(const Variant & var);
 

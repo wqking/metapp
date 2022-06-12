@@ -54,6 +54,8 @@ struct HasOutputStreamOperator_
 
 namespace metapp {
 
+class Variant;
+
 namespace internal_ {
 
 template <typename T, T ...values>
@@ -205,6 +207,20 @@ template <>
 struct TrueFalse <true> : std::true_type
 {
 };
+
+template <typename T>
+constexpr T maxOf(T a, T b)
+{
+	return a > b ? a : b;
+}
+
+template <typename T>
+struct IsVariant
+{
+	static constexpr bool value = std::is_same<
+		Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value;
+};
+
 
 } // namespace internal_
 

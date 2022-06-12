@@ -79,9 +79,18 @@ Variant::Variant() noexcept
 
 Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
-		metaType(metaType)
+		metaType(metaType),
+		data()
 {
-	metaType->constructData(&data, copyFrom, nullptr);
+	metaType->constructData(&data, copyFrom, nullptr, CopyStrategy::autoDetect);
+}
+
+Variant::Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy)
+	:
+		metaType(metaType),
+		data()
+{
+	metaType->constructData(&data, copyFrom, nullptr, copyStrategy);
 }
 
 Variant::Variant(const Variant & other) noexcept
@@ -174,7 +183,7 @@ Variant Variant::clone() const
 {
 	Variant result;
 	result.metaType = metaType;
-	result.metaType->constructData(&result.data, getAddress(), nullptr);
+	result.metaType->constructData(&result.data, getAddress(), nullptr, CopyStrategy::copy);
 	return result;
 }
 

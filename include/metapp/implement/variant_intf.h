@@ -29,17 +29,6 @@ namespace metapp {
 
 class MetaType;
 class MetaItem;
-class Variant;
-
-namespace internal_ {
-
-template <typename T>
-struct IsVariant
-{
-	static constexpr bool value = std::is_same<Variant, typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value;
-};
-
-} // namespace internal_
 
 class Variant
 {
@@ -70,6 +59,7 @@ public:
 	Variant(T && value);
 
 	Variant(const MetaType * metaType, const void * copyFrom);
+	Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy);
 
 	Variant(const Variant & other) noexcept;
 	Variant(Variant && other) noexcept;

@@ -293,7 +293,7 @@ struct MakeMetaInterfaceData
 
 struct UnifiedMetaTable
 {
-	void * (*constructData)(VariantData * data, const void * copyFrom, void * memory);
+	void * (*constructData)(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 
 	void (*destroy)(void * instance, const bool freeMemory);
 
@@ -323,8 +323,8 @@ private:
 		return typeKind;
 	}
 
-	void * constructData(VariantData * data, const void * copyFrom, void * memory) const {
-		return metaMethodTable.constructData(data, copyFrom, memory);
+	void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) const {
+		return metaMethodTable.constructData(data, copyFrom, memory, copyStrategy);
 	}
 
 	void destroy(void * instance) const {

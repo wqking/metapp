@@ -154,7 +154,7 @@ int compareTwoValues(T a, T b)
 } // namespace internal_
 
 
-void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/, void * /*memory*/)
+void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
 {
 	return nullptr;
 }

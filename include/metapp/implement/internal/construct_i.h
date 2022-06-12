@@ -23,6 +23,13 @@
 
 namespace metapp {
 
+enum class CopyStrategy
+{
+	autoDetect,
+	copy,
+	move
+};
+
 namespace internal_ {
 
 template <typename T>
@@ -44,7 +51,7 @@ T * constructOnHeapDefault(void * /*memory*/, std::false_type)
 }
 
 template <typename T, typename U>
-T * constructOnHeapCopy(const void * copyFrom, void * memory, std::true_type, U)
+T * constructOnHeapAutoDetect(const void * copyFrom, void * memory, std::true_type, U)
 {
 	if(memory == nullptr) {
 		return new T(*(T *)copyFrom);
@@ -55,7 +62,7 @@ T * constructOnHeapCopy(const void * copyFrom, void * memory, std::true_type, U)
 }
 
 template <typename T>
-T * constructOnHeapCopy(const void * copyFrom, void * memory, std::false_type, std::true_type)
+T * constructOnHeapAutoDetect(const void * copyFrom, void * memory, std::false_type, std::true_type)
 {
 	if(memory == nullptr) {
 		return new T(std::move(*(T *)copyFrom));
@@ -66,20 +73,65 @@ T * constructOnHeapCopy(const void * copyFrom, void * memory, std::false_type, s
 }
 
 template <typename T>
-T * constructOnHeapCopy(const void * /*copyFrom*/, void * /*memory*/, std::false_type, std::false_type)
+T * constructOnHeapAutoDetect(const void * /*copyFrom*/, void * /*memory*/, std::false_type, std::false_type)
 {
 	raiseException<NotConstructibleException>();
 	return nullptr;
 }
 
 template <typename T>
-T * constructOnHeap(const void * copyFrom, void * memory)
+T * constructOnHeapCopy(const void * copyFrom, void * memory, std::true_type)
+{
+	if(memory == nullptr) {
+		return new T(*(T *)copyFrom);
+	}
+	else {
+		return new (memory) T(*(T *)copyFrom);
+	}
+}
+
+template <typename T>
+T * constructOnHeapCopy(const void * /*copyFrom*/, void * /*memory*/, std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return nullptr;
+}
+
+template <typename T>
+T * constructOnHeapMove(const void * copyFrom, void * memory, std::true_type)
+{
+	if(memory == nullptr) {
+		return new T(std::move(*(T *)copyFrom));
+	}
+	else {
+		return new (memory) T(std::move(*(T *)copyFrom));
+	}
+}
+
+template <typename T>
+T * constructOnHeapMove(const void * /*copyFrom*/, void * /*memory*/, std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return nullptr;
+}
+
+template <typename T>
+T * constructOnHeap(const void * copyFrom, void * memory, const CopyStrategy copyStrategy)
 {
 	if(copyFrom == nullptr) {
 		return constructOnHeapDefault<T>(memory, std::is_default_constructible<T>());
 	}
 	else {
-		return constructOnHeapCopy<T>(copyFrom, memory, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+		switch(copyStrategy) {
+		case CopyStrategy::copy:
+			return constructOnHeapCopy<T>(copyFrom, memory, std::is_copy_assignable<T>());
+
+		case CopyStrategy::move:
+			return constructOnHeapMove<T>(copyFrom, memory, std::is_move_assignable<T>());
+
+		default:
+			return constructOnHeapAutoDetect<T>(copyFrom, memory, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+		}
 	}
 }
 
