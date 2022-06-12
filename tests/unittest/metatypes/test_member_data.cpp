@@ -79,7 +79,7 @@ TEST_CASE("metatypes, tkMemberPointer, MetaAccessible, instance constness")
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkMemberPointer);
 
 		const TestClass obj { 5 };
-		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, metapp::Variant::create<const TestClass>(obj)))->isConst());
+		REQUIRE(metapp::getNonReferenceMetaType(metapp::accessibleGet(v, obj))->isConst());
 	}
 	
 	SECTION("no cv, pointer") {

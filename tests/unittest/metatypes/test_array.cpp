@@ -22,7 +22,7 @@
 TEST_CASE("metatypes, tkArray, int[3]")
 {
 	int array[] = { 3, 8, 9 };
-	metapp::Variant v(metapp::Variant::create<int[3]>(array));
+	metapp::Variant v(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.canGet<int[]>());
 	REQUIRE(v.canGet<int[3]>());
@@ -81,7 +81,7 @@ TEST_CASE("metatypes, tkArray, int (&)[3]")
 TEST_CASE("metatypes, tkArray, std::string[3]")
 {
 	std::string array[3] = { "good", "great", "perfect" };
-	metapp::Variant v(metapp::Variant::create<std::string[3]>(array));
+	metapp::Variant v(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.get<std::string[]>()[0] == "good");
 	REQUIRE(v.get<std::string[]>()[1] == "great");
@@ -119,7 +119,7 @@ TEST_CASE("metatypes, tkArray, int[], constness")
 TEST_CASE("metatypes, tkArray, const std::string[3], can't set to const array")
 {
 	const std::string array[3] = { "good", "great", "perfect" };
-	metapp::Variant v(metapp::Variant::create<const std::string[3]>(array));
+	metapp::Variant v(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.getMetaType()->isConst());
 
@@ -131,7 +131,7 @@ TEST_CASE("metatypes, tkArray, const std::string[3], can't set to const array")
 TEST_CASE("metatypes, tkArray, int[2][3]")
 {
 	int array[2][3] = { { 3, 8, 9 }, { 5, 12, 21 } };
-	metapp::Variant v(metapp::Variant::create<int[2][3]>(array));
+	metapp::Variant v(array);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 	REQUIRE(v.get<int[][3]>()[0][0] == 3);
 	REQUIRE(v.get<int[][3]>()[0][1] == 8);

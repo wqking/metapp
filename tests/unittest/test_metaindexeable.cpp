@@ -94,7 +94,7 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable set T &", "", TestTypes_Indexables)
 	using Container = TestType;
 	auto dataProvider = TestContainerDataProvider<Container>();
 	Container container = dataProvider.getContainer();
-	metapp::Variant v(metapp::Variant::create<Container &>(container));
+	metapp::Variant v(metapp::Variant::reference(container));
 	REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
 	REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == dataProvider.getTypeKind());
 	REQUIRE(v.getMetaType()->getUpType()->getUpType()->getTypeKind() == dataProvider.getValueTypeKind());

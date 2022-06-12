@@ -71,9 +71,9 @@ private:
 	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
 		if(index == 0) {
-			return Variant::create<T1 &>(var.get<PairType &>().first);
+			return Variant::reference(var.get<PairType &>().first);
 		}
-		return Variant::create<T2 &>(var.get<PairType &>().second);
+		return Variant::reference(var.get<PairType &>().second);
 	}
 
 	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)

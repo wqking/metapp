@@ -335,7 +335,7 @@ TEST_CASE("tutorialMetaClass_staticMethods")
 	const metapp::MetaItem & obtainValues = metaClass->getCallable("obtainValues");
 	//desc There is no much difference between member methods and static methods, the only difference
 	//desc is that the instance can be `nullptr` when invoking the method.
-	metapp::callableInvoke(obtainValues, nullptr, metapp::Variant::create<std::string &>(message), &value, &obj);
+	metapp::callableInvoke(obtainValues, nullptr, metapp::Variant::reference(message), &value, &obj);
 	ASSERT(message == "Hello");
 	ASSERT(value == 38);
 	//code

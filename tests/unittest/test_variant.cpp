@@ -244,7 +244,7 @@ TEST_CASE("Variant, get/canGet")
 
 	SECTION("int &") {
 		int n = 38;
-		metapp::Variant v(metapp::Variant::create<int &>(n));
+		metapp::Variant v(metapp::Variant::reference(n));
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 		REQUIRE(v.canGet<int>());
 		REQUIRE(v.canGet<int &>());
@@ -274,7 +274,7 @@ TEST_CASE("Variant, get/canGet")
 	SECTION("int * &") {
 		int n = 38;
 		int * pn = &n;
-		metapp::Variant v(metapp::Variant::create<int * &>(pn));
+		metapp::Variant v(metapp::Variant::reference(pn));
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 		REQUIRE(v.canGet<int *>());
 		REQUIRE(v.canGet<int * &>());

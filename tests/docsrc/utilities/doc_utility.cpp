@@ -142,7 +142,7 @@ ExampleFunc
 
 	int m = 10;
 	// reference, refers to m;
-	metapp::Variant v3(metapp::Variant::create<int &>(m));
+	metapp::Variant v3(metapp::Variant::reference(m));
 	ASSERT(m == 10);
 	ASSERT(v3.get<int &>() == 10);
 	// r3 refers to m

@@ -41,6 +41,7 @@ TEST_CASE("metatypes, std::list<int>, MetaIndexable")
 	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 5);
 	REQUIRE(metaIndexable->getSizeInfo(v).isResizable());
 	REQUIRE(! metaIndexable->getSizeInfo(v).isUnknownSize());
+	REQUIRE(metaIndexable->get(v, 0).getMetaType()->isReference());
 	REQUIRE(metaIndexable->get(v, 0).get<int>() == 38);
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 98);
 	REQUIRE(metaIndexable->get(v, 2).get<int>() == 5);

@@ -57,7 +57,7 @@ TEST_CASE("utility, getPointer, std::unique_ptr<int>")
 {
 	std::unique_ptr<int> up(new int(5));
 	int * pn = up.get();
-	metapp::Variant v(metapp::Variant::create<std::unique_ptr<int> >(std::move(up)));
+	metapp::Variant v(std::move(up));
 	REQUIRE(metapp::getPointer(v) == pn);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<int>());
 }
@@ -66,7 +66,7 @@ TEST_CASE("utility, getPointer, std::unique_ptr<const int>")
 {
 	std::unique_ptr<const int> up(new int(5));
 	const int * pn = up.get();
-	metapp::Variant v(metapp::Variant::create<std::unique_ptr<const int> >(std::move(up)));
+	metapp::Variant v(std::move(up));
 	REQUIRE(metapp::getPointer(v) == pn);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<const int>());
 }

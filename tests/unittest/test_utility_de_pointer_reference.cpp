@@ -47,7 +47,7 @@ TEST_CASE("utility, depointer, int *")
 TEST_CASE("utility, depointer, int &")
 {
 	int n = 5;
-	metapp::Variant v(metapp::Variant::create<int &>(n));
+	metapp::Variant v(metapp::Variant::reference(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
@@ -183,7 +183,7 @@ TEST_CASE("utility, depointer, MyClass *")
 TEST_CASE("utility, depointer, MyClass &")
 {
 	MyClass n { "hello", {0} };
-	metapp::Variant v(metapp::Variant::create<MyClass &>(n));
+	metapp::Variant v(metapp::Variant::reference(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	REQUIRE(v.canGet<MyClass>());
 	REQUIRE(v.get<MyClass &>().text == "hello");
@@ -221,7 +221,7 @@ TEST_CASE("utility, dereference, int *")
 TEST_CASE("utility, dereference, int &")
 {
 	int n = 5;
-	metapp::Variant v(metapp::Variant::create<int &>(n));
+	metapp::Variant v(metapp::Variant::reference(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	REQUIRE(v.canGet<int>());
 	REQUIRE(v.get<int>() == 5);
@@ -259,7 +259,7 @@ TEST_CASE("utility, dereference, MyClass *")
 TEST_CASE("utility, dereference, MyClass &")
 {
 	MyClass n { "hello", {0} };
-	metapp::Variant v(metapp::Variant::create<MyClass &>(n));
+	metapp::Variant v(metapp::Variant::reference(n));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 	REQUIRE(v.canGet<MyClass>());
 	REQUIRE(v.get<MyClass &>().text == "hello");

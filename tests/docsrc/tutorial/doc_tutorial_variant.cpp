@@ -75,7 +75,7 @@ TEST_CASE("tutorialVariant")
 	//desc Now v contains reference to int[2][3].
 	//desc We can't simply assign array to v because the array type will be lost.
 	//desc We need to call Variant::create to retain the array type.
-	v = metapp::Variant::create<int (&)[2][3]>(array);
+	v = metapp::Variant::reference(array);
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
 	//desc Since v is a reference to array, modify array will also modify v
 	array[1][2] = 10;
@@ -83,7 +83,7 @@ TEST_CASE("tutorialVariant")
 
 	//desc Now we copy array into v.
 	int anotherArray[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-	v = metapp::Variant::create<int [2][3]>(anotherArray);
+	v = anotherArray;
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
 	//desc Since v is a copy of anotherArray, modify anotherArray will not affect v.
 	anotherArray[1][2] = 10;

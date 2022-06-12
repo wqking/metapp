@@ -92,7 +92,7 @@ We can't simply assign array to v because the array type will be lost.
 We need to call Variant::create to retain the array type.
 
 ```c++
-v = metapp::Variant::create<int (&)[2][3]>(array);
+v = metapp::Variant::reference(array);
 ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
 ```
 
@@ -107,7 +107,7 @@ Now we copy array into v.
 
 ```c++
 int anotherArray[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
-v = metapp::Variant::create<int [2][3]>(anotherArray);
+v = anotherArray;
 ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
 ```
 

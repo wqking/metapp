@@ -143,7 +143,7 @@ private:
 
 	static Variant metaIndexableGet(const Variant & var, const std::size_t index)
 	{
-		return Variant::create<ElementType &>(var.get<T &>()[index]);
+		return Variant::reference(var.get<T &>()[index]);
 	}
 
 	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)

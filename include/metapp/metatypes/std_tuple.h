@@ -156,11 +156,7 @@ private:
 	{
 		using TupleType = std::tuple<Types...>;
 
-		return callback(Variant::create<
-			typename std::tuple_element<index, TupleType>::type &
-			>(
-				std::get<index>(var.get<TupleType &>())
-		));
+		return callback(Variant::reference(std::get<index>(var.get<TupleType &>())));
 	}
 
 };

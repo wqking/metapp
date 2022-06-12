@@ -41,7 +41,7 @@ TEST_CASE("metatypes, std::function<void (int &, std::string &)>, invoke")
 	metapp::Variant v(func);
 	int a = 0;
 	std::string b;
-	metapp::Variant arguments[2] = { metapp::Variant::create<int &>(a), metapp::Variant::create<std::string &>(b) };
+	metapp::Variant arguments[2] = { metapp::Variant::reference(a), metapp::Variant::reference(b) };
 	v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments);
 	REQUIRE(a == 38);
 	REQUIRE(b == "hello");
@@ -54,7 +54,7 @@ TEST_CASE("metatypes, std::function<int & (int &)>, invoke")
 	});
 	metapp::Variant v(func);
 	int a = 0;
-	metapp::Variant arguments[1] = { metapp::Variant::create<int &>(a) };
+	metapp::Variant arguments[1] = { metapp::Variant::reference(a) };
 	metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, nullptr, arguments);
 	REQUIRE(result.getMetaType()->isReference());
 }

@@ -164,7 +164,7 @@ TEST_CASE("Variant, can't cast int * to int or int &")
 TEST_CASE("Variant, can't cast int & to int *")
 {
 	int n = 5;
-	metapp::Variant v(metapp::Variant::create<int &>(n));
+	metapp::Variant v(metapp::Variant::reference(n));
 	REQUIRE(! v.canCast<int *>());
 	REQUIRE_THROWS(v.cast<int *>());
 	REQUIRE(v.castSilently<int *>().isEmpty());
@@ -192,7 +192,7 @@ TEST_CASE("Variant, cast int * & to int *")
 {
 	int n = 5;
 	int * pn = &n;
-	metapp::Variant v(metapp::Variant::create<int * &>(pn));
+	metapp::Variant v(metapp::Variant::reference(pn));
 	REQUIRE(v.canCast<int *>());
 	REQUIRE(v.cast<int *>().get<int *>() == &n);
 	REQUIRE(v.cast<int * &>().get<int * &>() == &n);
@@ -212,7 +212,7 @@ TEST_CASE("Variant, can't cast int * to long *")
 TEST_CASE("Variant, cast std::string & to std::string")
 {
 	std::string s = "hello";
-	metapp::Variant v(metapp::Variant::create<std::string &>(s));
+	metapp::Variant v(metapp::Variant::reference(s));
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
 
 	REQUIRE(v.canCast<std::string>());
@@ -222,7 +222,7 @@ TEST_CASE("Variant, cast std::string & to std::string")
 TEST_CASE("Variant, cast std::string to std::string &")
 {
 	std::string s = "hello";
-	metapp::Variant v(metapp::Variant::create<std::string>(s));
+	metapp::Variant v(s);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
 
 	REQUIRE(v.canCast<std::string &>());
@@ -232,7 +232,7 @@ TEST_CASE("Variant, cast std::string to std::string &")
 TEST_CASE("Variant, cast std::string to const std::string &")
 {
 	std::string s = "hello";
-	metapp::Variant v(metapp::Variant::create<std::string>(s));
+	metapp::Variant v(s);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkStdString);
 	REQUIRE(! v.getMetaType()->isConst());
 
@@ -260,7 +260,7 @@ TEST_CASE("Variant, cast char * to std::string")
 TEST_CASE("Variant, cast char[6] to std::string")
 {
 	char s[6] = "hello";
-	metapp::Variant v(metapp::Variant::create<char[6]>(s));
+	metapp::Variant v(s);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 
 	REQUIRE(v.get<char []>() == std::string("hello"));
@@ -274,7 +274,7 @@ TEST_CASE("Variant, cast char[6] to std::string")
 TEST_CASE("Variant, cast char[6] to const char *")
 {
 	char s[6] = "hello";
-	metapp::Variant v(metapp::Variant::create<char[6]>(s));
+	metapp::Variant v(s);
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkArray);
 
 	REQUIRE(v.canCast<const char *>());
@@ -373,7 +373,7 @@ TEST_CASE("Variant, cast Derived & to MyClass &")
 	metaRepo.registerBase<Derived, MyClass>();
 
 	Derived derived {};
-	metapp::Variant v(metapp::Variant::create<Derived &>(derived));
+	metapp::Variant v(metapp::Variant::reference(derived));
 	REQUIRE(! v.canCast<MyClass *>());
 	REQUIRE(v.canCast<MyClass &>());
 	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
@@ -389,7 +389,7 @@ TEST_CASE("Variant, cast Derived to MyClass &")
 	metapp::MetaRepo metaRepo;
 	metaRepo.registerBase<Derived, MyClass>();
 
-	metapp::Variant v(metapp::Variant::create<Derived>(Derived {}));
+	metapp::Variant v(Derived {});
 	REQUIRE(! v.canCast<MyClass *>());
 	REQUIRE(v.canCast<MyClass &>());
 	REQUIRE(v.getMetaType() == metapp::getMetaType<Derived>());

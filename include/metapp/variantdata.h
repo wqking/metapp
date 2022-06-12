@@ -120,7 +120,7 @@ private:
 
 	template <typename T>
 	void doConstructOnBufferCopy(const void * /*copyFrom*/, std::false_type) {
-		// For POD, we don't need to check move-able. If it's not copy-able, just raise error.
+		// For POD, we don't need to check movable. If it's not copyable, just raise error.
 		raiseException<NotConstructibleException>();
 	}
 

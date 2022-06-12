@@ -71,7 +71,7 @@ private:
 		auto & list = var.get<ContainerType &>();
 		auto it = list.begin();
 		std::advance(it, index);
-		return Variant::create<ValueType>(*it);
+		return Variant::reference(*it);
 	}
 
 	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)

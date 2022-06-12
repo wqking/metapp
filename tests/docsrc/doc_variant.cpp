@@ -46,7 +46,7 @@ desc*/
 //code
 
 /*desc
-## Construct a Variant
+## Constructors and assignment operators
 
 #### Default constructor
 
@@ -60,20 +60,19 @@ Construct an empty Variant of type `tkVoid`.
 
 ```c++
 template <typename T>
-Variant(T value);
+Variant(T && value);
 ```
 
-Construct a Variant of type T and copy value into Variant.  
-Since there is no way to specify the template parameter T explicitly when calling a constructor,
-we can't construct reference (tkReference) or C array (tkArray) using this constructor,
-because the type T is either removed reference, or decayed for pointer. To specify T explicitly, use `Variant::create`.  
-If `value` is not copyable, it will be moved into Variant.  
+Construct a Variant of type T, copy value into Variant if value is l-value, or move value into Variant if it's r-value.  
+Note T is always treated as value type, even if it's reference. That's to say, we can't construct Variant of reference
+using this constructor, we need to use `Variant::reference` to create reference.  
 If `value` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
 
 #### Construct from a type and a value
 
 ```c++
-Variant(const MetaType * metaType, const void * copyFrom);
+Variant(const MetaType * metaType, const void * copyFrom); // #1
+Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy); // #2
 ```
 
 Construct a Variant of type `metaType`, and initialize with the object pointed by `copyFrom`.  
@@ -81,8 +80,25 @@ If `copyFrom` is nullptr, the object in the Variant is default constructed.
 If `copyFrom` is not nullptr, the object in the Variant is copied from the object pointed by `copyFrom`. In such case,
 `copyFrom` must point to an object of the exact same type of `metaType`. The constructor doesn't and can't validate `copyFrom`.
 
+For #1 form,  
+If `metaType` is copyable, `copyFrom` will be copied into Variant.  
 If `metaType` is not copyable, `copyFrom` will be moved into Variant.  
 If `metaType` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
+
+For #2 form, how `copyFrom` is copied is determined by `CopyStrategy`.  
+
+```c++
+enum class CopyStrategy
+{
+	autoDetect,
+	copy,
+	move
+};
+```
+
+`CopyStrategy::autoDetect`: `copyFrom` is copied in the same way as #1 form.  
+`CopyStrategy::copy`: `copyFrom` is copied, if `metaType` is not copyable, exception `metapp::NotConstructibleException` is raised.  
+`CopyStrategy::move`: `copyFrom` is moved, if `metaType` is not movable, exception `metapp::NotConstructibleException` is raised.  
 
 Note: `Variant(metaType)` will create a Variant that holds a pointer to a MetaType (tkMetaType), it's different with
 `Variant(metaType, nullptr)`.
@@ -96,19 +112,57 @@ Variant(Variant && other) noexcept;
 
 Copy and move constructors.
 
+#### Assign from value
+```c++
+template <typename T>
+Variant & operator = (T && value) noexcept;
+```
+
+Assign to the Variant with `value`.  
+The previous value held by the variant is destroyed after assigned with the new value.  
+`value` will be copied or moved to `this` Variant, depending on whether it's a l-value or r-value.  
+
+#### Copy and move assignment
+```c++
+Variant & operator = (const Variant & other) noexcept;
+Variant & operator = (Variant && other) noexcept;
+```
+Copy and move assignment.  
+The previous value held by the variant is destroyed after assigned with the new variant.  
+Example code,  
+desc*/
+
+ExampleFunc
+{
+	//code
+	metapp::Variant t(5);
+	ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
+	ASSERT(t.get<int>() == 5);
+	metapp::Variant u(38.2);
+	ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
+
+	t = u;
+	ASSERT(t.getMetaType()->equal(metapp::getMetaType<double>())); // t is double
+	ASSERT(t.get<double>() == 38.2);
+	//code
+}
+
+/*desc
 #### create
 ```c++
 template <typename T>
-static Variant create(T value);
+static Variant create(const T & value); // #1
+template <typename T>
+static Variant create(T && value); // #2
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
-This is similar with the constructor `template <typename T> Variant(T value)`,
-the `create` function allows to specify T explicitly, which is useful to construct reference or array,
-or object with top level CV qualifiers.  
+If T is value type (not reference), #1 form will copy the value into the Variant, #2 form will move the value into the Variant.  
+This is similar with the constructor `template <typename T> Variant(T && value)`,
+the `create` function allows to specify T explicitly.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
 
-If `value` is not copyable, it will be moved into Variant.  
-If `value` is not copyable nor movable, exception `metapp::NotConstructibleException` is raised.  
+Note: the prototype is pseudo code. The real code disables deduction for T on purpose.
+That's to say, the type T must be specified explicitly.
 
 **Example**
 desc*/
@@ -116,6 +170,9 @@ desc*/
 ExampleFunc
 {
 	//code
+	// This doesn't compile, we must specify T explicitly.
+	//metapp::Variant v = metapp::Variant::create(5);
+
 	int n = 5;
 
 	// The type held by v1 is tkReference
@@ -225,41 +282,6 @@ ExampleFunc
 /*desc
 ## Member functions
 
-#### Assign from value
-```c++
-template <typename T>
-Variant & operator = (T value) noexcept;
-```
-
-Assign to the Variant with `value`.  
-The previous value held by the variant is destroyed after assigned with the new value.  
-
-#### Copy and move assignment
-```c++
-Variant & operator = (const Variant & other) noexcept;
-Variant & operator = (Variant && other) noexcept;
-```
-Copy and move assignment.  
-The previous value held by the variant is destroyed after assigned with the new variant.  
-Example code,  
-desc*/
-
-ExampleFunc
-{
-	//code
-	metapp::Variant t(5);
-	ASSERT(t.getMetaType()->equal(metapp::getMetaType<int>())); // t is int
-	ASSERT(t.get<int>() == 5);
-	metapp::Variant u(38.2);
-	ASSERT(u.getMetaType()->equal(metapp::getMetaType<double>())); // u is double
-
-	t = u;
-	ASSERT(t.getMetaType()->equal(metapp::getMetaType<double>())); // t is double
-	ASSERT(t.get<double>() == 38.2);
-	//code
-}
-
-/*desc
 #### getMetaType
 ```c++
 const MetaType * getMetaType() const noexcept;

@@ -61,6 +61,24 @@ TEST_CASE("Variant, construct, Variant(T && value)")
 		metapp::Variant v(5);
 		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
 		REQUIRE(v.get<int>() == 5);
+		REQUIRE(! v.getMetaType()->isConst());
+	}
+
+	SECTION("const int") {
+		const int n = 5;
+		metapp::Variant v(n);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.getMetaType()->isConst());
+	}
+
+	SECTION("const int &") {
+		int n = 5;
+		const int & rn = n;
+		metapp::Variant v(rn);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.getMetaType()->isConst());
 	}
 
 	SECTION("vector, copy") {
@@ -75,7 +93,92 @@ TEST_CASE("Variant, construct, Variant(T && value)")
 	SECTION("vector, move") {
 		std::vector<int> dataList { 1, 2, 3 };
 		metapp::Variant v(std::move(dataList));
-		REQUIRE(dataList.size() == 0);
+		REQUIRE(dataList.empty());
+		REQUIRE(v.get<const std::vector<int> &>().size() == 3);
+		REQUIRE(v.get<const std::vector<int> &>()[0] == 1);
+	}
+
+}
+
+TEST_CASE("Variant, construct, operator = ")
+{
+	SECTION("int") {
+		metapp::Variant v;
+		v = 5;
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(! v.getMetaType()->isConst());
+	}
+
+	SECTION("const int") {
+		const int n = 5;
+		metapp::Variant v;
+		v = n;
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.getMetaType()->isConst());
+	}
+
+	SECTION("const int &") {
+		int n = 5;
+		const int & rn = n;
+		metapp::Variant v;
+		v = rn;
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.getMetaType()->isConst());
+	}
+
+	SECTION("vector, copy") {
+		std::vector<int> dataList { 1, 2, 3 };
+		metapp::Variant v;
+		v = dataList;
+		REQUIRE(dataList.size() == 3);
+		REQUIRE(dataList[0] == 1);
+		REQUIRE(v.get<const std::vector<int> &>().size() == 3);
+		REQUIRE(v.get<const std::vector<int> &>()[0] == 1);
+	}
+
+	SECTION("vector, move") {
+		std::vector<int> dataList { 1, 2, 3 };
+		metapp::Variant v;
+		v = std::move(dataList);
+		REQUIRE(dataList.empty());
+		REQUIRE(v.get<const std::vector<int> &>().size() == 3);
+		REQUIRE(v.get<const std::vector<int> &>()[0] == 1);
+	}
+
+}
+
+TEST_CASE("Variant, construct, create()")
+{
+	SECTION("int") {
+		metapp::Variant v = metapp::Variant::create<int>(5);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(! v.getMetaType()->isConst());
+	}
+
+	SECTION("const int") {
+		metapp::Variant v = metapp::Variant::create<const int>(5);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkInt);
+		REQUIRE(v.get<int>() == 5);
+		REQUIRE(v.getMetaType()->isConst());
+	}
+
+	SECTION("vector, copy") {
+		std::vector<int> dataList { 1, 2, 3 };
+		metapp::Variant v = metapp::Variant::create<std::vector<int> >(dataList);
+		REQUIRE(dataList.size() == 3);
+		REQUIRE(dataList[0] == 1);
+		REQUIRE(v.get<const std::vector<int> &>().size() == 3);
+		REQUIRE(v.get<const std::vector<int> &>()[0] == 1);
+	}
+
+	SECTION("vector, move") {
+		std::vector<int> dataList { 1, 2, 3 };
+		metapp::Variant v = metapp::Variant::create<std::vector<int> >(std::move(dataList));
+		REQUIRE(dataList.empty());
 		REQUIRE(v.get<const std::vector<int> &>().size() == 3);
 		REQUIRE(v.get<const std::vector<int> &>()[0] == 1);
 	}
