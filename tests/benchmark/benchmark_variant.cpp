@@ -64,5 +64,49 @@ BenchmarkFunc
 	printResult(t, iterations, "Variant cast");
 }
 
+struct HeavyCopy
+{
+	HeavyCopy() : value(0) {}
+
+	HeavyCopy(const HeavyCopy & other) : value(other.value) {
+		doHeavyWork();
+	}
+
+	HeavyCopy & operator = (const HeavyCopy & other) {
+		value = other.value;
+		doHeavyWork();
+		return *this;
+	}
+
+	HeavyCopy(HeavyCopy && other) noexcept : value(other.value) {
+	}
+
+	HeavyCopy & operator = (HeavyCopy && other) noexcept {
+		value = other.value;
+		return *this;
+	}
+
+	void doHeavyWork() {
+		std::vector<int> dataList(128, 6);
+		for(const int item : dataList) {
+			value += item;
+		}
+	}
+	int value;
+};
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v = HeavyCopy();
+			v = 5;
+			v = HeavyCopy();
+		}
+	});
+	printResult(t, iterations, "Variant from heavy copy object");
+}
+
 
 } //namespace

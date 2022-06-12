@@ -70,7 +70,7 @@ public:
 	Variant(const MetaItem &) = delete;
 
 	template <typename T>
-	Variant & operator = (T value);
+	Variant & operator = (T && value);
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 

@@ -70,63 +70,6 @@ Variant Variant::takeFrom(const Variant & var)
 	return takeFrom(metaType, var.get<void *>());
 }
 
-Variant::Variant() noexcept
-	: 
-		metaType(metapp::getMetaType<void>()),
-		data()
-{
-}
-
-Variant::Variant(const MetaType * metaType, const void * copyFrom)
-	:
-		metaType(metaType),
-		data()
-{
-	metaType->constructData(&data, copyFrom, nullptr, CopyStrategy::autoDetect);
-}
-
-Variant::Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy)
-	:
-		metaType(metaType),
-		data()
-{
-	metaType->constructData(&data, copyFrom, nullptr, copyStrategy);
-}
-
-Variant::Variant(const Variant & other) noexcept
-	:
-		metaType(other.metaType),
-		data(other.data)
-{
-}
-
-Variant::Variant(Variant && other) noexcept
-	:
-		metaType(std::move(other.metaType)),
-		data(std::move(other.data))
-{
-}
-
-Variant & Variant::operator = (const Variant & other) noexcept
-{
-	if(this != &other) {
-		metaType = other.metaType;
-		data = other.data;
-	}
-
-	return *this;
-}
-
-Variant & Variant::operator = (Variant && other) noexcept
-{
-	if(this != &other) {
-		metaType = std::move(other.metaType);
-		data = std::move(other.data);
-	}
-
-	return *this;
-}
-
 bool Variant::canGet(const MetaType * toMetaType) const
 {
 	const MetaType * fromMetaType = metaType;
@@ -174,11 +117,6 @@ Variant Variant::castSilently(const MetaType * toMetaType) const
 	return result;
 }
 
-bool Variant::isEmpty() const noexcept
-{
-	return metaType->isVoid();
-}
-
 Variant Variant::clone() const
 {
 	Variant result;
@@ -195,14 +133,6 @@ Variant & Variant::assign(const Variant & other)
 	mt->dtor(myAddress);
 	mt->placementCopyConstruct(myAddress, casted.getAddress());
 	return *this;
-}
-
-void Variant::swap(Variant & other) noexcept
-{
-	using std::swap;
-
-	swap(metaType, other.metaType);
-	swap(data, other.data);
 }
 
 std::istream & operator >> (std::istream & stream, Variant & value)
@@ -225,16 +155,6 @@ std::ostream & operator << (std::ostream & stream, const Variant & value)
 	}
 	metaStreamable->streamOut(stream, value);
 	return stream;
-}
-
-void swap(Variant & a, Variant & b) noexcept
-{
-	a.swap(b);
-}
-
-TypeKind getTypeKind(const Variant & v)
-{
-	return v.getMetaType()->getTypeKind();
 }
 
 

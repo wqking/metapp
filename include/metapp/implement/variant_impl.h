@@ -61,6 +61,29 @@ inline Variant Variant::reference(T && value)
 	return create<T &>((T &)value);
 }
 
+inline Variant::Variant() noexcept
+	: 
+	metaType(metapp::getMetaType<void>()),
+	data()
+{
+}
+
+inline Variant::Variant(const MetaType * metaType, const void * copyFrom)
+	:
+	metaType(metaType),
+	data()
+{
+	metaType->constructData(&data, copyFrom, nullptr, CopyStrategy::autoDetect);
+}
+
+inline Variant::Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy)
+	:
+	metaType(metaType),
+	data()
+{
+	metaType->constructData(&data, copyFrom, nullptr, copyStrategy);
+}
+
 template <typename T>
 inline Variant::Variant(T && value)
 	:
@@ -70,32 +93,45 @@ inline Variant::Variant(T && value)
 	doConstruct(std::forward<T>(value));
 }
 
-template <typename T>
-void Variant::doConstruct(T && value,
-	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
+inline Variant::Variant(const Variant & other) noexcept
+	:
+	metaType(other.metaType),
+	data(other.data)
 {
-	metaType = value.metaType;
-	data = value.data;
+}
+
+inline Variant::Variant(Variant && other) noexcept
+	:
+	metaType(std::move(other.metaType)),
+	data(std::move(other.data))
+{
+}
+
+inline Variant & Variant::operator = (const Variant & other) noexcept
+{
+	if(this != &other) {
+		metaType = other.metaType;
+		data = other.data;
+	}
+
+	return *this;
+}
+
+inline Variant & Variant::operator = (Variant && other) noexcept
+{
+	if(this != &other) {
+		metaType = std::move(other.metaType);
+		data = std::move(other.data);
+	}
+
+	return *this;
 }
 
 template <typename T>
-void Variant::doConstruct(T && value,
-	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
+inline Variant & Variant::operator = (T && value)
 {
-	metaType = metapp::getMetaType<typename std::remove_reference<T>::type>();
-	metaType->constructData(
-		&data,
-		(const void *)&value,
-		nullptr,
-		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
-	);
-}
+	doConstruct(std::forward<T>(value));
 
-template <typename T>
-inline Variant & Variant::operator = (T value)
-{
-	*this = Variant::create<T>(value);
-	
 	return *this;
 }
 
@@ -152,6 +188,50 @@ template <typename T>
 inline Variant Variant::castSilently() const
 {
 	return castSilently(metapp::getMetaType<T>());
+}
+
+inline bool Variant::isEmpty() const noexcept
+{
+	return metaType->isVoid();
+}
+
+inline void Variant::swap(Variant & other) noexcept
+{
+	using std::swap;
+
+	swap(metaType, other.metaType);
+	swap(data, other.data);
+}
+
+template <typename T>
+inline void Variant::doConstruct(T && value,
+	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
+{
+	metaType = value.metaType;
+	data = value.data;
+}
+
+template <typename T>
+inline void Variant::doConstruct(T && value,
+	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
+{
+	metaType = metapp::getMetaType<typename std::remove_reference<T>::type>();
+	metaType->constructData(
+		&data,
+		(const void *)&value,
+		nullptr,
+		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+	);
+}
+
+inline void swap(Variant & a, Variant & b) noexcept
+{
+	a.swap(b);
+}
+
+inline TypeKind getTypeKind(const Variant & v)
+{
+	return v.getMetaType()->getTypeKind();
 }
 
 

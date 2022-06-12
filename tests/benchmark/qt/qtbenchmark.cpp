@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <chrono>
+#include <vector>
 
 constexpr int generalIterations = 10 * 1000 * 1000;
 
@@ -140,6 +141,53 @@ void benchmarkVariantCast()
     std::cout << "Variant cast: " << t1 << std::endl;
 }
 
+struct HeavyCopy
+{
+    HeavyCopy() : value(0) {}
+
+    HeavyCopy(const HeavyCopy & other) : value(other.value) {
+        doHeavyWork();
+    }
+
+    HeavyCopy & operator = (const HeavyCopy & other) {
+        value = other.value;
+        doHeavyWork();
+        return *this;
+    }
+
+    HeavyCopy(HeavyCopy && other) noexcept : value(other.value) {
+    }
+
+    HeavyCopy & operator = (HeavyCopy && other) noexcept {
+        value = other.value;
+        return *this;
+    }
+
+    void doHeavyWork() {
+        std::vector<int> dataList(128, 6);
+        for(const int item : dataList) {
+            value += item;
+        }
+    }
+    int value;
+};
+
+Q_DECLARE_METATYPE(HeavyCopy)
+
+void benchmarkHeavyCopy()
+{
+    constexpr int iterations = generalIterations;
+    const auto t1 = measureElapsedTime([]() {
+        for(int i = 0; i < iterations; ++i) {
+            QVariant v = QVariant::fromValue(HeavyCopy());
+            v = 5;
+            v = QVariant::fromValue(HeavyCopy());
+        }
+
+    });
+    std::cout << "Variant from heavy copy object: " << t1 << std::endl;
+}
+
 int main(int /*argc*/, char */*argv*/[])
 {
     benchmarkMethod();
@@ -149,6 +197,7 @@ int main(int /*argc*/, char */*argv*/[])
     benchmarkVariantWithFundamental();
     benchmarkVariantWithString();
     benchmarkVariantCast();
+    benchmarkHeavyCopy();
 
     return 0;
 }

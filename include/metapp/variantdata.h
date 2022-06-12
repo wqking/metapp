@@ -68,16 +68,12 @@ public:
 	}
 
 	void constructReference(const void * copyFrom) {
+		object.reset();
 		podAs<const void *>() = copyFrom;
 		setStorageType(storageReference);
 	}
 
 	void * getAddress() const;
-
-	void reset() {
-		setStorageType(storageNone);
-		object.reset();
-	}
 
 	void swap(VariantData & other) noexcept {
 		object.swap(other.object);
@@ -87,6 +83,8 @@ public:
 private:
 	template <typename T>
 	void doConstructOnObjectOrBuffer(const void * copyFrom, std::true_type, const CopyStrategy /*copyStrategy*/) {
+		object.reset();
+
 		setStorageType(storageBuffer);
 
 		if(copyFrom == nullptr) {
