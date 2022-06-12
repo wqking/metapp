@@ -34,16 +34,16 @@ class Variant
 {
 public:
 	template <typename T>
-	static Variant create(const T & value,
+	static Variant create(const typename std::remove_reference<T>::type & value,
 		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
 	template <typename T>
-	static Variant create(const T & value,
+	static Variant create(const typename std::remove_reference<T>::type & value,
 		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
 	template <typename T>
-	static Variant create(T && value,
+	static Variant create(typename std::remove_reference<T>::type && value,
 		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
 	template <typename T>
-	static Variant create(T && value,
+	static Variant create(typename std::remove_reference<T>::type && value,
 		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
 
 	template <typename T>

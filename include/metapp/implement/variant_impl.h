@@ -20,14 +20,14 @@
 namespace metapp {
 
 template <typename T>
-inline Variant Variant::create(const T & value,
+inline Variant Variant::create(const typename std::remove_reference<T>::type & value,
 	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
 {
 	return *(Variant *)(void *)&value;
 }
 
 template <typename T>
-inline Variant Variant::create(const T & value,
+inline Variant Variant::create(const typename std::remove_reference<T>::type & value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	return Variant(
@@ -38,14 +38,14 @@ inline Variant Variant::create(const T & value,
 }
 
 template <typename T>
-inline Variant Variant::create(T && value,
+inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
 {
 	return *(Variant *)(void *)&value;
 }
 
 template <typename T>
-inline Variant Variant::create(T && value,
+inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	return Variant(
