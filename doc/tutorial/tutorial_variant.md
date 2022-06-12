@@ -67,11 +67,11 @@ v.get<std::string &>() = "world";
 ASSERT(v.get<const std::string &>() == "world");
 ```
 
-Now v contains char *.
+Now v contains char [].
 
 ```c++
 v = "great";
-ASSERT(strcmp(v.get<const char *>(), "great") == 0);
+ASSERT(strcmp(v.get<const char []>(), "great") == 0);
 ```
 
 Cast to const char *.

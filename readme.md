@@ -57,7 +57,8 @@ and much more.
   - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 no template parameters are needed. All parameters and return values are passed via metapp::Variant.
   - Imitate C++ reference extensively for better performance.
-  - Good performance. The performance is roughly similar to Qt meta system.
+  - Good performance. The performance is roughly similar to Qt meta system. Performance, binary size and compile time
+are continuously optimized.
   - Automatically type conversion when getting/setting fields, invoking methods, etc.
   - Support multiple inheritance and hierarchy.
   - Support using in dynamic library (plugins).
@@ -223,11 +224,11 @@ metapp::Variant casted = v.cast<double>();
 ASSERT(casted.get<double>() == 5.0);
 ```
 
-Now v contains pointer to char.
+Now v contains char array.
 
 ```c++
 v = "hello";
-ASSERT(strcmp(v.get<char *>(), "hello") == 0);
+ASSERT(strcmp(v.get<char []>(), "hello") == 0);
 ```
 
 Cast to std::string.
@@ -396,10 +397,11 @@ A std::vector of int.
 std::vector<int> container1 { 1, 5, 9, 6, 7 };
 ```
 
-Construct a Variant with the vector. To avoid container1 being copied, we use reference.
+Construct a Variant with the vector. To avoid container1 being copied, we move the container1 into Variant.
 
 ```c++
-metapp::Variant v1 = metapp::Variant::reference(container1);
+metapp::Variant v1 = std::move(container1);
+ASSERT(container1.empty()); // container1 was moved
 ```
 
 Concat the items in the vector.
@@ -613,7 +615,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 
 - Miscellaneous
   - [Use metapp in dynamic library](doc/dynamic_library.md)
-  - [Performance benchmark](doc/benchmark.md)
+  - [Performance and benchmark](doc/benchmark.md)
   - [Infrequently Asked Questions](doc/faq.md)
   - [About documentations](doc/about_document.md)
 

@@ -3,10 +3,12 @@
 # metapp performance benchmark
 <!--begintoc-->
 - [Overview](#mdtoc_e7c3d1bb)
+- [How is performance optimized in metapp](#mdtoc_9e7c67a5)
 - [Benchmark environment](#mdtoc_2af9f9b6)
 - [Benchmarks](#mdtoc_41bc1c58)
   - [Variant constructing and assignment, with fundamental](#mdtoc_9d4f2922)
   - [Variant constructing and assignment, with string](#mdtoc_ad1c37e3)
+  - [Variant constructing and assignment, with heavy copy but trivial move object](#mdtoc_38682910)
   - [Variant casting](#mdtoc_3d72fa05)
   - [Get accessible (Property)](#mdtoc_d2467693)
   - [Set accessible (Property)](#mdtoc_d368514c)
@@ -20,7 +22,7 @@
 This document contains some performance benchmark data for metapp. As a reference counterpart, performance of Qt meta system
 is also tested.  
 
-In brief, metapp performance is roughly similar to Qt meta system. The performance should be good enough for
+In brief, metapp performance is roughly similar to or better than Qt meta system. The performance should be good enough for
 most use cases. You may not use any reflection system in the render process in a console game, but you may want reflection
 system for script binding in a console game, so metapp can be useful in high performance applications.  
 
@@ -33,6 +35,18 @@ not much overlapped types supported by both metapp and Qt. So for more complicat
 
 Note: the sample code in the document is only for demonstration purpose, it's not for compiling. There are compile-able code
 in folder `metapp/tests/benchmark`. To build the benchmark, follow the unittests build instruction in root readme.
+
+<a id="mdtoc_9e7c67a5"></a>
+## How is performance optimized in metapp
+
+Optimization is continuously done on metapp. Here lists several optimizations that have done.  
+
+1. The arithmetic meta types use O(1) algorithm for casting instead of O(N) linear search algorithm in `metapp::CastToTypes`.  
+2. `MetaType::equal` related code is optimized. It's the very core and very frequently called function.
+3. `Variant` constructors and assignments support universal reference and move semantic.
+4. When constructing data in `Variant`, now using `std::make_shared` instead previously raw `new` to reduce extra heap allocations.
+
+Those optimizations, and others, have improved the performance significantly.
 
 <a id="mdtoc_2af9f9b6"></a>
 ## Benchmark environment
@@ -56,7 +70,7 @@ Qt version: 5.12.10
 <a id="mdtoc_9d4f2922"></a>
 ### Variant constructing and assignment, with fundamental
 
-10M iterations, metapp uses 806 ms, Qt uses 517 ms.  
+10M iterations, metapp uses 255 ms, Qt uses 517 ms.  
 
 Code for metapp
 
@@ -87,7 +101,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_ad1c37e3"></a>
 ### Variant constructing and assignment, with string
 
-10M iterations, metapp uses 2529 ms, Qt uses 3623 ms.  
+10M iterations, metapp uses 1349 ms, Qt uses 3623 ms.  
 
 Code for metapp
 
@@ -113,15 +127,81 @@ for(int i = 0; i < iterations; ++i) {
 
 **Remarks**  
 
-The performance looks like not good. Most time should be spent on the last assignment of `std::string` and `QString`, because
-that will copy the string to the variant internal buffer.  
+In metapp, the statement `v = "abc"` will copy the char array to Variant internal buffer. The statement `v = std::string("def")` will
+move the string to Variant internal buffer since it's a rvalue, but constructing and destroy the `std::string` will use a lot of time,
+though it's not related to metapp.
 
-Tip: in metapp, for non-fundamental types, use `Variant of reference` when possible to avoid copying.
+<a id="mdtoc_38682910"></a>
+### Variant constructing and assignment, with heavy copy but trivial move object
+
+10M iterations, metapp uses 2379 ms, Qt uses 6908 ms.  
+
+Code for metapp
+
+```c++
+struct HeavyCopy
+{
+  HeavyCopy() : value(0) {}
+
+  HeavyCopy(const HeavyCopy & other) : value(other.value) {
+    doHeavyWork();
+  }
+
+  HeavyCopy & operator = (const HeavyCopy & other) {
+    value = other.value;
+    doHeavyWork();
+    return *this;
+  }
+
+  HeavyCopy(HeavyCopy && other) noexcept : value(other.value) {
+  }
+
+  HeavyCopy & operator = (HeavyCopy && other) noexcept {
+    value = other.value;
+    return *this;
+  }
+
+  void doHeavyWork() {
+    std::vector<int> dataList(128, 6);
+    for(const int item : dataList) {
+      value += item;
+    }
+  }
+  int value;
+};
+
+for(int i = 0; i < iterations; ++i) {
+  metapp::Variant v = HeavyCopy();
+  v = 5;
+  v = HeavyCopy();
+}
+```
+
+Code for Qt
+
+```c++
+Q_DECLARE_METATYPE(HeavyCopy)
+
+for(int i = 0; i < iterations; ++i) {
+  QVariant v = QVariant::fromValue(HeavyCopy());
+  v = 5;
+  v = QVariant::fromValue(HeavyCopy());
+}
+```
+
+**Remarks**  
+
+`HeavyCopy` is a class that copy constructor and assignment are heavy and move constructor and assignment are trivial.  
+`std::vector` has similar characteristic. The reason not using `std::vector` here is that `std::vector` will do heap
+allocation on constructing, that will take a lot of extra time (about 2500 ms extra time on both metapp and Qt) and that's
+not related to the benchmark. `HeavyCopy` acts as a `std::vector` without heap allocation.  
+
+Note metapp needs about 2 seconds to finish this benchmark, most time is spent on allocate `HeavyCopy` on the heap.
 
 <a id="mdtoc_3d72fa05"></a>
 ### Variant casting
 
-10M iterations, metapp uses 831 ms, Qt uses 1752 ms.  
+10M iterations, metapp uses 815 ms, Qt uses 1752 ms.  
 
 Code for metapp
 
@@ -148,7 +228,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d2467693"></a>
 ### Get accessible (Property)
 
-10M iterations, metapp uses 263 ms, Qt uses 755 ms.  
+10M iterations, metapp uses 273 ms, Qt uses 755 ms.  
 
 Code for metapp
 
@@ -195,7 +275,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d368514c"></a>
 ### Set accessible (Property)
 
-10M iterations, metapp uses 465 ms, Qt uses 383 ms.  
+10M iterations, metapp uses 504 ms, Qt uses 383 ms.  
 
 Code for metapp
 
@@ -224,7 +304,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d289b5b9"></a>
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
-10M iterations, metapp uses 744 ms, Qt uses 602 ms.  
+10M iterations, metapp uses 788 ms, Qt uses 602 ms.  
 
 Code for metapp
 
@@ -262,15 +342,15 @@ for(int i = 0; i < iterations; ++i) {
 
 **Remarks**  
 
-When invoking Qt `QMetaMethod`, Qt doesn't very thin wrapper on the arguments. To my limited knowledge, Qt only gets arguments' addresses,
-does basic type checking, and pass the arguments' addresses to the target method directly (that's why Qt requires the arguments types
+When invoking Qt `QMetaMethod`, Qt does very thin wrapper on the arguments. To my limited knowledge, Qt only gets arguments' addresses,
+does basic type checking, and passes the arguments' addresses to the target method directly (that's why Qt requires the arguments types
 must match the parameters types in the target method).  
 For metapp, the arguments are the general `Variant`, there is more to do than Qt when passing `Variant` to the target method.  
 
 <a id="mdtoc_e989de5b"></a>
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 1358 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 1226 ms, Qt uses 1034 ms.  
 
 Code for metapp
 

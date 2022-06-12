@@ -20,6 +20,7 @@
 #include "metapp/exception.h"
 
 #include <type_traits>
+#include <memory>
 
 namespace metapp {
 
@@ -131,6 +132,84 @@ T * constructOnHeap(const void * copyFrom, void * memory, const CopyStrategy cop
 
 		default:
 			return constructOnHeapAutoDetect<T>(copyFrom, memory, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+		}
+	}
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrDefault(std::true_type)
+{
+	return std::make_shared<T>();
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrDefault(std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return std::shared_ptr<T>();
+}
+
+template <typename T, typename U>
+std::shared_ptr<T> constructSharedPtrAutoDetect(const void * copyFrom, std::true_type, U)
+{
+	return std::make_shared<T>(*(T *)copyFrom);
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrAutoDetect(const void * copyFrom, std::false_type, std::true_type)
+{
+	return std::make_shared<T>(std::move(*(T *)copyFrom));
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrAutoDetect(const void * /*copyFrom*/, std::false_type, std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return std::shared_ptr<T>();
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrCopy(const void * copyFrom, std::true_type)
+{
+	return std::make_shared<T>(*(T *)copyFrom);
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrCopy(const void * /*copyFrom*/, std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return std::shared_ptr<T>();
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrMove(const void * copyFrom, std::true_type)
+{
+	return std::make_shared<T>(std::move(*(T *)copyFrom));
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtrMove(const void * /*copyFrom*/, std::false_type)
+{
+	raiseException<NotConstructibleException>();
+	return std::shared_ptr<T>();
+}
+
+template <typename T>
+std::shared_ptr<T> constructSharedPtr(const void * copyFrom, const CopyStrategy copyStrategy)
+{
+	if(copyFrom == nullptr) {
+		return constructSharedPtrDefault<T>(std::is_default_constructible<T>());
+	}
+	else {
+		switch(copyStrategy) {
+		case CopyStrategy::copy:
+			return constructSharedPtrCopy<T>(copyFrom, std::is_copy_assignable<T>());
+
+		case CopyStrategy::move:
+			return constructSharedPtrMove<T>(copyFrom, std::is_move_assignable<T>());
+
+		default:
+			return constructSharedPtrAutoDetect<T>(copyFrom, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
 		}
 	}
 }

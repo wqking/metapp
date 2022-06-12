@@ -56,7 +56,8 @@ value is referenced instead of copied, so the memory and performance cost is kep
 	- True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 		no template parameters are needed. All parameters and return values are passed via metapp::Variant.
 	- Imitate C++ reference extensively for better performance.
-	- Good performance. The performance is roughly similar to Qt meta system.
+	- Good performance. The performance is roughly similar to Qt meta system. Performance, binary size and compile time
+		are continuously optimized.
 	- Automatically type conversion when getting/setting fields, invoking methods, etc.
 	- Support multiple inheritance and hierarchy.
 	- Support using in dynamic library (plugins).
@@ -204,9 +205,9 @@ ExampleFunc
 	metapp::Variant casted = v.cast<double>();
 	ASSERT(casted.get<double>() == 5.0);
 
-	//desc Now v contains pointer to char.
+	//desc Now v contains char array.
 	v = "hello";
-	ASSERT(strcmp(v.get<char *>(), "hello") == 0);
+	ASSERT(strcmp(v.get<char []>(), "hello") == 0);
 	//desc Cast to std::string.
 	casted = v.cast<std::string>();
 	// Get as reference to avoid copy.
@@ -355,8 +356,9 @@ ExampleFunc
 	//code
 	//desc A std::vector of int.
 	std::vector<int> container1 { 1, 5, 9, 6, 7 };
-	//desc Construct a Variant with the vector. To avoid container1 being copied, we use reference.
-	metapp::Variant v1 = metapp::Variant::reference(container1);
+	//desc Construct a Variant with the vector. To avoid container1 being copied, we move the container1 into Variant.
+	metapp::Variant v1 = std::move(container1);
+	ASSERT(container1.empty()); // container1 was moved
 	//desc Concat the items in the vector.
 	ASSERT(concat(v1) == "15967");
 

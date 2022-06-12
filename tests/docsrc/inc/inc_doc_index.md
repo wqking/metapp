@@ -45,6 +45,6 @@
 
 - Miscellaneous
 	- [Use metapp in dynamic library](doc/dynamic_library.md)
-	- [Performance benchmark](doc/benchmark.md)
+	- [Performance and benchmark](doc/benchmark.md)
 	- [Infrequently Asked Questions](doc/faq.md)
 	- [About documentations](doc/about_document.md)

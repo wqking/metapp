@@ -62,9 +62,9 @@ TEST_CASE("tutorialVariant")
 	v.get<std::string &>() = "world";
 	ASSERT(v.get<const std::string &>() == "world");
 
-	//desc Now v contains char *.
+	//desc Now v contains char [].
 	v = "great";
-	ASSERT(strcmp(v.get<const char *>(), "great") == 0);
+	ASSERT(strcmp(v.get<const char []>(), "great") == 0);
 
 	//desc Cast to const char *.
 	metapp::Variant casted = v.cast<std::string>();
