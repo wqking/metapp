@@ -65,9 +65,9 @@ Variant castArgument(const ArgumentSpan & arguments)
 }
 
 template <typename TL, int N>
-auto getArgument(const ArgumentSpan & arguments) -> typename TypeListGetAt<TL, N>::Type
+auto getArgument(const ArgumentSpan & arguments) -> typename TypeListGetAt<TL, N>::Type &
 {
-	return arguments[N].template get<typename TypeListGetAt<TL, N>::Type>();
+	return arguments[N].template get<typename TypeListGetAt<TL, N>::Type &>();
 }
 
 template <typename ArgList>

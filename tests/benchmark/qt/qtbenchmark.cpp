@@ -21,6 +21,9 @@ class TestClass : public QObject
     Q_OBJECT
 
 public:
+    Q_INVOKABLE void nothing() {
+    }
+
     Q_INVOKABLE int add(int a, int b) {
         return a + b;
     }
@@ -30,7 +33,23 @@ public:
     int value;
 };
 
-void benchmarkMethod()
+void benchmarkMethodNothing()
+{
+    TestClass obj;
+    QByteArray normalizedSignature = QMetaObject::normalizedSignature("nothing()");
+    const int index = obj.metaObject()->indexOfMethod(normalizedSignature);
+    QMetaMethod method = obj.metaObject()->method(index);
+    constexpr int iterations = generalIterations;
+    const auto t1 = measureElapsedTime([&method, &obj]() {
+        for(int i = 0; i < iterations; ++i) {
+            method.invoke(&obj, Qt::DirectConnection);
+        }
+
+    });
+    std::cout << "Callable, invoke `void TestClass::nothing()`: " << t1 << std::endl;
+}
+
+void benchmarkMethodAdd()
 {
     TestClass obj;
     QByteArray normalizedSignature = QMetaObject::normalizedSignature("add(int, int)");
@@ -190,7 +209,8 @@ void benchmarkHeavyCopy()
 
 int main(int /*argc*/, char */*argv*/[])
 {
-    benchmarkMethod();
+    benchmarkMethodNothing();
+    benchmarkMethodAdd();
     benchmarkMethodCast();
     benchmarkPropertyGet();
     benchmarkPropertySet();

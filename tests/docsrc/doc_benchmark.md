@@ -275,6 +275,42 @@ for(int i = 0; i < iterations; ++i) {
 }
 ```
 
+### Invoke method `void ()`
+
+10M iterations, metapp uses 213 ms, Qt uses 433 ms.  
+
+Code for metapp
+
+```c++
+struct TestClass
+{
+	void nothing()
+	{
+	}
+};
+
+metapp::Variant v = &TestClass::nothing;
+TestClass obj;
+metapp::Variant instance = &obj;
+const metapp::MetaCallable * metaCallable = v.getMetaType()->getMetaCallable();
+for(int i = 0; i < iterations; ++i) {
+	metaCallable->invoke(v, instance, {});
+}
+```
+
+Code for Qt
+
+```c++
+TestClass obj;
+QByteArray normalizedSignature = QMetaObject::normalizedSignature("nothing()");
+const int index = obj.metaObject()->indexOfMethod(normalizedSignature);
+QMetaMethod method = obj.metaObject()->method(index);
+constexpr int iterations = generalIterations;
+for(int i = 0; i < iterations; ++i) {
+	method.invoke(&obj, Qt::DirectConnection);
+}
+```
+
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
 10M iterations, metapp uses 788 ms, Qt uses 602 ms.  
@@ -318,7 +354,9 @@ for(int i = 0; i < iterations; ++i) {
 When invoking Qt `QMetaMethod`, Qt does very thin wrapper on the arguments. To my limited knowledge, Qt only gets arguments' addresses,
 does basic type checking, and passes the arguments' addresses to the target method directly (that's why Qt requires the arguments types
 must match the parameters types in the target method).  
-For metapp, the arguments are the general `Variant`, there is more to do than Qt when passing `Variant` to the target method.  
+For metapp, the arguments are the general `Variant`, there is more to do than Qt when passing `Variant` to the target method. metapp needs
+to create Variant from the argument (in the code it's `i` and `i+1`), then convert the Variant back to the target arguments (in the code
+it's `int` and `int`), then invoke the callable.
 
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 

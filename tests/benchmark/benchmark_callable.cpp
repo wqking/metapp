@@ -23,11 +23,30 @@ namespace {
 
 struct TestClass
 {
+	void nothing()
+	{
+	}
+
 	int add(const int a, const int b)
 	{
 		return a + b;
 	}
 };
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		metapp::Variant v = &TestClass::nothing;
+		TestClass obj;
+		metapp::Variant instance = &obj;
+		const metapp::MetaCallable * metaCallable = v.getMetaType()->getMetaCallable();
+		for(int i = 0; i < iterations; ++i) {
+			metaCallable->invoke(v, instance, {});
+		}
+	});
+	printResult(t, iterations, "Callable, invoke `void TestClass::nothing()`");
+}
 
 BenchmarkFunc
 {
