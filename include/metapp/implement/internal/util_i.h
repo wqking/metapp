@@ -20,6 +20,7 @@
 #include "metapp/utilities/utility.h"
 
 #include <string>
+#include <array>
 
 namespace metapp {
 
@@ -30,9 +31,8 @@ void verifyVariantWritable(const Variant & var);
 template <typename ...Types>
 inline const MetaType * getMetaTypeAt(const int index)
 {
-	const MetaType * metaTypeList[] = {
+	std::array<const MetaType *, sizeof...(Types)> metaTypeList {
 		getMetaType<Types>()...,
-		nullptr
 	};
 	return metaTypeList[index];
 }
@@ -40,9 +40,8 @@ inline const MetaType * getMetaTypeAt(const int index)
 template <typename ...Types>
 inline const MetaType * getMetaTypeAt(const int index, const TypeList<Types...> &)
 {
-	const MetaType * metaTypeList[] = {
+	std::array<const MetaType *, sizeof...(Types)> metaTypeList {
 		getMetaType<Types>()...,
-		nullptr
 	};
 	return metaTypeList[index];
 }

@@ -177,7 +177,7 @@ Note metapp needs about 2 seconds to finish this benchmark, most time is spent o
 
 ### Variant casting
 
-10M iterations, metapp uses 815 ms, Qt uses 1752 ms.  
+10M iterations, metapp uses 716 ms, Qt uses 1752 ms.  
 
 Code for metapp
 

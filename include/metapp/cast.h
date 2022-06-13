@@ -52,21 +52,14 @@ private:
 
 	using CastFromFunc = Variant (*)(const Variant & value);
 
-	static CastFromFunc doFindCastFromFuncHelper(const MetaType * /*fromMetaType*/, TypeList<>)
+	template <typename ...Types>
+	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
-		return nullptr;
-	}
-
-	template <typename T, typename ...Types>
-	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<T, Types...>)
-	{
-		constexpr std::size_t typeCount = sizeof...(Types) + 1;
+		constexpr std::size_t typeCount = sizeof...(Types);
 		std::array<const MetaType *, typeCount> fromMetaTypeList = {
-			getMetaType<T>(),
 			getMetaType<Types>()...
 		};
 		std::array<CastFromFunc, typeCount> castFromFuncList = {
-			&HelperCastFrom<T>::castFrom,
 			&HelperCastFrom<Types>::castFrom...,
 		};
 		for(std::size_t i = 0; i < typeCount; ++i) {
@@ -123,21 +116,14 @@ private:
 
 	using CastToFunc = Variant (*)(const Variant & value);
 
-	static CastToFunc doFindCastToFuncHelper(const MetaType * /*toMetaType*/, TypeList<>)
+	template <typename ...Types>
+	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<Types...>)
 	{
-		return nullptr;
-	}
-
-	template <typename T, typename ...Types>
-	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<T, Types...>)
-	{
-		constexpr std::size_t typeCount = sizeof...(Types) + 1;
+		constexpr std::size_t typeCount = sizeof...(Types);
 		const std::array<const MetaType *, typeCount> toMetaTypeList {
-			getMetaType<T>(),
 			getMetaType<Types>()...
 		};
 		const std::array<CastToFunc, typeCount> castToFuncList = {
-			&HelperCastTo<T>::castTo,
 			&HelperCastTo<Types>::castTo...,
 		};
 

@@ -22,6 +22,8 @@
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/utilities/utility.h"
 
+#include <array>
+
 namespace metapp {
 
 template <typename FT>
@@ -115,7 +117,7 @@ public:
 
 	static Variant metaCallableInvoke(const Variant & func, const Variant & instance, const ArgumentSpan & arguments)
 	{
-		Variant newArguments[] = { Variant::reference(arguments) };
+		std::array<Variant, 1> newArguments { Variant::reference(arguments) };
 		const FunctionType & variadicFunc = func.get<FunctionType &>();
 		const Variant & underlyingFunc = variadicFunc.getFunc();
 		return underlyingFunc.getMetaType()->getMetaCallable()->invoke(underlyingFunc, instance, newArguments);
