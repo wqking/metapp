@@ -45,6 +45,8 @@ even `std::vector<std::list<std::vector<std::string> > >`.
 - **Imitate C++ reference extensively for better performance.** For example, when getting a property value,
 or get an element value from a container, a `metapp::Variant` of reference to the element is returned when possible, the element
 value is referenced instead of copied, so the memory and performance cost is kept as minimum as possible.
+- **Good performance.** The performance is roughly similar to or better than Qt meta system. The execution speed can no way be
+close to native C++, but it's fast enough for reflection library.
 
 <a id="mdtoc_21927030"></a>
 ## Facts and features
@@ -57,7 +59,7 @@ and much more.
   - True runtime reflection. Accessing fields and properties, calling methods, are truly runtime behavior,
 no template parameters are needed. All parameters and return values are passed via metapp::Variant.
   - Imitate C++ reference extensively for better performance.
-  - Good performance. The performance is roughly similar to Qt meta system. Performance, binary size and compile time
+  - Good performance. The performance is roughly similar to or better than Qt meta system. Performance, binary size and compile time
 are continuously optimized.
   - Automatically type conversion when getting/setting fields, invoking methods, etc.
   - Support multiple inheritance and hierarchy.

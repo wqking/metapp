@@ -40,15 +40,15 @@ private:
 		&& sizeof(T) <= bufferSize
 	>;
 
-	static constexpr uint8_t storageNone = 0;
-	static constexpr uint8_t storageObject = 1;
-	static constexpr uint8_t storageBuffer = 2;
-	static constexpr uint8_t storageSharedPtr = 3;
-	static constexpr uint8_t storageReference = 4;
+	static constexpr int storageNone = 0;
+	static constexpr int storageObject = 1;
+	static constexpr int storageBuffer = 2;
+	static constexpr int storageSharedPtr = 3;
+	static constexpr int storageReference = 4;
 
 public:
 	VariantData()
-		: object(), buffer()
+		: object(), storageType(storageNone), buffer()
 	{
 	}
 
@@ -129,17 +129,18 @@ private:
 		return *(T *)(buffer.data());
 	}
 
-	uint8_t getStorageType() const {
-		return buffer[bufferSize];
+	int getStorageType() const {
+		return storageType;
 	}
 
-	void setStorageType(const uint8_t value) {
-		buffer[bufferSize] = value;
+	void setStorageType(const int value) {
+		storageType = value;
 	}
 
 private:
 	std::shared_ptr<void> object;
-	std::array<uint8_t, bufferSize + 1> buffer;
+	int storageType;
+	std::array<uint8_t, bufferSize> buffer;
 };
 
 inline void swap(VariantData & a, VariantData & b) noexcept

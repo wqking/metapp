@@ -313,7 +313,7 @@ for(int i = 0; i < iterations; ++i) {
 
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
-10M iterations, metapp uses 788 ms, Qt uses 602 ms.  
+10M iterations, metapp uses 663 ms, Qt uses 602 ms.  
 
 Code for metapp
 
@@ -360,7 +360,7 @@ it's `int` and `int`), then invoke the callable.
 
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 1170 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 1153 ms, Qt uses 1034 ms.  
 
 Code for metapp
 
