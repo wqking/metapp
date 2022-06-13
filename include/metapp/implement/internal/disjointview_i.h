@@ -151,7 +151,7 @@ public:
 		return *this;
 	}
 
-	DisjointView & operator = (DisjointView && other) {
+	DisjointView & operator = (DisjointView && other) noexcept {
 		if(this != &other) {
 			smallList = std::move(other.smallList);
 			largeList = std::move(other.largeList);

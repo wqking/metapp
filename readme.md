@@ -246,7 +246,8 @@ ASSERT(casted.get<const std::string &>() == "hello");
 Let's inspect the type `const std::map<int, std::string> * volatile *`
 
 ```c++
-const metapp::MetaType * metaType = metapp::getMetaType<const std::map<const int, std::string> * volatile *>();
+const metapp::MetaType * metaType = metapp::getMetaType<
+  const std::map<const int, std::string> * volatile *>();
 ASSERT(metaType->isPointer()); // The type is pointer
 
 // Second level pointer
@@ -331,7 +332,7 @@ const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 `getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
 Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.  
-The constructor is an overloaded callable since there are two constructors registgerd,
+The constructor is an overloaded callable since there are two constructors registered,
 `metapp::callableInvoke` will choose the proper callable to invoke.
 
 ```c++
@@ -434,8 +435,7 @@ We can even pass a pointer to container to `concat`.
 
 ```c++
 std::deque<int> container2 { 1, 2, 3 };
-metapp::Variant v2(&container2);
-ASSERT(concat(v2) == "123");
+ASSERT(concat(&container2) == "123");
 ```
 
 <a id="mdtoc_b8048b76"></a>
