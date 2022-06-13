@@ -11,6 +11,7 @@ set(SRC_BENCHMARK
 	benchmark_accessible.cpp
 	benchmark_callable.cpp
 	benchmark_variant.cpp
+	benchmark_misc.cpp
 )
 
 add_executable(
