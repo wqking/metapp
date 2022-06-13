@@ -18,6 +18,7 @@
 #include "metapp/metatype.h"
 #include "metapp/metarepo.h"
 #include "metapp/allmetatypes.h"
+#include "metapp/utilities/utility.h"
 
 namespace metapp {
 
@@ -87,7 +88,7 @@ const MetaType * MetaItem::asMetaType() const
 const MetaRepo * MetaItem::asMetaRepo() const
 {
 	doCheckType(Type::metaRepo);
-	return doGetVariant().get<const MetaRepo *>();
+	return static_cast<const MetaRepo *>(getPointer(doGetVariant()));
 }
 
 const Variant & MetaItem::asEnumValue() const

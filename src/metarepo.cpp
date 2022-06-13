@@ -441,10 +441,10 @@ MetaItemView MetaRepo::getTypeView() const
 	return MetaItemView(&doGetTypeList());
 }
 
-MetaItem & MetaRepo::registerRepo(const std::string & name, MetaRepo * repo)
+MetaItem & MetaRepo::registerRepo(const std::string & name, Variant repo)
 {
-	if(repo == nullptr) {
-		repo = new MetaRepo();
+	if(repo.isEmpty()) {
+		repo = Variant(MetaRepo());
 	}
 	if(! repoData) {
 		repoData = std::make_shared<ItemData>();

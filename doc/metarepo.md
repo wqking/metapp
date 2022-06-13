@@ -126,12 +126,13 @@ The returned `MetaItem` can be used to add annotations to the meta data.
 #### registerRepo, simulate namespace
 
 ```c++
-MetaItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+MetaItem & registerRepo(const std::string & name, Variant repo = Variant());
 ```
 
 Register a sub MetaRepo.  
-If the parameter `repo` is nullptr, `registerRepo` creates a new MetaRepo and register it under the `name`. The created `MetaRepo` can be got via `MetaItem::getTarget()` in the returned value.  
-If the parameter `repo` is not nullptr, `registerRepo` takes ownership of the `repo`. That to say, `repo` should not be freed by the program. `MetaRepo` will free it later.  
+If the parameter `repo` is empty, `registerRepo` creates a new MetaRepo and register it under the `name`.
+The created `MetaRepo` can be got via `MetaItem::getTarget()` in the returned value.  
+If the parameter `repo` is not empty, `repo` should be a value, reference, pointer, or smart pointer of `MetaRepo`.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 Note: registering a MetaRepo can simulate namespace. A MetaRepo can be treated as a namespace.  
 

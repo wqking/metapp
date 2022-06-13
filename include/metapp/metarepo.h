@@ -54,7 +54,7 @@ public:
 	const MetaItem & getType(const MetaType * metaType) const;
 	MetaItemView getTypeView() const;
 
-	MetaItem & registerRepo(const std::string & name, MetaRepo * repo = nullptr);
+	MetaItem & registerRepo(const std::string & name, Variant repo = Variant());
 	const MetaItem & getRepo(const std::string & name) const;
 	MetaItemView getRepoView() const;
 
