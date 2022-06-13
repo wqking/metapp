@@ -322,7 +322,7 @@ For metapp, the arguments are the general `Variant`, there is more to do than Qt
 
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 1226 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 1170 ms, Qt uses 1034 ms.  
 
 Code for metapp
 

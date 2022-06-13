@@ -90,7 +90,7 @@ public:
 			return Variant();
 		}
 
-		FunctionType f = callable.get<FunctionType &>();
+		FunctionType & f = callable.get<FunctionType &>();
 		return internal_::MetaCallableInvoker<Class, RT, ArgumentTypeList>::invoke(f, getPointer(instance), arguments);
 	}
 

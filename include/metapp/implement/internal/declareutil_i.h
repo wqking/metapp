@@ -135,7 +135,7 @@ struct MetaCallableInvoker <void, RT, ArgList>
 	}
 
 	template <typename FT, int ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
+	static Variant doInvoke(FT && func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -159,7 +159,7 @@ struct MetaCallableInvoker <void, void, ArgList>
 	}
 
 	template <typename FT, int ...Indexes>
-	static Variant doInvoke(FT func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
+	static Variant doInvoke(FT && func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -184,7 +184,7 @@ struct MetaCallableInvoker
 	}
 
 	template <typename FT, int ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
+	static Variant doInvoke(FT && func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
@@ -208,7 +208,7 @@ struct MetaCallableInvoker <Class, void, ArgList>
 	}
 
 	template <typename FT, int ...Indexes>
-	static Variant doInvoke(FT func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
+	static Variant doInvoke(FT && func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
 		std::array<Variant, argCount> castedArguments {
 			castArgument<ArgumentTypeList, Indexes>(arguments)...
 		};
