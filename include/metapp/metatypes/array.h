@@ -102,12 +102,7 @@ private:
 			}
 		}
 		else {
-			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory, copyStrategy);
-			}
-			else {
-				return internal_::constructOnHeap<ArrayWrapper>(nullptr, memory, copyStrategy);
-			}
+			return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory, copyStrategy);
 		}
 		return nullptr;
 	}
