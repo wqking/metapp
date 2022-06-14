@@ -221,7 +221,7 @@ ExampleFunc
 ExampleFunc
 {
 	//code
-	//desc Let's inspect the type `const std::map<int, std::string> * volatile *`
+	//desc Let's inspect the type `const std::map<const int, std::string> * volatile *`
 	const metapp::MetaType * metaType = metapp::getMetaType<
 		const std::map<const int, std::string> * volatile *>();
 	ASSERT(metaType->isPointer()); // The type is pointer
@@ -345,7 +345,7 @@ ExampleFunc
 	//code
 }
 
-//desc ### Runtime generic STL container
+//desc ### Runtime generic algorithm on STL container
 //desc Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 //code
 std::string concat(const metapp::Variant & container)
@@ -404,10 +404,10 @@ ExampleFunc
 		//desc C++ equivalence is `int & rn = n;`
 		metapp::Variant rn = metapp::Variant::reference(n);
 		ASSERT(rn.get<int>() == 9);
-		//desc Assign to rn with new value. C++ equivalence is `rn = 38;` where rn is `int &`.
-		//desc Here we can't user `rn = 38;` where rn is `Variant`, that's different meaning.
+		//desc Assign to rn with new value. C++ equivalence is `rn = (int)38.1;` where rn is `int &`.
+		//desc Here we can't use `rn = 38.1;` where rn is `Variant`, that's different meaning.
 		//desc See Variant document for details.
-		rn.assign(38); // different with rn = 38
+		rn.assign(38.1); // different with rn = 38.1, `rn = 38.1` won't modify n
 		//desc rn gets new value.
 		ASSERT(rn.get<int>() == 38);
 		//desc n is modified too.

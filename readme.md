@@ -16,7 +16,7 @@
   - [Use Variant](#mdtoc_cee017b6)
   - [Inspect MetaType](#mdtoc_3aaa429b)
   - [Reflect a class (declare meta type)](#mdtoc_19cc9779)
-  - [Runtime generic STL container](#mdtoc_5243b8d0)
+  - [Runtime generic algorithm on STL container](#mdtoc_afc73315)
   - [Use reference with Variant](#mdtoc_b8048b76)
   - [Work with unreflected types](#mdtoc_5095655f)
 - [Documentations](#mdtoc_aa76f386)
@@ -243,7 +243,7 @@ ASSERT(casted.get<const std::string &>() == "hello");
 
 <a id="mdtoc_3aaa429b"></a>
 ### Inspect MetaType
-Let's inspect the type `const std::map<int, std::string> * volatile *`
+Let's inspect the type `const std::map<const int, std::string> * volatile *`
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<
@@ -383,8 +383,8 @@ const auto & methodCalculate = metaClass->getCallable("calculate");
 ASSERT(metapp::callableInvoke(methodCalculate, myPet, 2, 3).get<int>() == 5);
 ```
 
-<a id="mdtoc_5243b8d0"></a>
-### Runtime generic STL container
+<a id="mdtoc_afc73315"></a>
+### Runtime generic algorithm on STL container
 Let's define a `concat` function that processes any Variant that implements meta interface MetaIterable
 
 ```c++
@@ -467,12 +467,12 @@ metapp::Variant rn = metapp::Variant::reference(n);
 ASSERT(rn.get<int>() == 9);
 ```
 
-Assign to rn with new value. C++ equivalence is `rn = 38;` where rn is `int &`.
-Here we can't user `rn = 38;` where rn is `Variant`, that's different meaning.
+Assign to rn with new value. C++ equivalence is `rn = (int)38.1;` where rn is `int &`.
+Here we can't use `rn = 38.1;` where rn is `Variant`, that's different meaning.
 See Variant document for details.
 
 ```c++
-rn.assign(38); // different with rn = 38
+rn.assign(38.1); // different with rn = 38.1, `rn = 38.1` won't modify n
 ```
 
 rn gets new value.
