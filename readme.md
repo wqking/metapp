@@ -287,6 +287,12 @@ public:
 private:
   int age;
 };
+
+// We can use factory function as constructor.
+MyPet * createMyPet(const std::string & name, const int birthYear, const int nowYear)
+{
+  return new MyPet(name, nowYear - birthYear);
+}
 ```
 
 Now let's `DeclareMetaType` for MyPet. We `DeclareMetaType` for all kinds of types,
@@ -304,6 +310,8 @@ struct metapp::DeclareMetaType<MyPet> : metapp::DeclareMetaTypeBase<MyPet>
         // Register constructors
         mc.registerConstructor(metapp::Constructor<MyPet ()>());
         mc.registerConstructor(metapp::Constructor<MyPet (const std::string &, int)>());
+        // Factory function as constructor
+        mc.registerConstructor(&createMyPet);
 
         // Register field with getter/setter function
         mc.registerAccessible("age",
@@ -332,7 +340,7 @@ const metapp::MetaClass * metaClass = metaType->getMetaClass();
 
 `getConstructor`, then invoke the constructor as if it's a normal callable, with proper arguments.
 Then obtain the MyPet instance pointer from the returned Variant and store it in a `std::shared_ptr`.  
-The constructor is an overloaded callable since there are two constructors registered,
+The constructor is an overloaded callable since there are three constructors registered,
 `metapp::callableInvoke` will choose the proper callable to invoke.
 
 ```c++
@@ -341,6 +349,11 @@ std::shared_ptr<MyPet> myPet(metapp::callableInvoke(metaClass->getConstructor(),
 // Verify the object is constructed properly.
 ASSERT(myPet->name == "Lovely");
 ASSERT(myPet->getAge() == 3);
+// Call the factory function, the result is same as myPet with name == "Lovely" and age == 3.
+std::shared_ptr<MyPet> myPetFromFactory(metapp::callableInvoke(metaClass->getConstructor(), nullptr,
+  "Lovely", 2019, 2022).get<MyPet *>());
+ASSERT(myPetFromFactory->name == "Lovely");
+ASSERT(myPetFromFactory->getAge() == 3);
 ```
 
 Get field by name then get the value.

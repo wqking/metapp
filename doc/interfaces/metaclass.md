@@ -84,7 +84,8 @@ The MetaClass instance under constructing is passed as the parameter. The callba
 MetaItem & registerConstructor(const Variant & constructor);
 ```
 
-Register a constructor. The parameter `constructor` is a Variant of `metapp::Constructor`.  
+Register a constructor. The parameter `constructor` is a Variant of `metapp::Constructor` or any callable that returns
+a pointer to the class such as factory function.  
 The returned `MetaItem` can be used to add annotations to the meta data.
 
 **Example**  
@@ -100,6 +101,12 @@ public:
   int n;
 };
 
+// Factory function
+CtorClass * createCtorClass(const std::string & s, const int a, const int b)
+{
+  return new CtorClass(s, a + b);
+}
+
 template <>
 struct metapp::DeclareMetaType<CtorClass> : metapp::DeclareMetaTypeBase<CtorClass>
 {
@@ -109,6 +116,9 @@ struct metapp::DeclareMetaType<CtorClass> : metapp::DeclareMetaTypeBase<CtorClas
       [](metapp::MetaClass & mc) {
         mc.registerConstructor(metapp::Constructor<CtorClass()>());
         mc.registerConstructor(metapp::Constructor<CtorClass(const std::string &, const int)>());
+        // Factory function. The factory is resolved as overloaded function with the above ctors, so
+        // the parameter types/count should not be same.
+        mc.registerConstructor(&createCtorClass);
       }
     );
     return &metaClass;
@@ -338,15 +348,25 @@ If there are more than one constructors, the callable Variant is tkOverloadedFun
 const metapp::MetaType * metaType = metapp::getMetaType<CtorClass>();
 const metapp::MetaClass * metaClass = metaType->getMetaClass();
 const metapp::MetaItem & constructor = metaClass->getConstructor();
+
 // Calling metapp::callableInvoke can invoke the proper function that matches the arguments
 metapp::Variant instance = metapp::callableInvoke(constructor, nullptr, "abc", 5);
 CtorClass * ptr = instance.get<CtorClass *>();
 ASSERT(ptr->s == "abc");
 ASSERT(ptr->n == 5);
 // Don't forget to delete the instance.  
+delete ptr;
+
 // A better approach is to use Variant::takeFrom() to convert the instance to a Variant managed object,
 // then we don't need to delete the instance.
-delete ptr;
+// This time we call the factory function with 3 arguments.
+metapp::Variant instance = metapp::callableInvoke(constructor, nullptr, "def", 5, 3);
+// object takes the ownership of instance, it will free the instance automatically.
+metapp::Variant object = metapp::Variant::takeFrom(instance);
+const CtorClass & ref = object.get<const CtorClass &>();
+ASSERT(ref.s == "def");
+ASSERT(ref.n == 8);
+// We should not delete the instance.  
 ```
 
 <a id="mdtoc_94f64513"></a>

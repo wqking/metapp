@@ -15,3 +15,11 @@ metapp compares meta types using a unique pointer, so whether `typeKind` is uniq
 
 To assign each meta type a unique `typeKind`, we need to [DeclareMetaType](declaremetatype.md)
 
+## Note on performance
+
+When checking `MetaType::equal` across modules, such as the main program (module A) call `Variant::get/cast` or invoke callable that
+is from a dynamic library (module B), the performance can be much slower than doing the same action within a single module, especially
+when the related `MetaType` has a lot of up types or deep level nested up types.  
+The reason is, when checking `MetaType::equal` within a single module, the checking only requires up to two pairs of pointers
+comparison. But when doing it across modules, the checking needs to traverse through all up types recursively and compare the type kind.
+
