@@ -231,7 +231,7 @@ ExampleFunc
 	ASSERT(secondLevelPointer->isPointer());
 	ASSERT(secondLevelPointer->isVolatile()); //second level pointer is volatile
 	
-	// The pointed type (std::map<int, std::string>).
+	// The pointed type (const std::map<const int, std::string>).
 	const metapp::MetaType * pointed = secondLevelPointer->getUpType();
 	ASSERT(pointed->isConst());
 	ASSERT(pointed->getTypeKind() == metapp::tkStdMap);
