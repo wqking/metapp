@@ -125,13 +125,13 @@ T * constructOnHeap(const void * copyFrom, void * memory, const CopyStrategy cop
 	else {
 		switch(copyStrategy) {
 		case CopyStrategy::copy:
-			return constructOnHeapCopy<T>(copyFrom, memory, std::is_copy_assignable<T>());
+			return constructOnHeapCopy<T>(copyFrom, memory, std::is_copy_constructible<T>());
 
 		case CopyStrategy::move:
-			return constructOnHeapMove<T>(copyFrom, memory, std::is_move_assignable<T>());
+			return constructOnHeapMove<T>(copyFrom, memory, std::is_move_constructible<T>());
 
 		default:
-			return constructOnHeapAutoDetect<T>(copyFrom, memory, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+			return constructOnHeapAutoDetect<T>(copyFrom, memory, std::is_copy_constructible<T>(), std::is_move_constructible<T>());
 		}
 	}
 }
@@ -203,13 +203,13 @@ std::shared_ptr<T> constructSharedPtr(const void * copyFrom, const CopyStrategy 
 	else {
 		switch(copyStrategy) {
 		case CopyStrategy::copy:
-			return constructSharedPtrCopy<T>(copyFrom, std::is_copy_assignable<T>());
+			return constructSharedPtrCopy<T>(copyFrom, std::is_copy_constructible<T>());
 
 		case CopyStrategy::move:
-			return constructSharedPtrMove<T>(copyFrom, std::is_move_assignable<T>());
+			return constructSharedPtrMove<T>(copyFrom, std::is_move_constructible<T>());
 
 		default:
-			return constructSharedPtrAutoDetect<T>(copyFrom, std::is_copy_assignable<T>(), std::is_move_assignable<T>());
+			return constructSharedPtrAutoDetect<T>(copyFrom, std::is_copy_constructible<T>(), std::is_move_constructible<T>());
 		}
 	}
 }
