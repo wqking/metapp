@@ -37,7 +37,7 @@ template <typename FT>
 class DefaultArgsFunction
 {
 public:
-	DefaultArgsFunction() : func() {
+	DefaultArgsFunction() : func(), defaultArgs() {
 	}
 
 	DefaultArgsFunction(const Variant & func, std::vector<Variant> defaultArgs)

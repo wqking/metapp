@@ -50,6 +50,11 @@ TEST_CASE("Variant, input stream")
 		ss >> v;
 		REQUIRE(v.get<std::string>() == "abcxyz");
 	}
+
+	SECTION("Unsupported") {
+		metapp::Variant v(std::vector<int>{});
+		REQUIRE_THROWS(ss >> v);
+	}
 }
 
 TEST_CASE("Variant, output stream")
@@ -96,6 +101,11 @@ TEST_CASE("Variant, output stream")
 		metapp::Variant v("abc");
 		ss << v;
 		REQUIRE(ss.str() == "abc");
+	}
+
+	SECTION("Unsupported") {
+		metapp::Variant v(std::vector<int>{});
+		REQUIRE_THROWS(ss << v);
 	}
 
 }

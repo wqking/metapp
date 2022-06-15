@@ -40,6 +40,11 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 	REQUIRE(metapp::callableGetParameterType(v, 0)->equal(metapp::getMetaType<int>()));
 	REQUIRE(metapp::callableGetParameterType(v, 1)->equal(metapp::getMetaType<std::string &>()));
 
+	REQUIRE(metapp::callableGetClassType(v)->isVoid());
+	REQUIRE(metapp::callableGetParameterCountInfo(v).getMinParameterCount() == 1);
+	REQUIRE(metapp::callableGetParameterCountInfo(v).getMaxParameterCount() == 2);
+	REQUIRE(metapp::callableGetReturnType(v)->equal(metapp::getMetaType<std::string>()));
+
 	SECTION("Invoke with default arguments") {
 		metapp::Variant arguments[] = { 5 };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, arguments));
@@ -52,37 +57,69 @@ TEST_CASE("metatypes, DefaultArgsFunction, myFunc1")
 	}
 }
 
-struct MyClass
+TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 {
-	std::vector<std::string> myFunc2(
+	struct MyClass
+	{
+		std::vector<std::string> myFunc2(
 			const int a,
 			const std::string b,
 			const long c,
 			const std::string d,
 			const char e
 		)
-	{
-		return {
-			std::to_string(a + value),
-			b,
-			std::to_string(c),
-			d,
-			std::to_string(e),
-		};
-	}
+		{
+			return {
+				std::to_string(a + value),
+				b,
+				std::to_string(c),
+				d,
+				std::to_string(e),
+			};
+		}
 
-	int value;
-};
+		int value;
+	};
 
-TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
-{
 	metapp::DefaultArgsFunction<decltype(&MyClass::myFunc2)> func(&MyClass::myFunc2, {
 		'a',
 		"default",
 		38
 	});
 	metapp::Variant v(func);
+
+	REQUIRE(metapp::callableGetParameterType(v, 0)->equal(metapp::getMetaType<int>()));
+	REQUIRE(metapp::callableGetParameterType(v, 1)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::callableGetParameterType(v, 2)->equal(metapp::getMetaType<long>()));
+	REQUIRE(metapp::callableGetParameterType(v, 3)->equal(metapp::getMetaType<std::string>()));
+	REQUIRE(metapp::callableGetParameterType(v, 4)->equal(metapp::getMetaType<char>()));
+
+	REQUIRE(metapp::callableGetClassType(v)->equal(metapp::getMetaType<MyClass>()));
+	REQUIRE(metapp::callableGetParameterCountInfo(v).getMinParameterCount() == 2);
+	REQUIRE(metapp::callableGetParameterCountInfo(v).getMaxParameterCount() == 5);
+	REQUIRE(metapp::callableGetReturnType(v)->equal(metapp::getMetaType<std::vector<std::string>>()));
+
 	MyClass obj { 3 };
+	
+	REQUIRE(! metapp::callableCanInvoke(v, &obj, 5));
+	REQUIRE(metapp::callableCanInvoke(v, &obj, 5, "a"));
+	REQUIRE(metapp::callableCanInvoke(v, &obj, 5, "a", 5.1));
+	REQUIRE(metapp::callableCanInvoke(v, &obj, 5, "a", 5.1, std::string("b")));
+	REQUIRE(metapp::callableCanInvoke(v, &obj, 5, "a", 5.1, std::string("b"), 38));
+	REQUIRE(! metapp::callableCanInvoke(v, &obj, "5", "a", 5.1, std::string("b"), 38));
+	REQUIRE(! metapp::callableCanInvoke(v, &obj, 5, "a", 5.1, std::string("b"), 38, 9));
+
+	REQUIRE(metapp::callableRankInvoke(v, &obj, 5) == metapp::invokeRankNone);
+	// metapp::invokeRankMatch * 3 is each of the three default arguments receives metapp::invokeRankMatch.
+	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, std::string("abc"))
+		== metapp::invokeRankMatch + metapp::invokeRankMatch + metapp::invokeRankMatch * 3);
+	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, "abc")
+		== metapp::invokeRankMatch + metapp::invokeRankCast + metapp::invokeRankMatch * 3);
+	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, "abc", 6)
+		== metapp::invokeRankMatch + metapp::invokeRankCast + metapp::invokeRankCast + metapp::invokeRankMatch * 2);
+	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, "abc", 6L)
+		== metapp::invokeRankMatch + metapp::invokeRankCast + metapp::invokeRankMatch + metapp::invokeRankMatch * 2);
+
 	SECTION("Invoke with 3 default arguments") {
 		metapp::Variant arguments[2] = { 5, "hello" };
 		REQUIRE(v.getMetaType()->getMetaCallable()->canInvoke(v, nullptr, arguments));

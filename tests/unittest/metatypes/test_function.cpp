@@ -22,6 +22,59 @@
 
 namespace {
 
+void firstFunc() {}
+
+TEST_CASE("metatypes, tkFunction, construct")
+{
+	using FT = void ();
+
+	SECTION("Variant, FT") {
+		metapp::Variant v(metapp::getMetaType<FT>(), nullptr);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
+		REQUIRE(v.canGet<FT>());
+		REQUIRE(v.get<FT>() == nullptr);
+		// function type is always decayed to function pointer, so FT is not much different with FT *
+		REQUIRE(v.canGet<FT *>());
+		REQUIRE(v.get<FT *>() == nullptr);
+	}
+
+	SECTION("Variant, FT *") {
+		metapp::Variant v(metapp::getMetaType<FT *>(), nullptr);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
+		REQUIRE(v.canGet<FT>());
+		REQUIRE(v.get<FT>() == nullptr);
+		REQUIRE(v.canGet<FT *>());
+		REQUIRE(v.get<FT *>() == nullptr);
+	}
+
+	SECTION("Variant, FT, copy from firstFunc") {
+		// Note here is address of firstFunc, not address of address of firstFunc.
+		// This is because we are creating Variant of type `FT`, so the second argument should
+		// be pointer to FT.
+		// The equivalent pseudo C++ code is `FT v = firstFunc;`, assume firstFunc is not decayed to function pointer,
+		// note the pseudo code is not valid C++.
+		metapp::Variant v(metapp::getMetaType<FT>(), (const void *)&firstFunc);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
+		REQUIRE(v.canGet<FT>());
+		REQUIRE(v.get<FT>() == &firstFunc);
+		REQUIRE(v.canGet<FT *>());
+		REQUIRE(v.get<FT *>() == &firstFunc);
+	}
+
+	SECTION("Variant, FT *, copy from firstFunc") {
+		FT * funcPtr = &firstFunc;
+		// We are creating Variant of type `FT *`, so the second argument should
+		// be pointer to address of FT.
+		// The equivalent pseudo C++ code is `FT * v = &firstFunc;`.
+		metapp::Variant v(metapp::getMetaType<FT *>(), &funcPtr);
+		REQUIRE(metapp::getTypeKind(v) == metapp::tkFunction);
+		REQUIRE(v.canGet<FT>());
+		REQUIRE(v.get<FT>() == funcPtr);
+		REQUIRE(v.canGet<FT *>());
+		REQUIRE(v.get<FT *>() == funcPtr);
+	}
+}
+
 const void * func1(int, const std::vector<int> &) { return nullptr; }
 
 TEST_CASE("metatypes, tkFunction, free function, types")
