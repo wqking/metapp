@@ -23,3 +23,4 @@ if(MSVC)
 	target_link_options(${TARGET_DOCSRC} PRIVATE "/INCREMENTAL")
 endif()
 
+add_test(NAME ${TARGET_DOCSRC} COMMAND ${TARGET_DOCSRC})
