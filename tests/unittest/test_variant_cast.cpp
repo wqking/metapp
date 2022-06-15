@@ -131,6 +131,15 @@ TEST_CASE("Variant, cast int & to int")
 	REQUIRE(m == 38);
 }
 
+TEST_CASE("Variant, cast int & to const volatile int &")
+{
+	int n = 38;
+	metapp::Variant v = metapp::Variant::reference(n);
+	metapp::Variant casted = v.cast<const volatile int &>();
+	const int m = casted.get<const volatile int &>();
+	REQUIRE(m == 38);
+}
+
 TEST_CASE("Variant, cast int ** to int ** and int ** &")
 {
 	int n = 5;

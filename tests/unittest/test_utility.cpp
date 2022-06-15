@@ -27,6 +27,8 @@ TEST_CASE("utility, getPointer, int *")
 	metapp::Variant v(&n);
 	REQUIRE(metapp::getPointer(v) == &n);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<int>());
+	REQUIRE(metapp::getPointerAndType(v).first == &n);
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<int>());
 }
 
 TEST_CASE("utility, getPointer, const int *")
@@ -35,6 +37,8 @@ TEST_CASE("utility, getPointer, const int *")
 	metapp::Variant v(&n);
 	REQUIRE(metapp::getPointer(v) == &n);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<const int>());
+	REQUIRE(metapp::getPointerAndType(v).first == &n);
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<const int>());
 }
 
 TEST_CASE("utility, getPointer, std::shared_ptr<int>")
@@ -43,6 +47,8 @@ TEST_CASE("utility, getPointer, std::shared_ptr<int>")
 	metapp::Variant v(sp);
 	REQUIRE(metapp::getPointer(v) == sp.get());
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<int>());
+	REQUIRE(metapp::getPointerAndType(v).first == sp.get());
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<int>());
 }
 
 TEST_CASE("utility, getPointer, std::shared_ptr<const int>")
@@ -51,6 +57,8 @@ TEST_CASE("utility, getPointer, std::shared_ptr<const int>")
 	metapp::Variant v(sp);
 	REQUIRE(metapp::getPointer(v) == sp.get());
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<const int>());
+	REQUIRE(metapp::getPointerAndType(v).first == sp.get());
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<const int>());
 }
 
 TEST_CASE("utility, getPointer, std::unique_ptr<int>")
@@ -60,6 +68,8 @@ TEST_CASE("utility, getPointer, std::unique_ptr<int>")
 	metapp::Variant v(std::move(up));
 	REQUIRE(metapp::getPointer(v) == pn);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<int>());
+	REQUIRE(metapp::getPointerAndType(v).first == pn);
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<int>());
 }
 
 TEST_CASE("utility, getPointer, std::unique_ptr<const int>")
@@ -69,6 +79,8 @@ TEST_CASE("utility, getPointer, std::unique_ptr<const int>")
 	metapp::Variant v(std::move(up));
 	REQUIRE(metapp::getPointer(v) == pn);
 	REQUIRE(metapp::getPointedType(v) == metapp::getMetaType<const int>());
+	REQUIRE(metapp::getPointerAndType(v).first == pn);
+	REQUIRE(metapp::getPointerAndType(v).second == metapp::getMetaType<const int>());
 }
 
 TEST_CASE("utility, isSameMetaType")

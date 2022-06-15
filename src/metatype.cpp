@@ -97,15 +97,6 @@ TristateBool doCastPointerReference(
 	const MetaType * toMetaType
 )
 {
-	if(fromMetaType->equal(toMetaType)) {
-		if(result != nullptr) {
-			// We need to `retype` instead of returning value directly even though fromMetaType equals to toMetaType.
-			// Because fromMetaType may have different CV qualifiers with toMetaType.
-			*result = Variant::retype(toMetaType, value);
-		}
-		return TristateBool::yes;
-	}
-
 	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
 	if(tristateResult != TristateBool::unknown) {
 		return tristateResult;

@@ -459,8 +459,8 @@ Note: The casted Variant may have different reference or CV qualifiers with T. F
 in the returned Variant can be `T &`, or `T`, both the `const` and reference can be discarded. If we cast to `T`, the return type
 can be `T &`, the reference is added. This is not an issue, because we can always call `var.get<const T &>()`
 or `var.get<T &>()` on the casted Variant, there is no any difference.  
-In brief on the note, the returned type doesn't guarantee the reference or CV is same as the type we cast to, but the returned type
-can guarantee (assume we cast to T, the returned type is U),  
+In brief, the returned type doesn't guarantee the reference or CV is same as the type we cast to, but the returned type
+can guarantee as below code (assume we cast to T, the returned type is U),  
 ```c++
 metapp::getNonReferenceMetaType(metapp::getMetaType<U>())->equal(metapp::getNonReferenceMetaType(metapp::getMetaType<T>()));
 castedVariant.canGet<U>();

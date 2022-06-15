@@ -32,7 +32,14 @@ struct DeclareMetaTypeBase <Variant>
 		}
 		else {
 			const Variant & ref = value.get<const Variant &>();
-			return ref.getMetaType()->cast(result, ref, toMetaType);
+			Variant casted = ref.castSilently(toMetaType);
+			if(casted.isEmpty()) {
+				return false;
+			}
+			if(result != nullptr) {
+				*result = std::move(casted);
+			}
+			return true;
 		}
 	}
 

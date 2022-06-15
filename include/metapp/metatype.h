@@ -61,6 +61,14 @@ const MetaType * doGetMetaTypeStorage();
 
 class UnifiedType;
 
+enum class TristateBool;
+TristateBool doCastPointerReference(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+);
+
 struct MetaTable
 {
 	const void * rawType;
@@ -292,10 +300,6 @@ public:
 		unifiedType->dtor(instance);
 	}
 
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
-		return unifiedType->cast(result, value, toMetaType);
-	}
-
 private:
 	MetaType(
 		const internal_::MetaTable & metaTable,
@@ -305,6 +309,10 @@ private:
 
 	void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) const {
 		return unifiedType->constructData(data, copyFrom, memory, copyStrategy);
+	}
+
+	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
+		return unifiedType->cast(result, value, toMetaType);
 	}
 
 	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
@@ -327,7 +335,14 @@ private:
 		const MetaType * toMetaType
 	);
 
-	// Variant needs to call constructData
+	friend internal_::TristateBool internal_::doCastPointerReference(
+		Variant * result,
+		const Variant & value,
+		const MetaType * fromMetaType,
+		const MetaType * toMetaType
+	);
+
+	// Variant needs to call constructData and cast
 	friend class Variant;
 
 private:
