@@ -37,8 +37,8 @@ public:
 	MetaRepo();
 	~MetaRepo();
 
-	MetaRepo(const MetaRepo &) = delete;
-	MetaRepo(MetaRepo &&) = delete;
+	MetaRepo(const MetaRepo &) = default;
+	MetaRepo(MetaRepo &&) = default;
 
 	const MetaItem & getAccessible(const std::string & name) const;
 	MetaItemView getAccessibleView() const;
