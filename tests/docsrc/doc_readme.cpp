@@ -383,7 +383,7 @@ ExampleFunc
 
 	//desc std::tuple is supported too, and we can use heterogeneous types.
 	ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
-	//desc Isn't cool we can use std::pair as a container?
+	//desc Isn't it cool we can use std::pair as a container?
 	ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
 
 	//desc We can even pass a pointer to container to `concat`.

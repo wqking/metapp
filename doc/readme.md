@@ -50,6 +50,7 @@
 - Miscellaneous
   - [Use metapp in dynamic library](dynamic_library.md)
   - [Performance and benchmark](benchmark.md)
+  - [Exception and thread safety](exception_thread_safety.md)
   - [Infrequently Asked Questions](faq.md)
   - [About documentations](about_document.md)
 

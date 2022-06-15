@@ -4,6 +4,7 @@
 <!--begintoc-->
 - [Overview](#mdtoc_e7c3d1bb)
 - [Header](#mdtoc_6e72a8c1)
+- [Constructor and destructor](#mdtoc_49c41b7f)
 - [MetaRepo member functions for registering meta data](#mdtoc_a11414c3)
   - [registerAccessible](#mdtoc_30ec3922)
   - [registerCallable](#mdtoc_3d0e0e3a)
@@ -58,6 +59,17 @@ program has.
 ```c++
 #include "metapp/metarepo.h"
 ```
+
+<a id="mdtoc_49c41b7f"></a>
+## Constructor and destructor
+
+```c++
+MetaRepo();
+~MetaRepo();
+```
+
+Note: caution needs to be taken when constructing or destroying `MetaRepo` in multi-threading application.  
+Please read [Exception and thread safety](exception_thread_safety.md) for details.
 
 <a id="mdtoc_a11414c3"></a>
 ## MetaRepo member functions for registering meta data

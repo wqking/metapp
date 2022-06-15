@@ -438,7 +438,7 @@ std::tuple is supported too, and we can use heterogeneous types.
 ASSERT(concat(std::make_tuple("A", 1, "B", 2)) == "A1B2");
 ```
 
-Isn't cool we can use std::pair as a container?
+Isn't it cool we can use std::pair as a container?
 
 ```c++
 ASSERT(concat(std::make_pair("Number", 1)) == "Number1");
@@ -631,6 +631,7 @@ If you want to contribute to the documents, be sure to read [How to generate doc
 - Miscellaneous
   - [Use metapp in dynamic library](doc/dynamic_library.md)
   - [Performance and benchmark](doc/benchmark.md)
+  - [Exception and thread safety](doc/exception_thread_safety.md)
   - [Infrequently Asked Questions](doc/faq.md)
   - [About documentations](doc/about_document.md)
 

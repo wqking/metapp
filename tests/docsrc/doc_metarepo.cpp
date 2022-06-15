@@ -37,6 +37,16 @@ program has.
 #include "metapp/metarepo.h"
 ```
 
+## Constructor and destructor
+
+```c++
+MetaRepo();
+~MetaRepo();
+```
+
+Note: caution needs to be taken when constructing or destroying `MetaRepo` in multi-threading application.  
+Please read [Exception and thread safety](exception_thread_safety.md) for details.
+
 ## MetaRepo member functions for registering meta data
 
 #### registerAccessible
