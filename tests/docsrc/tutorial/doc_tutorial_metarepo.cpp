@@ -108,6 +108,17 @@ void tutorialMetaRepo_registerMetaData()
 	This is only to demonstrate how to use registered meta type. There is a separate completed tutorial for how to use MetaClass.  
 	desc*/
 	metaRepo.registerType("MyClass", metapp::getMetaType<MyClass>());
+
+	/*desc
+	Register a nested MetaRepo, we can use it to simulate namespace.  
+	desc*/
+	metapp::MetaRepo nestedRepo;
+	nestedRepo.registerVariable("one", 1);
+	// For best efficiency, we move the `nestedRepo` into `metaRepo` to avoid copying.
+	// `nestedRepo` can also be std::shared_ptr, or std::unique_ptr.
+	// `nestedRepo` can also be raw pointer or reference to MetaRepo, in such case, the caller must ensure 
+	// `nestedRepo` lives as long as `metaRepo`, otherwise `metaRepo` will hold dangling pointer.
+	metaRepo.registerRepo("myNamespace", std::move(nestedRepo));
 	//code
 }
 
@@ -169,6 +180,46 @@ void tutorialMetaRepo_type()
 	//code
 }
 
+void tutorialMetaRepo_repo()
+{
+	//code
+	/*desc
+	## Use registered nested repo
+	desc*/
+
+	const auto repoItem = metaRepo.getRepo("myNamespace");
+	const metapp::MetaRepo * nestedRepo = repoItem.asMetaRepo();
+	const auto one = nestedRepo->getVariable("one");
+	ASSERT(one.asVariable().get<int>() == 1);
+	//code
+}
+
+void tutorialMetaRepo_metaItemView()
+{
+	//code
+	/*desc
+	## Use MetaItemView
+	desc*/
+
+	// Get all registered accessible as MetaItemView
+	const metapp::MetaItemView itemView = metaRepo.getAccessibleView();
+	// We registered two accessibles
+	ASSERT(itemView.size() == 2);
+	// The first accessible is textList
+	const metapp::MetaItem & firstItem = itemView[0];
+	ASSERT(firstItem.getName() == "textList");
+	// The second is value
+	ASSERT(itemView[1].getName() == "value");
+
+	// We can also use range based for loop
+	std::string allNames = "";
+	for(const metapp::MetaItem & item : itemView) {
+		allNames += item.getName();
+	}
+	ASSERT(allNames == "textListvalue");
+	//code
+}
+
 TEST_CASE("tutorialMetaRepo_main")
 {
 	tutorialMetaRepo_registerMetaData();
@@ -176,5 +227,7 @@ TEST_CASE("tutorialMetaRepo_main")
 	tutorialMetaRepo_accessible();
 	tutorialMetaRepo_method();
 	tutorialMetaRepo_type();
+	tutorialMetaRepo_repo();
+	tutorialMetaRepo_metaItemView();
 }
 

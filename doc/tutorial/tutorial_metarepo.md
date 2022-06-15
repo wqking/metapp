@@ -8,6 +8,8 @@
 - [Use field meta data](#mdtoc_8cd7c280)
 - [Use function meta data](#mdtoc_13307b6)
 - [Use registered types](#mdtoc_eb7aec57)
+- [Use registered nested repo](#mdtoc_c52fb9d2)
+- [Use MetaItemView](#mdtoc_75bf69a5)
 <!--endtoc-->
 
 `MetaRepo` is used to register and retrieve meta types at running time.
@@ -105,6 +107,18 @@ This is only to demonstrate how to use registered meta type. There is a separate
   metaRepo.registerType("MyClass", metapp::getMetaType<MyClass>());
 ```
 
+Register a nested MetaRepo, we can use it to simulate namespace.  
+
+```c++
+  metapp::MetaRepo nestedRepo;
+  nestedRepo.registerVariable("one", 1);
+  // For best efficiency, we move the `nestedRepo` into `metaRepo` to avoid copying.
+  // `nestedRepo` can also be std::shared_ptr, or std::unique_ptr.
+  // `nestedRepo` can also be raw pointer or reference to MetaRepo, in such case, the caller must ensure 
+  // `nestedRepo` lives as long as `metaRepo`, otherwise `metaRepo` will hold dangling pointer.
+  metaRepo.registerRepo("myNamespace", std::move(nestedRepo));
+```
+
 <a id="mdtoc_8cd7c280"></a>
 ## Use field meta data
 
@@ -168,4 +182,36 @@ ASSERT(result.get<const std::string &>() == "38trueGreat");
 ```c++
   metapp::MetaItem myClassType = metaRepo.getType("MyClass");
   ASSERT(myClassType.asMetaType() == metapp::getMetaType<MyClass>());
+```
+
+<a id="mdtoc_c52fb9d2"></a>
+## Use registered nested repo
+
+```c++
+  const auto repoItem = metaRepo.getRepo("myNamespace");
+  const metapp::MetaRepo * nestedRepo = repoItem.asMetaRepo();
+  const auto one = nestedRepo->getVariable("one");
+  ASSERT(one.asVariable().get<int>() == 1);
+```
+
+<a id="mdtoc_75bf69a5"></a>
+## Use MetaItemView
+
+```c++
+  // Get all registered accessible as MetaItemView
+  const metapp::MetaItemView itemView = metaRepo.getAccessibleView();
+  // We registered two accessibles
+  ASSERT(itemView.size() == 2);
+  // The first accessible is textList
+  const metapp::MetaItem & firstItem = itemView[0];
+  ASSERT(firstItem.getName() == "textList");
+  // The second is value
+  ASSERT(itemView[1].getName() == "value");
+
+  // We can also use range based for loop
+  std::string allNames = "";
+  for(const metapp::MetaItem & item : itemView) {
+    allNames += item.getName();
+  }
+  ASSERT(allNames == "textListvalue");
 ```

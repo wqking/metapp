@@ -147,6 +147,7 @@ The created `MetaRepo` can be got via `MetaItem::getTarget()` in the returned va
 If the parameter `repo` is not empty, `repo` should be a value, reference, pointer, or smart pointer of `MetaRepo`.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 Note: registering a MetaRepo can simulate namespace. A MetaRepo can be treated as a namespace.  
+Note: if the argument `repo` is a pointer or reference, the caller needs to ensure the `repo` is live while `this` repo is live.
 
 
 <a id="mdtoc_53769d77"></a>
