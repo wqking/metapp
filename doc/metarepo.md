@@ -408,7 +408,8 @@ The first meta type is always `classMetaType`. That's to say, even if there is n
 be invoked with `classMetaType`.  
 `callback` prototype is `bool callback(const MetaType * metaType)`. The argument `metaType` is the class current traversing at.
 If `callback` returns false, the traversing stops.  
-`traverseBases` returns true if all calls on `callback` returns true, returns false if all calls on `callback` returns false.
+`traverseBases` returns true if all calls on `callback` returns true, returns false if all calls on `callback` returns false.  
+`traverseBases` uses depth first search algorithm to traverse the hierarchy.
 
 <a id="mdtoc_7cf563c8"></a>
 ## Class MetaRepoList
@@ -447,7 +448,8 @@ const MetaRepo * findMetaRepoForHierarchy(const MetaType * classMetaType) const;
 ```
 
 Returns a pointer to the `MetaRepo` in which the `classMetaType` is registered using `MetaRepo::registerBase`.  
-If the `classMetaType` was not registered to any `MetaRepo`, nullptr is returned.  
+If `classMetaType` is registered in more than one `MetaRepo`s, only the first `MetaRepo` is returned.  
+If `classMetaType` is not registered in any `MetaRepo`, nullptr is returned.  
 
 <a id="mdtoc_4d2428a4"></a>
 #### traverseBases
@@ -457,8 +459,9 @@ template <typename FT>
 bool traverseBases(const MetaType * classMetaType, FT && callback) const;
 ```
 
-Similar to `MetaRepo::traverseBases`, this function finds the `MetaRepo` in which the `classMetaType`
-is registered using `MetaRepo::registerBase`, then call `MetaRepo::traverseBases` on the found `MetaRepo`.  
+Similar to `MetaRepo::traverseBases`, this function calls `findMetaRepoForHierarchy` to find the `MetaRepo`
+in which the `classMetaType` is registered using `MetaRepo::registerBase`, then call `MetaRepo::traverseBases`
+on the found `MetaRepo`.  
 If no `MetaRepo` is found, `callback` is invoked with `classMetaType` as if there is no any base classes.  
 If `callback` returns false, the traversing stops.  
 `traverseBases` returns true if all calls on `callback` returns true, returns false if all calls on `callback` returns false.

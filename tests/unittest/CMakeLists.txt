@@ -25,7 +25,7 @@ set_target_properties(${TARGET_TEST} PROPERTIES CXX_STANDARD 11)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 if(coverage)
-	set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
+	set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage -fno-inline")
 endif()
 endif()
 
