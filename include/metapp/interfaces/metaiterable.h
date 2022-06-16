@@ -32,15 +32,15 @@ public:
 	using Callback = std::function<bool (const Variant &)>;
 
 	explicit MetaIterable(
-			void (*forEach)(const Variant & iterable, Callback callback)
+			void (*forEach)(const Variant & iterable, const Callback & callback)
 		) : forEach(forEach)
 	{
 	}
 
-	void (*forEach)(const Variant & iterable, Callback callback);
+	void (*forEach)(const Variant & iterable, const Callback & callback);
 };
 
-inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)
+inline void iterableForEach(const Variant & iterable, const MetaIterable::Callback & callback)
 {
 	getNonReferenceMetaType(iterable)->getMetaIterable()->forEach(iterable, callback);
 }

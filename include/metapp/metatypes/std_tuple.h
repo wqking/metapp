@@ -130,16 +130,16 @@ private:
 		internal_::assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
 	}
 
-	static void metaIterableForEach(const Variant & var, MetaIterable::Callback callback)
+	static void metaIterableForEach(const Variant & var, const MetaIterable::Callback & callback)
 	{
 		using Sequence = typename internal_::MakeSizeSequence<sizeof...(Types)>::Type;
 		doForEach(var, callback, Sequence());
 	}
 
 	template <std::size_t ...Indexes>
-	static void doForEach(const Variant & var, MetaIterable::Callback callback, internal_::SizeConstantList<Indexes...>)
+	static void doForEach(const Variant & var, const MetaIterable::Callback & callback, internal_::SizeConstantList<Indexes...>)
 	{
-		using Func = bool (*)(const Variant & value, MetaIterable::Callback callback);
+		using Func = bool (*)(const Variant & value, const MetaIterable::Callback & callback);
 
 		std::array<Func, sizeof...(Types)> funcList {
 			&doForEachHelper<Indexes>...
@@ -152,7 +152,7 @@ private:
 	}
 
 	template <std::size_t index>
-	static bool doForEachHelper(const Variant & var, MetaIterable::Callback callback)
+	static bool doForEachHelper(const Variant & var, const MetaIterable::Callback & callback)
 	{
 		using TupleType = std::tuple<Types...>;
 

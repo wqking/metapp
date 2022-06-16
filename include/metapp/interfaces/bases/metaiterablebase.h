@@ -33,7 +33,7 @@ struct MetaIterableBase
 	}
 
 private:
-	static void metaIterableForEach(const Variant & iterable, MetaIterable::Callback callback)
+	static void metaIterableForEach(const Variant & iterable, const MetaIterable::Callback & callback)
 	{
 		ContainerType & container = iterable.get<ContainerType &>();
 		for(auto & item : container) {

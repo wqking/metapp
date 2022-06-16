@@ -91,7 +91,7 @@ private:
 		}
 	}
 
-	static void metaIterableForEach(const Variant & var, MetaIterable::Callback callback)
+	static void metaIterableForEach(const Variant & var, const MetaIterable::Callback & callback)
 	{
 		if(callback(var.get<PairType &>().first)) {
 			callback(var.get<PairType &>().second);

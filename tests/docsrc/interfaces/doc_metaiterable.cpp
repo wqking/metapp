@@ -74,7 +74,7 @@ The meaning of `forEach` is same as the member function listed below.
 #### forEach
 
 ```c++
-void forEach(const Variant & iterable, MetaIterable::Callback callback);
+void forEach(const Variant & iterable, const MetaIterable::Callback & callback);
 
 using Callback = std::function<bool (const Variant &)>;
 ```
@@ -100,7 +100,7 @@ you may store `iterable.getMetaType()->getMetaIterable()` to a local variable, t
 This is because `MetaIterable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
-inline void iterableForEach(const Variant & iterable, MetaIterable::Callback callback)
+inline void iterableForEach(const Variant & iterable, const MetaIterable::Callback & callback)
 {
 	iterable.getMetaType()->getMetaIterable()->forEach(iterable, callback);
 }
