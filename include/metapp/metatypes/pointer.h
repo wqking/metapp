@@ -22,7 +22,10 @@
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/interfaces/bases/metastreamablebase.h"
 #include "metapp/utilities/utility.h"
+#include "metapp/utilities/typelist.h"
 #include "metapp/implement/internal/util_i.h"
+
+#include <string>
 
 namespace metapp {
 

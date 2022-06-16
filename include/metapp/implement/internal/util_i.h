@@ -17,8 +17,6 @@
 #ifndef METAPP_UTIL_I_H_969872685611
 #define METAPP_UTIL_I_H_969872685611
 
-#include "metapp/utilities/utility.h"
-
 #include <string>
 #include <array>
 

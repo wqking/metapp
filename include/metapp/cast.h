@@ -17,11 +17,23 @@
 #ifndef METAPP_CAST_H_969872685611
 #define METAPP_CAST_H_969872685611
 
-#include "metapp/variant.h"
+#include "metapp/implement/variant_intf.h"
 
 #include <array>
 
 namespace metapp {
+
+class MetaType;
+
+template <typename T>
+constexpr const MetaType * getMetaType();
+
+bool commonCast(
+	Variant * result,
+	const Variant & value,
+	const MetaType * fromMetaType,
+	const MetaType * toMetaType
+);
 
 template <typename MyType, typename FromTypes>
 struct CastFromChecker
@@ -158,8 +170,8 @@ struct CastToTypes
 	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
 	{
 		return CastToChecker<T, ToTypes>::castTo(result, value, toMetaType)
-			|| CommonDeclareMetaType<T>::cast(result, value, toMetaType)
-			;
+			|| commonCast(result, value, getMetaType<T>(), toMetaType)
+		;
 	}
 };
 
@@ -168,9 +180,7 @@ struct CastFromTypes
 {
 	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
 	{
-		return CastFromChecker<T, FromTypes>::castFrom(result, value, fromMetaType)
-			|| (CommonDeclareMetaType<T>::castFrom != nullptr && CommonDeclareMetaType<T>::castFrom(result, value, fromMetaType))
-		;
+		return CastFromChecker<T, FromTypes>::castFrom(result, value, fromMetaType);
 	}
 };
 
@@ -181,5 +191,9 @@ struct CastFromToTypes : CastToTypes<T, FromToTypes>, CastFromTypes<T, FromToTyp
 
 
 } // namespace metapp
+
+#include "metapp/metatype.h"
+
+#include "metapp/implement/variant_impl.h"
 
 #endif

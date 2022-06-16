@@ -21,8 +21,10 @@
 #include "metapp/variant.h"
 #include "metapp/interfaces/metacallable.h"
 #include "metapp/utilities/utility.h"
+#include "metapp/implement/internal/declareutil_i.h"
 
 #include <array>
+#include <limits>
 
 namespace metapp {
 

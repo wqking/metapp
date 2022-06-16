@@ -17,7 +17,7 @@
 #ifndef METAPP_METASTREAMABLEBASE_H_969872685611
 #define METAPP_METASTREAMABLEBASE_H_969872685611
 
-#include "metapp/metatype.h"
+#include "metapp/implement/variant_intf.h"
 #include "metapp/interfaces/metastreamable.h"
 #include "metapp/implement/internal/typeutil_i.h"
 #include "metapp/exception.h"
@@ -104,7 +104,9 @@ private:
 
 } // namespace metapp
 
-#include "metapp/variant.h"
+#include "metapp/metatype.h"
+
+#include "metapp/implement/variant_impl.h"
 
 #endif
 

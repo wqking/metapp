@@ -22,7 +22,6 @@
 #include "metapp/utilities/utility.h"
 
 #include <map>
-#include <algorithm>
 
 namespace metapp {
 
