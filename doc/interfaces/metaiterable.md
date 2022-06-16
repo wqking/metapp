@@ -28,7 +28,8 @@ It's the metapp version of C++ "range-based for loop".
 <a id="mdtoc_fc50b916"></a>
 ## Get MetaIterable interface
 
-We can call `MetaType::getMetaIterable()` to get the `MetaIterable` interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaIterable()` to get the `MetaIterable` interface.
+If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
@@ -80,7 +81,8 @@ using Callback = std::function<bool (const Variant &)>;
 The first parameter `iterable` is the Variant which meta type implements `MetaIterable`,
 and hold the proper data such as `std::vector`. The member functions operate on the data.  
 We can treat `iterable` as the C++ object instance which class implements an interface called `MetaIterable`.  
-Variant `iterable` can be value that implements `MetaIterable`, or reference that refers to value that implements `MetaIterable`.  
+Variant `iterable` can be value that implements `MetaIterable`, or reference that refers to value that
+implements `MetaIterable`.  
 The second parameter `callback` is a callback function. Its prototype is `std::function<bool (const Variant &)>`.  
 
 When `forEach` is invoked, `callback` is called for every element in `iterable`,and the referent to the element
@@ -94,8 +96,9 @@ That means for associative containers such as `std::map`, the element is a `std:
 
 Below free functions are shortcut functions to use the member functions in `MetaIterable`.  
 Usually you should prefer the utility functions to calling `MetaIterable` member function directly.
-However, if you need to call functions on a single `MetaIterable` more than one times in a high performance application,
-you may store `iterable.getMetaType()->getMetaIterable()` to a local variable, then use the variable to call the member functions.
+However, if you need to call functions on a single `MetaIterable` more than one times in a high performance
+application, you may store `iterable.getMetaType()->getMetaIterable()` to a local variable, then use the variable
+to call the member functions.
 This is because `MetaIterable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++

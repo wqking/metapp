@@ -90,9 +90,10 @@ Sets the underlying pointer. It's similar to the `.reset()` function in `std::sh
 
 Below free functions are shortcut functions to use the member functions in `MetaPointerWrapper`.  
 Usually you should prefer the utility functions to calling `MetaPointerWrapper` member function directly.
-However, if you need to call functions on a single `MetaPointerWrapper` more than one times in a high performance application,
-you may store `pointerWrapper.getMetaType()->getMetaPointerWrapper()` to a local variable, then use the variable
-to call the member functions. This is because `getMetaPointerWrapper()` has slightly performance overhead (the overhead is neglect most time).
+However, if you need to call functions on a single `MetaPointerWrapper` more than one times in a high performance
+application, you may store `pointerWrapper.getMetaType()->getMetaPointerWrapper()` to a local variable,
+then use the variable to call the member functions. This is because `getMetaPointerWrapper()` has slightly
+performance overhead (the overhead is neglect most time).
 
 ```c++
 inline Variant pointerWrapperGetPointer(const Variant & pointerWrapper)

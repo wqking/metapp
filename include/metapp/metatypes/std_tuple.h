@@ -107,7 +107,7 @@ private:
 	{
 		using TupleType = std::tuple<Types...>;
 
-		return std::get<index>(var.get<TupleType &>());
+		return Variant::reference(std::get<index>(var.get<TupleType &>()));
 	}
 
 	template <std::size_t ...Indexes>
@@ -127,7 +127,7 @@ private:
 		using TupleType = std::tuple<Types...>;
 		using ValueType = typename std::tuple_element<index, TupleType>::type;
 
-		internal_::assignValue(std::get<index>(var.get<TupleType &>()), value.get<ValueType &>());
+		internal_::assignValue(std::get<index>(var.get<TupleType &>()), value.cast<ValueType &>().template get<ValueType &>());
 	}
 
 	static void metaIterableForEach(const Variant & var, const MetaIterable::Callback & callback)

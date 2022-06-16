@@ -135,8 +135,8 @@ For most callables, `minParameterCount` equals to `maxParameterCount`.
 For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
 'minParameterCount' is the minimum argument count of the overloaded functions.
 'maxParameterCount' is the maximum argument count of the overloaded functions.  
-For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
-is the number of all arguments, including both non-default and default arguments.  
+For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments,
+`maxParameterCount` is the number of all arguments, including both non-default and default arguments.  
 For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
 
 <a id="mdtoc_3d8ebc96"></a>
@@ -171,8 +171,8 @@ The return value is positive number or zero.
 If the return value is 0, then the arguments can't be used to invoke the callable.
 Otherwise, the larger the return value, the more matching.  
 
-Parameter `instance` is the object instance if `callable` is a class member function. `instance` can be value, pointer, or
-smart pointer.
+Parameter `instance` is the object instance if `callable` is a class member function.
+`instance` can be value, pointer, or smart pointer.
 If `callable` is a member function, and the constness of `instance` can't access `callable`
 (for example, `instance` is a pointer to const, while `callable` is a non-const member function),
 the rank is 0, value 0 is returned, and the `arguments` are not checked.  
@@ -307,8 +307,9 @@ void demoArgumentSpan(const metapp::ArgumentSpan & arguments)
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
 Usually you should prefer the utility functions to calling `MetaCallable` member function directly.
-However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application,
-you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions.
+However, if you need to call functions on a single `MetaCallable` more than one times in a high performance
+application, you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable
+to call the member functions.
 This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
 
 <a id="mdtoc_35629588"></a>

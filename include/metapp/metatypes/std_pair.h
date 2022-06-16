@@ -83,18 +83,18 @@ private:
 		}
 		else {
 			if(index == 0) {
-				internal_::assignValue(var.get<PairType &>().first, value.get<T1 &>());
+				internal_::assignValue(var.get<PairType &>().first, value.cast<T1 &>().template get<T1 &>());
 			}
 			else {
-				internal_::assignValue(var.get<PairType &>().second, value.get<T2 &>());
+				internal_::assignValue(var.get<PairType &>().second, value.cast<T2 &>().template get<T2 &>());
 			}
 		}
 	}
 
 	static void metaIterableForEach(const Variant & var, const MetaIterable::Callback & callback)
 	{
-		if(callback(var.get<PairType &>().first)) {
-			callback(var.get<PairType &>().second);
+		if(callback(Variant::reference(var.get<PairType &>().first))) {
+			callback(Variant::reference(var.get<PairType &>().second));
 		}
 	}
 

@@ -31,7 +31,8 @@
 <a id="mdtoc_b9e3e5c5"></a>
 ## Get MetaIndexable interface
 
-We can call `MetaType::getMetaIndexable()` to get the `MetaIndexable` interface. If the type doesn't implement the interface, `nullptr` is returned.
+We can call `MetaType::getMetaIndexable()` to get the `MetaIndexable` interface. If the type doesn't implement
+the interface, `nullptr` is returned.
 
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
@@ -72,7 +73,8 @@ The first parameter in all of the member functions is `const Variant & indexable
 It's the Variant which meta type implements `MetaIndexable`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
 We can treat `indexable` as the C++ object instance which class implements an interface called `MetaIndexable`.  
-Variant `indexable` can be value that implements `MetaIndexable`, or reference that refers to value that implements `MetaIndexable`.  
+Variant `indexable` can be value that implements `MetaIndexable`, or reference that refers to value
+that implements `MetaIndexable`.  
 
 For the functions that have parameter `index`, the functions don't do bound checking on `index`.
 It's the caller's responsibility to be sure the `index` is valid.
@@ -109,16 +111,16 @@ The constructors, `setResizable`, `setUnknowSize` are used by `MetaIndexable` im
 
 `size` is the number of elements in the indexable.  
 `resizable` means whether the indexable can be changed to another size by calling `resize`.  
-`unknownSize` is false by default for most cases, exception the type `T[]` has true unknownSize. If unknownSize is true,
-both `size` and `resizable` don't make sense.  
+`unknownSize` is false by default for most cases, exception the type `T[]` has true unknownSize.
+If unknownSize is true, both `size` and `resizable` don't make sense.  
 
 For `std::pair`, size is 2, resizable is false.  
 For `std::tuple`, size is the tuple size, resizable is false.  
 For `T[]`, unknownSize is true.  
 For `T[N]`, size is N, resizable is false, unknownSize is false.  
 For `std::array<T, N>`, size is N, resizable is false.  
-For other containers such as `std::vector`, `std::deque`, `std::list`, the function returns the size of the container,
-and resizable is true.  
+For other containers such as `std::vector`, `std::deque`, `std::list`, the function returns
+the size of the container, and resizable is true.  
 
 <a id="mdtoc_8d778ce1"></a>
 #### getValueType
@@ -144,7 +146,8 @@ void resize(const Variant & indexable, const std::size_t size);
 Resizes the container in the Variant to contain `size` elements.  
 For types that the size is fixed, such as `std::pair`, `std::tuple`, `T[]`, and `T[N]`, the function doesn't do anything.  
 For other containers, the function resizes the container.  
-If the `resize` argument in MetaIndexable constructor is nullptr, the function `resize` is still valid function, and it doesn't do any action.  
+If the `resize` argument in MetaIndexable constructor is nullptr, the function `resize` is still valid function,
+and it doesn't do any action.  
 
 <a id="mdtoc_fd3b2e70"></a>
 #### get
@@ -158,7 +161,8 @@ For `std::pair`, index 0 returns the first value, index 1 returns the second val
 For `std::tuple`, returns the tuple element at index.  
 For `T[]` and `T[N]`, returns T[index].  
 For other containers, returns the element at index in the container.  
-Note, for non-random access container such as `std::list`, the function uses `std::advance(list.begin(), index)` to access the element, the time complexity is linear.  
+Note, for non-random access container such as `std::list`, the function uses `std::advance(list.begin(), index)`
+to access the element, the time complexity is linear.  
 
 <a id="mdtoc_e61425dc"></a>
 #### set
@@ -167,13 +171,18 @@ Note, for non-random access container such as `std::list`, the function uses `st
 void (*set)(const Variant & indexable, const std::size_t index, const Variant & value);
 ```
 
-Sets the element at `index` with `value`. The `value` will be casted to the element type, if the cast fails, exception `metapp::BadCastException` is thrown.  
+Sets the element at `index` with `value`. The `value` will be casted to the element type, if the cast fails,
+exception `metapp::BadCastException` is thrown.  
 
 <a id="mdtoc_e4e47ded"></a>
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaIndexable`.  
-Usually you should prefer the utility functions to calling `MetaIndexable` member function directly. However, if you need to call functions on a single `MetaIndexable` more than one times in a high performance application, you may store `indexable.getMetaType()->getMetaIndexable()` to a local variable, then use the variable to call the member functions. This is because `getMetaIndexable()` has slightly performance overhead (the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaIndexable` member function directly.
+However, if you need to call functions on a single `MetaIndexable` more than one times in a high performance
+application, you may store `indexable.getMetaType()->getMetaIndexable()` to a local variable,
+then use the variable to call the member functions. This is because `getMetaIndexable()` has slightly
+performance overhead (the overhead is neglect most time).
 
 ```c++
 inline SizeInfo indexableGetSizeInfo(const Variant & indexable)

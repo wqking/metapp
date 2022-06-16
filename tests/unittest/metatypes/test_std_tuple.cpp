@@ -45,9 +45,37 @@ TEST_CASE("metatypes, std::tuple, MetaIndexable")
 	REQUIRE(metaIndexable->getSizeInfo(v).getSize() == 3);
 	REQUIRE(! metaIndexable->getSizeInfo(v).isResizable());
 	REQUIRE(! metaIndexable->getSizeInfo(v).isUnknownSize());
+	REQUIRE(metaIndexable->get(v, 0).getMetaType()->isReference());
+	REQUIRE(metaIndexable->get(v, 1).getMetaType()->isReference());
+	REQUIRE(metaIndexable->get(v, 2).getMetaType()->isReference());
 	REQUIRE(metaIndexable->get(v, 0).get<const std::string &>() == "hello");
 	REQUIRE(metaIndexable->get(v, 1).get<int>() == 5);
 	REQUIRE(metaIndexable->get(v, 2).get<long>() == 38);
+}
+
+TEST_CASE("metatypes, std::tuple, MetaIndexable, reference and set")
+{
+	auto tuple = std::make_tuple<std::string, int, long>("hello", 5, 38);
+	metapp::Variant v(metapp::Variant::reference(tuple));
+	REQUIRE(metapp::getTypeKind(v) == metapp::tkReference);
+	REQUIRE(metapp::indexableGetSizeInfo(v).getSize() == 3);
+	REQUIRE(! metapp::indexableGetSizeInfo(v).isResizable());
+	REQUIRE(! metapp::indexableGetSizeInfo(v).isUnknownSize());
+	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "hello");
+	REQUIRE(metapp::indexableGet(v, 1).get<int>() == 5);
+	REQUIRE(metapp::indexableGet(v, 2).get<long>() == 38);
+
+	metapp::indexableSet(v, 0, "world");
+	REQUIRE(metapp::indexableGet(v, 0).get<const std::string &>() == "world");
+	REQUIRE(std::get<0>(tuple) == "world");
+
+	metapp::indexableSet(v, 1, 9);
+	REQUIRE(metapp::indexableGet(v, 1).get<int>() == 9);
+	REQUIRE(std::get<1>(tuple) == 9);
+
+	metapp::indexableSet(v, 2, 15);
+	REQUIRE(metapp::indexableGet(v, 2).get<long>() == 15);
+	REQUIRE(std::get<2>(tuple) == 15);
 }
 
 TEST_CASE("metatypes, std::tuple, MetaIterable")
@@ -59,7 +87,7 @@ TEST_CASE("metatypes, std::tuple, MetaIterable")
 
 	std::vector<metapp::Variant> newVector;
 	v.getMetaType()->getMetaIterable()->forEach(v, [&newVector](const metapp::Variant & value) {
-		REQUIRE(metapp::getTypeKind(value) == metapp::tkReference);
+		REQUIRE(value.getMetaType()->isReference());
 		newVector.push_back(value);
 		return true;
 	});
