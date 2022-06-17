@@ -116,3 +116,100 @@ TEST_CASE("metatypes, std::function<int & ()>, cast from other MetaCallable")
 	REQUIRE(X::func() == 5);
 }
 
+TEST_CASE("metatypes, std::function<int (int)>, can't cast from std::string")
+{
+	metapp::Variant v(std::string("abc"));
+	using FT = std::function<int (int)>;
+	REQUIRE(! v.canCast<FT>());
+}
+
+TEST_CASE("metatypes, std::function<int (int)>, can't cast from int(int, int)")
+{
+	struct X {
+		static int add(const int a, const int b) {
+			return a + b + 1;
+		}
+	};
+	metapp::Variant v(X::add);
+	using FT = std::function<int (int)>;
+	REQUIRE(! v.canCast<FT>());
+}
+
+TEST_CASE("metatypes, std::function, cast from default args function")
+{
+	struct X {
+		static std::string concat(const int a, const std::string & b, const long c) {
+			return std::to_string(a) + b + std::to_string(c);
+		}
+	};
+	metapp::Variant v(metapp::createDefaultArgsFunction(&X::concat, { 38, "hello" }));
+	
+	SECTION("Can't cast to 0 argument") {
+		REQUIRE(! v.canCast<std::function<std::string ()> >());
+	}
+	
+	SECTION("Cast to 1 argument") {
+		using FT = std::function<std::string (int)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(5) == "5hello38");
+	}
+
+	SECTION("Cast to 2 arguments") {
+		using FT = std::function<std::string (int, std::string)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(6, "good") == "6good38");
+	}
+
+	SECTION("Cast to 3 arguments") {
+		using FT = std::function<std::string (int, std::string, long)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(6, "good", 9) == "6good9");
+	}
+
+	SECTION("Can't cast to 4 argument") {
+		REQUIRE(! v.canCast<std::function<std::string (int, std::string, long, int)> >());
+	}
+}
+
+TEST_CASE("metatypes, std::function, cast from variadic function")
+{
+	struct X {
+		static int sum(const metapp::ArgumentSpan & arguments)
+		{
+			int total = 0;
+			for(const auto & argument : arguments) {
+				total += argument.cast<int>().get<int>();
+			}
+			return total;
+		}
+
+	};
+
+	metapp::Variant v(metapp::createVariadicFunction(&X::sum));
+
+	SECTION("Cast to 0 argument") {
+		using FT = std::function<int ()>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()() == 0);
+	}
+
+	SECTION("Cast to 1 argument") {
+		using FT = std::function<int (int)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(5) == 5);
+	}
+
+	SECTION("Cast to 2 arguments") {
+		using FT = std::function<int (int, int)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(5, 6) == 11);
+	}
+
+	SECTION("Cast to 10 arguments") {
+		using FT = std::function<int (int, int, int, int, int, int, int, int, int, int)>;
+		REQUIRE(v.canCast<FT>());
+		REQUIRE(v.cast<FT>().get<FT &>()(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) == 55);
+	}
+
+}
+
