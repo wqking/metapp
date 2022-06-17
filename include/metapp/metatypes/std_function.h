@@ -47,10 +47,10 @@ struct DeclareMetaTypeBase <std::function<RT (Args...)> >
 			return false;
 		}
 		
-		const std::array<const MetaType *, argsCount> argsTypeList {
+		const std::array<const MetaType *, argsCount_> argsTypeList {
 			getMetaType<Args>()...,
 		};
-		for(int i = 0; i < argsCount; ++i) {
+		for(int i = 0; i < argsCount_; ++i) {
 			const MetaType * paramType = metaCallable->getParameterType(*fromVar, i);
 			if(! paramType->isVoid() && ! argsTypeList[i]->canCast(paramType)) {
 				return false;
