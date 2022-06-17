@@ -35,12 +35,18 @@
 
 We can call `MetaType::getMetaCallable()` to get the `MetaCallable` interface.
 If the type doesn't implement the interface, `nullptr` is returned.
+desc*/
 
-```c++
-const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
-const metapp::MetaCallable * metaCallable = metaType->getMetaCallable();
-```
+ExampleFunc
+{
+	//code
+	const metapp::MetaType * metaType = metapp::getMetaType<int (*)(const std::string &)>();
+	const metapp::MetaCallable * metaCallable = metaType->getMetaCallable();
+	//code
+	ASSERT(metaCallable != nullptr);
+}
 
+/*desc
 ## Implemented built-in meta types
 
 Constructor (tkConstructor)  
@@ -64,7 +70,7 @@ MetaCallable(
 );
 ```
 
-All arguments are function pointers. All pointers must point to valid function.  
+All arguments are function pointers. All pointers must point to valid functions.  
 The meaning of each functions are same as the member functions listed below.
 
 ## MetaCallable member functions
@@ -102,7 +108,7 @@ class ParameterCountInfo
 {
 public:
 	ParameterCountInfo();
-	ParameterCountInfo(const int resultCount, const int parameterCount);
+	ParameterCountInfo(const int resultCount, const int parameterCount); // #2
 	ParameterCountInfo(const int resultCount, const int minParameterCount, const int maxParameterCount);
 	int getResultCount() const;
 	int getMinParameterCount() const;
@@ -113,7 +119,7 @@ public:
 `resultCount` is 0 or 1. 0 means there is no return value. 1 means there is one return value.  
 `minParameterCount` and `maxParameterCount` define the number of arguments can be used to call the callable.
 The calling arguments count must be,  
-`minParameterCount <= argument count <= maxParameterCount`.  
+`minParameterCount <= argument count <= maxParameterCount`  
 For most callables, `minParameterCount` equals to `maxParameterCount`.  
 For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
 'minParameterCount' is the minimum argument count of the overloaded functions.
@@ -121,6 +127,8 @@ For overloaded function (tkOverloadedFunction), `resultCount` is the maximum res
 For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
 is the number of all arguments, including both non-default and default arguments.  
 For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
+
+In #2 constructor, both `minParameterCount` and `maxParameterCount` will equal to `parameterCount`.
 
 #### getReturnType
 
@@ -138,7 +146,7 @@ const MetaType * getParameterType(const Variant & callable, const int index);
 ```
 
 Returns the meta type of parameter at `index`.  
-For variadic function (tkVariadicFunction), the function always returns nullptr.  
+For variadic function (tkVariadicFunction), the function always returns meta type of `void` (tkVoid), which `MetaType::isVoid()` is true.  
 
 #### rankInvoke
 
@@ -403,8 +411,12 @@ Shortcut for `MetaCallable::isStatic()`.
 
 ## MetaCallable can cast to std::function
 
-Any `MetaCallable` can cast to `std::function` as long as the number of parameter is appropriate. The casting only checks
-parameter count, it doesn't check argument type or the result type. The user needs to ensure the argument type is cast-able.   
+Any `MetaCallable` can cast to `std::function` if,
+1. The number of parameters is appropriate.
+2. The parameter types in the `MetaCallable` can cast to the corresponding arguments in `std::function`.
+3. If the return type in `std::function` is not `void`, then the return type in the `MetaCallable` can cast to
+the the return type in `std::function`.
+
 For example,  
 desc*/
 
@@ -418,7 +430,7 @@ ExampleFunc
 {
 	//code
 	metapp::Variant v(&f1);
-	// The parameters type are not exactly, but they are convertible, double can convert to int
+	// The parameters type are not same, but they are convertible, double can convert to int
 	using FT = std::function<std::string (double, std::string)>;
 	FT func = v.cast<FT>().get<FT &>();
 	ASSERT(func(5.3, "Hello") == "5Hello");

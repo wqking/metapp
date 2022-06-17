@@ -49,7 +49,7 @@ We can call `MetaType::getMetaCallable()` to get the `MetaCallable` interface.
 If the type doesn't implement the interface, `nullptr` is returned.
 
 ```c++
-const metapp::MetaType * metaType = metapp::getMetaType<std::vector<int> >();
+const metapp::MetaType * metaType = metapp::getMetaType<int (*)(const std::string &)>();
 const metapp::MetaCallable * metaCallable = metaType->getMetaCallable();
 ```
 
@@ -78,7 +78,7 @@ MetaCallable(
 );
 ```
 
-All arguments are function pointers. All pointers must point to valid function.  
+All arguments are function pointers. All pointers must point to valid functions.  
 The meaning of each functions are same as the member functions listed below.
 
 <a id="mdtoc_84aa785a"></a>
@@ -119,7 +119,7 @@ class ParameterCountInfo
 {
 public:
   ParameterCountInfo();
-  ParameterCountInfo(const int resultCount, const int parameterCount);
+  ParameterCountInfo(const int resultCount, const int parameterCount); // #2
   ParameterCountInfo(const int resultCount, const int minParameterCount, const int maxParameterCount);
   int getResultCount() const;
   int getMinParameterCount() const;
@@ -130,14 +130,16 @@ public:
 `resultCount` is 0 or 1. 0 means there is no return value. 1 means there is one return value.  
 `minParameterCount` and `maxParameterCount` define the number of arguments can be used to call the callable.
 The calling arguments count must be,  
-`minParameterCount <= argument count <= maxParameterCount`.  
+`minParameterCount <= argument count <= maxParameterCount`  
 For most callables, `minParameterCount` equals to `maxParameterCount`.  
 For overloaded function (tkOverloadedFunction), `resultCount` is the maximum result count of the overloaded functions.
 'minParameterCount' is the minimum argument count of the overloaded functions.
 'maxParameterCount' is the maximum argument count of the overloaded functions.  
-For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments,
-`maxParameterCount` is the number of all arguments, including both non-default and default arguments.  
+For default args function (tkDefaultArgsFunction), 'minParameterCount' is the number of non-default arguments, `maxParameterCount`
+is the number of all arguments, including both non-default and default arguments.  
 For variadic function (tkVariadicFunction), 'minParameterCount' is 0, `maxParameterCount` is std::numeric_limits<int>::max().  
+
+In #2 constructor, both `minParameterCount` and `maxParameterCount` will equal to `parameterCount`.
 
 <a id="mdtoc_3d8ebc96"></a>
 #### getReturnType
@@ -157,7 +159,7 @@ const MetaType * getParameterType(const Variant & callable, const int index);
 ```
 
 Returns the meta type of parameter at `index`.  
-For variadic function (tkVariadicFunction), the function always returns nullptr.  
+For variadic function (tkVariadicFunction), the function always returns meta type of `void` (tkVoid), which `MetaType::isVoid()` is true.  
 
 <a id="mdtoc_a909c1fa"></a>
 #### rankInvoke
@@ -171,8 +173,8 @@ The return value is positive number or zero.
 If the return value is 0, then the arguments can't be used to invoke the callable.
 Otherwise, the larger the return value, the more matching.  
 
-Parameter `instance` is the object instance if `callable` is a class member function.
-`instance` can be value, pointer, or smart pointer.
+Parameter `instance` is the object instance if `callable` is a class member function. `instance` can be value, pointer, or
+smart pointer.
 If `callable` is a member function, and the constness of `instance` can't access `callable`
 (for example, `instance` is a pointer to const, while `callable` is a non-const member function),
 the rank is 0, value 0 is returned, and the `arguments` are not checked.  
@@ -307,9 +309,8 @@ void demoArgumentSpan(const metapp::ArgumentSpan & arguments)
 
 Below free functions are shortcut functions to use the member functions in `MetaCallable`.  
 Usually you should prefer the utility functions to calling `MetaCallable` member function directly.
-However, if you need to call functions on a single `MetaCallable` more than one times in a high performance
-application, you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable
-to call the member functions.
+However, if you need to call functions on a single `MetaCallable` more than one times in a high performance application,
+you may store `callable.getMetaType()->getMetaCallable()` to a local variable, then use the variable to call the member functions.
 This is because `getMetaCallable()` has slightly performance overhead (the overhead is neglect most time).
 
 <a id="mdtoc_35629588"></a>
@@ -445,8 +446,12 @@ Shortcut for `MetaCallable::isStatic()`.
 <a id="mdtoc_4f2a2173"></a>
 ## MetaCallable can cast to std::function
 
-Any `MetaCallable` can cast to `std::function` as long as the number of parameter is appropriate. The casting only checks
-parameter count, it doesn't check argument type or the result type. The user needs to ensure the argument type is cast-able.   
+Any `MetaCallable` can cast to `std::function` if,
+1. The number of parameters is appropriate.
+2. The parameter types in the `MetaCallable` can cast to the corresponding arguments in `std::function`.
+3. If the return type in `std::function` is not `void`, then the return type in the `MetaCallable` can cast to
+the the return type in `std::function`.
+
 For example,  
 
 ```c++
@@ -458,7 +463,7 @@ std::string f1(const int a, const std::string & b)
 
 ```c++
 metapp::Variant v(&f1);
-// The parameters type are not exactly, but they are convertible, double can convert to int
+// The parameters type are not same, but they are convertible, double can convert to int
 using FT = std::function<std::string (double, std::string)>;
 FT func = v.cast<FT>().get<FT &>();
 ASSERT(func(5.3, "Hello") == "5Hello");

@@ -20,6 +20,7 @@
 #include "metapp/interfaces/bases/metacallablebase.h"
 
 #include <functional>
+#include <array>
 
 namespace metapp {
 
@@ -45,6 +46,20 @@ struct DeclareMetaTypeBase <std::function<RT (Args...)> >
 		if(argsCount_ < paramInfo.getMinParameterCount() || argsCount_ > paramInfo.getMaxParameterCount()) {
 			return false;
 		}
+		
+		const std::array<const MetaType *, argsCount> argsTypeList {
+			getMetaType<Args>()...,
+		};
+		for(int i = 0; i < argsCount; ++i) {
+			const MetaType * paramType = metaCallable->getParameterType(*fromVar, i);
+			if(! paramType->isVoid() && ! argsTypeList[i]->canCast(paramType)) {
+				return false;
+			}
+		}
+		if(! getMetaType<RT>()->isVoid() && ! metaCallable->getReturnType(*fromVar)->canCast(getMetaType<RT>())) {
+			return false;
+		}
+
 		if(result != nullptr) {
 			*result = std::function<RT (Args...)>(
 				[fromVar](Args ... args) -> RT {

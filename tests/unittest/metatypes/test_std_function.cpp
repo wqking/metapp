@@ -69,7 +69,7 @@ TEST_CASE("metatypes, std::function<std::unique_ptr<int> ()>, invoke")
 	REQUIRE(result.getMetaType()->equal(metapp::getMetaType<std::unique_ptr<int> >()));
 }
 
-TEST_CASE("metatypes, std::function<int (int)>, cast from other MetaCallable")
+TEST_CASE("metatypes, std::function<int (int)>, cast from int(double)")
 {
 	struct X {
 		static int add(const double value) {
@@ -83,7 +83,7 @@ TEST_CASE("metatypes, std::function<int (int)>, cast from other MetaCallable")
 	REQUIRE(f(2) == 3);
 }
 
-TEST_CASE("metatypes, std::function<std::unique_ptr<int> (int)>, cast from other MetaCallable")
+TEST_CASE("metatypes, std::function<std::unique_ptr<int> (int)>, cast from std::unique_ptr<int>(double)")
 {
 	struct X {
 		static std::unique_ptr<int> func(const double value) {
@@ -97,7 +97,7 @@ TEST_CASE("metatypes, std::function<std::unique_ptr<int> (int)>, cast from other
 	REQUIRE(*f(2) == 7);
 }
 
-TEST_CASE("metatypes, std::function<int & ()>, cast from other MetaCallable")
+TEST_CASE("metatypes, std::function<int & ()>, cast from int &()")
 {
 	struct X {
 		static int & func() {
@@ -116,6 +116,23 @@ TEST_CASE("metatypes, std::function<int & ()>, cast from other MetaCallable")
 	REQUIRE(X::func() == 5);
 }
 
+TEST_CASE("metatypes, std::function<void (int &)>, cast from int (int &)")
+{
+	struct X {
+		static int func(int & rn) {
+			rn = 38;
+			return rn;
+		}
+	};
+	metapp::Variant v(X::func);
+	using FT = std::function<void (int &)>;
+	REQUIRE(v.canCast<FT>());
+	FT f = v.cast<FT>().get<FT &>();
+	int n = 0;
+	f(n);
+	REQUIRE(n == 38);
+}
+
 TEST_CASE("metatypes, std::function<int (int)>, can't cast from std::string")
 {
 	metapp::Variant v(std::string("abc"));
@@ -131,6 +148,29 @@ TEST_CASE("metatypes, std::function<int (int)>, can't cast from int(int, int)")
 		}
 	};
 	metapp::Variant v(X::add);
+	using FT = std::function<int (int)>;
+	REQUIRE(! v.canCast<FT>());
+}
+
+TEST_CASE("metatypes, std::function<int (int)>, can't cast from int(std::string)")
+{
+	struct X {
+		static int func(std::string) {
+			return 0;
+		}
+	};
+	metapp::Variant v(X::func);
+	using FT = std::function<int (int)>;
+	REQUIRE(! v.canCast<FT>());
+}
+
+TEST_CASE("metatypes, std::function<int (int)>, can't cast from void(int)")
+{
+	struct X {
+		static void func(int) {
+		}
+	};
+	metapp::Variant v(X::func);
 	using FT = std::function<int (int)>;
 	REQUIRE(! v.canCast<FT>());
 }

@@ -54,6 +54,8 @@ bool commonCast(
 	const MetaType * toMetaType
 );
 
+const MetaType * getNonReferenceMetaType(const MetaType * metaType);
+
 namespace internal_ {
 
 template <typename T>
@@ -301,6 +303,9 @@ public:
 	}
 
 	bool canCast(const MetaType * toMetaType) const {
+		if(getNonReferenceMetaType(this)->equal(getNonReferenceMetaType(toMetaType))) {
+			return true;
+		}
 		return cast(nullptr, nullptr, toMetaType);
 	}
 
