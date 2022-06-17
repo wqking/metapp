@@ -49,7 +49,8 @@ struct metapp::DeclareMetaType <MyClass>
 };
 ```
 
-The members in DeclareMetaType that will be used by metapp are static constants, type definition, or static functions. All members are optional. If any member is missed, metapp will use default implementation.  
+The members in DeclareMetaType that will be used by metapp are static constants, type definition, or static functions.
+All members are optional. If any member is missed, metapp will use default implementation.  
 
 <a id="mdtoc_eacdf91a"></a>
 ## Members in DeclareMetaType
@@ -75,25 +76,53 @@ the value must be equal or greater than `metapp::tkUser`.
 #### Function cast
 
 ```c++
-static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
+static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType);
 ```
 
-Function `cast` return true if the `value` can be type casted to `toMetaType`, otherwise returns false.  
-If `result` is not nullptr and if the `value` can be casted, set `result` with the casted value.  
-If the implementation can't cast the value, it should return the value of default implementation, `metapp::commonCast`.  
+Function `cast` return true if current meta type being declared can be casted to `toMetaType`, otherwise returns false.  
+If the implementation can't cast the type, it should return the value of default implementation, `metapp::commonCast`.  
+If `result` is not nullptr and if the `*fromVar` can be casted, set `result` with the casted value.  
+If `result` is not nullptr, `fromVar` is guaranteed not nullptr.  
+If `result` is nullptr, `fromVar` is can be nullptr or not nullptr.  
+
+Assume current being declared type is T, then,  
+If `result` is not nullptr, then `cast` should set `result` with the casted value that's casted from `*fromVar`.  
+If `result` is nullptr, and if `fromVar` is not nullptr, then `cast` should return if `metapp::getMetaType<T>()` can cast
+to `toMetaType`, but `cast` can access `fromVar` if necessary.  
+If `result` is nullptr, and if `fromVar` is also nullptr, then `cast` should return if `metapp::getMetaType<T>()` can cast
+to `toMetaType`. If `cast` must depend on the available of `fromVar`, then `cast` should return true or false directly.  
+
+The built-in meta types that depend on `fromVar` are `std::function` (tkStdFunction) and `Variant` (tkVariant).  
+
+Below is the pseudo code about implementing `cast`,
 
 ```c++
 template <>
 struct metapp::DeclareMetaType <MyClass>
   : metapp::DeclareMetaTypeBase <MyClass>
 {
-  static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
+  static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType)
   {
-    if(can cast MyClass to toMetaType) {
-      *result = casted value;
-      return true;
+    if(need to depending on fromVar) {
+      if(fromVar == nullptr) {
+        return true;
+      }
+      if(fromVar can cast to toMetaType) {
+        if(result != nullptr) {
+          *result = casted *fromVar;
+        }
+        return true;
+      }
     }
-    return metapp::commonCast(result, value, getMetaType<MyClass>(), toMetaType);
+    else {
+      if(can cast MyClass to toMetaType) {
+        if(result != nullptr) {
+          *result = casted *fromVar;
+        }
+        return true;
+      }
+    }
+    return metapp::commonCast(result, fromVar, getMetaType<MyClass>(), toMetaType);
   }
 };
 ```
@@ -102,11 +131,13 @@ struct metapp::DeclareMetaType <MyClass>
 #### castFrom
 
 ```c++
-static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType);
+static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType);
 ```
 
-Function `castFrom` return true if the `value` of `fromMetaType` can be casted to the type of which is under DeclareMetaType, otherwise returns false.  
-If `result` is not nullptr and if the `value` can be casted, set `result` with the casted value.  
+Function `castFrom` return true if the `*fromVar` of `fromMetaType` can be casted to the type
+of which is under DeclareMetaType, otherwise returns false.  
+If `result` is not nullptr and if the `*fromVar` can be casted, set `result` with the casted value.  
+For the cases when `result` or `fromVar` is nullptr, see `cast`.  
 
 <a id="mdtoc_eb2d6dea"></a>
 #### Function setup
@@ -251,23 +282,23 @@ Here is example code,
 template <>
 struct metapp::DeclareMetaType<Integer>
 {
-  static bool cast(metapp::Variant * result, const metapp::Variant & value, const metapp::MetaType * toMetaType) {
+  static bool cast(metapp::Variant * result, const metapp::Variant * fromVar, const metapp::MetaType * toMetaType) {
     // Check if toMetaType is Text
     if(toMetaType->equal(metapp::getMetaType<Text>())) {
       if(result != nullptr) {
-        *result = static_cast<Text>(value.get<const Integer &>());
+        *result = static_cast<Text>(fromVar->get<const Integer &>());
       }
       return true;
     }
     // Note it's getMetaType<Integer>(), it's the meta type under DeclareMetaType
-    return commonCast(result, value, getMetaType<Integer>(), toMetaType);
+    return commonCast(result, fromVar, getMetaType<Integer>(), toMetaType);
   }
 
-  static bool castFrom(metapp::Variant * result, const metapp::Variant & value, const metapp::MetaType * fromMetaType)
+  static bool castFrom(metapp::Variant * result, const metapp::Variant * fromVar, const metapp::MetaType * fromMetaType)
   {
     if(fromMetaType->equal(metapp::getMetaType<Text>())) {
       if(result != nullptr) {
-        *result = static_cast<Integer>(value.get<const Text &>());
+        *result = static_cast<Integer>(fromVar->get<const Text &>());
       }
       return true;
     }

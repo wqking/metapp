@@ -49,7 +49,7 @@ constexpr const MetaType * getMetaType();
 
 bool commonCast(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 );
@@ -64,7 +64,7 @@ class UnifiedType;
 enum class TristateBool;
 TristateBool doCastPointerReference(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 );
@@ -259,7 +259,7 @@ public:
 		if(getModule() == other->getModule()) {
 			return false;
 		}
-		return doDeepEqual(other);
+		return doCheckEqualCrossModules(other);
 	}
 
 	int compare(const MetaType * other) const;
@@ -300,6 +300,10 @@ public:
 		unifiedType->dtor(instance);
 	}
 
+	bool canCast(const MetaType * toMetaType) const {
+		return cast(nullptr, nullptr, toMetaType);
+	}
+
 private:
 	MetaType(
 		const internal_::MetaTable & metaTable,
@@ -311,33 +315,33 @@ private:
 		return unifiedType->constructData(data, copyFrom, memory, copyStrategy);
 	}
 
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
-		return unifiedType->cast(result, value, toMetaType);
+	bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) const {
+		return unifiedType->cast(result, fromVar, toMetaType);
 	}
 
-	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
-		return unifiedType->castFrom(result, value, fromMetaType);
+	bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType) const {
+		return unifiedType->castFrom(result, fromVar, fromMetaType);
 	}
 
 	const void * getRawType() const noexcept {
 		return metaTable.rawType;
 	}
 
-	bool doDeepEqual(const MetaType * other) const;
+	bool doCheckEqualCrossModules(const MetaType * other) const;
 
 	template <typename T>
 	friend const MetaType * internal_::doGetMetaTypeStorage();
 
 	friend bool commonCast(
 		Variant * result,
-		const Variant & value,
+		const Variant * fromVar,
 		const MetaType * fromMetaType,
 		const MetaType * toMetaType
 	);
 
 	friend internal_::TristateBool internal_::doCastPointerReference(
 		Variant * result,
-		const Variant & value,
+		const Variant * fromVar,
 		const MetaType * fromMetaType,
 		const MetaType * toMetaType
 	);
@@ -377,9 +381,9 @@ public:
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 	static void destroy(void * instance, const bool freeMemory);
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType);
 
-	static constexpr bool (*castFrom)(Variant * result, const Variant & value, const MetaType * fromMetaType) = nullptr;
+	static constexpr bool (*castFrom)(Variant * result, const Variant * fromVar, const MetaType * fromMetaType) = nullptr;
 };
 
 template <typename T, typename Enabled = void>
@@ -408,9 +412,9 @@ struct DeclareMetaTypeVoidBase
 	static void destroy(void * instance, const bool freeMemory);
 	static void dtor(void * instance, const bool freeMemory);
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType);
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType);
 
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType);
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType);
 
 };
 

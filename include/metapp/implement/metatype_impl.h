@@ -189,9 +189,9 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance, const bool freeMe
 }
 
 template <typename T>
-inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant & value, const MetaType * toMetaType)
+inline bool CommonDeclareMetaType<T>::cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType)
 {
-	return commonCast(result, value, getMetaType<T>(), toMetaType);
+	return commonCast(result, fromVar, getMetaType<T>(), toMetaType);
 }
 
 template <typename T>

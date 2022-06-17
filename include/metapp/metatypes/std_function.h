@@ -30,21 +30,25 @@ struct DeclareMetaTypeBase <std::function<RT (Args...)> >
 	using UpType = TypeList<RT, Args...>;
 	static constexpr TypeKind typeKind = tkStdFunction;
 
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * /*fromMetaType*/)
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * /*fromMetaType*/)
 	{
-		const MetaCallable * metaCallable = getNonReferenceMetaType(value)->getMetaCallable();
+		if(fromVar == nullptr) {
+			return true;
+		}
+
+		const MetaCallable * metaCallable = getNonReferenceMetaType(*fromVar)->getMetaCallable();
 		if(metaCallable == nullptr) {
 			return false;
 		}
-		const auto paramInfo = metaCallable->getParameterCountInfo(value);
+		const auto paramInfo = metaCallable->getParameterCountInfo(*fromVar);
 		constexpr int argsCount_ = sizeof...(Args);
 		if(argsCount_ < paramInfo.getMinParameterCount() || argsCount_ > paramInfo.getMaxParameterCount()) {
 			return false;
 		}
 		if(result != nullptr) {
 			*result = std::function<RT (Args...)>(
-				[value](Args ... args) -> RT {
-					return doCastFromInvoke<RT>(value, args...);
+				[fromVar](Args ... args) -> RT {
+					return doCastFromInvoke<RT>(*fromVar, args...);
 				}
 			);
 		}

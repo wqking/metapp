@@ -54,29 +54,29 @@ struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory, copyStrategy);
 	}
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
 		const MetaType * upType = getMetaType<UpType>();
 		const MetaType * nonRef = getNonReferenceMetaType(toMetaType);
 		if(nonRef->equal(getMetaType<std::string>()) && upType->equal(getMetaType<char>())) {
 			if(result != nullptr) {
-				*result = std::string((const char *)(value.getAddress()));
+				*result = std::string((const char *)(fromVar->getAddress()));
 			}
 			return true;
 		}
 		if(nonRef->equal(getMetaType<std::wstring>()) && upType->equal(getMetaType<wchar_t>())) {
 			if(result != nullptr) {
-				*result = std::wstring((const wchar_t *)(value.getAddress()));
+				*result = std::wstring((const wchar_t *)(fromVar->getAddress()));
 			}
 			return true;
 		}
 		if(nonRef->isPointer() && nonRef->getUpType()->equal(upType)) {
 			if(result != nullptr) {
-				*result = (UpType *)(value.getAddress());
+				*result = (UpType *)(fromVar->getAddress());
 			}
 			return true;
 		}
 
-		return commonCast(result, value, getMetaType<T>(), toMetaType);
+		return commonCast(result, fromVar, getMetaType<T>(), toMetaType);
 	}
 
 private:

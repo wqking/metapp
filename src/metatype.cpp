@@ -32,7 +32,7 @@ enum class TristateBool
 
 TristateBool doCastObject(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 )
@@ -59,10 +59,10 @@ TristateBool doCastObject(
 				void * instance = nullptr;
 				// Should not use getPointer() in utility
 				if(fromMetaType->isPointer()) {
-					instance = value.get<void *>();
+					instance = fromVar->get<void *>();
 				}
 				else {
-					instance = value.getAddress();
+					instance = fromVar->getAddress();
 				}
 				if(instance != nullptr) {
 					instance = metaRepo->cast(instance, fromUpType, toUpType);
@@ -92,19 +92,19 @@ TristateBool doCastObject(
 
 TristateBool doCastPointerReference(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 )
 {
-	const TristateBool tristateResult = doCastObject(result, value, fromMetaType, toMetaType);
+	const TristateBool tristateResult = doCastObject(result, fromVar, fromMetaType, toMetaType);
 	if(tristateResult != TristateBool::unknown) {
 		return tristateResult;
 	}
 
 	if(fromMetaType->isReference() || toMetaType->isReference()) {
 		if(getNonReferenceMetaType(fromMetaType)->cast(
-			result, value, getNonReferenceMetaType(toMetaType))) {
+			result, fromVar, getNonReferenceMetaType(toMetaType))) {
 			return TristateBool::yes;
 		}
 	}
@@ -158,12 +158,12 @@ void DeclareMetaTypeVoidBase::dtor(void * /*instance*/, const bool /*freeMemory*
 {
 }
 
-bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*toMetaType*/)
+bool DeclareMetaTypeVoidBase::cast(Variant * /*result*/, const Variant * /*fromVar*/, const MetaType * /*toMetaType*/)
 {
 	return false;
 }
 
-bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant & /*value*/, const MetaType * /*fromMetaType*/)
+bool DeclareMetaTypeVoidBase::castFrom(Variant * /*result*/, const Variant * /*fromVar*/, const MetaType * /*fromMetaType*/)
 {
 	return false;
 }
@@ -181,7 +181,7 @@ MetaType::MetaType(
 {
 }
 
-bool MetaType::doDeepEqual(const MetaType * other) const
+bool MetaType::doCheckEqualCrossModules(const MetaType * other) const
 {
 	if(getTypeKind() != other->getTypeKind() || getUpTypeCount() != other->getUpTypeCount()) {
 		return false;
@@ -216,17 +216,17 @@ int MetaType::compare(const MetaType * other) const
 
 bool commonCast(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 )
 {
-	const internal_::TristateBool tristate = internal_::doCastPointerReference(result, value, fromMetaType, toMetaType);
+	const internal_::TristateBool tristate = internal_::doCastPointerReference(result, fromVar, fromMetaType, toMetaType);
 	if(tristate != internal_::TristateBool::unknown) {
 		return tristate == internal_::TristateBool::yes;
 	}
 
-	if(toMetaType->castFrom(result, value, fromMetaType)) {
+	if(toMetaType->castFrom(result, fromVar, fromMetaType)) {
 		return true;
 	}
 

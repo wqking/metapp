@@ -42,17 +42,17 @@ struct DeclareMetaTypeBase <T,
 	// the performance is bad (casting between arithmetics are quite commonly used so performance is important).
 	// Here we implement `cast` using O(1) algorithm for better performance.
 	// Another side effect is the binary size decreased a little bit.
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
 		// If we don't use getNonReferenceMetaType below, reference to T can still be handled
 		// correctly by `commonCast`, but that will affect performance.
 		const TypeKind toTypeKind = getNonReferenceMetaType(toMetaType)->getTypeKind();
 		if(typeKindIsArithmetic(toTypeKind)) {
 			if(result != nullptr) {
-				getCastToFunc(toTypeKind - tkArithmeticBegin)(result, value.get<T>());
+				getCastToFunc(toTypeKind - tkArithmeticBegin)(result, fromVar->get<T>());
 			}
 			return true;
 		}
-		return commonCast(result, value, getMetaType<T>(), toMetaType);
+		return commonCast(result, fromVar, getMetaType<T>(), toMetaType);
 	}
 
 private:

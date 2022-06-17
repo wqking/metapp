@@ -297,9 +297,9 @@ struct UnifiedMetaTable
 
 	void (*destroy)(void * instance, const bool freeMemory);
 
-	bool (*cast)(Variant * result, const Variant & value, const MetaType * toMetaType);
+	bool (*cast)(Variant * result, const Variant * fromVar, const MetaType * toMetaType);
 
-	bool (*castFrom)(Variant * result, const Variant & value, const MetaType * fromMetaType);
+	bool (*castFrom)(Variant * result, const Variant * fromVar, const MetaType * fromMetaType);
 
 	MetaInterfaceData metaInterfaceData;
 };
@@ -335,15 +335,15 @@ private:
 		metaMethodTable.destroy(instance, false);
 	}
 
-	bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) const {
-		return metaMethodTable.cast(result, value, toMetaType);
+	bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) const {
+		return metaMethodTable.cast(result, fromVar, toMetaType);
 	}
 
-	bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType) const {
+	bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType) const {
 		if(metaMethodTable.castFrom == nullptr) {
 			return false;
 		}
-		return metaMethodTable.castFrom(result, value, fromMetaType);
+		return metaMethodTable.castFrom(result, fromVar, fromMetaType);
 	}
 
 	const void * getMetaInterface(const MetaInterfaceKind kind) const;

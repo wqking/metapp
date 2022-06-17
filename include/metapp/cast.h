@@ -30,7 +30,7 @@ constexpr const MetaType * getMetaType();
 
 bool commonCast(
 	Variant * result,
-	const Variant & value,
+	const Variant * fromVar,
 	const MetaType * fromMetaType,
 	const MetaType * toMetaType
 );
@@ -39,12 +39,12 @@ template <typename MyType, typename FromTypes>
 struct CastFromChecker
 {
 public:
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType)
 	{
 		auto castFromFunc = findCastFromFunc(fromMetaType);
 		if(castFromFunc != nullptr) {
 			if(result != nullptr) {
-				*result = castFromFunc(value);
+				*result = castFromFunc(fromVar);
 			}
 			return true;
 		}
@@ -57,12 +57,12 @@ private:
 	{
 		using ToType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
-		static Variant castFrom(const Variant & value) {
-			return static_cast<ToType>(*(FromType *)(value.getAddress()));
+		static Variant castFrom(const Variant * fromVar) {
+			return static_cast<ToType>(*(FromType *)(fromVar->getAddress()));
 		}
 	};
 
-	using CastFromFunc = Variant (*)(const Variant & value);
+	using CastFromFunc = Variant (*)(const Variant * fromVar);
 
 	template <typename ...Types>
 	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<Types...>)
@@ -103,12 +103,12 @@ template <typename MyType, typename ToTypes>
 struct CastToChecker
 {
 public:
-	static bool castTo(Variant * result, const Variant & value, const MetaType * toMetaType)
+	static bool castTo(Variant * result, const Variant * fromVar, const MetaType * toMetaType)
 	{
 		auto castToFunc = findCastToFunc(toMetaType);
 		if(castToFunc != nullptr) {
 			if(result != nullptr) {
-				*result = castToFunc(value);
+				*result = castToFunc(fromVar);
 			}
 			return true;
 		}
@@ -121,12 +121,12 @@ private:
 	{
 		using FromType = typename std::remove_cv<typename std::remove_reference<MyType>::type>::type;
 
-		static Variant castTo(const Variant & value) {
-			return static_cast<ToType>(*(FromType *)(value.getAddress()));
+		static Variant castTo(const Variant * fromVar) {
+			return static_cast<ToType>(*(FromType *)(fromVar->getAddress()));
 		}
 	};
 
-	using CastToFunc = Variant (*)(const Variant & value);
+	using CastToFunc = Variant (*)(const Variant * fromVar);
 
 	template <typename ...Types>
 	static CastToFunc doFindCastToFuncHelper(const MetaType * toMetaType, TypeList<Types...>)
@@ -167,10 +167,10 @@ private:
 template <typename T, typename ToTypes>
 struct CastToTypes
 {
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType)
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType)
 	{
-		return CastToChecker<T, ToTypes>::castTo(result, value, toMetaType)
-			|| commonCast(result, value, getMetaType<T>(), toMetaType)
+		return CastToChecker<T, ToTypes>::castTo(result, fromVar, toMetaType)
+			|| commonCast(result, fromVar, getMetaType<T>(), toMetaType)
 		;
 	}
 };
@@ -178,9 +178,9 @@ struct CastToTypes
 template <typename T, typename FromTypes>
 struct CastFromTypes
 {
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * fromMetaType)
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType)
 	{
-		return CastFromChecker<T, FromTypes>::castFrom(result, value, fromMetaType);
+		return CastFromChecker<T, FromTypes>::castFrom(result, fromVar, fromMetaType);
 	}
 };
 

@@ -280,3 +280,17 @@ TEST_CASE("MetaType, destroy")
 	REQUIRE(freed);
 }
 
+template <typename F, typename T>
+bool testCanCast()
+{
+	return metapp::getMetaType<F>()->canCast(metapp::getMetaType<T>());
+}
+
+TEST_CASE("MetaType, canCast")
+{
+	REQUIRE(testCanCast<int, int>());
+	REQUIRE(testCanCast<int &, int>());
+	REQUIRE(testCanCast<int, long>());
+	REQUIRE(testCanCast<int &, long>());
+	REQUIRE(! testCanCast<int, std::string>());
+}

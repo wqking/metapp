@@ -321,6 +321,23 @@ void dtor(void * instance) const;
 Invoke the destructor but don't free the memory.  
 This is useful to destruct the object constructed by `placementConstruct` or `placementCopyConstruct`.  
 
+#### canCast
+
+```c++
+bool canCast(const MetaType * toMetaType) const;
+```
+
+Return true if `this` MetaType can cast to `toMetaType`. This is similar to `Variant::canCast(const MetaType * toMetaType)`
+with special case.  
+The special case is, since `MetaType::canCast` can't provide any `Variant` for test, the meta types that depend on the
+`Variant` value to test cast-ability will return inaccurate result. `Variant::canCast` doesn't have such problem because
+it can provide the `Variant` value.  
+In the built-in meta types, it will always return true in `MetaType::canCast`
+if `this` MetaType is `std::function` (tkStdFunction), or `toMetaType` is `Variant` (tkVariant).
+
+Usually `MetaType::canCast` should not be used unless you can't have the `Variant` value available, otherwise, always use
+`Variant::canCast`.
+
 #### getModule
 
 ```c++

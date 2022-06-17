@@ -83,15 +83,15 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 		}
 	}
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
 		if(getNonReferenceMetaType(toMetaType)->equal(getMetaType<std::weak_ptr<T> >())) {
 			if(result != nullptr) {
-				*result = std::weak_ptr<T>(value.get<SharedPtr &>());
+				*result = std::weak_ptr<T>(fromVar->get<SharedPtr &>());
 			}
 			return true;
 		}
 
-		return commonCast(result, value, getMetaType<SharedPtr>(), toMetaType);
+		return commonCast(result, fromVar, getMetaType<SharedPtr>(), toMetaType);
 	}
 
 	static const MetaAccessible * getMetaAccessible() {

@@ -26,27 +26,29 @@ struct DeclareMetaTypeBase <Variant>
 {
 	static constexpr TypeKind typeKind = tkVariant;
 
-	static bool cast(Variant * result, const Variant & value, const MetaType * toMetaType) {
-		if(commonCast(result, value, getMetaType<Variant>(), toMetaType)) {
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
+		if(commonCast(result, fromVar, getMetaType<Variant>(), toMetaType)) {
 			return true;
 		}
 		else {
-			const Variant & ref = value.get<const Variant &>();
-			Variant casted = ref.castSilently(toMetaType);
-			if(casted.isEmpty()) {
-				return false;
-			}
-			if(result != nullptr) {
-				*result = std::move(casted);
+			if(fromVar != nullptr) {
+				const Variant & ref = fromVar->get<const Variant &>();
+				Variant casted = ref.castSilently(toMetaType);
+				if(casted.isEmpty()) {
+					return false;
+				}
+				if(result != nullptr) {
+					*result = std::move(casted);
+				}
 			}
 			return true;
 		}
 	}
 
-	static bool castFrom(Variant * result, const Variant & value, const MetaType * /*fromMetaType*/)
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * /*fromMetaType*/)
 	{
 		if(result != nullptr) {
-			*result = value;
+			*result = *fromVar;
 		}
 		return true;
 	}

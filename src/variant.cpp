@@ -92,7 +92,7 @@ bool Variant::canCast(const MetaType * toMetaType) const
 	if(getNonReferenceMetaType(toMetaType)->equal(getNonReferenceMetaType(metaType))) {
 		return true;
 	}
-	return metaType->cast(nullptr, *this, toMetaType);
+	return metaType->cast(nullptr, this, toMetaType);
 }
 
 Variant Variant::cast(const MetaType * toMetaType) const
@@ -101,7 +101,7 @@ Variant Variant::cast(const MetaType * toMetaType) const
 		return *this;
 	}
 	Variant result;
-	if(! metaType->cast(&result, *this, toMetaType)) {
+	if(! metaType->cast(&result, this, toMetaType)) {
 		raiseException<BadCastException>();
 	}
 	return result;
@@ -113,7 +113,7 @@ Variant Variant::castSilently(const MetaType * toMetaType) const
 		return *this;
 	}
 	Variant result;
-	metaType->cast(&result, *this, toMetaType);
+	metaType->cast(&result, this, toMetaType);
 	return result;
 }
 
