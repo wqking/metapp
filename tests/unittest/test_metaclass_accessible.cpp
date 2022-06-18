@@ -53,7 +53,7 @@ struct C : B, B2
 };
 bool C::staticValue = true;
 
-metapp::MetaRepo tmfMetaRepo;
+metapp::MetaRepo tmaMetaRepo;
 
 } // namespace
 
@@ -78,7 +78,7 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
-		tmfMetaRepo.registerBase<B, A>();
+		tmaMetaRepo.registerBase<B, A>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
@@ -114,7 +114,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{
-		tmfMetaRepo.registerBase<C, B, B2>();
+		tmaMetaRepo.registerBase<C, B, B2>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
@@ -132,7 +132,7 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 };
 
 
-TEST_CASE("MetaClass, field, struct B")
+TEST_CASE("MetaClass, accessible, struct B")
 {
 	auto metaTypeB = metapp::getMetaType<B>();
 	auto metaClassB = metaTypeB->getMetaClass();
@@ -142,16 +142,16 @@ TEST_CASE("MetaClass, field, struct B")
 	
 	REQUIRE(metaClassB->getAccessible("notExist").isEmpty());
 	
-	const auto & field = metaClassB->getAccessible("value");
-	REQUIRE(metapp::accessibleGetValueType(field)->getTypeKind() == metapp::tkStdString);
-	REQUIRE(metapp::accessibleGet(field, &b).template get<const std::string &>() == "hello");
+	const auto & accessible = metaClassB->getAccessible("value");
+	REQUIRE(metapp::accessibleGetValueType(accessible)->getTypeKind() == metapp::tkStdString);
+	REQUIRE(metapp::accessibleGet(accessible, &b).template get<const std::string &>() == "hello");
 
 	const auto & a = metaClassB->getAccessible("a");
 	REQUIRE(metapp::accessibleGetValueType(a)->getTypeKind() == metapp::tkInt);
 	REQUIRE(metapp::accessibleGet(a, &b).template get<int>() == 3);
 }
 
-TEST_CASE("MetaClass, field, struct C")
+TEST_CASE("MetaClass, accessible, struct C")
 {
 	auto metaTypeC = metapp::getMetaType<C>();
 	auto metaClassC = metaTypeC->getMetaClass();
@@ -162,28 +162,35 @@ TEST_CASE("MetaClass, field, struct C")
 
 	REQUIRE(metaClassC->getAccessible("notExist").isEmpty());
 
-	const auto & field = metaClassC->getAccessible("value");
-	REQUIRE(metapp::accessibleGet(field, &c).template get<int>() == 5);
+	const auto & accessible = metaClassC->getAccessible("value");
+	REQUIRE(! accessible.asAccessible().isEmpty());
+	REQUIRE(metapp::accessibleGet(accessible, &c).template get<int>() == 5);
 
 	const auto & a = metaClassC->getAccessible("a");
 	REQUIRE(metapp::accessibleGet(a, &c).template get<int>() == 3);
 
 	const auto & staticValue = metaClassC->getAccessible("staticValue");
 	REQUIRE(metapp::accessibleGet(staticValue, nullptr).template get<bool>() == true);
+}
 
-	std::map<std::string, int> fieldNameMap;
+TEST_CASE("MetaClass, accessible, struct C, getAccessibleView")
+{
+	auto metaTypeC = metapp::getMetaType<C>();
+	auto metaClassC = metaTypeC->getMetaClass();
+
+	std::map<std::string, int> accessibleNameMap;
 	auto accessibleView = metaClassC->getAccessibleView();
 	for(auto it = accessibleView.begin(); it != accessibleView.end(); ++it) {
-		++fieldNameMap[it->getName()];
+		++accessibleNameMap[it->getName()];
 	}
-	REQUIRE(fieldNameMap["value"] == 3);
-	REQUIRE(fieldNameMap["c"] == 1);
-	REQUIRE(fieldNameMap["b"] == 1);
-	REQUIRE(fieldNameMap["a"] == 1);
-	REQUIRE(fieldNameMap["b2"] == 1);
-	REQUIRE(fieldNameMap["staticValue"] == 1);
-	REQUIRE(fieldNameMap.size() == 6);
-	REQUIRE(fieldNameMap.find("notReflected") == fieldNameMap.end());
-	REQUIRE(fieldNameMap.find("notExist") == fieldNameMap.end());
+	REQUIRE(accessibleNameMap["value"] == 3);
+	REQUIRE(accessibleNameMap["c"] == 1);
+	REQUIRE(accessibleNameMap["b"] == 1);
+	REQUIRE(accessibleNameMap["a"] == 1);
+	REQUIRE(accessibleNameMap["b2"] == 1);
+	REQUIRE(accessibleNameMap["staticValue"] == 1);
+	REQUIRE(accessibleNameMap.size() == 6);
+	REQUIRE(accessibleNameMap.find("notReflected") == accessibleNameMap.end());
+	REQUIRE(accessibleNameMap.find("notExist") == accessibleNameMap.end());
 }
 

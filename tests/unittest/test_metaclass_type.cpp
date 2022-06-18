@@ -20,7 +20,6 @@
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/allmetatypes.h"
 #include "metapp/metarepo.h"
-#include "metapp/utilities/utility.h"
 
 #include <string>
 #include <iostream>
@@ -30,52 +29,21 @@ namespace {
 
 struct A
 {
-	virtual ~A() {}
-
-	std::string methodA() const noexcept {
-		return "hello";
-	}
-
-	virtual int virtualMethod() const {
-		return value;
-	}
-
-	int value;
 };
 
 struct B : A
 {
-	std::string methodB(const std::string & s) const {
-		return "good" + s;
-	}
-
-	int virtualMethod() const override {
-		return value + 9;
-	}
 };
 
 struct B2
 {
-	int methodB2() {
-		return 8;
-	}
 };
 
 struct C : B, B2
 {
-	int methodC() {
-		return 38;
-	}
-	
-	int virtualMethod() const override {
-		return value + 1;
-	}
-	
-	void notReflected() {
-	}
 };
 
-metapp::MetaRepo tmmMetaRepo1;
+metapp::MetaRepo tmvMetaRepo;
 
 } // namespace
 
@@ -86,8 +54,8 @@ struct metapp::DeclareMetaType <A> : metapp::DeclareMetaTypeBase <A>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<A>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerCallable("methodA", &A::methodA);
-				mc.registerCallable("virtualMethod", &A::virtualMethod);
+				mc.registerType("string", getMetaType<std::string>());
+				mc.registerType("int", getMetaType<int>());
 			}
 		);
 		return &metaClass;
@@ -100,15 +68,15 @@ struct metapp::DeclareMetaType <B> : metapp::DeclareMetaTypeBase <B>
 {
 	static void setup()
 	{
-		tmmMetaRepo1.registerBase<B, A>();
+		tmvMetaRepo.registerBase<B, A>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B>(),
 			[](metapp::MetaClass & mc) {
-				auto & item = mc.registerCallable("methodB", &B::methodB);
-				item.registerAnnotation("hello", 5);
+				mc.registerType("string", getMetaType<const char *>());
+				mc.registerType("vector<int>", getMetaType<std::vector<int> >());
 			}
 		);
 		return &metaClass;
@@ -123,7 +91,7 @@ struct metapp::DeclareMetaType <B2> : metapp::DeclareMetaTypeBase <B2>
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<B2>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerCallable("methodB2", &B2::methodB2);
+				mc.registerType("long", getMetaType<long>());
 			}
 		);
 		return &metaClass;
@@ -136,14 +104,16 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 {
 	static void setup()
 	{
-		tmmMetaRepo1.registerBase<C, B, B2>();
+		tmvMetaRepo.registerBase<C, B, B2>();
 	}
 
 	static const metapp::MetaClass * getMetaClass() {
 		static const metapp::MetaClass metaClass(
 			metapp::getMetaType<C>(),
 			[](metapp::MetaClass & mc) {
-				mc.registerCallable("methodC", &C::methodC);
+				mc.registerType("char", getMetaType<char>());
+				mc.registerType("short", getMetaType<short>());
+				mc.registerType("double", getMetaType<double>());
 			}
 		);
 		return &metaClass;
@@ -152,20 +122,51 @@ struct metapp::DeclareMetaType <C> : metapp::DeclareMetaTypeBase <C>
 };
 
 
-TEST_CASE("MetaClass, method, struct B")
+TEST_CASE("MetaClass, type, struct B")
 {
 	auto metaTypeB = metapp::getMetaType<B>();
 	auto metaClassB = metaTypeB->getMetaClass();
-	B b;
-	b.value = 2;
-
-	REQUIRE(metaClassB->getCallable("notExist").isEmpty());
 	
-	const auto & methodB = metaClassB->getCallable("methodB");
-	REQUIRE(metapp::callableInvoke(methodB, &b, "great").get<const std::string &>() == "goodgreat");
-	REQUIRE(methodB.getAnnotation("hello").get<int>() == 5);
+	REQUIRE(metaClassB->getType("notExist").isEmpty());
+	
+	const auto & bString= metaClassB->getType("string");
+	REQUIRE(bString.asMetaType() == metapp::getMetaType<const char *>());
 
-	const auto & virtualMethod = metaClassB->getCallable("virtualMethod");
-	REQUIRE(metapp::callableInvoke(virtualMethod, &b).get<int>() == 11);
+	const auto & aInt = metaClassB->getType("int");
+	REQUIRE(aInt.asMetaType() == metapp::getMetaType<int>());
+}
+
+TEST_CASE("MetaClass, type, struct C")
+{
+	auto metaTypeC = metapp::getMetaType<C>();
+	auto metaClassC = metaTypeC->getMetaClass();
+
+	REQUIRE(metaClassC->getType("notExist").isEmpty());
+
+	const auto & cChar = metaClassC->getType("char");
+	REQUIRE(cChar.asMetaType() == metapp::getMetaType<char>());
+	const auto & cShort = metaClassC->getType("short");
+	REQUIRE(cShort.asMetaType() == metapp::getMetaType<short>());
+	const auto & cDouble = metaClassC->getType("double");
+	REQUIRE(cDouble.asMetaType() == metapp::getMetaType<double>());
+}
+
+TEST_CASE("MetaClass, type, struct C, getTypeView")
+{
+	auto metaTypeC = metapp::getMetaType<C>();
+	auto metaClassC = metaTypeC->getMetaClass();
+
+	std::map<std::string, int> typeNameMap;
+	auto typeView = metaClassC->getTypeView();
+	for(const auto & item : typeView) {
+		++typeNameMap[item.getName()];
+	}
+	REQUIRE(typeNameMap["string"] == 2);
+	REQUIRE(typeNameMap["int"] == 1);
+	REQUIRE(typeNameMap["vector<int>"] == 1);
+	REQUIRE(typeNameMap["long"] == 1);
+	REQUIRE(typeNameMap["char"] == 1);
+	REQUIRE(typeNameMap["short"] == 1);
+	REQUIRE(typeNameMap["double"] == 1);
 }
 
