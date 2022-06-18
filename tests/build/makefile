@@ -64,7 +64,7 @@ mingw_coverage: needcmake
 	$(ECHO) "Running tests..."
 	$(CH_DIR) $(CACHE_DIR)_mingw_coverage/unittest unittest
 	$(CH_DIR) $(CACHE_DIR)_mingw_coverage/unittest/CMakeFiles/unittest.dir gcov -b ./*.cpp.gcno
-	$(CH_DIR) ../coverage gcovr -r ../.. --html --html-details -o coverage.html
+	$(CH_DIR) ../coverage gcovr -r ../.. --html --html-details -o coverage.html --exclude ../catch\.hpp
 
 msys: needcmake
 	$(MK_CACHE)_msys
