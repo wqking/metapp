@@ -17,13 +17,9 @@
 /*desc
 # List of all built-in meta types
 
-## List of type kinds and equivalent C++ types
+## List of type kinds, equivalent C++ types and implemented meta interfaces
 
-//@include ../inc/inc_typekind_cpp_type.md
-
-## List of implemented meta interfaces
-
-//@include ../inc/inc_typekind_meta_interface.md
+//@include ../inc/inc_typekind_cpp_type_interfaces.md
 
 ## List of cast-abilities
 

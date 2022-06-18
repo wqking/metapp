@@ -66,8 +66,7 @@ The first parameter in all of the member functions is `const Variant & mappable`
 It's the Variant which meta type implements `MetaMappable`, and hold the proper data such as `std::vector`.
 The member functions operate on the data.  
 We can treat `mappable` as the C++ object instance which class implements an interface called `MetaMappable`.  
-Variant `mappable` can be value that implements `MetaMappable`, or reference that refers to value that implements
-`MetaMappable`.  
+Variant `mappable` can be value that implements `MetaMappable`, or reference that refers to value that implements `MetaMappable`.  
 
 <a id="mdtoc_8d778ce1"></a>
 #### getValueType
@@ -115,9 +114,8 @@ Set the mapped value of the element with `key` with `value`.
 
 Below free functions are shortcut functions to use the member functions in `MetaMappable`.  
 Usually you should prefer the utility functions to calling `MetaMappable` member function directly.
-However, if you need to call functions on a single `MetaMappable` more than one times in a high performance
-application, you may store `mappable.getMetaType()->getMetaMappable()` to a local variable, then use the variable
-to call the member functions.
+However, if you need to call functions on a single `MetaMappable` more than one times in a high performance application,
+you may store `mappable.getMetaType()->getMetaMappable()` to a local variable, then use the variable to call the member functions.
 This is because `getMetaMappable()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++

@@ -240,13 +240,12 @@ The parameter `name` is the variable name.
 The parameter `variable` is a Variant of any value.  
 The returned `MetaItem` can be used to add annotations to the meta data.  
 
-The difference between `accessible` and `variable` is, an `accessible` must implement meta interface `MetaAccessible`,
-while a `variable` can be any value. How to use a `variable` is up to the user.  
-The best practice to decide when to use `accessible` or `variable` is, when a Variant will be got/set value via
-an accessible such as a pointer to a variable, register it as `accessible`. If a Variant's value is not going to change
- such as a constant, register it as `variable`.  
-Note: I'm not satisfied with the term `variable`. I've thought about constant, object, value, item, element,
-but none is satisfying.
+The difference between `accessible` and `variable` is, an `accessible` must implement meta interface `MetaAccessible`, while
+a `variable` can be any value. How to use a `variable` is up to the user.  
+The best practice to decide when to use `accessible` or `variable` is, when a Variant will be got/set value via an accessible
+such as a pointer to a variable, register it as `accessible`. If a Variant's value is not going to change, such as a constant,
+register it as `variable`.  
+Note: I'm not satisfied with the term `variable`. I've thought about constant, object, value, item, element, but none is satisfying.
 
 **Example**  
 

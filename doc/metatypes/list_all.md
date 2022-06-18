@@ -2,149 +2,79 @@
 
 # List of all built-in meta types
 <!--begintoc-->
-- [List of type kinds and equivalent C++ types](#mdtoc_567cf31f)
-- [List of implemented meta interfaces](#mdtoc_70882b35)
+- [List of type kinds, equivalent C++ types and implemented meta interfaces](#mdtoc_2abe77cd)
 - [List of cast-abilities](#mdtoc_7f714096)
 - [List of UpTypes](#mdtoc_99a0987)
 <!--endtoc-->
 
-<a id="mdtoc_567cf31f"></a>
-## List of type kinds and equivalent C++ types
+<a id="mdtoc_2abe77cd"></a>
+## List of type kinds, equivalent C++ types and implemented meta interfaces
 
-|TypeKind              |Value     |C++ type                                                                                                      |
-|----------------------|----------|--------------------------------------------------------------------------------------------------------------|
-|tkVoid                |0         |void                                                                                                          |
-|tkBool                |1         |bool                                                                                                          |
-|tkChar                |2         |char                                                                                                          |
-|tkWideChar            |3         |wchar_t                                                                                                       |
-|tkChar8 (C++20)       |4         |char8_t                                                                                                       |
-|tkChar16              |5         |char16_t                                                                                                      |
-|tkChar32              |6         |char32_t                                                                                                      |
-|tkSignedChar          |7         |signed char                                                                                                   |
-|tkUnsignedChar        |8         |unsigned char                                                                                                 |
-|tkShort               |9         |short                                                                                                         |
-|tkUnsignedShort       |10        |unsigned short                                                                                                |
-|tkInt                 |11        |int                                                                                                           |
-|tkUnsignedInt         |12        |unsigned int                                                                                                  |
-|tkLong                |13        |long                                                                                                          |
-|tkUnsignedLong        |14        |unsigned long                                                                                                 |
-|tkLongLong            |15        |long long                                                                                                     |
-|tkUnsignedLongLong    |16        |unsigned long long                                                                                            |
-|tkFloat               |17        |float                                                                                                         |
-|tkDouble              |18        |double                                                                                                        |
-|tkLongDouble          |19        |long double                                                                                                   |
-|tkObject              |40        |None                                                                                                          |
-|tkPointer             |41        |T *                                                                                                           |
-|tkReference           |42        |T &                                                                                                           |
-|tkFunction            |43        |None                                                                                                          |
-|tkMemberFunction      |44        |None                                                                                                          |
-|tkMemberPointer       |45        |None                                                                                                          |
-|tkConstructor         |46        |None                                                                                                          |
-|tkOverloadedFunction  |47        |None                                                                                                          |
-|tkDefaultArgsFunction |48        |None                                                                                                          |
-|tkVariadicFunction    |49        |None                                                                                                          |
-|tkArray               |50        |T[]                                                                                                           |
-|tkEnum                |51        |None                                                                                                          |
-|tkAccessor            |52        |None                                                                                                          |
-|tkVariant             |53        |metapp::Variant                                                                                               |
-|tkMetaType            |54        |None                                                                                                          |
-|tkMetaRepo            |55        |None                                                                                                          |
-|tkStdString           |100       |std::string                                                                                                   |
-|tkStdWideString       |101       |std::wstring                                                                                                  |
-|tkStdSharedPtr        |102       |std::shared_ptr<T>                                                                                            |
-|tkStdUniquePtr        |103       |std::unique_ptr<T>                                                                                            |
-|tkStdWeakPtr          |104       |std::weak_ptr<T>                                                                                              |
-|tkStdFunction         |105       |std::function                                                                                                 |
-|tkStdVector           |106       |std::vector<T, Allocator>                                                                                     |
-|tkStdList             |107       |std::list<T, Allocator>                                                                                       |
-|tkStdDeque            |108       |std::deque<T, Allocator>                                                                                      |
-|tkStdArray            |109       |std::array<T, length>                                                                                         |
-|tkStdForwardList      |110       |std::forward_list<T, Allocator>                                                                               |
-|tkStdStack            |111       |std::stack<T, Container>                                                                                      |
-|tkStdQueue            |112       |std::queue<T, Container>                                                                                      |
-|tkStdPriorityQueue    |113       |std::priority_queue<T, Container>                                                                             |
-|tkStdMap              |114       |std::map<Key, T, Compare, Allocator>                                                                          |
-|tkStdMultimap         |115       |std::multimap<<br />    Key,<br />    T,<br />    Compare,<br />    Allocator<br />>                          |
-|tkStdSet              |116       |std::set<Key, Compare, Allocator>                                                                             |
-|tkStdMultiset         |117       |std::multiset<<br />    Key,<br />    Compare,<br />    Allocator<br />>                                      |
-|tkStdUnorderedMap     |118       |std::unordered_map<<br />    Key,<br />    T,<br />    Hash,<br />    KeyEqual,<br />    Allocator<br />>     |
-|tkStdUnorderedMultimap|119       |std::unordered_multimap<<br />    Key,<br />    T,<br />    Hash,<br />    KeyEqual,<br />    Allocator<br />>|
-|tkStdUnorderedSet     |120       |std::unordered_set<<br />    Key,<br />    Hash,<br />    KeyEqual,<br />    Allocator<br />>                 |
-|tkStdUnorderedMultiset|121       |std::unordered_multiset<<br />    Key,<br />    Hash,<br />    KeyEqual,<br />    Allocator<br />>            |
-|tkStdPair             |122       |std::pair<T1, T2>                                                                                             |
-|tkStdTuple            |123       |std::tuple<Types...>                                                                                          |
-|tkStdAny              |124       |std::any                                                                                                      |
-|tkStdVariant          |125       |std::variant<Types...>                                                                                        |
-|tkUser                |1024      |None                                                                                                          |
-
-<a id="mdtoc_70882b35"></a>
-## List of implemented meta interfaces
-
-|TypeKind              |Implemented meta interfaces           |
-|----------------------|--------------------------------------|
-|tkVoid                |None                                  |
-|tkBool                |None                                  |
-|tkChar                |None                                  |
-|tkWideChar            |None                                  |
-|tkChar8 (C++20)       |None                                  |
-|tkChar16              |None                                  |
-|tkChar32              |None                                  |
-|tkSignedChar          |None                                  |
-|tkUnsignedChar        |None                                  |
-|tkShort               |None                                  |
-|tkUnsignedShort       |None                                  |
-|tkInt                 |None                                  |
-|tkUnsignedInt         |None                                  |
-|tkLong                |None                                  |
-|tkUnsignedLong        |None                                  |
-|tkLongLong            |None                                  |
-|tkUnsignedLongLong    |None                                  |
-|tkFloat               |None                                  |
-|tkDouble              |None                                  |
-|tkLongDouble          |None                                  |
-|tkObject              |None                                  |
-|tkPointer             |MetaAccessible                        |
-|tkReference           |None                                  |
-|tkFunction            |MetaCallable                          |
-|tkMemberFunction      |MetaCallable                          |
-|tkMemberPointer       |MetaAccessible                        |
-|tkConstructor         |MetaCallable<br />MetaMember          |
-|tkOverloadedFunction  |MetaCallable                          |
-|tkDefaultArgsFunction |MetaCallable                          |
-|tkVariadicFunction    |MetaCallable                          |
-|tkArray               |MetaIndexable                         |
-|tkEnum                |None                                  |
-|tkAccessor            |MetaAccessible                        |
-|tkVariant             |None                                  |
-|tkMetaType            |None                                  |
-|tkMetaRepo            |None                                  |
-|tkStdString           |None                                  |
-|tkStdWideString       |None                                  |
-|tkStdSharedPtr        |MetaAccessible<br />MetaPointerWrapper|
-|tkStdUniquePtr        |MetaAccessible<br />MetaPointerWrapper|
-|tkStdWeakPtr          |None                                  |
-|tkStdFunction         |MetaCallable                          |
-|tkStdVector           |MetaIndexable<br />MetaIterable       |
-|tkStdList             |MetaIndexable<br />MetaIterable       |
-|tkStdDeque            |MetaIndexable<br />MetaIterable       |
-|tkStdArray            |MetaIndexable<br />MetaIterable       |
-|tkStdForwardList      |MetaIterable                          |
-|tkStdStack            |None                                  |
-|tkStdQueue            |None                                  |
-|tkStdPriorityQueue    |None                                  |
-|tkStdMap              |MetaIterable<br />MetaMappable        |
-|tkStdMultimap         |MetaIterable<br />MetaMappable        |
-|tkStdSet              |MetaIterable                          |
-|tkStdMultiset         |MetaIterable                          |
-|tkStdUnorderedMap     |MetaIterable<br />MetaMappable        |
-|tkStdUnorderedMultimap|MetaIterable<br />MetaMappable        |
-|tkStdUnorderedSet     |MetaIterable                          |
-|tkStdUnorderedMultiset|MetaIterable                          |
-|tkStdPair             |MetaIndexable                         |
-|tkStdTuple            |MetaIndexable<br />MetaIterable       |
-|tkStdAny              |None                                  |
-|tkStdVariant          |None                                  |
-|tkUser                |None                                  |
+|TypeKind              |Value     |C++ type                                                                                                                                                                                                                              |Implemented meta interfaces           |
+|----------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+|tkVoid                |0         |void                                                                                                                                                                                                                                  |None                                  |
+|tkBool                |1         |bool                                                                                                                                                                                                                                  |None                                  |
+|tkChar                |2         |char                                                                                                                                                                                                                                  |None                                  |
+|tkWideChar            |3         |wchar_t                                                                                                                                                                                                                               |None                                  |
+|tkChar8 (C++20)       |4         |char8_t                                                                                                                                                                                                                               |None                                  |
+|tkChar16              |5         |char16_t                                                                                                                                                                                                                              |None                                  |
+|tkChar32              |6         |char32_t                                                                                                                                                                                                                              |None                                  |
+|tkSignedChar          |7         |signed char                                                                                                                                                                                                                           |None                                  |
+|tkUnsignedChar        |8         |unsigned char                                                                                                                                                                                                                         |None                                  |
+|tkShort               |9         |short                                                                                                                                                                                                                                 |None                                  |
+|tkUnsignedShort       |10        |unsigned short                                                                                                                                                                                                                        |None                                  |
+|tkInt                 |11        |int                                                                                                                                                                                                                                   |None                                  |
+|tkUnsignedInt         |12        |unsigned int                                                                                                                                                                                                                          |None                                  |
+|tkLong                |13        |long                                                                                                                                                                                                                                  |None                                  |
+|tkUnsignedLong        |14        |unsigned long                                                                                                                                                                                                                         |None                                  |
+|tkLongLong            |15        |long long                                                                                                                                                                                                                             |None                                  |
+|tkUnsignedLongLong    |16        |unsigned long long                                                                                                                                                                                                                    |None                                  |
+|tkFloat               |17        |float                                                                                                                                                                                                                                 |None                                  |
+|tkDouble              |18        |double                                                                                                                                                                                                                                |None                                  |
+|tkLongDouble          |19        |long double                                                                                                                                                                                                                           |None                                  |
+|tkObject              |40        |None                                                                                                                                                                                                                                  |None                                  |
+|tkPointer             |41        |T *                                                                                                                                                                                                                                   |MetaAccessible                        |
+|tkReference           |42        |T &                                                                                                                                                                                                                                   |None                                  |
+|tkFunction            |43        |// function pointer<br />R (*)(T1, T2, T3,...)<br />// function type<br />R (T1, T2, T3,...)                                                                                                                                          |MetaCallable                          |
+|tkMemberFunction      |44        |// member function<br />R (C::*)(T1, T2, T3,...)                                                                                                                                                                                      |MetaCallable                          |
+|tkMemberPointer       |45        |// member data<br />T C::*                                                                                                                                                                                                            |MetaAccessible                        |
+|tkConstructor         |46        |// Class constructor.<br />metapp::Constructor                                                                                                                                                                                        |MetaCallable<br />MetaMember          |
+|tkOverloadedFunction  |47        |// Overload functions<br />metapp::OverloadedFunction                                                                                                                                                                                 |MetaCallable                          |
+|tkDefaultArgsFunction |48        |// Function with default arguments<br />metapp::DefaultArgsFunction                                                                                                                                                                   |MetaCallable                          |
+|tkVariadicFunction    |49        |// Variadic function<br />metapp::VariadicFunction                                                                                                                                                                                    |MetaCallable                          |
+|tkArray               |50        |T[]                                                                                                                                                                                                                                   |MetaIndexable                         |
+|tkEnum                |51        |// C++ enum, or scoped enum.<br />enum A {};<br />enum class B {};                                                                                                                                                                    |None                                  |
+|tkAccessor            |52        |metapp::Accessor                                                                                                                                                                                                                      |MetaAccessible                        |
+|tkVariant             |53        |metapp::Variant                                                                                                                                                                                                                       |None                                  |
+|tkMetaType            |54        |metapp::MetaType                                                                                                                                                                                                                      |None                                  |
+|tkMetaRepo            |55        |metapp::MetaRepo                                                                                                                                                                                                                      |None                                  |
+|tkStdString           |100       |std::string                                                                                                                                                                                                                           |None                                  |
+|tkStdWideString       |101       |std::wstring                                                                                                                                                                                                                          |None                                  |
+|tkStdSharedPtr        |102       |std::shared_ptr<T>                                                                                                                                                                                                                    |MetaAccessible<br />MetaPointerWrapper|
+|tkStdUniquePtr        |103       |std::unique_ptr<T>                                                                                                                                                                                                                    |MetaAccessible<br />MetaPointerWrapper|
+|tkStdWeakPtr          |104       |std::weak_ptr<T>                                                                                                                                                                                                                      |None                                  |
+|tkStdFunction         |105       |std::function                                                                                                                                                                                                                         |MetaCallable                          |
+|tkStdVector           |106       |std::vector<T, Allocator>                                                                                                                                                                                                             |MetaIndexable<br />MetaIterable       |
+|tkStdList             |107       |std::list<T, Allocator>                                                                                                                                                                                                               |MetaIndexable<br />MetaIterable       |
+|tkStdDeque            |108       |std::deque<T, Allocator>                                                                                                                                                                                                              |MetaIndexable<br />MetaIterable       |
+|tkStdArray            |109       |std::array<T, length>                                                                                                                                                                                                                 |MetaIndexable<br />MetaIterable       |
+|tkStdForwardList      |110       |std::forward_list<T, Allocator>                                                                                                                                                                                                       |MetaIterable                          |
+|tkStdStack            |111       |std::stack<T, Container>                                                                                                                                                                                                              |None                                  |
+|tkStdQueue            |112       |std::queue<T, Container>                                                                                                                                                                                                              |None                                  |
+|tkStdPriorityQueue    |113       |std::priority_queue<T, Container>                                                                                                                                                                                                     |None                                  |
+|tkStdMap              |114       |std::map<Key, T, Compare, Allocator>                                                                                                                                                                                                  |MetaIterable<br />MetaMappable        |
+|tkStdMultimap         |115       |std::multimap<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    T,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Compare,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>                                                  |MetaIterable<br />MetaMappable        |
+|tkStdSet              |116       |std::set<Key, Compare, Allocator>                                                                                                                                                                                                     |MetaIterable                          |
+|tkStdMultiset         |117       |std::multiset<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Compare,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>                                                                                      |MetaIterable                          |
+|tkStdUnorderedMap     |118       |std::unordered_map<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    T,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Hash,<br />&nbsp;&nbsp;&nbsp;&nbsp;    KeyEqual,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>     |MetaIterable<br />MetaMappable        |
+|tkStdUnorderedMultimap|119       |std::unordered_multimap<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    T,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Hash,<br />&nbsp;&nbsp;&nbsp;&nbsp;    KeyEqual,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>|MetaIterable<br />MetaMappable        |
+|tkStdUnorderedSet     |120       |std::unordered_set<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Hash,<br />&nbsp;&nbsp;&nbsp;&nbsp;    KeyEqual,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>                                         |MetaIterable                          |
+|tkStdUnorderedMultiset|121       |std::unordered_multiset<<br />&nbsp;&nbsp;&nbsp;&nbsp;    Key,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Hash,<br />&nbsp;&nbsp;&nbsp;&nbsp;    KeyEqual,<br />&nbsp;&nbsp;&nbsp;&nbsp;    Allocator<br />>                                    |MetaIterable                          |
+|tkStdPair             |122       |std::pair<T1, T2>                                                                                                                                                                                                                     |MetaIndexable                         |
+|tkStdTuple            |123       |std::tuple<Types...>                                                                                                                                                                                                                  |MetaIndexable<br />MetaIterable       |
+|tkStdAny              |124       |std::any                                                                                                                                                                                                                              |None                                  |
+|tkStdVariant          |125       |std::variant<Types...>                                                                                                                                                                                                                |None                                  |
+|tkUser                |1024      |The start value of user defined meta type kinds.                                                                                                                                                                                      |None                                  |
 
 <a id="mdtoc_7f714096"></a>
 ## List of cast-abilities

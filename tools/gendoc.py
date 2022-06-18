@@ -146,7 +146,7 @@ def doProcessFile(sourceFile) :
 
 def checkGenerateTables() :
 	excelFileName = os.path.join(sourcePath, 'tables.xlsx')
-	incFileName = os.path.join(sourcePath, 'inc/inc_typekind_cpp_type.md')
+	incFileName = os.path.join(sourcePath, 'inc/inc_typekind_cast.md')
 	if isFileUpToDate(excelFileName, incFileName) :
 		return
 	print("Re-generate markdown tables.")

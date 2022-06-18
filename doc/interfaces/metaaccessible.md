@@ -117,9 +117,9 @@ Returns the value.
 The parameter `instance` is the object instance, if any.  
 The returned Variant is a reference to the value.  
 For pointer `T *`, `instance` is ignored. The returned Variant is a reference to the value.  
-For member data pointer `T C::*`, `instance` is used to access the value in the object, and the returned Variant
-has the same constness as the `instance`. For example, if `instance` is a const object, or pointer to const object,
-the returned Variant is a referent to const value. The same for `volatile` and `const volatile`.  
+For member data pointer `T C::*`, `instance` is used to access the value in the object, and the returned Variant has the same
+constness as the `instance`. For example, if `instance` is a const object, or pointer to const object, the returned Variant
+is a referent to const value. The same for `volatile` and `const volatile`.  
 For Accessor, `instance` is passed to the accessor. The returned Variant is the value get from the accessor.  
 `instance` can be value, reference, pointer, `std::shared_ptr`, `std::unique_ptr`, etc.  
 
@@ -151,11 +151,7 @@ The function is equivalent to `return getClassType(accessible)->isVoid();`.
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaAccessible`.  
-Usually you should prefer the utility functions to calling `MetaAccessible` member function directly.
-However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance
-application, you may store `accessible.getMetaType()->getMetaAccessible()` to a local variable, then use the variable
-to call the member functions. This is because `getMetaAccessible()` has slightly performance overhead
-(the overhead is neglect most time).
+Usually you should prefer the utility functions to calling `MetaAccessible` member function directly. However, if you need to call functions on a single `MetaAccessible` more than one times in a high performance application, you may store `accessible.getMetaType()->getMetaAccessible()` to a local variable, then use the variable to call the member functions. This is because `getMetaAccessible()` has slightly performance overhead (the overhead is neglect most time).
 
 ```c++
 inline const MetaType * accessibleGetValueType(const Variant & accessible)

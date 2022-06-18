@@ -4,12 +4,8 @@ excelFile = '../tests/docsrc/tables.xlsx'
 outputPath = '../tests/docsrc/inc/'
 outputTableList = [
 	{
-		'columnIndexList' : [ 0, 1, 2 ],
-		'fileName' : outputPath + 'inc_typekind_cpp_type.md'
-	},
-	{
-		'columnIndexList' : [ 0, 4 ],
-		'fileName' : outputPath + 'inc_typekind_meta_interface.md'
+		'columnIndexList' : [ 0, 1, 2, 4 ],
+		'fileName' : outputPath + 'inc_typekind_cpp_type_interfaces.md'
 	},
 	{
 		'columnIndexList' : [ 0, 5, 6 ],
@@ -28,7 +24,19 @@ def loadSheetData(sheet) :
 		rowData = []
 		for cell in row :
 			value = str(cell.value)
-			value = value.replace("\n", "<br />")
+			#value = value.replace("\n", "<br />")
+
+			# Replace leading white spaces with &nbsp;
+			lineList = value.splitlines()
+			value = ''
+			for line in lineList :
+				stripped = line.lstrip()
+				spaceCount = len(line) - len(stripped)
+				if value != '' :
+					value += '<br />'
+				value += '&nbsp;' * spaceCount
+				value += line
+
 			rowData.append(value)
 		rowList.append(rowData)
 		columnCount = len(rowData)

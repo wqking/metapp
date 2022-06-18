@@ -400,14 +400,17 @@ Here is the example code for the potential issue,
 
 ```c++
 metapp::Variant storedVar;
-metapp::Variant callable(std::function<void (const metapp::Variant &)>([&storedVar](const metapp::Variant & var) {
-  ASSERT(var.getMetaType()->isReference());
-  ASSERT(var.get<const std::string &>() == "good");
-  // Wrong! storedVar will container invalid address
-  storedVar = var;
-  ASSERT(storedVar.get<const std::string &>() == "good");
-  // After the function returns, storedVar may refer to invalid address
-}));
+metapp::Variant callable(
+  std::function<void (const metapp::Variant &)>([&storedVar](const metapp::Variant & var)
+  {
+    ASSERT(var.getMetaType()->isReference());
+    ASSERT(var.get<const std::string &>() == "good");
+    // Wrong! storedVar will container invalid address
+    storedVar = var;
+    ASSERT(storedVar.get<const std::string &>() == "good");
+    // After the function returns, storedVar may refer to invalid address
+  }
+));
 metapp::callableInvoke(callable, nullptr, std::string("good"));
 // Below line won't work, it either assert fail or crash.
 // ASSERT(storedVar.get<const std::string &>() == "good");
@@ -429,7 +432,7 @@ Iterator findCallable(
 
 Returns an iterator to the element that's best matched to `arguments` in the range [first, last).  
 If no matched callable, `last` is returned.  
-`Iterator` must be the iterator to `Variant`, `MetaItem`, or `MetaItem`.
+`Iterator` must be the iterator to `Variant` or `MetaItem`.
 
 <a id="mdtoc_70d046a1"></a>
 #### callableIsStatic
@@ -450,7 +453,7 @@ Any `MetaCallable` can cast to `std::function` if,
 1. The number of parameters is appropriate.
 2. The parameter types in the `MetaCallable` can cast to the corresponding arguments in `std::function`.
 3. If the return type in `std::function` is not `void`, then the return type in the `MetaCallable` can cast to
-the the return type in `std::function`.
+the return type in `std::function`.
 
 For example,  
 

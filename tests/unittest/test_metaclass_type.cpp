@@ -144,6 +144,8 @@ TEST_CASE("MetaClass, type, struct C")
 	REQUIRE(metaClassC->getType("notExist").isEmpty());
 
 	const auto & cChar = metaClassC->getType("char");
+	REQUIRE(&cChar == &metaClassC->getType(metapp::tkChar));
+	REQUIRE(&cChar == &metaClassC->getType(metapp::getMetaType<char>()));
 	REQUIRE(cChar.asMetaType() == metapp::getMetaType<char>());
 	const auto & cShort = metaClassC->getType("short");
 	REQUIRE(cShort.asMetaType() == metapp::getMetaType<short>());
