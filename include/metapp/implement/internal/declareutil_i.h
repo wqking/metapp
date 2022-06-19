@@ -58,18 +58,6 @@ int rankArgumentMatching(const ArgumentSpan & arguments)
 	return invokeRankNone;
 }
 
-template <typename TL, int N>
-Variant castArgument(const ArgumentSpan & arguments)
-{
-	return arguments[N].template cast<typename TypeListGetAt<TL, N>::Type>();
-}
-
-template <typename TL, int N>
-auto getArgument(const ArgumentSpan & arguments) -> typename TypeListGetAt<TL, N>::Type &
-{
-	return arguments[N].template get<typename TypeListGetAt<TL, N>::Type &>();
-}
-
 template <typename ArgList>
 struct MetaCallableInvokeChecker
 {
@@ -136,13 +124,10 @@ struct MetaCallableInvoker <void, RT, ArgList>
 
 	template <typename FT, int ...Indexes>
 	static Variant doInvoke(FT && func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
-		std::array<Variant, argCount> castedArguments {
-			castArgument<ArgumentTypeList, Indexes>(arguments)...
-		};
-		// avoid unused warning if there is no arguments
-		(void)arguments;
-		(void)castedArguments;
-		return Variant::create<RT>(func(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
+		return Variant::create<RT>(func(
+			arguments[Indexes].template cast<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type>()
+				.template get<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type &>()...
+		));
 	}
 };
 
@@ -160,13 +145,10 @@ struct MetaCallableInvoker <void, void, ArgList>
 
 	template <typename FT, int ...Indexes>
 	static Variant doInvoke(FT && func, void * /*instance*/, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
-		std::array<Variant, argCount> castedArguments {
-			castArgument<ArgumentTypeList, Indexes>(arguments)...
-		};
-		// avoid unused warning if there is no arguments
-		(void)arguments;
-		(void)castedArguments;
-		func(getArgument<ArgumentTypeList, Indexes>(castedArguments)...);
+		func(
+			arguments[Indexes].template cast<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type>()
+				.template get<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type &>()...
+		);
 		return Variant();
 	}
 };
@@ -185,13 +167,10 @@ struct MetaCallableInvoker
 
 	template <typename FT, int ...Indexes>
 	static Variant doInvoke(FT && func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
-		std::array<Variant, argCount> castedArguments {
-			castArgument<ArgumentTypeList, Indexes>(arguments)...
-		};
-		// avoid unused warning if there is no arguments
-		(void)arguments;
-		(void)castedArguments;
-		return Variant::create<RT>((static_cast<Class *>(instance)->*func)(getArgument<ArgumentTypeList, Indexes>(castedArguments)...));
+		return Variant::create<RT>((static_cast<Class *>(instance)->*func)(
+			arguments[Indexes].template cast<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type>()
+			.template get<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type &>()...
+		));
 	}
 };
 
@@ -209,13 +188,10 @@ struct MetaCallableInvoker <Class, void, ArgList>
 
 	template <typename FT, int ...Indexes>
 	static Variant doInvoke(FT && func, void * instance, const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
-		std::array<Variant, argCount> castedArguments {
-			castArgument<ArgumentTypeList, Indexes>(arguments)...
-		};
-		// avoid unused warning if there is no arguments
-		(void)arguments;
-		(void)castedArguments;
-		(static_cast<Class *>(instance)->*func)(getArgument<ArgumentTypeList, Indexes>(castedArguments)...);
+		(static_cast<Class *>(instance)->*func)(
+			arguments[Indexes].template cast<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type>()
+				.template get<typename TypeListGetAt<ArgumentTypeList, Indexes>::Type &>()...
+		);
 		return Variant();
 	}
 };
