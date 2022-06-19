@@ -47,11 +47,6 @@ private:
 	static constexpr int storageReference = 4;
 
 public:
-	VariantData()
-		: object(), storageType(storageNone), buffer()
-	{
-	}
-
 	template <typename T>
 	void construct(const void * copyFrom, const CopyStrategy copyStrategy) {
 		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>(), copyStrategy);
@@ -139,8 +134,8 @@ private:
 
 private:
 	std::shared_ptr<void> object;
-	int storageType;
 	std::array<uint8_t, bufferSize> buffer;
+	int storageType;
 };
 
 inline void swap(VariantData & a, VariantData & b) noexcept

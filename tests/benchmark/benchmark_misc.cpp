@@ -52,6 +52,18 @@ BenchmarkFunc
 	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v;
+			dontOptimizeAway(v);
+		}
+	});
+	printResult(t, iterations, "Variant construct default");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
 			metapp::Variant v(5);
 		}
 	});

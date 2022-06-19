@@ -68,10 +68,10 @@ private:
 	static CastFromFunc doFindCastFromFuncHelper(const MetaType * fromMetaType, TypeList<Types...>)
 	{
 		constexpr std::size_t typeCount = sizeof...(Types);
-		std::array<const MetaType *, typeCount> fromMetaTypeList = {
+		std::array<const MetaType *, typeCount> fromMetaTypeList {
 			getMetaType<Types>()...
 		};
-		std::array<CastFromFunc, typeCount> castFromFuncList = {
+		std::array<CastFromFunc, typeCount> castFromFuncList {
 			&HelperCastFrom<Types>::castFrom...,
 		};
 		for(std::size_t i = 0; i < typeCount; ++i) {
@@ -135,7 +135,7 @@ private:
 		const std::array<const MetaType *, typeCount> toMetaTypeList {
 			getMetaType<Types>()...
 		};
-		const std::array<CastToFunc, typeCount> castToFuncList = {
+		const std::array<CastToFunc, typeCount> castToFuncList {
 			&HelperCastTo<Types>::castTo...,
 		};
 

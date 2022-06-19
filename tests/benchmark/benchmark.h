@@ -17,6 +17,8 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
+#include "metapp/compiler.h"
+
 #include "../catch.hpp"
 
 #include <chrono>
@@ -79,5 +81,20 @@ inline void printResult(const uint64_t time, const int iterations, const std::st
 #define I_UFN_CONCAT(a, b) a ## b
 #define UFN_CONCAT(a, b) I_UFN_CONCAT(a, b)
 #define BenchmarkFunc TEST_CASE(UFN_STRINGIZE(__FILE__) UFN_STRINGIZE(__LINE__))
+
+#if defined(METAPP_COMPILER_GCC) || defined(METAPP_COMPILER_CLANG)
+template <typename T>
+void dontOptimizeAway(T && value)
+{
+	__asm__ __volatile__("" :: "m" (value));
+}
+#else
+template <typename T>
+void dontOptimizeAway(T && )
+{
+	// We don't benchmark in MSVC
+}
+#endif
+
 
 #endif
