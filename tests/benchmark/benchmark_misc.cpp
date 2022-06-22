@@ -56,7 +56,7 @@ BenchmarkFunc
 			dontOptimizeAway(v);
 		}
 	});
-	printResult(t, iterations, "Variant construct default");
+	printResult(t, iterations, "Misc, Variant construct default");
 }
 
 BenchmarkFunc
@@ -67,7 +67,7 @@ BenchmarkFunc
 			metapp::Variant v(5);
 		}
 	});
-	printResult(t, iterations, "Variant construct with int");
+	printResult(t, iterations, "Misc, Variant construct with int");
 }
 
 BenchmarkFunc
@@ -79,7 +79,43 @@ BenchmarkFunc
 			v = 38.0;
 		}
 	});
-	printResult(t, iterations, "Variant assignment with double");
+	printResult(t, iterations, "Misc, Variant assignment with double");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v(i);
+			v = v.cast<double>();
+		}
+	});
+	printResult(t, iterations, "Misc, Variant cast int to double");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v(metapp::Variant::reference(i));
+			v = v.cast<double>();
+		}
+	});
+	printResult(t, iterations, "Misc, Variant cast int & to double");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v(i);
+			v = v.cast<double &>();
+		}
+	});
+	printResult(t, iterations, "Misc, Variant cast int to double &");
 }
 
 

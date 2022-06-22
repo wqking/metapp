@@ -97,11 +97,6 @@ TristateBool doCastPointerReference(
 	const MetaType * toMetaType
 )
 {
-	const TristateBool tristateResult = doCastObject(result, fromVar, fromMetaType, toMetaType);
-	if(tristateResult != TristateBool::unknown) {
-		return tristateResult;
-	}
-
 	if(fromMetaType->isReference() || toMetaType->isReference()) {
 		if(getNonReferenceMetaType(fromMetaType)->cast(
 			result, fromVar, getNonReferenceMetaType(toMetaType))) {
@@ -109,7 +104,7 @@ TristateBool doCastPointerReference(
 		}
 	}
 
-	return TristateBool::unknown;
+	return doCastObject(result, fromVar, fromMetaType, toMetaType);
 }
 
 const void * UnifiedType::getMetaInterface(const MetaInterfaceKind kind) const
