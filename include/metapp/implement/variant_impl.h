@@ -62,24 +62,25 @@ inline Variant Variant::reference(T && value)
 }
 
 inline Variant::Variant() noexcept
-	: 
-	metaType(voidMetaType),
-	data()
+	:
+		// Don't use voidMetaType, that will cause static intialization order problem.
+		metaType(metapp::getMetaType<void>()),
+		data()
 {
 }
 
 inline Variant::Variant(const MetaType * metaType, const void * copyFrom)
 	:
-	metaType(metaType),
-	data()
+		metaType(metaType),
+		data()
 {
 	metaType->constructData(&data, copyFrom, nullptr, CopyStrategy::autoDetect);
 }
 
 inline Variant::Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy)
 	:
-	metaType(metaType),
-	data()
+		metaType(metaType),
+		data()
 {
 	metaType->constructData(&data, copyFrom, nullptr, copyStrategy);
 }
