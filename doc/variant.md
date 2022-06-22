@@ -170,18 +170,16 @@ ASSERT(t.get<double>() == 38.2);
 #### create
 ```c++
 template <typename T>
-static Variant create(const T & value); // #1
+static Variant create(const typename std::remove_reference<T>::type & value); // #1
 template <typename T>
-static Variant create(T && value); // #2
+static Variant create(typename std::remove_reference<T>::type && value); // #2
 ```
 Construct a Variant of type T and copy value into Variant, then return the Variant.  
 If T is value type (not reference), #1 form will copy the value into the Variant, #2 form will move the value into the Variant.  
-This is similar with the constructor `template <typename T> Variant(T && value)`,
+This is "named constructor" that's equivalent to `template <typename T> Variant(T && value)`,
 the `create` function allows to specify T explicitly.  
 If T is metapp::Variant or reference to metapp::Variant, value is returned directly.  
-
-Note: the prototype is pseudo code. The real code disables deduction for T on purpose.
-That's to say, the type T must be specified explicitly.
+T must be specified explicitly, type deduction is disabled on purpose.  
 
 **Example**
 
@@ -205,7 +203,7 @@ metapp::Variant v3(n);
 ASSERT(! v3.getMetaType()->isReference());
 
 // The type held by v4 is int, not const
-metapp::Variant v4= n;
+metapp::Variant v4 = n;
 ASSERT(! v4.getMetaType()->isConst());
 ```
 
@@ -217,7 +215,8 @@ static Variant reference(T && value);
 ```
 
 Create a Variant of reference to `value`. `value` can be either lvalue or rvalue reference.  
-This is equivalent to `Variant::create<T &>(value);`, but in `reference` the template argument can be deduced.
+This is similar to `Variant::create<T &>(value)`, but in `reference` the template argument can be deduced,
+and if `T` is `Variant`, it creates reference to `Variant`.  
 
 **Example**
 
