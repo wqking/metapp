@@ -214,16 +214,73 @@ std::shared_ptr<T> constructSharedPtr(const void * copyFrom, const CopyStrategy 
 	}
 }
 
-template <typename T>
-void callDtor(T * p, typename std::enable_if<std::is_destructible<T>::value>::type * = nullptr)
+template <typename T, typename Enabled = void>
+struct DeleterDtor
 {
-	p->~T();
-}
+	static void callDelete(void * p)
+	{
+		delete static_cast<T *>(p);
+	}
+
+	static void callDtor(void * p)
+	{
+		static_cast<T *>(p)->~T();
+	}
+};
 
 template <typename T>
-void callDtor(T * /*p*/, typename std::enable_if<! std::is_destructible<T>::value>::type * = nullptr)
+struct DeleterDtor <T, typename std::enable_if<! std::is_destructible<T>::value && ! std::is_array<T>::value>::type>
 {
-}
+	static void callDelete(void * /*p*/)
+	{
+	}
+
+	static void callDtor(void * /*p*/)
+	{
+	}
+};
+
+template <typename T>
+struct DeleterDtor <T[], void>
+{
+	static void callDelete(void * p)
+	{
+		delete[] static_cast<T *>(p);
+	}
+
+	static void callDtor(void * /*p*/)
+	{
+	}
+};
+
+template <typename T, std::size_t N>
+struct DeleterDtor <T[N], typename std::enable_if<std::is_destructible<T>::value>::type>
+{
+	static void callDelete(void * p)
+	{
+		delete[] static_cast<T *>(p);
+	}
+
+	static void callDtor(void * p)
+	{
+		for(std::size_t i = 0; i < N; ++i) {
+			//static_cast<T *>(p)[i].~T();
+			DeleterDtor<T>::callDtor((void *)(static_cast<T *>(p) + i));
+		}
+	}
+};
+
+template <typename T, std::size_t N>
+struct DeleterDtor <T[N], typename std::enable_if<! std::is_destructible<T>::value>::type>
+{
+	static void callDelete(void * /*p*/)
+	{
+	}
+
+	static void callDtor(void * /*p*/)
+	{
+	}
+};
 
 
 } // namespace internal_

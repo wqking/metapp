@@ -364,7 +364,7 @@ template <typename T>
 struct CommonDeclareMetaType
 {
 private:
-	using Underlying = typename std::decay<typename std::remove_reference<T>::type>::type;
+	using NoRef = typename std::remove_reference<T>::type;
 
 public:
 	using UpType = TypeList<>;

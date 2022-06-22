@@ -155,11 +155,11 @@ inline void * CommonDeclareMetaType<T>::constructData(
 	)
 {
 	if(data != nullptr) {
-		data->construct<Underlying>(copyFrom, copyStrategy);
+		data->construct<NoRef>(copyFrom, copyStrategy);
 		return nullptr;
 	}
 	else {
-		return internal_::constructOnHeap<Underlying>(copyFrom, memory, copyStrategy);
+		return internal_::constructOnHeap<NoRef>(copyFrom, memory, copyStrategy);
 	}
 }
 
@@ -175,10 +175,10 @@ inline void CommonDeclareMetaType<T>::destroy(void * instance, const bool freeMe
 #pragma clang diagnostic ignored "-Wdelete-non-abstract-non-virtual-dtor"
 #endif
 	if(freeMemory) {
-		delete static_cast<Underlying *>(instance);
+		internal_::DeleterDtor<NoRef>::callDelete(instance);
 	}
 	else {
-		internal_::callDtor<Underlying>((Underlying *)instance);
+		internal_::DeleterDtor<NoRef>::callDtor(instance);
 	}
 #if defined(METAPP_COMPILER_CLANG)
 #pragma clang diagnostic pop
