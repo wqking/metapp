@@ -37,6 +37,10 @@ struct DeclareMetaTypeBase <T &>
 		}
 		return nullptr;
 	}
+
+	static void destroy(void * /*instance*/, const bool /*freeMemory*/) {
+	}
+
 };
 
 template <typename T>

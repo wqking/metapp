@@ -166,26 +166,12 @@ inline void * CommonDeclareMetaType<T>::constructData(
 template <typename T>
 inline void CommonDeclareMetaType<T>::destroy(void * instance, const bool freeMemory)
 {
-#if defined(METAPP_COMPILER_GCC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
-#endif
-#if defined(METAPP_COMPILER_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdelete-non-abstract-non-virtual-dtor"
-#endif
 	if(freeMemory) {
 		internal_::DeleterDtor<NoRef>::callDelete(instance);
 	}
 	else {
 		internal_::DeleterDtor<NoRef>::callDtor(instance);
 	}
-#if defined(METAPP_COMPILER_CLANG)
-#pragma clang diagnostic pop
-#endif
-#if defined(METAPP_COMPILER_GCC)
-#pragma GCC diagnostic pop
-#endif
 }
 
 template <typename T>

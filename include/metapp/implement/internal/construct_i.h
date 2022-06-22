@@ -219,7 +219,23 @@ struct DeleterDtor
 {
 	static void callDelete(void * p)
 	{
+#if defined(METAPP_COMPILER_GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+#endif
+#if defined(METAPP_COMPILER_CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-abstract-non-virtual-dtor"
+#endif
+
 		delete static_cast<T *>(p);
+
+#if defined(METAPP_COMPILER_CLANG)
+#pragma clang diagnostic pop
+#endif
+#if defined(METAPP_COMPILER_GCC)
+#pragma GCC diagnostic pop
+#endif
 	}
 
 	static void callDtor(void * p)
@@ -229,56 +245,16 @@ struct DeleterDtor
 };
 
 template <typename T>
-struct DeleterDtor <T, typename std::enable_if<! std::is_destructible<T>::value && ! std::is_array<T>::value>::type>
+struct DeleterDtor <T, typename std::enable_if<! std::is_destructible<T>::value>::type>
 {
 	static void callDelete(void * /*p*/)
 	{
+		raiseException<NotConstructibleException>("Not destructible");
 	}
 
 	static void callDtor(void * /*p*/)
 	{
-	}
-};
-
-template <typename T>
-struct DeleterDtor <T[], void>
-{
-	static void callDelete(void * p)
-	{
-		delete[] static_cast<T *>(p);
-	}
-
-	static void callDtor(void * /*p*/)
-	{
-	}
-};
-
-template <typename T, std::size_t N>
-struct DeleterDtor <T[N], typename std::enable_if<std::is_destructible<T>::value>::type>
-{
-	static void callDelete(void * p)
-	{
-		delete[] static_cast<T *>(p);
-	}
-
-	static void callDtor(void * p)
-	{
-		for(std::size_t i = 0; i < N; ++i) {
-			//static_cast<T *>(p)[i].~T();
-			DeleterDtor<T>::callDtor((void *)(static_cast<T *>(p) + i));
-		}
-	}
-};
-
-template <typename T, std::size_t N>
-struct DeleterDtor <T[N], typename std::enable_if<! std::is_destructible<T>::value>::type>
-{
-	static void callDelete(void * /*p*/)
-	{
-	}
-
-	static void callDtor(void * /*p*/)
-	{
+		raiseException<NotConstructibleException>("Not destructible");
 	}
 };
 
