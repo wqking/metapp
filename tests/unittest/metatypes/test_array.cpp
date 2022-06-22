@@ -194,3 +194,88 @@ TEST_CASE("metatypes, tkArray, empty int[2][3]")
 	REQUIRE(v1UpMetaIndexable->get(v1, 1).get<int>() == 7);
 	REQUIRE(v1UpMetaIndexable->get(v1, 2).get<int>() == 8);
 }
+
+namespace {
+
+struct TestFreeClass
+{
+	TestFreeClass() {
+		++counter;
+		localCounter = counter;
+	}
+	TestFreeClass(const TestFreeClass &) {
+		++counter;
+		localCounter = counter;
+	}
+	TestFreeClass(TestFreeClass &&) {
+		++counter;
+		localCounter = counter;
+	}
+	~TestFreeClass() {
+		--counter;
+	}
+
+	int localCounter;
+	static int counter;
+};
+
+int TestFreeClass::counter = 0;
+
+using TestFreeClassList = metapp::TypeList<TestFreeClass[5], TestFreeClass[2][5]>;
+
+} // namespace
+
+TEMPLATE_LIST_TEST_CASE("metatypes, tkArray, objects are freed correctly", "", TestFreeClassList)
+{
+	using Array = TestType;
+	constexpr auto arraySize = sizeof(Array) / sizeof(TestFreeClass);
+
+	SECTION("Variant") {
+		metapp::Variant v(metapp::getMetaType<Array>(), nullptr);
+		REQUIRE(TestFreeClass::counter == arraySize);
+		v = 5;
+		REQUIRE(TestFreeClass::counter == 0);
+	}
+
+	SECTION("MetaType") {
+		auto metaType = metapp::getMetaType<Array>();
+		REQUIRE(TestFreeClass::counter == 0);
+
+		SECTION("construct") {
+			void * instance = metaType->construct();
+			REQUIRE(TestFreeClass::counter == arraySize);
+			metaType->destroy(instance);
+			REQUIRE(TestFreeClass::counter == 0);
+		}
+
+		SECTION("placementConstruct") {
+			char memory[sizeof(Array)];
+			metaType->placementConstruct(memory);
+			REQUIRE(TestFreeClass::counter == arraySize);
+			metaType->dtor(memory);
+			REQUIRE(TestFreeClass::counter == 0);
+		}
+
+		SECTION("copyConstruct") {
+			Array copyFrom {};
+			REQUIRE(TestFreeClass::counter == arraySize);
+			void * instance = metaType->copyConstruct(copyFrom);
+			REQUIRE(TestFreeClass::counter == arraySize * 2);
+			metaType->destroy(instance);
+			REQUIRE(TestFreeClass::counter == arraySize);
+		}
+		REQUIRE(TestFreeClass::counter == 0);
+
+		SECTION("placementConstruct") {
+			Array copyFrom {};
+			char memory[sizeof(Array)];
+			REQUIRE(TestFreeClass::counter == arraySize);
+			metaType->placementCopyConstruct(memory, copyFrom);
+			REQUIRE(TestFreeClass::counter == arraySize * 2);
+			metaType->dtor(memory);
+			REQUIRE(TestFreeClass::counter == arraySize);
+		}
+		REQUIRE(TestFreeClass::counter == 0);
+
+	}
+}

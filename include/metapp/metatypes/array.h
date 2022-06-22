@@ -54,6 +54,10 @@ struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory, copyStrategy);
 	}
 
+	static void destroy(void * instance, const bool freeMemory) {
+		doDestroy<length != internal_::unknownSize>(instance, freeMemory);
+	}
+
 	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
 		const MetaType * upType = getMetaType<UpType>();
 		const MetaType * nonRef = getNonReferenceMetaType(toMetaType);
@@ -95,14 +99,14 @@ private:
 		) {
 		if(data != nullptr) {
 			if(copyFrom != nullptr) {
-				data->construct<ArrayWrapper>((ArrayWrapper *)copyFrom, copyStrategy);
+				data->construct<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), copyStrategy);
 			}
 			else {
 				data->construct<ArrayWrapper>(nullptr, copyStrategy);
 			}
 		}
 		else {
-			return internal_::constructOnHeap<ArrayWrapper>((ArrayWrapper *)copyFrom, memory, copyStrategy);
+			return internal_::constructOnHeap<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), memory, copyStrategy);
 		}
 		return nullptr;
 	}
@@ -117,6 +121,29 @@ private:
 		) {
 		raiseException<NotConstructibleException>();
 		return nullptr;
+	}
+
+	template <bool hasLength>
+	static void doDestroy(
+			void * instance,
+			const bool freeMemory,
+			typename std::enable_if<hasLength>::type * = nullptr
+		) {
+		if(freeMemory) {
+			delete static_cast<ArrayWrapper *>(instance);
+		}
+		else {
+			static_cast<ArrayWrapper *>(instance)->~ArrayWrapper();
+		}
+	}
+
+	template <bool hasLength>
+	static void doDestroy(
+			void * /*instance*/,
+			const bool /*freeMemory*/,
+			typename std::enable_if<! hasLength>::type * = nullptr
+		) {
+		raiseException<NotConstructibleException>();
 	}
 
 	using ElementType = typename std::remove_extent<
