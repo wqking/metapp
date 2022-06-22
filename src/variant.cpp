@@ -127,11 +127,18 @@ Variant Variant::clone() const
 
 Variant & Variant::assign(const Variant & other)
 {
-	Variant casted = other.cast(metaType);
-	void * myAddress = getAddress();
 	const MetaType * mt = getNonReferenceMetaType(metaType);
-	mt->dtor(myAddress);
-	mt->placementCopyConstruct(myAddress, casted.getAddress());
+	if(mt->getTypeKind() == tkVariant) {
+		void * myAddress = getAddress();
+		mt->dtor(myAddress);
+		mt->placementCopyConstruct(myAddress, &other);
+	}
+	else {
+		const Variant casted = other.cast(metaType);
+		void * myAddress = getAddress();
+		mt->dtor(myAddress);
+		mt->placementCopyConstruct(myAddress, casted.getAddress());
+	}
 	return *this;
 }
 

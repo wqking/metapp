@@ -29,7 +29,7 @@ namespace {
 TEST_CASE("MetaCallable, rankInvoke")
 {
 	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), nullptr, 5) == metapp::invokeRankMatch);
-	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), nullptr, metapp::Variant(5)) == metapp::invokeRankMatch);
+	REQUIRE(metapp::callableRankInvoke(std::function<void (int)>(), nullptr, metapp::Variant(5)) == metapp::invokeRankCast);
 
 	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), nullptr, std::string("abc")) == metapp::invokeRankMatch);
 	REQUIRE(metapp::callableRankInvoke(std::function<void (std::string)>(), nullptr, "abc") == metapp::invokeRankCast);

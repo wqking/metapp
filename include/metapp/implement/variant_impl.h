@@ -58,7 +58,11 @@ inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 template <typename T>
 inline Variant Variant::reference(T && value)
 {
-	return create<T &>((T &)value);
+	return Variant(
+		metapp::getMetaType<T &>(),
+		(const void *)&value,
+		CopyStrategy::autoDetect
+	);
 }
 
 inline Variant::Variant() noexcept

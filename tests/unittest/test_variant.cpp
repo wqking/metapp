@@ -133,35 +133,52 @@ TEST_CASE("Variant, reference")
 {
 	SECTION("int &") {
 		int n = 5;
-		metapp::Variant v = metapp::Variant::reference(n);
-		REQUIRE(v.getMetaType()->isReference());
-		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
-		REQUIRE(! v.getMetaType()->getUpType()->isConst());
-		REQUIRE(v.get<int>() == 5);
+		metapp::Variant ref = metapp::Variant::reference(n);
+		REQUIRE(ref.getMetaType()->isReference());
+		REQUIRE(ref.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(ref.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(! ref.getMetaType()->getUpType()->isConst());
+		REQUIRE(ref.get<int>() == 5);
 		n = 38;
-		REQUIRE(v.get<int>() == 38);
+		REQUIRE(ref.get<int>() == 38);
+		ref.assign(97.3);
+		REQUIRE(ref.get<int>() == 97);
+		REQUIRE(n == 97);
 	}
 
 	SECTION("const int &") {
 		const int n = 5;
-		metapp::Variant v = metapp::Variant::reference(n);
-		REQUIRE(v.getMetaType()->isReference());
-		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
-		REQUIRE(v.getMetaType()->getUpType()->isConst());
-		REQUIRE(v.get<int>() == 5);
+		metapp::Variant ref = metapp::Variant::reference(n);
+		REQUIRE(ref.getMetaType()->isReference());
+		REQUIRE(ref.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(ref.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(ref.getMetaType()->getUpType()->isConst());
+		REQUIRE(ref.get<int>() == 5);
 	}
 
 	SECTION("int &&") {
 		int n = 5;
-		metapp::Variant v = metapp::Variant::reference(std::move(n));
-		REQUIRE(v.getMetaType()->isReference());
-		REQUIRE(v.getMetaType()->getTypeKind() == metapp::tkReference);
-		REQUIRE(v.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
-		REQUIRE(v.get<int>() == 5);
+		metapp::Variant ref = metapp::Variant::reference(std::move(n));
+		REQUIRE(ref.getMetaType()->isReference());
+		REQUIRE(ref.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(ref.getMetaType()->getUpType()->getTypeKind() == metapp::tkInt);
+		REQUIRE(ref.get<int>() == 5);
 		n = 38;
-		REQUIRE(v.get<int>() == 38);
+		REQUIRE(ref.get<int>() == 38);
+	}
+
+	SECTION("metapp::Variant &") {
+		metapp::Variant v = 5;
+		metapp::Variant ref = metapp::Variant::reference(v);
+		REQUIRE(ref.getMetaType()->isReference());
+		REQUIRE(ref.getMetaType()->getTypeKind() == metapp::tkReference);
+		REQUIRE(ref.getMetaType()->getUpType()->getTypeKind() == metapp::tkVariant);
+		REQUIRE(! ref.getMetaType()->getUpType()->isConst());
+		REQUIRE(ref.get<const metapp::Variant &>().get<int>() == 5);
+		v = std::string("abc");
+		REQUIRE(ref.get<const metapp::Variant &>().get<const std::string &>() == "abc");
+		ref.assign(38);
+		REQUIRE(ref.get<const metapp::Variant &>().get<int>() == 38);
 	}
 
 }
