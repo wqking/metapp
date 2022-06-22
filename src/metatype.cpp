@@ -69,11 +69,11 @@ TristateBool doCastObject(
 				}
 				if(instance != nullptr) {
 					if(toMetaType->isReference()) {
-						Variant temp = Variant::create<int &>(*(int *)instance);
+						const Variant temp = Variant::reference(*(int *)instance);
 						*result = Variant::retype(toMetaType, temp);
 					}
 					else {
-						Variant temp = Variant::create<void *>(instance);
+						const Variant temp = instance;
 						*result = Variant::retype(toMetaType, temp);
 					}
 					return TristateBool::yes;

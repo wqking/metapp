@@ -49,7 +49,7 @@ private:
 		const auto & container = mappable.get<const ContainerType &>();
 		auto it = container.find(key.get<const KeyType &>());
 		if(it != container.end()) {
-			return Variant::create<const MappedType &>(it->second);
+			return Variant::reference(it->second);
 		}
 		return Variant();
 	}

@@ -70,7 +70,7 @@ struct MetaIndexableBase
 	}
 
 private:
-	using ValueType = decltype(std::declval<ContainerType &>()[0]);
+	using ValueType = typename ContainerType::value_type;
 
 	static MetaIndexable::SizeInfo metaIndexableGetSizeInfo(const Variant & indexable)
 	{
@@ -94,7 +94,7 @@ private:
 		if(index >= metaIndexableGetSizeInfo(indexable).getSize()) {
 			raiseException<OutOfRangeException>();
 		}
-		return Variant::create<ValueType>(indexable.get<ContainerType &>()[index]);
+		return Variant::reference(indexable.get<ContainerType &>()[index]);
 	}
 
 	static void metaIndexableSet(const Variant & indexable, const std::size_t index, const Variant & value)

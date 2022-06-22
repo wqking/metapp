@@ -37,7 +37,7 @@ private:
 	{
 		ContainerType & container = iterable.get<ContainerType &>();
 		for(auto & item : container) {
-			if(! callback(Variant::create<decltype(item)>(item))) {
+			if(! callback(Variant::reference(item))) {
 				break;
 			}
 		}

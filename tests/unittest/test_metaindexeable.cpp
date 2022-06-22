@@ -49,7 +49,9 @@ TEMPLATE_LIST_TEST_CASE("MetaIndexable get", "", TestTypes_Indexables)
 	auto nonPointer = metapp::depointer(v);
 	REQUIRE(metaIndexable->getSizeInfo(nonPointer).getSize() == container.size());
 	for(std::size_t i = 0; i < container.size(); ++i) {
-		REQUIRE(metaIndexable->get(nonPointer, i).template get<ValueType>() == container.at(i));
+		const auto item = metaIndexable->get(nonPointer, i);
+		REQUIRE(item.getMetaType()->isReference());
+		REQUIRE(item.template get<ValueType>() == container.at(i));
 	}
 }
 

@@ -384,7 +384,7 @@ inline Variant doPointerToReference(const Variant & value, std::true_type)
 template <typename P>
 inline Variant doPointerToReference(const Variant & value, std::false_type)
 {
-	return Variant::create<P &>(**(P **)value.getAddress());
+	return Variant::reference(**(P **)value.getAddress());
 }
 
 
