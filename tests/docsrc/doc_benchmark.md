@@ -79,8 +79,9 @@ for(int i = 0; i < iterations; ++i) {
 
 **Remarks**  
 
-Since the commit 5428f612, now constructing and copying Variant with template value (here is fundamental value)
-can be inlined and the code may be optimized out, that's why metapp is so fast.
+Since [the optimization in this commit](https://github.com/wqking/metapp/commit/382817969dac3cc9e61d90bda8cda73b8f274800),
+now constructing and copying Variant with template value (here is fundamental value) can be inlined and the code
+may be optimized out, that's why metapp is so fast.
 
 ### Variant constructing and assignment, with string
 
