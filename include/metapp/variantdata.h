@@ -58,10 +58,25 @@ public:
 	}
 
 	template <typename T>
-	VariantData(const T * copyFrom, const CopyStrategy copyStrategy)
-		: object(), buffer(), storageType(storageNone)
+	VariantData(const T * copyFrom, const CopyStrategy /*copyStrategy*/,
+		typename std::enable_if<FitBuffer<T>::value>::type * = nullptr)
+		: object(), buffer(), storageType(storageBuffer)
 	{
-		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>(), copyStrategy);
+		if(copyFrom == nullptr) {
+			doConstructOnBufferDefault<T>(
+				internal_::TrueFalse<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>()
+				);
+		}
+		else {
+			doConstructOnBufferCopy<T>(copyFrom, std::is_copy_assignable<T>());
+		}
+	}
+
+	template <typename T>
+	VariantData(const T * copyFrom, const CopyStrategy copyStrategy,
+		typename std::enable_if<! FitBuffer<T>::value>::type * = nullptr)
+		: object(internal_::constructSharedPtr<T>(copyFrom, copyStrategy)), buffer(), storageType(storageObject)
+	{
 	}
 
 	VariantData(const std::shared_ptr<void> & obj, StorageTagObject)
@@ -88,28 +103,6 @@ public:
 	}
 
 private:
-	template <typename T>
-	void doConstructOnObjectOrBuffer(const void * copyFrom, std::true_type, const CopyStrategy /*copyStrategy*/) {
-		object.reset();
-
-		setStorageType(storageBuffer);
-
-		if(copyFrom == nullptr) {
-			doConstructOnBufferDefault<T>(
-				internal_::TrueFalse<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>()
-			);
-		}
-		else {
-			doConstructOnBufferCopy<T>(copyFrom, std::is_copy_assignable<T>());
-		}
-	}
-
-	template <typename T>
-	void doConstructOnObjectOrBuffer(const void * copyFrom, std::false_type, const CopyStrategy copyStrategy) {
-		setStorageType(storageObject);
-		object = internal_::constructSharedPtr<T>(copyFrom, copyStrategy);
-	}
-
 	template <typename T>
 	void doConstructOnBufferDefault(std::true_type) {
 		podAs<T>() = T();
