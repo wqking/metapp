@@ -50,6 +50,10 @@ struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 		return &metaIndexable;
 	}
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy copyStrategy) {
+		return doConstructVariantData<length != internal_::unknownSize>(copyFrom, copyStrategy);
+	}
+
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
 		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory, copyStrategy);
 	}
@@ -90,6 +94,25 @@ private:
 	};
 
 	template <bool hasLength>
+	static VariantData doConstructVariantData(
+			const void * copyFrom,
+			const CopyStrategy copyStrategy,
+			typename std::enable_if<hasLength>::type * = nullptr
+		) {
+		return VariantData(static_cast<const ArrayWrapper *>(copyFrom), copyStrategy);
+	}
+
+	template <bool hasLength>
+	static VariantData doConstructVariantData(
+			const void * /*copyFrom*/,
+			const CopyStrategy /*copyStrategy*/,
+			typename std::enable_if<! hasLength>::type * = nullptr
+		) {
+		raiseException<NotConstructibleException>();
+		return VariantData();
+	}
+
+	template <bool hasLength>
 	static void * doConstructData(
 			VariantData * data,
 			const void * copyFrom,
@@ -98,12 +121,7 @@ private:
 			typename std::enable_if<hasLength>::type * = nullptr
 		) {
 		if(data != nullptr) {
-			if(copyFrom != nullptr) {
-				data->construct<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), copyStrategy);
-			}
-			else {
-				data->construct<ArrayWrapper>(nullptr, copyStrategy);
-			}
+			*data = VariantData(static_cast<const ArrayWrapper *>(copyFrom), copyStrategy);
 		}
 		else {
 			return internal_::constructOnHeap<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), memory, copyStrategy);

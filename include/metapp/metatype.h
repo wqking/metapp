@@ -316,6 +316,10 @@ private:
 		const TypeFlags typeFlags
 	) noexcept;
 
+	VariantData constructVariantData(const void * copyFrom, const CopyStrategy copyStrategy) const {
+		return unifiedType->constructVariantData(copyFrom, copyStrategy);
+	}
+
 	void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) const {
 		return unifiedType->constructData(data, copyFrom, memory, copyStrategy);
 	}
@@ -383,6 +387,7 @@ public:
 		| (std::is_floating_point<T>::value ? tfFloat : 0)
 	;
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy copyStrategy);
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 	static void destroy(void * instance, const bool freeMemory);
 
@@ -413,6 +418,7 @@ struct DeclareMetaTypeVoidBase
 	static constexpr TypeKind typeKind = tkVoid;
 	static constexpr TypeFlags typeFlags = 0;
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy copyStrategy);
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy);
 	static void destroy(void * instance, const bool freeMemory);
 	static void dtor(void * instance, const bool freeMemory);

@@ -130,6 +130,7 @@ const UnifiedType * doGetUnifiedType()
 	static const UnifiedType unifiedType(
 		SelectDeclareClass<T, HasMember_typeKind<M>::value>::typeKind,
 		UnifiedMetaTable{
+			SelectDeclareClass<T, HasMember_constructVariantData<M>::value>::constructVariantData,
 			SelectDeclareClass<T, HasMember_constructData<M>::value>::constructData,
 			SelectDeclareClass<T, HasMember_destroy<M>::value>::destroy,
 			SelectDeclareClass<T, HasMember_cast<M>::value>::cast,
@@ -147,6 +148,15 @@ const UnifiedType * doGetUnifiedType()
 } // namespace internal_
 
 template <typename T>
+inline VariantData CommonDeclareMetaType<T>::constructVariantData(
+		const void * copyFrom,
+		const CopyStrategy copyStrategy
+	)
+{
+	return VariantData(static_cast<const NoRef *>(copyFrom), copyStrategy);
+}
+
+template <typename T>
 inline void * CommonDeclareMetaType<T>::constructData(
 		VariantData * data,
 		const void * copyFrom,
@@ -155,7 +165,7 @@ inline void * CommonDeclareMetaType<T>::constructData(
 	)
 {
 	if(data != nullptr) {
-		data->construct<NoRef>(copyFrom, copyStrategy);
+		*data = VariantData(static_cast<const NoRef *>(copyFrom), copyStrategy);
 		return nullptr;
 	}
 	else {

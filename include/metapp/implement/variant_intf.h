@@ -32,6 +32,9 @@ class MetaItem;
 
 class Variant
 {
+private:
+	struct ConstructTag {};
+
 public:
 	template <typename T>
 	static Variant create(const typename std::remove_reference<T>::type & value,
@@ -56,7 +59,12 @@ public:
 	~Variant() = default;
 
 	template <typename T>
-	Variant(T && value);
+	Variant(T && value,
+		typename std::enable_if<internal_::IsVariant<T>::value, ConstructTag>::type = ConstructTag{});
+
+	template <typename T>
+	Variant(T && value,
+		typename std::enable_if<! internal_::IsVariant<T>::value, ConstructTag>::type = ConstructTag{});
 
 	Variant(const MetaType * metaType, const void * copyFrom);
 	Variant(const MetaType * metaType, const void * copyFrom, const CopyStrategy copyStrategy);
@@ -70,7 +78,11 @@ public:
 	Variant(const MetaItem &) = delete;
 
 	template <typename T>
-	Variant & operator = (T && value);
+	auto operator = (T && value)
+		-> typename std::enable_if<internal_::IsVariant<T>::value, Variant &>::type;
+	template <typename T>
+	auto operator = (T && value)
+		-> typename std::enable_if<! internal_::IsVariant<T>::value, Variant &>::type;
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 
@@ -123,12 +135,7 @@ public:
 	friend std::ostream & operator << (std::ostream & stream, const Variant & v);
 
 private:
-	template <typename T>
-	void doConstruct(T && value,
-		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
-	template <typename T>
-	void doConstruct(T && value,
-		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
+	Variant(const MetaType * metaType, const VariantData & data);
 
 private:
 	const MetaType * metaType;

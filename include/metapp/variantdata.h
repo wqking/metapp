@@ -47,25 +47,37 @@ private:
 	static constexpr int storageReference = 4;
 
 public:
+	struct StorageTagObject {};
+	struct StorageTagSharedPtr {};
+	struct StorageTagReference {};
+
+public:
+	VariantData()
+		: object(), buffer(), storageType(storageNone)
+	{
+	}
+
 	template <typename T>
-	void construct(const void * copyFrom, const CopyStrategy copyStrategy) {
+	VariantData(const T * copyFrom, const CopyStrategy copyStrategy)
+		: object(), buffer(), storageType(storageNone)
+	{
 		doConstructOnObjectOrBuffer<T>(copyFrom, FitBuffer<T>(), copyStrategy);
 	}
 
-	void constructObject(const std::shared_ptr<void> & obj) {
-		object = obj;
-		setStorageType(storageObject);
+	VariantData(const std::shared_ptr<void> & obj, StorageTagObject)
+		: object(obj), buffer(), storageType(storageObject)
+	{
 	}
 
-	void constructSharedPtr(const std::shared_ptr<void> & sharedPtr) {
-		object = sharedPtr;
-		setStorageType(storageSharedPtr);
+	VariantData(const std::shared_ptr<void> & sharedPtr, StorageTagSharedPtr)
+		: object(sharedPtr), buffer(), storageType(storageSharedPtr)
+	{
 	}
 
-	void constructReference(const void * copyFrom) {
-		object.reset();
+	VariantData(const void * copyFrom, StorageTagReference)
+		: object(), buffer(), storageType(storageReference)
+	{
 		podAs<const void *>() = copyFrom;
-		setStorageType(storageReference);
 	}
 
 	void * getAddress() const;

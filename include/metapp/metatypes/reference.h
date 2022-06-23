@@ -30,10 +30,15 @@ struct DeclareMetaTypeBase <T &>
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkReference;
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy /*copyStrategy*/)
+	{
+		return VariantData(copyFrom, VariantData::StorageTagReference());
+	}
+
 	static void * constructData(VariantData * data, const void * copyFrom, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
 	{
 		if(data != nullptr) {
-			data->constructReference(copyFrom);
+			*data = VariantData(copyFrom, VariantData::StorageTagReference());
 		}
 		return nullptr;
 	}
@@ -55,9 +60,13 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> > : DeclareMetaTypeBase<T 
 
 	using WrapperType = std::reference_wrapper<T>;
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy /*copyStrategy*/) {
+		return VariantData(&(T &)*(WrapperType *)copyFrom, VariantData::StorageTagReference());
+	}
+
 	static void * constructData(VariantData * data, const void * copyFrom, void * /*memory*/, const CopyStrategy /*copyStrategy*/) {
 		if(data != nullptr) {
-			data->constructReference(&(T &)*(WrapperType *)copyFrom);
+			*data = VariantData(&(T &)*(WrapperType *)copyFrom, VariantData::StorageTagReference());
 		}
 		return nullptr;
 	}

@@ -126,6 +126,7 @@ METAPP_HAS_MEMBER(getMetaMappable);
 METAPP_HAS_MEMBER(getMetaPointerWrapper);
 METAPP_HAS_MEMBER(getMetaUser);
 
+METAPP_HAS_MEMBER(constructVariantData);
 METAPP_HAS_MEMBER(constructData);
 METAPP_HAS_MEMBER(destroy);
 METAPP_HAS_MEMBER(cast);

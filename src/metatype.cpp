@@ -140,6 +140,11 @@ int compareTwoValues(T a, T b)
 } // namespace internal_
 
 
+VariantData DeclareMetaTypeVoidBase::constructVariantData(const void * /*value*/, const CopyStrategy /*copyStrategy*/)
+{
+	return VariantData();
+}
+
 void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
 {
 	return nullptr;

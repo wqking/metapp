@@ -43,22 +43,16 @@ void * VariantData::getAddress() const
 
 Variant Variant::retype(const MetaType * metaType, const Variant & var)
 {
-	Variant result;
-	result.metaType = metaType;
-	result.data = var.data;
-	return result;
+	return Variant(metaType, var.data);
 }
 
 Variant Variant::takeFrom(const MetaType * metaType, void * instance)
 {
-	Variant result;
-
-	result.metaType = metaType;
-	result.data.constructObject(std::shared_ptr<void>(instance, [metaType](void * p) {
-		metaType->destroy(p);
-	}));
-
-	return result;
+	return Variant(metaType, VariantData(std::shared_ptr<void>(instance, [metaType](void * p) {
+			metaType->destroy(p);
+		}),
+		VariantData::StorageTagObject()
+	));
 }
 
 Variant Variant::takeFrom(const Variant & var)

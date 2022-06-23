@@ -32,6 +32,7 @@ BenchmarkFunc
 	printResult(t, iterations, "Misc, getMetaType<int>`");
 }
 
+/*
 BenchmarkFunc
 {
 	constexpr int iterations = generalIterations;
@@ -46,6 +47,7 @@ BenchmarkFunc
 	});
 	printResult(t, iterations, "Misc, metapp::VariantData construct<int>`");
 }
+*/
 
 BenchmarkFunc
 {

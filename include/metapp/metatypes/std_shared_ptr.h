@@ -68,13 +68,22 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 	using UpType = T;
 	static constexpr TypeKind typeKind = tkStdSharedPtr;
 
+	static VariantData constructVariantData(const void * copyFrom, const CopyStrategy /*copyStrategy*/) {
+		if(copyFrom == nullptr) {
+			return VariantData(internal_::castSharedPtrToVoid(SharedPtr()), VariantData::StorageTagSharedPtr());
+		}
+		else {
+			return VariantData(internal_::castSharedPtrToVoid(*(SharedPtr *)copyFrom), VariantData::StorageTagSharedPtr());
+		}
+	}
+
 	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
 		if(data != nullptr) {
 			if(copyFrom == nullptr) {
-				data->constructSharedPtr(internal_::castSharedPtrToVoid(SharedPtr()));
+				*data = VariantData(internal_::castSharedPtrToVoid(SharedPtr()), VariantData::StorageTagSharedPtr());
 			}
 			else {
-				data->constructSharedPtr(internal_::castSharedPtrToVoid(*(SharedPtr *)copyFrom));
+				*data = VariantData(internal_::castSharedPtrToVoid(*(SharedPtr *)copyFrom), VariantData::StorageTagSharedPtr());
 			}
 			return nullptr;
 		}
