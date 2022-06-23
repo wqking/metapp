@@ -35,11 +35,8 @@ struct DeclareMetaTypeBase <T &>
 		return VariantData(copyFrom, VariantData::StorageTagReference());
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
+	static void * constructData(const void * /*copyFrom*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
 	{
-		if(data != nullptr) {
-			*data = VariantData(copyFrom, VariantData::StorageTagReference());
-		}
 		return nullptr;
 	}
 
@@ -64,10 +61,7 @@ struct DeclareMetaTypeBase <std::reference_wrapper<T> > : DeclareMetaTypeBase<T 
 		return VariantData(&(T &)*(WrapperType *)copyFrom, VariantData::StorageTagReference());
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * /*memory*/, const CopyStrategy /*copyStrategy*/) {
-		if(data != nullptr) {
-			*data = VariantData(&(T &)*(WrapperType *)copyFrom, VariantData::StorageTagReference());
-		}
+	static void * constructData(const void * /*copyFrom*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/) {
 		return nullptr;
 	}
 

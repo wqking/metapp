@@ -145,7 +145,7 @@ VariantData DeclareMetaTypeVoidBase::constructVariantData(const void * /*value*/
 	return VariantData();
 }
 
-void * DeclareMetaTypeVoidBase::constructData(VariantData * /*data*/, const void * /*value*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
+void * DeclareMetaTypeVoidBase::constructData(const void * /*value*/, void * /*memory*/, const CopyStrategy /*copyStrategy*/)
 {
 	return nullptr;
 }

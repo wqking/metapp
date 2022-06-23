@@ -54,8 +54,8 @@ struct DeclareMetaTypeArrayBase : MetaStreamableBase<T>
 		return doConstructVariantData<length != internal_::unknownSize>(copyFrom, copyStrategy);
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
-		return doConstructData<length != internal_::unknownSize>(data, copyFrom, memory, copyStrategy);
+	static void * constructData(const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
+		return doConstructData<length != internal_::unknownSize>(copyFrom, memory, copyStrategy);
 	}
 
 	static void destroy(void * instance, const bool freeMemory) {
@@ -114,24 +114,16 @@ private:
 
 	template <bool hasLength>
 	static void * doConstructData(
-			VariantData * data,
 			const void * copyFrom,
 			void * memory,
 			const CopyStrategy copyStrategy,
 			typename std::enable_if<hasLength>::type * = nullptr
 		) {
-		if(data != nullptr) {
-			*data = VariantData(static_cast<const ArrayWrapper *>(copyFrom), copyStrategy);
-		}
-		else {
-			return internal_::constructOnHeap<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), memory, copyStrategy);
-		}
-		return nullptr;
+		return internal_::constructOnHeap<ArrayWrapper>(static_cast<const ArrayWrapper *>(copyFrom), memory, copyStrategy);
 	}
 
 	template <bool hasLength>
 	static void * doConstructData(
-			VariantData * /*data*/,
 			const void * /*copyFrom*/,
 			void * /*memory*/,
 			const CopyStrategy /*copyStrategy*/,

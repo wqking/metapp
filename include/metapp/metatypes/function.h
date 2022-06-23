@@ -51,24 +51,13 @@ struct DeclareMetaTypeBase <RT (Args...)>
 		}
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
-		if(data != nullptr) {
-			if(copyFrom != nullptr) {
-				*data = VariantData((FullType **)&copyFrom, copyStrategy);
-			}
-			else {
-				*data = VariantData((FullType **)nullptr, copyStrategy);
-			}
+	static void * constructData(const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
+		if(copyFrom != nullptr) {
+			return internal_::constructOnHeap<FullType *>(&copyFrom, memory, copyStrategy);
 		}
 		else {
-			if(copyFrom != nullptr) {
-				return internal_::constructOnHeap<FullType *>(&copyFrom, memory, copyStrategy);
-}
-			else {
-				return internal_::constructOnHeap<FullType *>(nullptr, memory, copyStrategy);
-			}
-}
-		return nullptr;
+			return internal_::constructOnHeap<FullType *>(nullptr, memory, copyStrategy);
+		}
 	}
 
 };

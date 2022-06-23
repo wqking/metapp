@@ -77,19 +77,8 @@ struct DeclareMetaTypeBase <std::shared_ptr<T> >
 		}
 	}
 
-	static void * constructData(VariantData * data, const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
-		if(data != nullptr) {
-			if(copyFrom == nullptr) {
-				*data = VariantData(internal_::castSharedPtrToVoid(SharedPtr()), VariantData::StorageTagSharedPtr());
-			}
-			else {
-				*data = VariantData(internal_::castSharedPtrToVoid(*(SharedPtr *)copyFrom), VariantData::StorageTagSharedPtr());
-			}
-			return nullptr;
-		}
-		else {
-			return internal_::constructOnHeap<SharedPtr>(copyFrom, memory, copyStrategy);
-		}
+	static void * constructData(const void * copyFrom, void * memory, const CopyStrategy copyStrategy) {
+		return internal_::constructOnHeap<SharedPtr>(copyFrom, memory, copyStrategy);
 	}
 
 	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {

@@ -158,19 +158,12 @@ inline VariantData CommonDeclareMetaType<T>::constructVariantData(
 
 template <typename T>
 inline void * CommonDeclareMetaType<T>::constructData(
-		VariantData * data,
 		const void * copyFrom,
 		void * memory,
 		const CopyStrategy copyStrategy
 	)
 {
-	if(data != nullptr) {
-		*data = VariantData(static_cast<const NoRef *>(copyFrom), copyStrategy);
-		return nullptr;
-	}
-	else {
-		return internal_::constructOnHeap<NoRef>(copyFrom, memory, copyStrategy);
-	}
+	return internal_::constructOnHeap<NoRef>(copyFrom, memory, copyStrategy);
 }
 
 template <typename T>

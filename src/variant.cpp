@@ -113,10 +113,7 @@ Variant Variant::castSilently(const MetaType * toMetaType) const
 
 Variant Variant::clone() const
 {
-	Variant result;
-	result.metaType = metaType;
-	result.metaType->constructData(&result.data, getAddress(), nullptr, CopyStrategy::copy);
-	return result;
+	return Variant(metaType, metaType->constructVariantData(getAddress(), CopyStrategy::copy));
 }
 
 Variant & Variant::assign(const Variant & other)
