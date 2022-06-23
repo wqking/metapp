@@ -70,6 +70,12 @@ struct Base
 		return 0;
 	}
 
+	void method() {
+	}
+
+	void constMethod() const {
+	}
+
 };
 
 struct Derived : Base
@@ -96,11 +102,19 @@ TEST_CASE("metatypes, tkMemberFunction, invoke")
 
 	SECTION("virtual") {
 		metapp::Variant v(&Base::add);
-		metapp::Variant arguments[] = { 7 };
 		Derived obj { 5 };
-		metapp::Variant result = v.getMetaType()->getMetaCallable()->invoke(v, &obj, arguments);
+		metapp::Variant result = metapp::callableInvoke(v, &obj, 7);
 		REQUIRE(result.get<int>() == 12);
 	}
+
+}
+
+TEST_CASE("metatypes, tkMemberFunction, canInvoke, object instance CV")
+{
+	REQUIRE(metapp::callableCanInvoke(&Base::method, (Base *)0));
+	REQUIRE(! metapp::callableCanInvoke(&Base::method, (const Base *)0));
+	REQUIRE(metapp::callableCanInvoke(&Base::constMethod, (Base *)0));
+	REQUIRE(metapp::callableCanInvoke(&Base::constMethod, (const Base *)0));
 
 }
 
