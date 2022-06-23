@@ -19,6 +19,47 @@
 
 namespace metapp {
 
+namespace internal_ {
+
+// DoConstructVariantData is used where `metaType->constructVariantData` is called.
+// DoConstructVariantData is useful to inline and elide copy of VariantData.
+// It improves performance dramatically.
+
+template <typename T, typename Enabled = void>
+struct DoConstructVariantData
+{
+	static VariantData doConstruct(const void * copyFrom, const CopyStrategy copyStrategy) {
+		return getMetaType<T>()->constructVariantData(
+			copyFrom,
+			copyStrategy
+		);
+	}
+};
+
+template <typename T>
+struct DoConstructVariantData <T,
+	typename std::enable_if<std::is_reference<T>::value>::type>
+{
+	static VariantData doConstruct(const void * copyFrom, const CopyStrategy /*copyStrategy*/) {
+		return VariantData(copyFrom, VariantData::StorageTagReference());
+	}
+};
+
+template <typename T>
+struct DoConstructVariantData <T,
+	typename std::enable_if<! std::is_reference<T>::value
+		&& ! HasMember_constructVariantData<DeclareMetaType<T> >::value>::type
+	>
+{
+	static VariantData doConstruct(const void * copyFrom, const CopyStrategy copyStrategy) {
+		using U = typename std::remove_reference<T>::type;
+		return VariantData(static_cast<const U *>(copyFrom), copyStrategy);
+	}
+};
+
+} // namespace internal_
+
+
 template <typename T>
 inline Variant Variant::create(const typename std::remove_reference<T>::type & value,
 	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
@@ -32,8 +73,10 @@ inline Variant Variant::create(const typename std::remove_reference<T>::type & v
 {
 	return Variant(
 		metapp::getMetaType<T>(),
-		(const void *)&value,
-		CopyStrategy::autoDetect
+		internal_::DoConstructVariantData<T>::doConstruct(
+			(const void *)&value,
+			CopyStrategy::autoDetect
+		)
 	);
 }
 
@@ -50,8 +93,10 @@ inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 {
 	return Variant(
 		metapp::getMetaType<T>(),
-		(const void *)&value,
-		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+		internal_::DoConstructVariantData<T>::doConstruct(
+			(const void *)&value,
+			std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+		)
 	);
 }
 
@@ -60,8 +105,10 @@ inline Variant Variant::reference(T && value)
 {
 	return Variant(
 		metapp::getMetaType<T &>(),
-		(const void *)&value,
-		CopyStrategy::autoDetect
+		internal_::DoConstructVariantData<T &>::doConstruct(
+			(const void *)&value,
+			CopyStrategy::autoDetect
+		)
 	);
 }
 
@@ -101,10 +148,10 @@ inline Variant::Variant(T && value,
 		typename std::enable_if<! internal_::IsVariant<T>::value, ConstructTag>::type)
 	:
 		metaType(metapp::getMetaType<typename std::remove_reference<T>::type>()),
-		data(metaType->constructVariantData(
+		data(internal_::DoConstructVariantData<typename std::remove_reference<T>::type>::doConstruct(
 			(const void *)&value,
-			std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy)
-		)
+			std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
+		))
 {
 }
 
@@ -166,7 +213,7 @@ inline auto Variant::operator = (T && value)
 	-> typename std::enable_if<! internal_::IsVariant<T>::value, Variant &>::type
 {
 	metaType = metapp::getMetaType<typename std::remove_reference<T>::type>();
-	data = metaType->constructVariantData(
+	data = internal_::DoConstructVariantData<typename std::remove_reference<T>::type>::doConstruct(
 		(const void *)&value,
 		std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
 	);

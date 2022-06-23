@@ -71,7 +71,7 @@ Qt version: 5.12.10
 <a id="mdtoc_9d4f2922"></a>
 ### Variant constructing and assignment, with fundamental
 
-10M iterations, metapp uses 255 ms, Qt uses 517 ms.  
+10M iterations, metapp uses 16 ms, Qt uses 517 ms.  
 
 Code for metapp
 
@@ -99,10 +99,15 @@ for(int i = 0; i < iterations; ++i) {
 }
 ```
 
+**Remarks**  
+
+Since the commit 5428f612, now constructing and copying Variant with template value (here is fundamental value)
+can be inlined and the code may be optimized out, that's why metapp is so fast.
+
 <a id="mdtoc_ad1c37e3"></a>
 ### Variant constructing and assignment, with string
 
-10M iterations, metapp uses 1349 ms, Qt uses 3623 ms.  
+10M iterations, metapp uses 1153 ms, Qt uses 3623 ms.  
 
 Code for metapp
 
@@ -229,7 +234,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d2467693"></a>
 ### Get accessible (Property)
 
-10M iterations, metapp uses 273 ms, Qt uses 755 ms.  
+10M iterations, metapp uses 241 ms, Qt uses 755 ms.  
 
 Code for metapp
 
@@ -276,7 +281,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d368514c"></a>
 ### Set accessible (Property)
 
-10M iterations, metapp uses 504 ms, Qt uses 383 ms.  
+10M iterations, metapp uses 462 ms, Qt uses 383 ms.  
 
 Code for metapp
 
@@ -342,7 +347,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d289b5b9"></a>
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
-10M iterations, metapp uses 663 ms, Qt uses 602 ms.  
+10M iterations, metapp uses 551 ms, Qt uses 602 ms.  
 
 Code for metapp
 
@@ -390,7 +395,7 @@ it's `int` and `int`), then invoke the callable.
 <a id="mdtoc_e989de5b"></a>
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 1153 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 1104 ms, Qt uses 1034 ms.  
 
 Code for metapp
 

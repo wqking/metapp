@@ -71,6 +71,9 @@ TristateBool doCastPointerReference(
 	const MetaType * toMetaType
 );
 
+template <typename T, typename Enabled>
+struct DoConstructVariantData;
+
 struct MetaTable
 {
 	const void * rawType;
@@ -355,8 +358,10 @@ private:
 		const MetaType * toMetaType
 	);
 
-	// Variant needs to call constructData and cast
 	friend class Variant;
+
+	template <typename T, typename Enabled>
+	friend struct internal_::DoConstructVariantData;
 
 private:
 	internal_::MetaTable metaTable;

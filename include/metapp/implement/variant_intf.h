@@ -83,6 +83,7 @@ public:
 	template <typename T>
 	auto operator = (T && value)
 		-> typename std::enable_if<! internal_::IsVariant<T>::value, Variant &>::type;
+
 	Variant & operator = (const Variant & other) noexcept;
 	Variant & operator = (Variant && other) noexcept;
 
