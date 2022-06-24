@@ -21,7 +21,7 @@ namespace metapp {
 
 namespace internal_ {
 
-// DoConstructVariantData is used where `metaType->constructVariantData` is called.
+// DoConstructVariantData is the compile time version of `metaType->constructVariantData`.
 // DoConstructVariantData is useful to inline and elide copy of VariantData.
 // It improves performance dramatically.
 
@@ -29,31 +29,28 @@ template <typename T, typename Enabled = void>
 struct DoConstructVariantData
 {
 	static VariantData doConstruct(const void * copyFrom, const CopyStrategy copyStrategy) {
+		return SelectDeclareClass<
+				T,
+				HasMember_constructVariantData<DeclareMetaType<T> >::value
+			>::constructVariantData(
+				copyFrom,
+				copyStrategy
+			)
+		;
+	}
+};
+
+// GCC can't detect specialization for array correctly (MSVC and clang don't have the problem).
+// Let's use the runtime solution for array.
+template <typename T>
+struct DoConstructVariantData <T,
+	typename std::enable_if<std::is_array<T>::value>::type>
+{
+	static VariantData doConstruct(const void * copyFrom, const CopyStrategy copyStrategy) {
 		return getMetaType<T>()->constructVariantData(
 			copyFrom,
 			copyStrategy
 		);
-	}
-};
-
-template <typename T>
-struct DoConstructVariantData <T,
-	typename std::enable_if<std::is_reference<T>::value>::type>
-{
-	static VariantData doConstruct(const void * copyFrom, const CopyStrategy /*copyStrategy*/) {
-		return VariantData(copyFrom, VariantData::StorageTagReference());
-	}
-};
-
-template <typename T>
-struct DoConstructVariantData <T,
-	typename std::enable_if<! std::is_reference<T>::value
-		&& ! HasMember_constructVariantData<DeclareMetaType<T> >::value>::type
-	>
-{
-	static VariantData doConstruct(const void * copyFrom, const CopyStrategy copyStrategy) {
-		using U = typename std::remove_reference<T>::type;
-		return VariantData(static_cast<const U *>(copyFrom), copyStrategy);
 	}
 };
 
