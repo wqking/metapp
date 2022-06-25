@@ -19,6 +19,7 @@
 #include "metapp/metarepo.h"
 #include "metapp/interfaces/metaaccessible.h"
 #include "metapp/interfaces/metapointerwrapper.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 

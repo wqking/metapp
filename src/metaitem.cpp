@@ -17,8 +17,8 @@
 #include "metapp/metaitem.h"
 #include "metapp/metatype.h"
 #include "metapp/metarepo.h"
-#include "metapp/allmetatypes.h"
 #include "metapp/utilities/utility.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 

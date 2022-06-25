@@ -17,6 +17,7 @@
 #include "metapp/interfaces/metaclass.h"
 #include "metapp/metatype.h"
 #include "metapp/metarepo.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 

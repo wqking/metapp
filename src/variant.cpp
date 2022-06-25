@@ -18,6 +18,7 @@
 #include "metapp/utilities/utility.h"
 #include "metapp/interfaces/metastreamable.h"
 #include "metapp/interfaces/metaaccessible.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 

@@ -18,6 +18,7 @@
 #include "metapp/metarepo.h"
 #include "metapp/variant.h"
 #include "metapp/utilities/utility.h"
+#include "metapp/allmetatypes.h"
 
 namespace metapp {
 
