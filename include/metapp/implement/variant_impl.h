@@ -59,13 +59,6 @@ struct DoConstructVariantData <T,
 
 template <typename T>
 inline Variant Variant::create(const typename std::remove_reference<T>::type & value,
-	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
-{
-	return *(Variant *)(void *)&value;
-}
-
-template <typename T>
-inline Variant Variant::create(const typename std::remove_reference<T>::type & value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	return Variant(
@@ -79,13 +72,6 @@ inline Variant Variant::create(const typename std::remove_reference<T>::type & v
 
 template <typename T>
 inline Variant Variant::create(typename std::remove_reference<T>::type && value,
-	typename std::enable_if<internal_::IsVariant<T>::value>::type *)
-{
-	return *(Variant *)(void *)&value;
-}
-
-template <typename T>
-inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 	typename std::enable_if<! internal_::IsVariant<T>::value>::type *)
 {
 	return Variant(
@@ -95,6 +81,11 @@ inline Variant Variant::create(typename std::remove_reference<T>::type && value,
 			std::is_rvalue_reference<T &&>::value ? CopyStrategy::move : CopyStrategy::copy
 		)
 	);
+}
+
+inline Variant Variant::create(const Variant & value)
+{
+	return value;
 }
 
 template <typename T>
@@ -128,15 +119,6 @@ inline Variant::Variant(const MetaType * metaType, const void * copyFrom, const 
 	:
 		metaType(metaType),
 		data(metaType->constructVariantData(copyFrom, copyStrategy))
-{
-}
-
-template <typename T>
-inline Variant::Variant(T && value,
-		typename std::enable_if<internal_::IsVariant<T>::value, ConstructTag>::type)
-	:
-		metaType(value.metaType),
-		data(value.data)
 {
 }
 
@@ -188,18 +170,6 @@ inline Variant & Variant::operator = (Variant && other) noexcept
 	if(this != &other) {
 		metaType = std::move(other.metaType);
 		data = std::move(other.data);
-	}
-
-	return *this;
-}
-
-template <typename T>
-inline auto Variant::operator = (T && value)
-	-> typename std::enable_if<internal_::IsVariant<T>::value, Variant &>::type
-{
-	if(this != &value) {
-		metaType = value.metaType;
-		data = value.data;
 	}
 
 	return *this;

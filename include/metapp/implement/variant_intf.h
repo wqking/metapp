@@ -38,16 +38,11 @@ private:
 public:
 	template <typename T>
 	static Variant create(const typename std::remove_reference<T>::type & value,
-		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
-	template <typename T>
-	static Variant create(const typename std::remove_reference<T>::type & value,
 		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
 	template <typename T>
 	static Variant create(typename std::remove_reference<T>::type && value,
-		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr);
-	template <typename T>
-	static Variant create(typename std::remove_reference<T>::type && value,
 		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr);
+	static Variant create(const Variant & value);
 
 	template <typename T>
 	static Variant reference(T && value);
@@ -57,10 +52,6 @@ public:
 
 	Variant() noexcept;
 	~Variant() = default;
-
-	template <typename T>
-	Variant(T && value,
-		typename std::enable_if<internal_::IsVariant<T>::value, ConstructTag>::type = ConstructTag{});
 
 	template <typename T>
 	Variant(T && value,
@@ -77,9 +68,6 @@ public:
 	// (such as MetaItem::asCallable()) should be used
 	Variant(const MetaItem &) = delete;
 
-	template <typename T>
-	auto operator = (T && value)
-		-> typename std::enable_if<internal_::IsVariant<T>::value, Variant &>::type;
 	template <typename T>
 	auto operator = (T && value)
 		-> typename std::enable_if<! internal_::IsVariant<T>::value, Variant &>::type;
