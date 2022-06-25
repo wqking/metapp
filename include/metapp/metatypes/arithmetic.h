@@ -64,7 +64,7 @@ private:
 	using CastToFunc = void (*)(Variant * result, const T value);
 	static CastToFunc getCastToFunc(const int index)
 	{
-		CastToFunc castToFuncList[] {
+		static CastToFunc castToFuncList[] {
 			&doCastTo<bool>,
 			&doCastTo<char>, &doCastTo<wchar_t>,
 			&doCastTo<internal_::metappChar8_t>,

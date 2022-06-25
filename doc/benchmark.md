@@ -46,6 +46,7 @@ Optimization is continuously done on metapp. Here lists several optimizations th
 2. `MetaType::equal` related code is optimized. It's the very core and very frequently called function.
 3. `Variant` constructors and assignments support universal reference and move semantic.
 4. When constructing data in `Variant`, now using `std::make_shared` instead previously raw `new` to reduce extra heap allocations.
+5. When constructing and copying `Variant` from compile time data type, compiling time constructing function is used instead of relying on runtime meta type. That not only increases `Variant` constructing performance, but also enables the possibilities for the compiler to inline and optimize out the code.
 
 Those optimizations, and others, have improved the performance significantly.
 
@@ -141,7 +142,7 @@ though it's not related to metapp.
 <a id="mdtoc_38682910"></a>
 ### Variant constructing and assignment, with heavy copy but trivial move object
 
-10M iterations, metapp uses 2379 ms, Qt uses 6908 ms.  
+10M iterations, metapp uses 2245 ms, Qt uses 6908 ms.  
 
 Code for metapp
 
@@ -208,7 +209,7 @@ Note metapp needs about 2 seconds to finish this benchmark, most time is spent o
 <a id="mdtoc_3d72fa05"></a>
 ### Variant casting
 
-10M iterations, metapp uses 716 ms, Qt uses 1752 ms.  
+10M iterations, metapp uses 573 ms, Qt uses 1752 ms.  
 
 Code for metapp
 
@@ -396,7 +397,7 @@ it's `int` and `int`), then invoke the callable.
 <a id="mdtoc_e989de5b"></a>
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 1104 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 938 ms, Qt uses 1034 ms.  
 
 Code for metapp
 
