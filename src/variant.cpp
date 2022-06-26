@@ -22,26 +22,6 @@
 
 namespace metapp {
 
-void * VariantData::getAddress() const
-{
-	switch(getStorageType()) {
-	case storageObject:
-		return (void *)(object.get());
-
-	case storageBuffer:
-		return (void *)(buffer.data());
-
-	case storageSharedPtr:
-		return (void *)&object;
-
-	case storageReference:
-		return *(void **)(buffer.data());
-	}
-
-	return nullptr;
-}
-
-
 Variant Variant::retype(const MetaType * metaType, const Variant & var)
 {
 	return Variant(metaType, var.data);

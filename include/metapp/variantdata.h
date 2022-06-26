@@ -95,7 +95,23 @@ public:
 		podAs<const void *>() = copyFrom;
 	}
 
-	void * getAddress() const;
+	void * getAddress() const {
+		switch(getStorageType()) {
+		case storageObject:
+			return (void *)(object.get());
+
+		case storageBuffer:
+			return (void *)(buffer.data());
+
+		case storageSharedPtr:
+			return (void *)&object;
+
+		case storageReference:
+			return *(void **)(buffer.data());
+		}
+
+		return nullptr;
+	}
 
 	void swap(VariantData & other) noexcept {
 		object.swap(other.object);
