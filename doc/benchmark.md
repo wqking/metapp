@@ -213,7 +213,7 @@ Note metapp needs about 2 seconds to finish this benchmark, most time is spent o
 <a id="mdtoc_3d72fa05"></a>
 ### Variant casting
 
-10M iterations, metapp uses 573 ms, Qt uses 1752 ms.  
+10M iterations, metapp uses 533 ms, Qt uses 1752 ms.  
 
 Code for metapp
 
@@ -240,7 +240,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d2467693"></a>
 ### Get accessible (Property)
 
-10M iterations, metapp uses 241 ms, Qt uses 755 ms.  
+10M iterations, metapp uses 189 ms, Qt uses 755 ms.  
 
 Code for metapp
 
@@ -287,7 +287,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d368514c"></a>
 ### Set accessible (Property)
 
-10M iterations, metapp uses 462 ms, Qt uses 383 ms.  
+10M iterations, metapp uses 306 ms, Qt uses 383 ms.  
 
 Code for metapp
 
@@ -316,7 +316,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_3a32abb0"></a>
 ### Invoke method `void ()`
 
-10M iterations, metapp uses 213 ms, Qt uses 433 ms.  
+10M iterations, metapp uses 107 ms, Qt uses 433 ms.  
 
 Code for metapp
 
@@ -353,7 +353,7 @@ for(int i = 0; i < iterations; ++i) {
 <a id="mdtoc_d289b5b9"></a>
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
-10M iterations, metapp uses 551 ms, Qt uses 602 ms.  
+10M iterations, metapp uses 413 ms, Qt uses 602 ms.  
 
 Code for metapp
 
@@ -401,7 +401,7 @@ it's `int` and `int`), then invoke the callable.
 <a id="mdtoc_e989de5b"></a>
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 938 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 834 ms, Qt uses 1034 ms.  
 
 Code for metapp
 

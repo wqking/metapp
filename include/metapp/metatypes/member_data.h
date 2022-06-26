@@ -41,6 +41,8 @@ struct DeclareMetaTypeBase <T Class::*, typename std::enable_if<! std::is_functi
 	}
 
 private:
+	using FullType = T Class::*;
+
 	static const MetaType * accessibleGetValueType(const Variant & /*accessible*/) {
 		return getMetaType<T>();
 	}
@@ -57,17 +59,17 @@ private:
 		const auto pointerAndType = getPointerAndType(instance);
 		if(pointerAndType.second->isConst()) {
 			if(pointerAndType.second->isVolatile()) {
-				return Variant::reference(((const volatile Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+				return Variant::reference(((const volatile Class *)pointerAndType.first)->*(accessible.get<FullType>()));
 			}
 			else {
-				return Variant::reference(((const Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+				return Variant::reference(((const Class *)pointerAndType.first)->*(accessible.get<FullType>()));
 			}
 		}
 		else if(pointerAndType.second->isVolatile()) {
-			return Variant::reference(((volatile Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+			return Variant::reference(((volatile Class *)pointerAndType.first)->*(accessible.get<FullType>()));
 		}
 		else {
-			return Variant::reference(((Class *)pointerAndType.first)->*(accessible.get<T Class::*>()));
+			return Variant::reference(((Class *)pointerAndType.first)->*(accessible.get<FullType>()));
 		}
 	}
 
@@ -76,7 +78,7 @@ private:
 		internal_::verifyVariantWritable(instance);
 
 		internal_::assignValue(
-			((Class *)getPointer(instance))->*(accessible.get<T Class::*>()),
+			((Class *)getPointer(instance))->*(accessible.get<FullType>()),
 			value.cast<T>().template get<const T &>()
 		);
 	}

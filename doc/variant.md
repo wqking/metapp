@@ -20,6 +20,7 @@
   - [getMetaType](#mdtoc_83f2208d)
   - [canGet](#mdtoc_4273f5f8)
   - [get](#mdtoc_fd3b2e70)
+  - [get](#mdtoc_fd3b2e71)
   - [getAddress](#mdtoc_7e7d9c01)
   - [canCast](#mdtoc_f164fa3f)
   - [cast](#mdtoc_12b8b9f6)
@@ -371,12 +372,15 @@ ASSERT(! v3.canGet<int>()); // rule 2
 template <typename T>
 T get() const;
 ```
-If `canGet<T>()` returns true, `get` returns the underlying value as T.  
+Returns the underlying value as T.  
 If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
 If T is function type, the return type is function pointer.  
 If T is Variant or reference to Variant, then, if `this` type is Variant or reference to Variant, returns the underlying Variant,
 otherwise returns `*this`.
+
+Note: `get` doesn't check if `canGet` returns true, for performance reason. It's the caller's responsibility to be sure
+`T` matches the underlying value type. For checked get, use function `checkedGet`.
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string,
 we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference
@@ -419,6 +423,16 @@ if(metapp::getNonReferenceMetaType(v)->equal(metapp::getMetaType<int *>())) {
 if(v.canGet<int *>()) {
 }
 ```
+
+<a id="mdtoc_fd3b2e71"></a>
+#### get
+```c++
+template <typename T>
+T checkedGet() const;
+```
+
+If `canGet<T>()` returns true, `checkedGet()` returns the value from `get()`.  
+If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
 
 <a id="mdtoc_7e7d9c01"></a>
 #### getAddress

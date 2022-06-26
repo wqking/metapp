@@ -206,16 +206,11 @@ inline bool Variant::canGet(typename std::enable_if<internal_::IsVariant<T>::val
 }
 
 template <typename T>
-inline auto Variant::get(
-		typename std::enable_if<! internal_::IsVariant<T>::value>::type *
-	) const -> typename internal_::VariantReturnType<T>::Type
+inline auto Variant::get(typename std::enable_if<! internal_::IsVariant<T>::value>::type *) const
+	-> typename internal_::VariantReturnType<T>::Type
 {
 	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
 		return get<const Variant &>().get<T>();
-	}
-
-	if(! canGet<T>()) {
-		raiseException<BadCastException>("Can't get from Variant");
 	}
 
 	using U = typename internal_::VariantReturnType<T>::Type;
@@ -223,9 +218,8 @@ inline auto Variant::get(
 }
 
 template <typename T>
-inline auto Variant::get(
-		typename std::enable_if<internal_::IsVariant<T>::value>::type *
-	) const -> typename internal_::VariantReturnType<T>::Type
+inline auto Variant::get(typename std::enable_if<internal_::IsVariant<T>::value>::type *) const
+	-> typename internal_::VariantReturnType<T>::Type
 {
 	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
 		using U = typename internal_::VariantReturnType<T>::Type;
@@ -233,6 +227,16 @@ inline auto Variant::get(
 	}
 
 	return (Variant &)*this;
+}
+
+template <typename T>
+inline auto Variant::checkedGet() const -> typename internal_::VariantReturnType<T>::Type
+{
+	if(! canGet<T>()) {
+		raiseException<BadCastException>("Can't get from Variant");
+	}
+
+	return get<T>();
 }
 
 template <typename T>

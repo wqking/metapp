@@ -47,7 +47,7 @@ private:
 	static Variant metaMapGet(const Variant & mappable, const Variant & key)
 	{
 		const auto & container = mappable.get<const ContainerType &>();
-		auto it = container.find(key.get<const KeyType &>());
+		auto it = container.find(key.cast<const KeyType &>().template get<const KeyType &>());
 		if(it != container.end()) {
 			return Variant::reference(it->second);
 		}
@@ -57,8 +57,10 @@ private:
 	static void metaMapSet(const Variant & mappable, const Variant & key, const Variant & value)
 	{
 		auto & container = mappable.get<ContainerType &>();
-		const KeyType & nativeKey = key.get<const KeyType &>();
-		const MappedType & nativeValue = value.get<const MappedType &>();
+		const Variant castedKey = key.cast<const KeyType &>();
+		const Variant castedValue = value.cast<const MappedType &>();
+		const KeyType & nativeKey = castedKey.get<const KeyType &>();
+		const MappedType & nativeValue = castedValue.get<const MappedType &>();
 		auto it = container.find(nativeKey);
 		if(it != container.end()) {
 			internal_::assignValue(it->second, nativeValue);

@@ -90,13 +90,13 @@ public:
 	bool canGet(const MetaType * toMetaType) const;
 
 	template <typename T>
-	auto get(
-		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr
-	) const -> typename internal_::VariantReturnType<T>::Type;
+	auto get(typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr) const
+		-> typename internal_::VariantReturnType<T>::Type;
 	template <typename T>
-	auto get(
-		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr
-	) const -> typename internal_::VariantReturnType<T>::Type;
+	auto get(typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr) const
+		-> typename internal_::VariantReturnType<T>::Type;
+	template <typename T>
+	auto checkedGet() const -> typename internal_::VariantReturnType<T>::Type;
 
 	bool canCast(const MetaType * toMetaType) const;
 	template <typename T>
