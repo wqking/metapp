@@ -28,9 +28,6 @@
 #include <tuple>
 #include <initializer_list>
 
-const metapp::MetaType * getUpTypeAt(const metapp::MetaType * metaType, int index);
-std::vector<metapp::TypeKind> getUpTypeTypeKinds(const metapp::MetaType * metaType);
-
 template <typename Container>
 int getContainerSize(const Container & container)
 {
