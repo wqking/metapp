@@ -19,9 +19,18 @@
 #include "metapp/variant.h"
 #include "metapp/allmetatypes.h"
 
-TEST_CASE("metatypes, void")
+TEST_CASE("metatypes, void, types")
 {
 	REQUIRE(metapp::getTypeKind(metapp::Variant((void *)0)) == metapp::tkPointer);
 	REQUIRE(metapp::getMetaType<void>()->getTypeKind() == metapp::tkVoid);
+}
+
+TEST_CASE("metatypes, void, construct")
+{
+	const metapp::MetaType * metaType = metapp::getMetaType<void>();
+	REQUIRE(metaType->construct() == nullptr);
+	REQUIRE(metaType->copyConstruct(nullptr) == nullptr);
+	REQUIRE(metaType->placementConstruct(nullptr) == nullptr);
+	REQUIRE(metaType->placementCopyConstruct(nullptr, nullptr) == nullptr);
 }
 
