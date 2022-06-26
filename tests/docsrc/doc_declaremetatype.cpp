@@ -91,18 +91,18 @@ Function `cast` return true if current meta type being declared can be casted to
 If the implementation can't cast the type, it should return the value of default implementation, `metapp::commonCast`.  
 If `result` is not nullptr and if the `*fromVar` can be casted, set `result` with the casted value.  
 If `result` is not nullptr, `fromVar` is guaranteed not nullptr.  
-If `result` is nullptr, `fromVar` is can be nullptr or not nullptr.  
+If `result` is nullptr, `fromVar` can be nullptr or not nullptr.  
 
 Assume current being declared type is T, then,  
 If `result` is not nullptr, then `cast` should set `result` with the casted value that's casted from `*fromVar`.  
-If `result` is nullptr, and if `fromVar` is not nullptr, then `cast` should return if `metapp::getMetaType<T>()` can cast
-to `toMetaType`, but `cast` can access `fromVar` if necessary.  
+If `result` is nullptr, and if `fromVar` is not nullptr, then `cast` should return true if `metapp::getMetaType<T>()` can cast
+to `toMetaType`, and `cast` can access `fromVar` if necessary.  
 If `result` is nullptr, and if `fromVar` is also nullptr, then `cast` should return if `metapp::getMetaType<T>()` can cast
 to `toMetaType`. If `cast` must depend on the available of `fromVar`, then `cast` should return true or false directly.  
 
 The built-in meta types that depend on `fromVar` are `std::function` (tkStdFunction) and `Variant` (tkVariant).  
 
-Below is the pseudo code about implementing `cast`,
+Below is the pseudo code for implementing `cast`,
 desc*/
 
 #if 0
