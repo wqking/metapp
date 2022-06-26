@@ -305,12 +305,36 @@ Return true if `myVariant.get<T>()` can be called to get the underlying value.
 #1 form is equivalent to `canGet(metapp::getMetaType<T>())`. 
 
 The rules to determine `canGet`, assume the underlying value has type V,  
-1. If both T and V are references, `canGet` returns true.  
-2. If both T and V are pointers after reference is removed, `canGet` returns true.  
-3. If both T and V are C array after reference is removed, `canGet` returns true.  
-4. If either T or V is reference, the other one is not reference,
+1. If T is Variant or reference to Variant, `canGet` returns true. Otherwise if V is Variant or reference to Variant, returns `this->get<const Variant &>().canGet<T>()`.
+2. If both T and V are references, `canGet` returns true.  
+3. If both T and V are pointers after reference is removed, `canGet` returns true.  
+4. If both T and V are C array after reference is removed, `canGet` returns true.  
+5. If either T or V is reference, the other one is not reference,
 `canGet` returns true only if the referred type is same as the non-reference type.  
-5. If neither T and V are reference or pointer, `canGet` returns true only if T is same as V.  
+6. If neither T and V are reference or pointer, `canGet` returns true only if T is same as V.  
+
+The pseudo code for the rules in canGet, "thisType" is the type in `this` Variant.
+
+```c++
+bool canGet(toMetaType) {
+  if(toMetaType is Variant or reference to Variant) {
+    return true;
+  }
+  if(thisType is Variant or reference to Variant) {
+    return this->get<const Variant &>().canGet(toMetaType);
+  }
+  if(toMetaType is reference and thisType is reference) {
+    return true;
+  }
+  if(toMetaType is pointer and thisType is pointer) {
+    return true;
+  }
+  if(toMetaType is array and thisType is array) {
+    return true;
+  }
+  return false;
+}
+```
 
 `canGet` and `get` expect either T is same as underlying type V, or T and V are reference are pointer.  
 If You need to get the underlying value as different type, use `canCast` and `cast`.  
@@ -351,13 +375,33 @@ If `canGet<T>()` returns true, `get` returns the underlying value as T.
 If `canGet<T>()` returns false, it throws exception `metapp::BadCastException`.  
 If T is array such as int[3], the return type is the reference to the array, e.g, int(&)[3].
 If T is function type, the return type is function pointer.  
+If T is Variant or reference to Variant, then, if `this` type is Variant or reference to Variant, returns the underlying Variant,
+otherwise returns `*this`.
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string,
 we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference
 instead of copy the value. That helps to improve the performance.  
 We should always getting as reference to avoid copying, unless you do want to copy the value.  
 
-Note: `canGet` and `get` are not type safe when either types (T and the type inside the Variant)
+The pseudo code for the rules in get, "thisType" is the type in `this` Variant.
+
+```c++
+template <typename T>
+ReturnType get() {
+  if(T is Variant or reference to Variant) {
+    if(thisType is Variant or reference to Variant) {
+      return underlying Variant;
+    }
+    return *this;
+  }
+  if(thisType is Variant or reference to Variant) {
+    return this->get<const Variant &>().get<T>();
+  }
+  return underlying value;
+}
+```
+
+Note: `canGet` and `get` are not type safe when either types (T and `this` type inside the Variant)
 are pointer and reference. The reason is `canGet` and `get` assume the user have knowledge on the type
 held by the Variant and they provide a fast way to access the underlying pointer and reference.  
 If you pursuit better type safety, use `canCast` and `cast`.  

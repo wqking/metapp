@@ -65,14 +65,20 @@ Variant Variant::takeFrom(const Variant & var)
 	return takeFrom(metaType, var.get<void *>());
 }
 
-bool Variant::canGet(const MetaType * toMetaType) const
+bool Variant::canGet(const MetaType * toMetaType_) const
 {
 	const MetaType * fromMetaType = metaType;
-	if(fromMetaType->isReference() && toMetaType->isReference()) {
+	if(fromMetaType->isReference() && toMetaType_->isReference()) {
 		return true;
 	}
 	fromMetaType = getNonReferenceMetaType(fromMetaType);
-	toMetaType = getNonReferenceMetaType(toMetaType);
+	const MetaType * toMetaType = getNonReferenceMetaType(toMetaType_);
+	if(toMetaType->getTypeKind() == tkVariant) {
+		return true;
+	}
+	if(fromMetaType->getTypeKind() == tkVariant) {
+		return get<const Variant &>().canGet(toMetaType_);
+	}
 	if(fromMetaType->isPointer() && toMetaType->isPointer()) {
 		return true;
 	}

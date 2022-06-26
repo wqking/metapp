@@ -84,20 +84,18 @@ public:
 	}
 
 	template <typename T>
-	bool canGet() const;
+	bool canGet(typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr) const;
+	template <typename T>
+	bool canGet(typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr) const;
 	bool canGet(const MetaType * toMetaType) const;
 
 	template <typename T>
 	auto get(
-		typename std::enable_if<! std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
-		>::value>::type * = nullptr
+		typename std::enable_if<! internal_::IsVariant<T>::value>::type * = nullptr
 	) const -> typename internal_::VariantReturnType<T>::Type;
 	template <typename T>
 	auto get(
-		typename std::enable_if<std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
-		>::value>::type * = nullptr
+		typename std::enable_if<internal_::IsVariant<T>::value>::type * = nullptr
 	) const -> typename internal_::VariantReturnType<T>::Type;
 
 	bool canCast(const MetaType * toMetaType) const;

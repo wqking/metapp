@@ -189,19 +189,31 @@ inline auto Variant::operator = (T && value)
 }
 
 template <typename T>
-inline bool Variant::canGet() const
+inline bool Variant::canGet(typename std::enable_if<! internal_::IsVariant<T>::value>::type *) const
 {
+	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
+		return get<const Variant &>().canGet<T>();
+	}
+
 	using U = typename internal_::VariantReturnType<T>::Type;
 	return canGet(metapp::getMetaType<U>());
 }
 
 template <typename T>
+inline bool Variant::canGet(typename std::enable_if<internal_::IsVariant<T>::value>::type *) const
+{
+	return true;
+}
+
+template <typename T>
 inline auto Variant::get(
-		typename std::enable_if<! std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
-		>::value>::type *
+		typename std::enable_if<! internal_::IsVariant<T>::value>::type *
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
+	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
+		return get<const Variant &>().get<T>();
+	}
+
 	if(! canGet<T>()) {
 		raiseException<BadCastException>("Can't get from Variant");
 	}
@@ -212,12 +224,10 @@ inline auto Variant::get(
 
 template <typename T>
 inline auto Variant::get(
-		typename std::enable_if<std::is_same<
-			typename std::remove_cv<typename std::remove_reference<T>::type>::type, Variant
-		>::value>::type *
+		typename std::enable_if<internal_::IsVariant<T>::value>::type *
 	) const -> typename internal_::VariantReturnType<T>::Type
 {
-	if(canGet<Variant>()) {
+	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
 		using U = typename internal_::VariantReturnType<T>::Type;
 		return (U)(*(typename std::remove_reference<U>::type *)(getAddress()));
 	}
