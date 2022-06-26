@@ -16,6 +16,12 @@ uint64_t measureElapsedTime(F f)
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t).count();
 }
 
+template <typename T>
+void dontOptimizeAway(T && value)
+{
+    __asm__ __volatile__("" :: "m" (value));
+}
+
 class TestClass : public QObject
 {
     Q_OBJECT
@@ -124,6 +130,7 @@ void benchmarkVariantWithFundamental()
             v = (unsigned short)9;
             v = true;
             v = 1.5f;
+            dontOptimizeAway(v);
         }
 
     });
@@ -143,6 +150,19 @@ void benchmarkVariantWithString()
 
     });
     std::cout << "Variant construct and assignment, with string: " << t1 << std::endl;
+}
+
+void benchmarkVariantGetInt()
+{
+    constexpr int iterations = generalIterations;
+    const auto t1 = measureElapsedTime([]() {
+        QVariant v = 5;
+        for(int i = 0; i < iterations; ++i) {
+            dontOptimizeAway(v.toInt());
+        }
+
+    });
+    std::cout << "Variant get int: " << t1 << std::endl;
 }
 
 void benchmarkVariantCast()
@@ -216,6 +236,7 @@ int main(int /*argc*/, char */*argv*/[])
     benchmarkPropertySet();
     benchmarkVariantWithFundamental();
     benchmarkVariantWithString();
+    benchmarkVariantGetInt();
     benchmarkVariantCast();
     benchmarkHeavyCopy();
 

@@ -26,28 +26,11 @@ BenchmarkFunc
 	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
 		for(int i = 0; i < iterations; ++i) {
-			metapp::getMetaType<int>();
+			dontOptimizeAway(metapp::getMetaType<int>());
 		}
 	});
 	printResult(t, iterations, "Misc, getMetaType<int>`");
 }
-
-/*
-BenchmarkFunc
-{
-	constexpr int iterations = generalIterations;
-	const auto t = measureElapsedTime([iterations]() {
-		int n = 5;
-		for(int i = 0; i < iterations; ++i) {
-			metapp::VariantData data;
-			data.construct<int>(&n, metapp::CopyStrategy::copy);
-			// below line is to ensure the loop is not optimized out
-			if(data.getAddress() == nullptr) break;
-		}
-	});
-	printResult(t, iterations, "Misc, metapp::VariantData construct<int>`");
-}
-*/
 
 BenchmarkFunc
 {
@@ -67,6 +50,7 @@ BenchmarkFunc
 	const auto t = measureElapsedTime([iterations]() {
 		for(int i = 0; i < iterations; ++i) {
 			metapp::Variant v(5);
+			dontOptimizeAway(v);
 		}
 	});
 	printResult(t, iterations, "Misc, Variant construct with int");
@@ -76,9 +60,22 @@ BenchmarkFunc
 {
 	constexpr int iterations = generalIterations;
 	const auto t = measureElapsedTime([iterations]() {
+		metapp::Variant v(5);
+		for(int i = 0; i < iterations; ++i) {
+			dontOptimizeAway(v.getAddress());
+		}
+	});
+	printResult(t, iterations, "Misc, Variant getAddress");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
 		metapp::Variant v;
 		for(int i = 0; i < iterations; ++i) {
 			v = 38.0;
+			dontOptimizeAway(v);
 		}
 	});
 	printResult(t, iterations, "Misc, Variant assignment with double");

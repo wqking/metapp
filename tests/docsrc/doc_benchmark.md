@@ -50,7 +50,7 @@ Qt version: 5.12.10
 
 ### Variant constructing and assignment, with fundamental
 
-10M iterations, metapp uses 16 ms, Qt uses 517 ms.  
+10M iterations, metapp uses 516 ms, Qt uses 571 ms.  
 
 Code for metapp
 
@@ -62,6 +62,7 @@ for(int i = 0; i < iterations; ++i) {
 	v = (unsigned short)9;
 	v = true;
 	v = 1.5f;
+	dontOptimizeAway(v);
 }
 ```
 
@@ -75,6 +76,7 @@ for(int i = 0; i < iterations; ++i) {
 	v = (unsigned short)9;
 	v = true;
 	v = 1.5f;
+	dontOptimizeAway(v);
 }
 ```
 
@@ -82,7 +84,9 @@ for(int i = 0; i < iterations; ++i) {
 
 Since [the optimization in this commit](https://github.com/wqking/metapp/commit/382817969dac3cc9e61d90bda8cda73b8f274800),
 now constructing and copying Variant with template value (here is fundamental value) can be inlined and the code
-may be optimized out, that's why metapp is so fast.
+may be optimized out. If we remove the line `dontOptimizeAway(v)`, then the code in metapp can be optimized out and the
+timing can be as fast as 16 ms (Qt is 517 ms if the line is removed). The function `dontOptimizeAway` is to keep the variable
+from being removed by the optimization.
 
 ### Variant constructing and assignment, with string
 

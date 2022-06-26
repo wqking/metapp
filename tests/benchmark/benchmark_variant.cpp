@@ -31,6 +31,7 @@ BenchmarkFunc
 			v = (unsigned short)9;
 			v = true;
 			v = 1.5f;
+			dontOptimizeAway(v);
 		}
 	});
 	printResult(t, iterations, "Variant construct and assignment, with fundamental");
@@ -48,6 +49,18 @@ BenchmarkFunc
 		}
 	});
 	printResult(t, iterations, "Variant construct and assignment, with string");
+}
+
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+	const auto t = measureElapsedTime([iterations]() {
+		metapp::Variant v = 5;
+		for(int i = 0; i < iterations; ++i) {
+			dontOptimizeAway(v.get<int>());
+		}
+	});
+	printResult(t, iterations, "Variant get int");
 }
 
 BenchmarkFunc
