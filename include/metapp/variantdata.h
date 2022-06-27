@@ -41,10 +41,10 @@ private:
 	>;
 
 	static constexpr int storageNone = 0;
-	static constexpr int storageObject = 1;
+	static constexpr int storageReference = 1;
 	static constexpr int storageBuffer = 2;
-	static constexpr int storageSharedPtr = 3;
-	static constexpr int storageReference = 4;
+	static constexpr int storageObject = 3;
+	static constexpr int storageSharedPtr = 4;
 
 public:
 	struct StorageTagObject {};
@@ -62,13 +62,13 @@ public:
 		typename std::enable_if<FitBuffer<T>::value>::type * = nullptr)
 		: object(), buffer(), storageType(storageBuffer)
 	{
-		if(copyFrom == nullptr) {
-			doConstructOnBufferDefault<T>(
-				internal_::TrueFalse<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>()
-				);
+		if(copyFrom != nullptr) {
+			doConstructOnBufferCopy<T>(copyFrom, std::is_copy_assignable<T>());
 		}
 		else {
-			doConstructOnBufferCopy<T>(copyFrom, std::is_copy_assignable<T>());
+			doConstructOnBufferDefault<T>(
+				internal_::TrueFalse<std::is_default_constructible<T>::value && std::is_copy_assignable<T>::value>()
+			);
 		}
 	}
 
@@ -97,17 +97,18 @@ public:
 
 	void * getAddress() const {
 		switch(getStorageType()) {
-		case storageObject:
-			return (void *)(object.get());
+		case storageReference:
+			return *(void **)(buffer.data());
 
 		case storageBuffer:
 			return (void *)(buffer.data());
 
+		case storageObject:
+			return (void *)(object.get());
+
 		case storageSharedPtr:
 			return (void *)&object;
 
-		case storageReference:
-			return *(void **)(buffer.data());
 		}
 
 		return nullptr;

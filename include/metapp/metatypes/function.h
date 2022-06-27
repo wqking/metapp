@@ -60,6 +60,12 @@ struct DeclareMetaTypeBase <RT (Args...)>
 		}
 	}
 
+	static void destroy(void * instance, const bool freeMemory) {
+		if(freeMemory) {
+			delete static_cast<FullType **>(instance);
+		}
+	}
+
 };
 
 #ifdef METAPP_NOEXCEPT_BELONGS_TO_FUNCTION_TYPE

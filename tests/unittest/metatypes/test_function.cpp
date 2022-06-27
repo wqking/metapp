@@ -73,6 +73,73 @@ TEST_CASE("metatypes, tkFunction, construct")
 		REQUIRE(v.canGet<FT *>());
 		REQUIRE(v.get<FT *>() == funcPtr);
 	}
+
+	SECTION("Heap, FT") {
+		auto metaType = metapp::getMetaType<FT>();
+		void * ft = metaType->construct();
+		REQUIRE(*static_cast<FT **>(ft) == nullptr);
+		metaType->destroy(ft);
+	}
+
+	SECTION("Heap, FT *") {
+		auto metaType = metapp::getMetaType<FT *>();
+		void * ft = metaType->construct();
+		REQUIRE(*static_cast<FT **>(ft) == nullptr);
+		metaType->destroy(ft);
+	}
+
+	SECTION("Heap, FT, copy from firstFunc") {
+		auto metaType = metapp::getMetaType<FT>();
+		void * ft = metaType->copyConstruct(&firstFunc);
+		REQUIRE(*static_cast<FT **>(ft) == &firstFunc);
+		metaType->destroy(ft);
+	}
+
+	SECTION("Heap, FT *, copy from firstFunc") {
+		FT * funcPtr = &firstFunc;
+		auto metaType = metapp::getMetaType<FT *>();
+		void * ft = metaType->copyConstruct(&funcPtr);
+		REQUIRE(*static_cast<FT **>(ft) == &firstFunc);
+		metaType->destroy(ft);
+	}
+
+	SECTION("Heap, FT, placement construct") {
+		FT * memory = &firstFunc;
+		REQUIRE(memory != nullptr);
+		auto metaType = metapp::getMetaType<FT>();
+		void * ft = metaType->placementConstruct(&memory);
+		REQUIRE(memory == nullptr);
+		metaType->dtor(ft);
+	}
+
+	SECTION("Heap, FT *, placement construct") {
+		FT * memory = &firstFunc;
+		REQUIRE(memory != nullptr);
+		auto metaType = metapp::getMetaType<FT *>();
+		void * ft = metaType->placementConstruct(&memory);
+		REQUIRE(memory == nullptr);
+		metaType->dtor(ft);
+	}
+
+	SECTION("Heap, FT, placement copy construct") {
+		FT * memory = nullptr;
+		REQUIRE(memory == nullptr);
+		auto metaType = metapp::getMetaType<FT>();
+		void * ft = metaType->placementCopyConstruct(&memory, &firstFunc);
+		REQUIRE(memory == &firstFunc);
+		metaType->dtor(ft);
+	}
+
+	SECTION("Heap, FT *, placement copy construct") {
+		FT * funcPtr = &firstFunc;
+		FT * memory = nullptr;
+		REQUIRE(memory == nullptr);
+		auto metaType = metapp::getMetaType<FT *>();
+		void * ft = metaType->placementCopyConstruct(&memory, &funcPtr);
+		REQUIRE(memory == &firstFunc);
+		metaType->dtor(ft);
+	}
+
 }
 
 const void * func1(int, const std::vector<int> &) { return nullptr; }
