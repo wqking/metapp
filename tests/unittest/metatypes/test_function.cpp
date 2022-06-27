@@ -90,7 +90,7 @@ TEST_CASE("metatypes, tkFunction, construct")
 
 	SECTION("Heap, FT, copy from firstFunc") {
 		auto metaType = metapp::getMetaType<FT>();
-		void * ft = metaType->copyConstruct(&firstFunc);
+		void * ft = metaType->copyConstruct((void *)&firstFunc);
 		REQUIRE(*static_cast<FT **>(ft) == &firstFunc);
 		metaType->destroy(ft);
 	}
@@ -125,7 +125,7 @@ TEST_CASE("metatypes, tkFunction, construct")
 		FT * memory = nullptr;
 		REQUIRE(memory == nullptr);
 		auto metaType = metapp::getMetaType<FT>();
-		void * ft = metaType->placementCopyConstruct(&memory, &firstFunc);
+		void * ft = metaType->placementCopyConstruct(&memory, (void *)&firstFunc);
 		REQUIRE(memory == &firstFunc);
 		metaType->dtor(ft);
 	}

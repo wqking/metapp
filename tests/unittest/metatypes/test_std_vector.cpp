@@ -72,3 +72,22 @@ TEST_CASE("metatypes, std::vector<std::string>, MetaIterable")
 	REQUIRE(original == newVector);
 }
 
+TEST_CASE("metatypes, std::vector<metapp::Variant>, MetaIndexable")
+{
+	metapp::Variant v(std::vector<metapp::Variant> {
+		5, "abc", 9.1, std::string("def")
+	});
+	REQUIRE(metapp::indexableGet(v, 0).get<int>() == 5);
+	REQUIRE(metapp::indexableGet(v, 1).get<char []>() == std::string("abc"));
+	REQUIRE(metapp::indexableGet(v, 2).get<double>() == 9.1);
+	REQUIRE(metapp::indexableGet(v, 3).get<const std::string &>() == "def");
+
+	metapp::indexableSet(v, 0, "good");
+	metapp::indexableSet(v, 1, 38);
+	metapp::indexableSet(v, 2, std::string("hello"));
+	metapp::indexableSet(v, 3, 99L);
+	REQUIRE(metapp::indexableGet(v, 0).get<char []>() == std::string("good"));
+	REQUIRE(metapp::indexableGet(v, 1).get<int>() == 38);
+	REQUIRE(metapp::indexableGet(v, 2).get<const std::string &>() == "hello");
+	REQUIRE(metapp::indexableGet(v, 3).get<long>() == 99L);
+}
