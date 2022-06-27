@@ -209,6 +209,8 @@ template <typename T>
 inline auto Variant::get(typename std::enable_if<! internal_::IsVariant<T>::value>::type *) const
 	-> typename internal_::VariantReturnType<T>::Type
 {
+	assert(canGet<T>());
+
 	if(getNonReferenceMetaType(metaType)->getTypeKind() == tkVariant) {
 		return get<const Variant &>().get<T>();
 	}

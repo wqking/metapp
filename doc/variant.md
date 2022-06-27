@@ -379,8 +379,9 @@ If T is function type, the return type is function pointer.
 If T is Variant or reference to Variant, then, if `this` type is Variant or reference to Variant, returns the underlying Variant,
 otherwise returns `*this`.
 
-Note: `get` doesn't check if `canGet` returns true, for performance reason. It's the caller's responsibility to be sure
-`T` matches the underlying value type. For checked get, use function `checkedGet`.
+Note: `get` doesn't check if `canGet()` returns true for performance reason. It's the caller's responsibility to be sure
+`T` matches the underlying value type. For checked get, use function `checkedGet`. `get` does `assert(canGet<T>())`, that's
+only available in debug mode for debug purpose.
 
 T can be reference of the underlying type. For example, if the a Variant `v` holds a std::string,
 we can call `v.get<std::string &>()`, or `v.get<const std::string &>()` to get a reference
