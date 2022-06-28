@@ -31,6 +31,11 @@ metapp is light weight, powerful, fast, unique, non-intrusive, no macros, and ea
 Even if you don't need reflection, you may use `metapp::Variant` with any C++ types, and you can enjoy the large amount of
 built-in meta types.
 
+![C++](https://img.shields.io/badge/C%2B%2B-11-blue)
+![Compilers](https://img.shields.io/badge/Compilers-GCC%2FMSVC%2FClang-blue)
+![License](https://img.shields.io/badge/License-Apache--2.0-blue)
+![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
+
 ## Highlight and unique features
 
 - **Allow to retrieve any C++ type information at runtime, such as primary types, pointer, reference, function, template,
@@ -115,7 +120,6 @@ close to native C++, but it's fast enough for reflection library.
 Apache License, Version 2.0  
 
 ### Version 0.1.0
-![CI](https://github.com/wqking/metapp/workflows/CI/badge.svg)
 
 The project is under working in progress.  
 The first stable release will be v1.0.0. 
