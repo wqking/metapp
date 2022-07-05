@@ -55,6 +55,22 @@ Returns true if the type kind is integral type.
 Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `signed char`, `unsigned char`,
 `short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
 
+#### typeKindIsSignedIntegral
+
+```c++
+constexpr bool typeKindIsSignedIntegral(const TypeKind typeKind);
+```
+
+Returns true if the type kind is signed integral type.  
+
+#### typeKindIsUnsignedIntegral
+
+```c++
+constexpr bool typeKindIsUnsignedIntegral(const TypeKind typeKind);
+```
+
+Returns true if the type kind is unsigned integral type.  
+
 #### typeKindIsReal
 
 ```c++

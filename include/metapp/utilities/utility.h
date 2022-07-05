@@ -51,6 +51,23 @@ inline constexpr bool typeKindIsIntegral(const TypeKind typeKind)
 	return typeKind >= tkIntegerBegin && typeKind <= tkIntegerEnd;
 }
 
+inline constexpr bool typeKindIsSignedIntegral(const TypeKind typeKind)
+{
+	return typeKind == tkInt
+		|| typeKind == tkLong
+		|| typeKind == tkLongLong
+		|| (typeKind >= tkChar && typeKind <= tkSignedChar)
+		|| typeKind == tkShort
+	;
+}
+
+inline constexpr bool typeKindIsUnsignedIntegral(const TypeKind typeKind)
+{
+	return typeKindIsIntegral(typeKind)
+		&& ! typeKindIsSignedIntegral(typeKind)
+	;
+}
+
 inline constexpr bool typeKindIsReal(const TypeKind typeKind)
 {
 	return typeKind >= tkRealBegin && typeKind <= tkRealEnd;

@@ -7,6 +7,8 @@
 - [Functions](#mdtoc_43ac2d0c)
   - [getNonReferenceMetaType](#mdtoc_4bdd99f)
   - [typeKindIsIntegral](#mdtoc_9d1d5f7b)
+  - [typeKindIsSignedIntegral](#mdtoc_3bdfaa1c)
+  - [typeKindIsUnsignedIntegral](#mdtoc_63dcacc5)
   - [typeKindIsReal](#mdtoc_5fce48b8)
   - [typeKindIsArithmetic](#mdtoc_e7c716be)
   - [isSameMetaType](#mdtoc_f760704)
@@ -56,6 +58,24 @@ constexpr bool typeKindIsIntegral(const TypeKind typeKind);
 Returns true if the type kind is integral type.  
 Integral type is `bool`, `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`, `signed char`, `unsigned char`,
 `short`, `unsigned short`, `int`, `unsigned int`, `long`, `unsigned long`, `long long`, `unsigned long long`.
+
+<a id="mdtoc_3bdfaa1c"></a>
+#### typeKindIsSignedIntegral
+
+```c++
+constexpr bool typeKindIsSignedIntegral(const TypeKind typeKind);
+```
+
+Returns true if the type kind is signed integral type.  
+
+<a id="mdtoc_63dcacc5"></a>
+#### typeKindIsUnsignedIntegral
+
+```c++
+constexpr bool typeKindIsUnsignedIntegral(const TypeKind typeKind);
+```
+
+Returns true if the type kind is unsigned integral type.  
 
 <a id="mdtoc_5fce48b8"></a>
 #### typeKindIsReal
