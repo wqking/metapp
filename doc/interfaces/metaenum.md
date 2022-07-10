@@ -10,7 +10,8 @@
 - [MetaEnum member functions for registering meta data](#mdtoc_31633ac1)
   - [registerValue](#mdtoc_9435388f)
 - [MetaEnum member functions for retrieving meta data](#mdtoc_9b450e78)
-  - [getValue](#mdtoc_2d64f577)
+  - [getByName](#mdtoc_90be2fd1)
+  - [getByValue](#mdtoc_50e8212)
   - [getValueView](#mdtoc_ff547046)
 - [Non-member utility functions](#mdtoc_e4e47ded)
 <!--endtoc-->
@@ -77,14 +78,25 @@ The returned `MetaItem` can be used to add annotations to the meta data.
 <a id="mdtoc_9b450e78"></a>
 ## MetaEnum member functions for retrieving meta data
 
-<a id="mdtoc_2d64f577"></a>
-#### getValue
+<a id="mdtoc_90be2fd1"></a>
+#### getByName
 
 ```c++
-const MetaItem & getValue(const std::string & name) const;
+const MetaItem & getByName(const std::string & name) const;
 ```
 
-Get a value of `name`. If the name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+Get a MetaItem of `name`. If the name is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+
+<a id="mdtoc_50e8212"></a>
+#### getByValue
+
+```c++
+template <typename T>
+const MetaItem & getByValue(const T value) const;
+```
+
+Get a MetaItem of `value`. If the value is not registered, an empty MetaItem is returned (MetaItem::isEmpty() is true).  
+`value` must be an enumerate value that can cast to `long long`.
 
 <a id="mdtoc_ff547046"></a>
 #### getValueView
@@ -101,9 +113,15 @@ Returns a MetaItemView for all registered names and values.
 Below free functions are shortcut functions to use the member functions in `MetaItem`.  
 
 ```c++
-inline const MetaItem & enumGetValue(const Variant & var, const std::string & name)
+inline const MetaItem & enumGetByName(const Variant & var, const std::string & name)
 {
-  return var.getMetaType()->getMetaEnum()->getValue(name);
+  return getNonReferenceMetaType(var)->getMetaEnum()->getByName(name);
+}
+
+template <typename T>
+inline const MetaItem & enumGetByValue(const Variant & var, const T value)
+{
+  return getNonReferenceMetaType(var)->getMetaEnum()->getByValue(value);
 }
 
 inline MetaItemView enumGetValueView(const Variant & var)

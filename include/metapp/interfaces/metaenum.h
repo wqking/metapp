@@ -31,9 +31,16 @@ extern MetaItem emptyMetaItem;
 
 class MetaEnum
 {
+private:
+	using Underlying = long long;
+
 public:
 	template <typename FT>
 	explicit MetaEnum(FT callback)
+		:
+			valueList(),
+			nameValueMap(),
+			valueNameMap()
 	{
 		callback(*this);
 	}
@@ -46,12 +53,25 @@ public:
 		valueList.emplace_back(MetaItem::Type::enumValue, name, value);
 		MetaItem & registeredEnumValue = valueList.back();
 		nameValueMap.insert(typename decltype(nameValueMap)::value_type(registeredEnumValue.getName(), &registeredEnumValue));
+		const Variant casted = value.castSilently<Underlying>();
+		if(! casted.isEmpty()) {
+			valueNameMap.insert(typename decltype(valueNameMap)::value_type(casted.get<Underlying>(), &registeredEnumValue));
+		}
 		return registeredEnumValue;
 	}
 
-	const MetaItem & getValue(const std::string & name) const {
+	const MetaItem & getByName(const std::string & name) const {
 		auto it = nameValueMap.find(name);
 		if(it != nameValueMap.end()) {
+			return *it->second;
+		}
+		return internal_::emptyMetaItem;
+	}
+
+	template <typename T>
+	const MetaItem & getByValue(const T value) const {
+		auto it = valueNameMap.find(static_cast<Underlying>(value));
+		if(it != valueNameMap.end()) {
 			return *it->second;
 		}
 		return internal_::emptyMetaItem;
@@ -68,11 +88,21 @@ private:
 		MetaItem *,
 		std::less<const std::string>
 	> nameValueMap;
+	std::map<
+		Underlying,
+		MetaItem *
+	> valueNameMap;
 };
 
-inline const MetaItem & enumGetValue(const Variant & var, const std::string & name)
+inline const MetaItem & enumGetByName(const Variant & var, const std::string & name)
 {
-	return getNonReferenceMetaType(var)->getMetaEnum()->getValue(name);
+	return getNonReferenceMetaType(var)->getMetaEnum()->getByName(name);
+}
+
+template <typename T>
+inline const MetaItem & enumGetByValue(const Variant & var, const T value)
+{
+	return getNonReferenceMetaType(var)->getMetaEnum()->getByValue(value);
 }
 
 inline MetaItemView enumGetValueView(const Variant & var)

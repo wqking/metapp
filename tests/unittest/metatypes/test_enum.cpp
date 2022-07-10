@@ -74,9 +74,12 @@ TEST_CASE("metatypes, enum class")
 	auto metaType = metapp::getMetaType<EnumHuman>();
 	REQUIRE(metaType->getTypeKind() == 2000);
 	REQUIRE(metaType->getUpType()->getTypeKind() == metapp::tkChar);
-	REQUIRE(metaType->getMetaEnum() != nullptr);
-	REQUIRE(metaType->getMetaEnum()->getValue("male").asEnumValue().get<EnumHuman>() == EnumHuman::male);
-	REQUIRE(metaType->getMetaEnum()->getValue("female").asEnumValue().get<EnumHuman>() == EnumHuman::female);
+	const auto metaEnum = metaType->getMetaEnum();
+	REQUIRE(metaEnum != nullptr);
+	REQUIRE(metaEnum->getByName("male").asEnumValue().get<EnumHuman>() == EnumHuman::male);
+	REQUIRE(metaEnum->getByName("female").asEnumValue().get<EnumHuman>() == EnumHuman::female);
+	REQUIRE(metaEnum->getByValue(EnumHuman::male).getName() == "male");
+	REQUIRE(metaEnum->getByValue(EnumHuman::female).getName() == "female");
 
 	{
 		metapp::Variant v(EnumHuman::female);

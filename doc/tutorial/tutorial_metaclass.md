@@ -436,8 +436,8 @@ ASSERT(enumType.asMetaType() == metapp::getMetaType<TmClass::MyEnum>());
 ASSERT(enumType.getName() == "MyEnum");
 
 const metapp::MetaEnum * metaEnum = enumType.asMetaType()->getMetaEnum();
-ASSERT(metaEnum->getValue("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
-ASSERT(metaEnum->getValue("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
+ASSERT(metaEnum->getByName("one").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::one);
+ASSERT(metaEnum->getByName("two").asEnumValue().get<TmClass::MyEnum>() == TmClass::MyEnum::two);
 
 const metapp::MetaItem & innerType = metaClass->getType("MyInner");
 ASSERT(innerType.asMetaType() == metapp::getMetaType<TmClass::MyInner>());
