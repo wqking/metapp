@@ -23,9 +23,9 @@
 
 ## Variant
 
-### How can I convert a Variant of pointer to non-pointer?
+### How to convert a Variant of pointer to non-pointer?
 
-The first argument in some meta interface functions, such as `MetaAccessible::get/set`, `MetaCallable::invoke`, the first argument
+In some meta interface functions, such as `MetaAccessible::get/set`, `MetaCallable::invoke`, the first argument
 is a Variant that requires to be either value or reference, but not pointer.
 If we have a pointer and want to convert it to non-pointer so that we can pass it to those functions, we can
 call function `depointer` in `utility.h` to covert it to equivalent non-pointer. For example,  
@@ -47,6 +47,35 @@ ExampleFunc
 }
 
 /*desc
+### How to convert an integer to a Variant of enum without knowing the enum native type?
+
+```c++
+const metapp::MetaType * enumMetaType = what ever meta type of an enum;
+const long long value = 123;
+```
+
+Assume we have an `enumMetaType` of an enum, we only know it's an enum but not knowing the C++ type nor the enum underlying type, and
+we have an integer `value` such as a `long long`, how to convert the value to a Variant of enum?
+
+Method 1, bad and wrong method
+
+```c++
+metapp::Variant enumVar(enumMetaType, &value);
+```
+
+This method copies the value directly to the enum. It may works in most cases, until,
+1. The program runs on a computer with big endian.
+2. Or the integer binary representation is sign magnitude instead of 2's Complement. I don't know which C++ compiler produces sign magnitude,
+but C++ standard allows it.
+
+Method 2, correct method
+
+```c++
+metapp::Variant enumVar = metapp::Variant(value).cast(enumMetaType);
+```
+
+It's slower than method 1, but it guarantees to generate the correct result on all platforms.
+
 ### What's the difference between metapp::Variant and std::variant?
 
 `std::variant` requires you to know the contained types beforehand. You don't need to know any type when using `metapp::Variant`.  
