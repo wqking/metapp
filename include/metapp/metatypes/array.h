@@ -180,7 +180,7 @@ private:
 
 	static void metaIndexableSet(const Variant & var, const std::size_t index, const Variant & value)
 	{
-		internal_::verifyVariantWritable(var);
+		requireMutable(var);
 
 		if(index >= metaIndexableGetSizeInfo(var).getSize()) {
 			raiseException<OutOfRangeException>();

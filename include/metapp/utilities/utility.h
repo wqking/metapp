@@ -98,6 +98,18 @@ std::pair<void *, const MetaType *> getPointerAndType(const Variant & var);
 Variant depointer(const Variant & var);
 Variant dereference(const Variant & var);
 
+inline bool isMutable(const Variant & var)
+{
+	return ! getPointedType(var)->isConst();
+}
+
+inline void requireMutable(const Variant & var)
+{
+	if(! isMutable(var)) {
+		raiseException<UnwritableException>();
+	}
+}
+
 std::string getNameByTypeKind(const TypeKind typeKind);
 
 class MetaRepo;

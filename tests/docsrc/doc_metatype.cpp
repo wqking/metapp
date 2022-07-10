@@ -350,4 +350,17 @@ Usually you don't need to use this function.
 For the same module, the function always returns the same pointer for all meta types.  
 For different modules, the pointers are different.  
 
+## Non-member free functions
+
+#### getTypeKind
+
+```c++
+template <typename T>
+constexpr TypeKind getTypeKind();
+```
+
+Returns the type kind of type `T` at compile time.  
+The returned value can be used as a `constexpr` constant.
+
+
 desc*/

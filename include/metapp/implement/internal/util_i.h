@@ -24,8 +24,6 @@ namespace metapp {
 
 namespace internal_ {
 
-void verifyVariantWritable(const Variant & var);
-
 template <typename ...Types>
 inline const MetaType * getMetaTypeAt(const int index)
 {

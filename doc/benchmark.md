@@ -4,6 +4,7 @@
 <!--begintoc-->
 - [Overview](#mdtoc_e7c3d1bb)
 - [How is performance optimized in metapp](#mdtoc_9e7c67a5)
+- [Performance tips](#mdtoc_598e5c0)
 - [Benchmark environment](#mdtoc_2af9f9b6)
 - [Benchmarks](#mdtoc_41bc1c58)
   - [Variant constructing and assignment, with fundamental](#mdtoc_9d4f2922)
@@ -49,6 +50,17 @@ Optimization is continuously done on metapp. Here lists several optimizations th
 5. When constructing and copying `Variant` from compile time data type, compiling time constructing function is used instead of relying on runtime meta type. That not only increases `Variant` constructing performance, but also enables the possibilities for the compiler to inline and optimize out the code.
 
 Those optimizations, and others, have improved the performance significantly.
+
+<a id="mdtoc_598e5c0"></a>
+## Performance tips
+
+1. When construct `Variant` with large object, move the object instead of copying it.
+2. If the data type in `Variant` is known at runtime, operate on the native data type instead of using meta interfaces. Meta interfaces are highly abstraction with performance cost. For example, if we have a `Variant v` of `std::vector<int>` and we need to set large amount of data in it, then we can write,  
+```c++
+std::vector<int> & vec = v.get<std::vector<int> &>();
+vec.resize(100000);
+// set 100000 elements here
+```
 
 <a id="mdtoc_2af9f9b6"></a>
 ## Benchmark environment

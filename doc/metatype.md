@@ -26,6 +26,8 @@
   - [dtor](#mdtoc_9a9618bc)
   - [canCast](#mdtoc_f164fa3f)
   - [getModule](#mdtoc_e3c125af)
+- [Non-member free functions](#mdtoc_35e73e03)
+  - [getTypeKind](#mdtoc_9973f312)
 <!--endtoc-->
 
 <a id="mdtoc_e7c3d1bb"></a>
@@ -365,4 +367,19 @@ Usually you don't need to use this function.
 "Module" means a dynamic library, or the main program.  
 For the same module, the function always returns the same pointer for all meta types.  
 For different modules, the pointers are different.  
+
+<a id="mdtoc_35e73e03"></a>
+## Non-member free functions
+
+<a id="mdtoc_9973f312"></a>
+#### getTypeKind
+
+```c++
+template <typename T>
+constexpr TypeKind getTypeKind();
+```
+
+Returns the type kind of type `T` at compile time.  
+The returned value can be used as a `constexpr` constant.
+
 

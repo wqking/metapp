@@ -31,6 +31,16 @@ Optimization is continuously done on metapp. Here lists several optimizations th
 
 Those optimizations, and others, have improved the performance significantly.
 
+## Performance tips
+
+1. When construct `Variant` with large object, move the object instead of copying it.
+2. If the data type in `Variant` is known at runtime, operate on the native data type instead of using meta interfaces. Meta interfaces are highly abstraction with performance cost. For example, if we have a `Variant v` of `std::vector<int>` and we need to set large amount of data in it, then we can write,  
+```c++
+std::vector<int> & vec = v.get<std::vector<int> &>();
+vec.resize(100000);
+// set 100000 elements here
+```
+
 ## Benchmark environment
 
 **Hardware**  

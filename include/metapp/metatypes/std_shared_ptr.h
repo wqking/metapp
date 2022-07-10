@@ -125,7 +125,7 @@ private:
 	}
 
 	static void accessibleSet(const Variant & accessible, const Variant & /*instance*/, const Variant & value) {
-		internal_::verifyVariantWritable(accessible);
+		requireMutable(accessible);
 
 		internal_::assignValue(*(accessible.get<SharedPtr &>()), value.cast<T>().template get<const T &>());
 	}

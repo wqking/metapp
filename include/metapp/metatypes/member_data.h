@@ -74,8 +74,8 @@ private:
 	}
 
 	static void accessibleSet(const Variant & accessible, const Variant & instance, const Variant & value) {
-		internal_::verifyVariantWritable(accessible);
-		internal_::verifyVariantWritable(instance);
+		requireMutable(accessible);
+		requireMutable(instance);
 
 		internal_::assignValue(
 			((Class *)getPointer(instance))->*(accessible.get<FullType>()),

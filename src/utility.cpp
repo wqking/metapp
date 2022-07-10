@@ -25,14 +25,6 @@ namespace metapp {
 
 namespace internal_ {
 
-void verifyVariantWritable(const Variant & var)
-{
-	auto metaType = getPointedType(var);
-	if(metaType->isConst()) {
-		raiseException<UnwritableException>();
-	}
-}
-
 const MetaType * voidMetaTypeFromVariant(const Variant & /*var*/)
 {
 	return voidMetaType;

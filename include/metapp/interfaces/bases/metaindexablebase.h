@@ -99,7 +99,7 @@ private:
 
 	static void metaIndexableSet(const Variant & indexable, const std::size_t index, const Variant & value)
 	{
-		internal_::verifyVariantWritable(indexable);
+		requireMutable(indexable);
 
 		if(index >= metaIndexableGetSizeInfo(indexable).getSize()) {
 			raiseException<OutOfRangeException>();

@@ -117,5 +117,32 @@ BenchmarkFunc
 	printResult(t, iterations, "Misc, Variant cast int to double &");
 }
 
+BenchmarkFunc
+{
+	constexpr int iterations = generalIterations;
+
+	const auto t1 = measureElapsedTime([iterations]() {
+		metapp::Variant v = std::vector<metapp::Variant>();
+		std::vector<metapp::Variant> & dataList = v.get<std::vector<metapp::Variant> &>();
+		dataList.resize(1000);
+		for(int i = 0; i < iterations; ++i) {
+			dataList[i % 1000] = i;
+		}
+		dontOptimizeAway(v);
+	});
+	printResult(t1, iterations, "Misc, Fill std::vector<metapp::Variant>, directly");
+
+	const auto t2 = measureElapsedTime([iterations]() {
+		metapp::Variant v = std::vector<metapp::Variant>();
+		const metapp::MetaIndexable * metaIndexable = v.getMetaType()->getMetaIndexable();
+		metaIndexable->resize(v, 1000);
+		for(int i = 0; i < iterations; ++i) {
+			metaIndexable->set(v, i % 1000, i);
+		}
+		dontOptimizeAway(v);
+	});
+	printResult(t2, iterations, "Misc, Fill std::vector<metapp::Variant>, MetaIndexable");
+}
+
 
 } //namespace

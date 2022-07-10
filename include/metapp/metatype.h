@@ -447,5 +447,16 @@ extern const MetaType * voidMetaType;
 
 #include "metapp/implement/variant_impl.h"
 
+namespace metapp {
+
+template <typename T>
+constexpr TypeKind getTypeKind()
+{
+	using M = DeclareMetaType<T>;
+	return internal_::SelectDeclareClass<T, internal_::HasMember_typeKind<M>::value>::typeKind;
+}
+
+} // namespace metapp
+
 
 #endif
