@@ -502,6 +502,8 @@ and we want to cast it to type `to` (which is `toMetaType`), `F` and `T` are val
 | F    | T * | false                                                                                                      |
 | F    | T   | determined by canCast                                                                                      |
 
+Note: `void *` can cast to any pointer, and any pointer can cast to `void *`.
+
 #### cast
 ```c++
 Variant cast(const MetaType * toMetaType) const;

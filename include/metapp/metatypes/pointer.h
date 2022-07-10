@@ -77,7 +77,28 @@ private:
 template <typename T>
 struct DeclareMetaTypeVoidPtrBase : DeclareMetaTypePointerBase<T>
 {
-public:
+	static bool cast(Variant * result, const Variant * fromVar, const MetaType * toMetaType) {
+		if(toMetaType->isPointer()) {
+			if(result != nullptr) {
+				void * ptr = fromVar->get<void *>();
+				*result = metapp::Variant(toMetaType, &ptr);
+			}
+			return true;
+		}
+		return commonCast(result, fromVar, getMetaType<Variant>(), toMetaType);
+	}
+
+	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType)
+	{
+		if(fromMetaType->isPointer()) {
+			if(result != nullptr) {
+				*result = fromVar->get<void *>();
+			}
+			return true;
+		}
+		return false;
+	}
+
 };
 
 template <>

@@ -218,6 +218,24 @@ TEST_CASE("Variant, can't cast int * to long *")
 	REQUIRE_THROWS(v.cast<long *>());
 }
 
+TEST_CASE("Variant, cast void * to int *")
+{
+	int n = 5;
+	metapp::Variant v((void *)&n);
+	REQUIRE(v.canCast<int *>());
+	REQUIRE(v.cast<int *>().get<int *>() == &n);
+	REQUIRE(v.cast<int *>().getMetaType()->equal(metapp::getMetaType<int *>()));
+}
+
+TEST_CASE("Variant, cast int * to void *")
+{
+	int n = 5;
+	metapp::Variant v(&n);
+	REQUIRE(v.canCast<void *>());
+	REQUIRE(v.cast<void *>().get<void *>() == &n);
+	REQUIRE(v.cast<void *>().getMetaType()->equal(metapp::getMetaType<void *>()));
+}
+
 TEST_CASE("Variant, cast std::string & to std::string")
 {
 	std::string s = "hello";
