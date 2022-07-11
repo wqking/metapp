@@ -85,7 +85,7 @@ struct DeclareMetaTypeVoidPtrBase : DeclareMetaTypePointerBase<T>
 			}
 			return true;
 		}
-		return commonCast(result, fromVar, getMetaType<Variant>(), toMetaType);
+		return commonCast(result, fromVar, getMetaType<T>(), toMetaType);
 	}
 
 	static bool castFrom(Variant * result, const Variant * fromVar, const MetaType * fromMetaType)
