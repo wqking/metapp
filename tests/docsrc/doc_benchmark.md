@@ -19,6 +19,9 @@ not much overlapped types supported by both metapp and Qt. So for more complicat
 Note: the sample code in the document is only for demonstration purpose, it's not for compiling. There are compile-able code
 in folder `metapp/tests/benchmark`. To build the benchmark, follow the unittests build instruction in root readme.
 
+Note: the data was revised on Jul.14, 2022. The previous data was tested with CPU power set to 96% to avoid overheat. After
+changing it to 100%, the performance data is almost doubled. No code improvement, only test environment was changed in the revision.
+
 ## How is performance optimized in metapp
 
 Optimization is continuously done on metapp. Here lists several optimizations that have done.  
@@ -60,7 +63,7 @@ Qt version: 5.12.10
 
 ### Variant constructing and assignment, with fundamental
 
-10M iterations, metapp uses 516 ms, Qt uses 571 ms.  
+10M iterations, metapp uses 282 ms, Qt uses 288 ms.  
 
 Code for metapp
 
@@ -100,7 +103,7 @@ from being removed by the optimization.
 
 ### Variant constructing and assignment, with string
 
-10M iterations, metapp uses 1153 ms, Qt uses 3623 ms.  
+10M iterations, metapp uses 629 ms, Qt uses 1995 ms.  
 
 Code for metapp
 
@@ -132,7 +135,7 @@ though it's not related to metapp.
 
 ### Variant constructing and assignment, with heavy copy but trivial move object
 
-10M iterations, metapp uses 2245 ms, Qt uses 6908 ms.  
+10M iterations, metapp uses 1280 ms, Qt uses 3584 ms.  
 
 Code for metapp
 
@@ -198,7 +201,7 @@ Note metapp needs about 2 seconds to finish this benchmark, most time is spent o
 
 ### Variant casting
 
-10M iterations, metapp uses 533 ms, Qt uses 1752 ms.  
+10M iterations, metapp uses 282 ms, Qt uses 951 ms.  
 
 Code for metapp
 
@@ -224,7 +227,7 @@ for(int i = 0; i < iterations; ++i) {
 
 ### Get accessible (Property)
 
-10M iterations, metapp uses 189 ms, Qt uses 755 ms.  
+10M iterations, metapp uses 105 ms, Qt uses 409 ms.  
 
 Code for metapp
 
@@ -270,7 +273,7 @@ for(int i = 0; i < iterations; ++i) {
 
 ### Set accessible (Property)
 
-10M iterations, metapp uses 306 ms, Qt uses 383 ms.  
+10M iterations, metapp uses 155 ms, Qt uses 201 ms.  
 
 Code for metapp
 
@@ -298,7 +301,7 @@ for(int i = 0; i < iterations; ++i) {
 
 ### Invoke method `void ()`
 
-10M iterations, metapp uses 107 ms, Qt uses 433 ms.  
+10M iterations, metapp uses 63 ms, Qt uses 238 ms.  
 
 Code for metapp
 
@@ -334,7 +337,7 @@ for(int i = 0; i < iterations; ++i) {
 
 ### Invoke method `int (int, int)` with argument `(int, int)`, no casting
 
-10M iterations, metapp uses 413 ms, Qt uses 602 ms.  
+10M iterations, metapp uses 227 ms, Qt uses 324 ms.  
 
 Code for metapp
 
@@ -381,7 +384,7 @@ it's `int` and `int`), then invoke the callable.
 
 ### Invoke method `int (int, int)` with argument `(double, double)`, with casting
 
-10M iterations, metapp uses 834 ms, Qt uses 1034 ms.  
+10M iterations, metapp uses 457 ms, Qt uses 555 ms.  
 
 Code for metapp
 
