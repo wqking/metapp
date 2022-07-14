@@ -56,7 +56,8 @@ const metapp::MetaMappable * metaMappable = metaType->getMetaMappable();
 MetaMappable(
 	const MetaType * (*getValueType)(const Variant & mappable),
 	Variant (*get)(const Variant & mappable, const Variant & key),
-	void (*set)(const Variant & mappable, const Variant & key, const Variant & value)
+	void (*set)(const Variant & mappable, const Variant & key, const Variant & value),
+	void (*forEach)(const Variant & mappable, const Callback & callback)
 );
 ```
 
@@ -114,6 +115,23 @@ Set the mapped value of the element with `key` with `value`.
 `key` is casted to the key type in the container.  
 `value` is casted to the value type in the container.  
 
+#### forEach
+
+```c++
+void forEach(const Variant & mappable, const Callback & callback);
+
+using Callback = std::function<bool (const Variant & key, const Variant & value)>;
+```
+
+When `forEach` is invoked, `callback` is called for every element in `mappable`,and the references to the key and value
+pare passed as the arguments of the `callback`. If `callback` returns true, `forEach` will continue on next element,
+until there is no more elements. If `callback` returns false, `forEach` will stop the loop and return.  
+
+Note: this function is different with `MetaIterable::forEach`. `MetaIterable::forEach` only passes one argument to the callback,
+for `std::map` or other associate containers, the argument is a `std::pair` of the key and value. To decompose the key and value,
+the callback needs to get `MetaIndexable` from the `std::pair` and uses `MetaIndexable` to get the key and value.  
+`MetaMappable::forEach` passes the key and value to the callback directly, it may have better performance than `MetaIterable::forEach`.
+
 ## Non-member utility functions
 
 Below free functions are shortcut functions to use the member functions in `MetaMappable`.  
@@ -136,6 +154,11 @@ inline Variant mappableGet(const Variant & mappable, const Variant & key)
 inline void mappableSet(const Variant & mappable, const Variant & key, const Variant & value)
 {
 	mappable.getMetaType()->getMetaMappable()->set(mappable, key, value);
+}
+
+inline void mappableForEach(const Variant & mappable, const MetaMappable::Callback & callback)
+{
+	getNonReferenceMetaType(mappable)->getMetaMappable()->forEach(mappable, callback);
 }
 ```
 

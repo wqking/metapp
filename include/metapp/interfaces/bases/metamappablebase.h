@@ -29,7 +29,8 @@ struct MetaMappableBase
 		static MetaMappable metaMap(
 			&metaMapGetValueType,
 			&metaMapGet,
-			&metaMapSet
+			&metaMapSet,
+			&metaMapForEach
 		);
 		return &metaMap;
 	}
@@ -67,6 +68,16 @@ private:
 		}
 		else {
 			container.insert(std::make_pair(nativeKey, nativeValue));
+		}
+	}
+
+	static void metaMapForEach(const Variant & mappable, const MetaMappable::Callback & callback)
+	{
+		auto & container = mappable.get<ContainerType &>();
+		for(auto & item : container) {
+			if(! callback(Variant::reference(item.first), Variant::reference(item.second))) {
+				break;
+			}
 		}
 	}
 

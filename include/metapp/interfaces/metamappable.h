@@ -20,26 +20,33 @@
 #include "metapp/variant.h"
 #include "metapp/utilities/utility.h"
 
+#include <functional>
+
 namespace metapp {
 
 class MetaMappable
 {
 public:
+	using Callback = std::function<bool (const Variant &, const Variant &)>;
+
 	MetaMappable(
 		const MetaType * (*getValueType)(const Variant & mappable),
 		Variant (*get)(const Variant & mappable, const Variant & key),
-		void (*set)(const Variant & mappable, const Variant & key, const Variant & value)
+		void (*set)(const Variant & mappable, const Variant & key, const Variant & value),
+		void (*forEach)(const Variant & mappable, const Callback & callback)
 	)
 		:
 			getValueType(getValueType),
 			get(get),
-			set(set)
+			set(set),
+			forEach(forEach)
 	{
 	}
 
 	const MetaType * (*getValueType)(const Variant & mappable);
 	Variant (*get)(const Variant & mappable, const Variant & key);
 	void (*set)(const Variant & mappable, const Variant & key, const Variant & value);
+	void (*forEach)(const Variant & mappable, const Callback & callback);
 };
 
 inline const MetaType * mappableGetValueType(const Variant & mappable)
@@ -55,6 +62,11 @@ inline Variant mappableGet(const Variant & mappable, const Variant & key)
 inline void mappableSet(const Variant & mappable, const Variant & key, const Variant & value)
 {
 	getNonReferenceMetaType(mappable)->getMetaMappable()->set(mappable, key, value);
+}
+
+inline void mappableForEach(const Variant & mappable, const MetaMappable::Callback & callback)
+{
+	getNonReferenceMetaType(mappable)->getMetaMappable()->forEach(mappable, callback);
 }
 
 

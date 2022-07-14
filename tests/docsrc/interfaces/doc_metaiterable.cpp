@@ -85,8 +85,8 @@ We can treat `iterable` as the C++ object instance which class implements an int
 Variant `iterable` can be value that implements `MetaIterable`, or reference that refers to value that implements `MetaIterable`.  
 The second parameter `callback` is a callback function. Its prototype is `std::function<bool (const Variant &)>`.  
 
-When `forEach` is invoked, `callback` is called for every element in `iterable`,and the referent to the element
-is passed as the parameter of the `callback`. If `callback` returns true, `forEach` will continue on next element,
+When `forEach` is invoked, `callback` is called for every element in `iterable`,and the reference to the element
+is passed as the arguments of the `callback`. If `callback` returns true, `forEach` will continue on next element,
 until there is no more elements. If `callback` returns false, `forEach` will stop the loop and return.  
 Note: for STL containers, the element is the `value_type` in the container.
 That means for associative containers such as `std::map`, the element is a `std::pair` of the key and value.  
