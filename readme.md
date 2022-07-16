@@ -12,6 +12,7 @@
 - [Quick start](#mdtoc_ea7b0a9)
   - [Namespace](#mdtoc_33e16b56)
   - [Build and install, use metapp in your project](#mdtoc_7785483e)
+- [Related projects](#mdtoc_17c2987c)
 - [Example code](#mdtoc_3bb166c4)
   - [Use Variant](#mdtoc_cee017b6)
   - [Inspect MetaType](#mdtoc_3aaa429b)
@@ -195,6 +196,11 @@ endif(metapp_FOUND)
 Note: when using the method 2 with MinGW on Windows, by default CMake will install metapp in system folder which is not writable.
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
+
+<a id="mdtoc_17c2987c"></a>
+## Related projects
+
+[jsonpp](https://github.com/wqking/jsonpp) - a JSON parser and dumper based on metapp, developed by metapp developer (wqking).
 
 <a id="mdtoc_3bb166c4"></a>
 ## Example code

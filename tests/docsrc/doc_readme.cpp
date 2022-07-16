@@ -187,6 +187,10 @@ Note: when using the method 2 with MinGW on Windows, by default CMake will insta
 You should specify another folder to install.
 To do so, replace `cmake ..` with `cmake .. -DCMAKE_INSTALL_PREFIX="YOUR_NEW_LIB_FOLDER"`.
 
+## Related projects
+
+[jsonpp](https://github.com/wqking/jsonpp) - a JSON parser and dumper based on metapp, developed by metapp developer (wqking).
+
 ## Example code
 
 Here are some simple code pieces. There are comprehensive tutorials in the documentations.
