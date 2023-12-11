@@ -54,3 +54,6 @@
   - [Infrequently Asked Questions](faq.md)
   - [About documentations](about_document.md)
 
+- Tips and tricks
+  - [Use magic_enum to register enum values automatically](tips/magic_enum.md)
+

@@ -49,3 +49,6 @@
 	- [Exception and thread safety](doc/exception_thread_safety.md)
 	- [Infrequently Asked Questions](doc/faq.md)
 	- [About documentations](doc/about_document.md)
+
+- Tips and tricks
+	- [Use magic_enum to register enum values automatically](doc/tips/magic_enum.md)
