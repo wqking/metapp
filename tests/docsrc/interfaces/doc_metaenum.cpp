@@ -40,6 +40,50 @@ const metapp::MetaType * metaType = metapp::getMetaType<MyEnum>();
 const metapp::MetaEnum * metaEnum = metaType->getMetaEnum();
 ```
 
+## Implement MetaEnum
+desc*/
+
+//code
+// This is the enum we are going to reflect for.
+enum class EnumAnimal {
+	dog = 1,
+	cat = 2,
+	panda = 3
+};
+
+// We use metapp::DeclareMetaType to declare a type for EnumAnimal.
+template <>
+struct metapp::DeclareMetaType <EnumAnimal> : metapp::DeclareMetaTypeBase <EnumAnimal>
+{
+	// The static function getMetaEnum is where we implement MetaEnum.
+	static const metapp::MetaEnum * getMetaEnum() {
+		// Define a static metapp::MetaEnum object. Note it must be static.
+		static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
+			// Register the values into the passed in MetaEnum
+			me.registerValue("dog", EnumAnimal::dog);
+			me.registerValue("cat", EnumAnimal::cat);
+			me.registerValue("panda", EnumAnimal::panda);
+		});
+		// Return the MetaEnum object.
+		return &metaEnum;
+	}
+};
+
+//code
+
+ExampleFunc
+{
+	//code
+	// Let's use the MetaEnum
+	const auto metaType = metapp::getMetaType<EnumAnimal>();
+	const auto metaEnum = metaType->getMetaEnum();
+	ASSERT(metaEnum != nullptr);
+	ASSERT(metaEnum->getByName("dog").asEnumValue().get<EnumAnimal>() == EnumAnimal::dog);
+	ASSERT(metaEnum->getByValue(EnumAnimal::cat).getName() == "cat");
+	//code
+}
+
+/*desc
 ## Implemented built-in meta types
 
 None

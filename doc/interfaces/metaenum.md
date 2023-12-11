@@ -5,6 +5,7 @@
 - [Overview](#mdtoc_e7c3d1bb)
 - [Header](#mdtoc_6e72a8c1)
 - [Get MetaEnum interface](#mdtoc_42ccb38f)
+- [Implement MetaEnum](#mdtoc_247b079c)
 - [Implemented built-in meta types](#mdtoc_ed7f0e2e)
 - [MetaEnum constructor](#mdtoc_348cb714)
 - [MetaEnum member functions for registering meta data](#mdtoc_31633ac1)
@@ -36,6 +37,45 @@ We can call `MetaType::getMetaEnum()` to get the MetaEnum interface. If the type
 ```c++
 const metapp::MetaType * metaType = metapp::getMetaType<MyEnum>();
 const metapp::MetaEnum * metaEnum = metaType->getMetaEnum();
+```
+
+<a id="mdtoc_247b079c"></a>
+## Implement MetaEnum
+
+```c++
+// This is the enum we are going to reflect for.
+enum class EnumAnimal {
+  dog = 1,
+  cat = 2,
+  panda = 3
+};
+
+// We use metapp::DeclareMetaType to declare a type for EnumAnimal.
+template <>
+struct metapp::DeclareMetaType <EnumAnimal> : metapp::DeclareMetaTypeBase <EnumAnimal>
+{
+  // The static function getMetaEnum is where we implement MetaEnum.
+  static const metapp::MetaEnum * getMetaEnum() {
+    // Define a static metapp::MetaEnum object. Note it must be static.
+    static const metapp::MetaEnum metaEnum([](metapp::MetaEnum & me) {
+      // Register the values into the passed in MetaEnum
+      me.registerValue("dog", EnumAnimal::dog);
+      me.registerValue("cat", EnumAnimal::cat);
+      me.registerValue("panda", EnumAnimal::panda);
+    });
+    // Return the MetaEnum object.
+    return &metaEnum;
+  }
+};
+```
+
+```c++
+// Let's use the MetaEnum
+const auto metaType = metapp::getMetaType<EnumAnimal>();
+const auto metaEnum = metaType->getMetaEnum();
+ASSERT(metaEnum != nullptr);
+ASSERT(metaEnum->getByName("dog").asEnumValue().get<EnumAnimal>() == EnumAnimal::dog);
+ASSERT(metaEnum->getByValue(EnumAnimal::cat).getName() == "cat");
 ```
 
 <a id="mdtoc_ed7f0e2e"></a>
