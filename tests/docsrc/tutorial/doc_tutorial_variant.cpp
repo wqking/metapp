@@ -53,12 +53,12 @@ TEST_CASE("tutorialVariant")
 	//desc Now v contains std::string.
 	v = std::string("hello");
 	//desc Get as std::string will copy the value, that's inefficient.  
-	//desc We should get as reference.
 	ASSERT(v.get<std::string>() == "hello");
-	//desc Get as reference to avoid copy.
+	//desc We should get as reference to avoid copy.
 	ASSERT(v.get<const std::string &>() == "hello");
 	//desc Whether the reference is const, it doesn't matter.
 	ASSERT(v.get<std::string &>() == "hello");
+	//desc We can assign to the reference if it's not const.
 	v.get<std::string &>() = "world";
 	ASSERT(v.get<const std::string &>() == "world");
 
@@ -67,14 +67,18 @@ TEST_CASE("tutorialVariant")
 	ASSERT(strcmp(v.get<const char []>(), "great") == 0);
 
 	//desc Cast to const char *.
-	metapp::Variant casted = v.cast<std::string>();
+	metapp::Variant casted = v.cast<const char *>();
+	ASSERT(strcmp(casted.get<const char *>(), "great") == 0);
+
+	//desc Cast to std::string.
+	casted = v.cast<std::string>();
 	ASSERT(casted.get<const std::string &>() == "great");
 
 	//desc Let's see how Variant works with array
 	int array[2][3] = { { 1, 2, 3 }, { 4, 5, 6 } };
 	//desc Now v contains reference to int[2][3].
 	//desc We can't simply assign array to v because the array type will be lost.
-	//desc We need to call Variant::create to retain the array type.
+	//desc We need to call Variant::create or Variant::reference to retain the array type.
 	v = metapp::Variant::reference(array);
 	ASSERT(v.get<int (&)[2][3]>()[1][2] == 6);
 	//desc Since v is a reference to array, modify array will also modify v

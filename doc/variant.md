@@ -272,11 +272,11 @@ This function is not useful in most cases. The only useful case is to use it on 
 **Example**  
 
 ```c++
-// This is wrong. In this case, var hold the ownership of MyClass
+// This is wrong. In this case, var hold the ownership of std::string
 // takeFrom can't take the ownership from var
 //metapp::Variant var(std::string());
 
-// This works, var hold the pointer, it doesn't hold the ownership of MyClass
+// This works, var hold the pointer, it doesn't hold the ownership of std::string
 // Note: if we don't call takeFrom later, var will leak the object
 // because it doesn't hold the ownership.
 metapp::Variant var(new std::string());
