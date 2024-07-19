@@ -115,6 +115,11 @@ public:
 	}
 };
 
+static constexpr int invokeRankMatch = 1000;
+static constexpr int invokeRankCast = 1;
+static constexpr int invokeRankNone = 0;
+static constexpr int invokeRankMax = std::numeric_limits<int>::max();
+
 template <typename Iterator>
 Iterator findCallable(
 	Iterator first,
@@ -133,6 +138,9 @@ Iterator findCallable(
 		if(rank > maxRank) {
 			maxRank = rank;
 			result = first;
+			if(rank == invokeRankMax) {
+				break;
+			}
 		}
 	}
 	

@@ -144,5 +144,27 @@ BenchmarkFunc
 	printResult(t2, iterations, "Misc, Fill std::vector<metapp::Variant>, MetaIndexable");
 }
 
+metapp::Variant tempGet(const int n)
+{
+	switch(n) {
+	case 0:
+		return 5LL;
+	case 1:
+		return 6LL;
+	}
+	return "abc";
+}
+
+TEST_CASE("temp")
+{
+	constexpr int iterations = generalIterations;
+	const auto t1 = measureElapsedTime([iterations]() {
+		for(int i = 0; i < iterations; ++i) {
+			metapp::Variant v = tempGet(i % 2);
+			dontOptimizeAway(v);
+		}
+	});
+	printResult(t1, iterations, "Misc, temp");
+}
 
 } //namespace

@@ -24,12 +24,9 @@
 #include <type_traits>
 #include <numeric>
 #include <algorithm>
+#include <limits>
 
 namespace metapp {
-
-static constexpr int invokeRankMatch = 1000;
-static constexpr int invokeRankCast = 1;
-static constexpr int invokeRankNone = 0;
 
 namespace internal_ {
 
@@ -88,7 +85,7 @@ struct MetaCallableInvokeChecker
 	template <int ...Indexes>
 	static int doRankInvoke(const ArgumentSpan & arguments, IntConstantList<Indexes...>) {
 		if(argCount == arguments.size() && arguments.empty()) {
-			return invokeRankMatch;
+			return invokeRankMax;
 		}
 		std::array<int, argCount> rankList {
 			rankArgumentMatching<ArgumentTypeList, Indexes>(arguments)...
@@ -97,13 +94,17 @@ struct MetaCallableInvokeChecker
 		(void)arguments;
 		(void)rankList;
 		int rank = 0;
+		bool allMatchExactly = true;
 		for(auto it = std::begin(rankList); it != std::end(rankList); ++it) {
 			if(*it == invokeRankNone) {
 				return invokeRankNone;
 			}
+			if(*it != invokeRankMatch) {
+				allMatchExactly = false;
+			}
 			rank += *it;
 		}
-		return rank;
+		return allMatchExactly ? invokeRankMax : rank;
 	}
 };
 

@@ -112,7 +112,7 @@ TEST_CASE("metatypes, DefaultArgsFunction, MyClass::myFunc2")
 	REQUIRE(metapp::callableRankInvoke(v, &obj, 5) == metapp::invokeRankNone);
 	// metapp::invokeRankMatch * 3 is each of the three default arguments receives metapp::invokeRankMatch.
 	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, std::string("abc"))
-		== metapp::invokeRankMatch + metapp::invokeRankMatch + metapp::invokeRankMatch * 3);
+		== metapp::invokeRankMax);
 	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, "abc")
 		== metapp::invokeRankMatch + metapp::invokeRankCast + metapp::invokeRankMatch * 3);
 	REQUIRE(metapp::callableRankInvoke(v, &obj, 5, "abc", 6)
